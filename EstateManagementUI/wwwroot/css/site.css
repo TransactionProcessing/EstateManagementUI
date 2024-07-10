@@ -19,4 +19,11 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color: ghostwhite
+}
+
+/* My Custom CSS below here */
+
+.card {
+    margin-right: 20px !important;
 }
