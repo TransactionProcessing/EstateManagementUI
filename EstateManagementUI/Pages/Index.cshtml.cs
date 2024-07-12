@@ -16,5 +16,9 @@ namespace EstateManagementUI.Pages
         {
 
         }
+
+        public async Task LogIn() {
+
+        }
     }
 }
