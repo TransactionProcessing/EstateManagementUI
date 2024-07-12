@@ -1,44 +1,83 @@
 ﻿@{
     bool isAuthenticated = ViewBag.IsAuthenticated ?? true;
+    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
 }
+
+@{
+    string GetCurrentPageClass(string prefix) =>
+        page.StartsWith($"/{prefix}")
+            ? "btn btn-sm btn-neutral btn-active"
+            : "btn btn-sm btn-ghost";
+
+    async Task RenderItem(string title, string name)
+    {
+        <a asp-page="/@name/Index" class="@GetCurrentPageClass(name)">
+            <partial name="Loading"/>
+            @title
+        </a>
+    }
+}
+
 
 <div class="bg-base-200 rounded text-center p-4 m-8">
     @if (isAuthenticated)
 {
-<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container">
-        <a class="navbar-brand" asp-area="" asp-page="/Index">EstateManagementUI</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-            <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+// <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+//     <div class="container">
+//         <a class="navbar-brand" asp-area="" asp-page="/Index">EstateManagementUI</a>
+//         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+//                 aria-expanded="false" aria-label="Toggle navigation">
+//             <span class="navbar-toggler-icon"></span>
+//         </button>
+//         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+//             <ul class="navbar-nav flex-grow-1">
+//                 <li class="nav-item">
+//                     <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+//                 </li>
+//                 <li class="nav-item">
+//                     <a class="nav-link text-dark" asp-area="" asp-page="/Contract/Index">My Contracts</a>
+//                 </li>
+//                 <li class="nav-item">
+//                     <a class="nav-link text-dark" asp-area="" asp-page="/Estate/Index">My Estate</a>
+//                 </li>
+//                 <li class="nav-item">
+//                     <a class="nav-link text-dark" asp-area="" asp-page="/FileProcessing/Index">File Processing</a>
+//                 </li>
+//                 <li class="nav-item">
+//                     <a class="nav-link text-dark" asp-area="" asp-page="/Merchant/Index">My Merchants</a>
+//                 </li>
+//                 <li class="nav-item">
+//                     <a class="nav-link text-dark" asp-area="" asp-page="/Operator/Index">My Operators</a>
+//                 </li>
+//                         <li class="nav-item">
+//                             <a class="nav-link text-dark" asp-area="" asp-page="/Reporting/Index">Reporting</a>
+//                         </li>
+//             </ul>
+//         </div>
+//     </div>
+// </nav>
+    <div class="navbar bg-base-100 shadow-xl z-[100]">
+        <div class="flex-none">
+            <a class="btn btn-ghost text-xl no-animation" href="/">Estate Management UI</a>
+        </div>
+        <div class="flex-1 flex gap-2" hydro-link>
+            @{
+                await RenderItem("My Estate", "Estate");
+                await RenderItem("My Merchants", "Merchant");
+                await RenderItem("My Contracts", "Contract");
+                await RenderItem("My Operators", "Operator");
+                    await RenderItem("Reports", "Reporting");
+                    await RenderItem("FileProcessing", "File Processing");
+            }
+        </div>
+        <div class="flex-none">
+            <ul class="menu menu-horizontal">
+                <li>
+                    <hydro name="ProfileDropdown" />
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Contract/Index">My Contracts</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Estate/Index">My Estate</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/FileProcessing/Index">File Processing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Merchant/Index">My Merchants</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Operator/Index">My Operators</a>
-                </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Reporting/Index">Reporting</a>
-                        </li>
             </ul>
         </div>
     </div>
-</nav>
 }
 else
 {
