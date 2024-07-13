@@ -12,6 +12,21 @@
   <ItemGroup>
     <PackageReference Include="Hydro" Version="0.14.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Lamar" Version="13.0.3" />
+    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="13.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.3" />
+    <PackageReference Include="Shared" Version="2024.7.2" />
+    <PackageReference Include="IdentityModel" Version="6.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="aspnetapp-root-cert.cer">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="aspnetapp-web-api.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

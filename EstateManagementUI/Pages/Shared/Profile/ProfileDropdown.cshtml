@@ -1,6 +1,6 @@
 @model ProfileDropdown
 @{
-    bool isAuthenticated = ViewBag.IsAuthenticated ?? false;
+    bool isAuthenticated = User.Identity.IsAuthenticated;
 }
     @if (isAuthenticated) {
   <ul class="p-2 bg-base-800 rounded-t-none right-0 shadow-lg whitespace-nowrap">
