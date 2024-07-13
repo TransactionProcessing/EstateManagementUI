@@ -1,5 +1,5 @@
 ﻿@{
-    bool isAuthenticated = ViewBag.IsAuthenticated ?? true;
+    bool isAuthenticated = User.Identity.IsAuthenticated;
     var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
 }
 
@@ -22,40 +22,6 @@
 <div class="bg-base-200 rounded text-center p-4 m-8">
     @if (isAuthenticated)
 {
-// <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-//     <div class="container">
-//         <a class="navbar-brand" asp-area="" asp-page="/Index">EstateManagementUI</a>
-//         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-//                 aria-expanded="false" aria-label="Toggle navigation">
-//             <span class="navbar-toggler-icon"></span>
-//         </button>
-//         <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-//             <ul class="navbar-nav flex-grow-1">
-//                 <li class="nav-item">
-//                     <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-//                 </li>
-//                 <li class="nav-item">
-//                     <a class="nav-link text-dark" asp-area="" asp-page="/Contract/Index">My Contracts</a>
-//                 </li>
-//                 <li class="nav-item">
-//                     <a class="nav-link text-dark" asp-area="" asp-page="/Estate/Index">My Estate</a>
-//                 </li>
-//                 <li class="nav-item">
-//                     <a class="nav-link text-dark" asp-area="" asp-page="/FileProcessing/Index">File Processing</a>
-//                 </li>
-//                 <li class="nav-item">
-//                     <a class="nav-link text-dark" asp-area="" asp-page="/Merchant/Index">My Merchants</a>
-//                 </li>
-//                 <li class="nav-item">
-//                     <a class="nav-link text-dark" asp-area="" asp-page="/Operator/Index">My Operators</a>
-//                 </li>
-//                         <li class="nav-item">
-//                             <a class="nav-link text-dark" asp-area="" asp-page="/Reporting/Index">Reporting</a>
-//                         </li>
-//             </ul>
-//         </div>
-//     </div>
-// </nav>
     <div class="navbar bg-base-100 shadow-xl z-[100]">
         <div class="flex-none">
             <a class="btn btn-ghost text-xl no-animation" href="/">Estate Management UI</a>

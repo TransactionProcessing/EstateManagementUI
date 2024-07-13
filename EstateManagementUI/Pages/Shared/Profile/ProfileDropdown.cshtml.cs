@@ -11,8 +11,7 @@ public class ProfileDropdown() : HydroComponent
 {
     public override async Task RenderAsync()
     {
-        //var user = await database.GetCurrentUser();
-        //ViewBag.IsAuthenticated = user != null;
+        
     }
 
     public void SwitchTheme()
