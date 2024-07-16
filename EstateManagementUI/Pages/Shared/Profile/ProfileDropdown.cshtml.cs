@@ -1,4 +1,5 @@
 using Hydro;
+using Microsoft.AspNetCore.Authentication;
 
 //using HydroSales.Authorization;
 //using HydroSales.Database;
@@ -7,30 +8,16 @@ using Hydro;
 namespace EstateManagementUI.Pages.Shared.Profile;
 
 //IAuthorizationService authorizationService, IDatabase database, IMembershipService membershipService
-public class ProfileDropdown() : HydroComponent
+public class ProfileDropdown : HydroComponent
 {
-    public override async Task RenderAsync()
-    {
-        
+    private readonly IHttpContextAccessor HttpContextAccessor;
+
+    public ProfileDropdown(IHttpContextAccessor httpContextAccessor) {
+        this.HttpContextAccessor = httpContextAccessor;
     }
 
-    public void SwitchTheme()
-    {
-        var theme = this.HttpContext.Request.Cookies.TryGetValue("theme", out var value) ? value : "emerald";
-        var newTheme = theme == "emerald" ? "dark" : "emerald";
-        this.HttpContext.Response.Cookies.Append("theme", newTheme, new CookieOptions { MaxAge = TimeSpan.FromDays(365) });
-        this.Redirect(this.HttpContext.Request.Headers.Referer.ToString());
-    }
-
-    public async Task SignUp()
-    {
-        //await membershipService.SignUp();
-        //Redirect(Url.Page("/Invoices/Index"));
-    }
-
-    public async Task Logout()
-    {
-        //await authorizationService.SignOut();
-        Redirect("/");
+    public async Task SignOut() {
+        await this.HttpContextAccessor.HttpContext.SignOutAsync("oidc");
+        await this.HttpContextAccessor.HttpContext.SignOutAsync("Cookies");
     }
 }

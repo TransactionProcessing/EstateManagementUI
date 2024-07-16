@@ -17,7 +17,10 @@ builder.Host.UseLamar((c,
                        r) => {
     r.AddRazorPages();
     r.AddHydro();
-    r.IncludeRegistry<MiddlewareRegistry>();
+
+                           r.AddHttpContextAccessor();
+
+                           r.IncludeRegistry<MiddlewareRegistry>();
     r.IncludeRegistry<AuthenticationRegistry>();
 }).ConfigureAppConfiguration((hostingContext, configBuilder) => {
     
@@ -73,6 +76,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+//app.UseCors("test");
 
 app.UseAuthentication();
 app.UseAuthorization();

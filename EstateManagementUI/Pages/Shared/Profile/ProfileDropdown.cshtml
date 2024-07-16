@@ -1,22 +1,39 @@
 @model ProfileDropdown
+@using System.Globalization
 @{
-    bool isAuthenticated = User.Identity.IsAuthenticated;
-}
-    @if (isAuthenticated) {
-  <ul class="p-2 bg-base-800 rounded-t-none right-0 shadow-lg whitespace-nowrap">
+    var givenName = User.Claims.SingleOrDefault(c => c.Type == "given_name");
+    var familyName = User.Claims.SingleOrDefault(c => c.Type == "family_name");
+    var userFullName = $"{givenName.Value} {familyName.Value}";
 
-        <li>
-            <a asp-page="/Invoices/Index" hydro-boost>Dashboard</a>
-        </li>
-
-        <li>
-            <a hydro-on:click="@(() => Model.SwitchTheme())" href="#">Light/dark theme</a>
-        </li>
-        <li>
-            <a hydro-on:click="@(() => Model.Logout())" href="#">Log out</a>
-        </li>
-    </ul>
+    String registrationText = String.Empty;
+    var registrationDateClaim = User.Claims.SingleOrDefault(c => c.Type == "registration_date");
+    if (registrationDateClaim != null)
+    {
+        if (DateTime.TryParseExact(registrationDateClaim.Value, "yyyy-MM-dd HH:mm:ss.fff", null,DateTimeStyles.None, out DateTime registrationDate)) {
+            registrationText = $"Registered on {registrationDate.ToShortDateString()}";
+        }
     }
     else {
-        <a hydro-on:click="@(() => Model.Logout())" href="#">Log in</a>
+        registrationText = $"Registered on Unknown";
     }
+}
+
+<li class="nav-item dropdown user-menu">
+    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+        @* <img src="~/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="User Image"> *@ <span class="d-none d-md-inline">@userFullName</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+        <!--begin::User Image-->
+        <li class="user-header text-bg-secondary">
+            @* <img src="~/img/user2-160x160.jpg" class="rounded-circle shadow" alt="User Image"> *@
+            <p>
+                @userFullName
+                <small>@registrationText</small>
+            </p>
+        </li> <!--end::User Image--> <!--begin::Menu Body-->
+        <li class="user-footer">
+            @* <a href="#" class="btn btn-default btn-flat">Profile</a> <a href="#" class="btn btn-default btn-flat float-end">Sign out</a> *@
+            <a href="#" class="btn btn-default btn-flat">Profile</a> <button hydro-on:click="@(() => Model.SignOut())" class="btn btn-default btn-flat float-end">Sign out</button>
+        </li> <!--end::Menu Footer-->
+    </ul>
+</li>
