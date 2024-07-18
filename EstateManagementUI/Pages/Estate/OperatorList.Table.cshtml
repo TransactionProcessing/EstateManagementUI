@@ -1,0 +1,44 @@
+﻿@model EstateManagementUI.Pages.Estate.OperatorList
+
+<table class="table table-sm">
+    <thead>
+    <tr>
+        <th class="w-40">Name</th>
+        <th class="w-28">Custom Merchant</th>
+        <th class="w-24">Custom Terminal</th>
+        <th class="w-12"></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var operatorModel in Model.Operators)
+    {
+        <tr class="hover">
+            <td>
+                @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
+                    @operatorModel.Name
+                @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
+                </a> *@
+            </td>
+
+            <td>
+                @operatorModel.RequireCustomMerchantNumber
+            </td>
+            <td>
+                @operatorModel.RequireCustomTerminalNumber
+            </td>
+            
+
+            @* <td class="align-middle text-end">
+                @{
+                    var menuItems = new TableDropdownItem[]
+                    {
+                        new("Edit", () => Model.Edit(product.Id))
+                    };
+                }
+
+                <partial name="TableDropdown" model="@menuItems" />
+            </td> *@
+        </tr>
+    }
+    </tbody>
+</table>

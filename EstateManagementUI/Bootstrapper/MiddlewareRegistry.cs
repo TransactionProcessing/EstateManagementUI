@@ -1,10 +1,16 @@
-﻿using Hydro.Configuration;
+﻿using EstateManagement.Client;
+using EstateManagmentUI.BusinessLogic.Clients;
+using EstateManagmentUI.BusinessLogic.RequestHandlers;
+using Hydro.Configuration;
 using IdentityModel;
 using Lamar;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using Shared.General;
 using Shared.Middleware;
+using System.Diagnostics.CodeAnalysis;
+using EstateManagmentUI.BusinessLogic.Requests;
 
 namespace EstateManagementUI.Bootstrapper
 {
@@ -70,6 +76,33 @@ namespace EstateManagementUI.Bootstrapper
             });
             
             this.AddAuthorization();
+        }
+    }
+
+    public class ClientRegistry : ServiceRegistry
+    {
+        public ClientRegistry()
+        {
+            //this.AddSingleton<IConfigurationService, ConfigurationService>();
+            this.AddSingleton<IApiClient, ApiClient>();
+            this.AddSingleton<IEstateClient, EstateClient>();
+            //this.AddSingleton<IFileProcessorClient, FileProcessorClient>();
+            //this.AddSingleton<ITransactionProcessorClient, TransactionProcessorClient>();
+            //this.AddSingleton<IEstateReportingApiClient, EstateReportingApiClient>();
+            this.AddSingleton<Func<String, String>>(container => (serviceName) =>
+            {
+                return ConfigurationReader.GetBaseServerUri(serviceName).OriginalString;
+            });
+            this.AddSingleton<HttpClient>();
+        }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class MediatorRegistry : ServiceRegistry {
+        public MediatorRegistry() {
+            this.AddTransient<IMediator, Mediator>();
+
+            this.AddSingleton<IRequestHandler<Queries.GetEstateQuery, EstateModel>, EstateRequestHandler>();
         }
     }
 
