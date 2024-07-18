@@ -5,6 +5,9 @@ using Hydro.Configuration;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Logging;
+using NLog;
+using NLog.Extensions.Logging;
 using Shared.General;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +25,8 @@ builder.Host.UseLamar((c,
 
                            r.IncludeRegistry<MiddlewareRegistry>();
     r.IncludeRegistry<AuthenticationRegistry>();
+    r.IncludeRegistry<ClientRegistry>();
+    r.IncludeRegistry<MediatorRegistry>();
 }).ConfigureAppConfiguration((hostingContext, configBuilder) => {
     
     configBuilder.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
@@ -32,6 +37,29 @@ builder.Host.UseLamar((c,
         .AddEnvironmentVariables();
 
     ConfigurationReader.Initialise(configBuilder.Build());
+}).ConfigureLogging((context,
+                     loggingBuilder) => {
+    // NLog: Setup NLog for Dependency injection
+
+    loggingBuilder.ClearProviders();
+                         loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace); // TODO: Config
+
+                         String nlogConfigFilename = "nlog.config";
+
+                         if (context.HostingEnvironment.IsDevelopment()) {
+                             var developmentNlogConfigFilename = "nlog.development.config";
+                             if (File.Exists(Path.Combine(context.HostingEnvironment.ContentRootPath, developmentNlogConfigFilename))) {
+                                 nlogConfigFilename = developmentNlogConfigFilename;
+                             }
+                         }
+
+                         NLog.LogManager.Setup().LoadConfigurationFromFile(nlogConfigFilename);
+                         loggingBuilder.AddNLog();
+
+                         var loggerFactory = new NLog.Extensions.Logging.NLogLoggerFactory();
+                         var l = loggerFactory.CreateLogger("");
+                         Shared.Logger.Logger.Initialise(l);
+                         //Configuration.LogConfiguration(Logger.LogWarning);
 });
 
 builder.WebHost.UseConfiguration(config);

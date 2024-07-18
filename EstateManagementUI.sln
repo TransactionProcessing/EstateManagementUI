@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35103.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI", "EstateManagementUI\EstateManagementUI.csproj", "{2EA6492F-70A7-41EB-B816-A9854C0DB47B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagmentUI.BusinessLogic", "EstateManagmentUI.BusinessLogic\EstateManagmentUI.BusinessLogic.csproj", "{03159A77-7944-4099-9FF4-15C7D39D53DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{2EA6492F-70A7-41EB-B816-A9854C0DB47B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EA6492F-70A7-41EB-B816-A9854C0DB47B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EA6492F-70A7-41EB-B816-A9854C0DB47B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
