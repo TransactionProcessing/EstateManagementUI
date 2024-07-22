@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EstateManagmentUI.BusinessLogic\EstateManagmentUI.BusinessLogic.csproj" />
+    <ProjectReference Include="..\EstateManagmentUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
   </ItemGroup>
 
   <ItemGroup>

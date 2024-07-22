@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EstateManagmentUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 
 namespace EstateManagmentUI.BusinessLogic.RequestHandlers
