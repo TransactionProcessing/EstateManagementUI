@@ -1,5 +1,4 @@
 ﻿using EstateManagement.Client;
-using EstateManagmentUI.BusinessLogic.Clients;
 using EstateManagmentUI.BusinessLogic.RequestHandlers;
 using Hydro.Configuration;
 using IdentityModel;
@@ -10,6 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 using Shared.General;
 using Shared.Middleware;
 using System.Diagnostics.CodeAnalysis;
+using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 
 namespace EstateManagementUI.Bootstrapper

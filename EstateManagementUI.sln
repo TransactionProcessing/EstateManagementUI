@@ -5,7 +5,15 @@ VisualStudioVersion = 17.11.35103.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI", "EstateManagementUI\EstateManagementUI.csproj", "{2EA6492F-70A7-41EB-B816-A9854C0DB47B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagmentUI.BusinessLogic", "EstateManagmentUI.BusinessLogic\EstateManagmentUI.BusinessLogic.csproj", "{03159A77-7944-4099-9FF4-15C7D39D53DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI.BusinessLogic", "EstateManagmentUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj", "{03159A77-7944-4099-9FF4-15C7D39D53DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E7671C23-F30C-471A-A9EF-AC85DC607B55}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{05420FAB-1C50-4AAD-9E7C-2A86184019B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI.BusinessLogic.Tests", "EstateManagementUI.BusinessLogic.Tests\EstateManagementUI.BusinessLogic.Tests.csproj", "{95D6BC50-E55F-4D9B-B96D-D97EE5456BE1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI.Testing", "EstateManagementUI.Testing\EstateManagementUI.Testing.csproj", "{6F4573B4-A5CC-48B6-A96A-E692C612275D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,9 +29,23 @@ Global
 		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03159A77-7944-4099-9FF4-15C7D39D53DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D6BC50-E55F-4D9B-B96D-D97EE5456BE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D6BC50-E55F-4D9B-B96D-D97EE5456BE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D6BC50-E55F-4D9B-B96D-D97EE5456BE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D6BC50-E55F-4D9B-B96D-D97EE5456BE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F4573B4-A5CC-48B6-A96A-E692C612275D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F4573B4-A5CC-48B6-A96A-E692C612275D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F4573B4-A5CC-48B6-A96A-E692C612275D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F4573B4-A5CC-48B6-A96A-E692C612275D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2EA6492F-70A7-41EB-B816-A9854C0DB47B} = {05420FAB-1C50-4AAD-9E7C-2A86184019B7}
+		{03159A77-7944-4099-9FF4-15C7D39D53DB} = {05420FAB-1C50-4AAD-9E7C-2A86184019B7}
+		{95D6BC50-E55F-4D9B-B96D-D97EE5456BE1} = {E7671C23-F30C-471A-A9EF-AC85DC607B55}
+		{6F4573B4-A5CC-48B6-A96A-E692C612275D} = {E7671C23-F30C-471A-A9EF-AC85DC607B55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5AE6DA4-B167-44E5-9B63-61C7E8D1BC9F}

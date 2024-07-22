@@ -1,130 +1,181 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using EstateManagementUI.Bootstrapper;
 using Hydro.Configuration;
+using Lamar;
 using Lamar.Microsoft.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Extensions.Logging;
 using Shared.General;
 
-var builder = WebApplication.CreateBuilder(args);
+public class Startup {
+    private static IWebHostEnvironment WebHostEnvironment;
+    public static Container Container;
 
-FileInfo fi = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
-IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(fi.Directory.FullName).AddJsonFile("hosting.json", optional: true)
-    .AddJsonFile("hosting.development.json", optional: true).AddEnvironmentVariables().Build();
+    public static IConfigurationRoot Configuration { get; set; }
 
-builder.Host.UseLamar((c,
-                       r) => {
-    r.AddRazorPages();
-    r.AddHydro();
-
-                           r.AddHttpContextAccessor();
-
-                           r.IncludeRegistry<MiddlewareRegistry>();
-    r.IncludeRegistry<AuthenticationRegistry>();
-    r.IncludeRegistry<ClientRegistry>();
-    r.IncludeRegistry<MediatorRegistry>();
-}).ConfigureAppConfiguration((hostingContext, configBuilder) => {
-    
-    configBuilder.SetBasePath(hostingContext.HostingEnvironment.ContentRootPath)
-        .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
-        .AddJsonFile($"/home/txnproc/config/appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true)
-        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-        .AddJsonFile($"appsettings.{hostingContext.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-        .AddEnvironmentVariables();
-
-    ConfigurationReader.Initialise(configBuilder.Build());
-}).ConfigureLogging((context,
-                     loggingBuilder) => {
-    // NLog: Setup NLog for Dependency injection
-
-    loggingBuilder.ClearProviders();
-                         loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace); // TODO: Config
-
-                         String nlogConfigFilename = "nlog.config";
-
-                         if (context.HostingEnvironment.IsDevelopment()) {
-                             var developmentNlogConfigFilename = "nlog.development.config";
-                             if (File.Exists(Path.Combine(context.HostingEnvironment.ContentRootPath, developmentNlogConfigFilename))) {
-                                 nlogConfigFilename = developmentNlogConfigFilename;
-                             }
-                         }
-
-                         NLog.LogManager.Setup().LoadConfigurationFromFile(nlogConfigFilename);
-                         loggingBuilder.AddNLog();
-
-                         var loggerFactory = new NLog.Extensions.Logging.NLogLoggerFactory();
-                         var l = loggerFactory.CreateLogger("");
-                         Shared.Logger.Logger.Initialise(l);
-                         //Configuration.LogConfiguration(Logger.LogWarning);
-});
-
-builder.WebHost.UseConfiguration(config);
-builder.WebHost.UseKestrel(options =>
+    public Startup(IWebHostEnvironment webHostEnvironment)
     {
-        var port = 5004;
+        IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(webHostEnvironment.ContentRootPath)
+            .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
+            .AddJsonFile($"/home/txnproc/config/appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables();
 
-        options.Listen(IPAddress.Any,
-            port,
-            listenOptions =>
+        Startup.Configuration = builder.Build();
+        Startup.WebHostEnvironment = webHostEnvironment;
+        
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+    }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureContainer(ServiceRegistry services)
+    {
+        ConfigurationReader.Initialise(Startup.Configuration);
+
+        services.AddHttpContextAccessor();
+        
+        services.IncludeRegistry<MiddlewareRegistry>();
+        if (Startup.WebHostEnvironment.IsEnvironment("IntegrationTest") == false){
+            services.IncludeRegistry<AuthenticationRegistry>();
+        }
+        services.IncludeRegistry<ClientRegistry>();
+        services.IncludeRegistry<MediatorRegistry>();
+
+        Startup.Container = new Container(services);
+    }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
+                          ILoggerFactory loggerFactory) {
+
+        // TODO: where should the logging be configured??
+
+        // Configure the HTTP request pipeline.
+        if (!env.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+        }
+        else
+        {
+            app.UseDeveloperExceptionPage();
+
+        }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.UseHydro(env);
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapRazorPages();
+        });
+    }
+}
+
+
+public class Program {
+
+    public static void Main(String[] args)
+    {
+        Program.CreateHostBuilder(args).Build().Run();
+    }
+
+    public static IHostBuilder CreateHostBuilder(String[] args) {
+        FileInfo fi = new FileInfo(System.Reflection.Assembly.GetExecutingAssembly().Location);
+        IConfigurationRoot config = new ConfigurationBuilder().SetBasePath(fi.Directory.FullName)
+            .AddJsonFile("hosting.json", optional: true).AddJsonFile("hosting.development.json", optional: true)
+            .AddEnvironmentVariables().Build();
+
+        IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args);
+        hostBuilder.UseWindowsService();
+        hostBuilder.UseLamar();
+        hostBuilder.ConfigureWebHostDefaults(webBuilder => {
+            webBuilder.UseStartup<Startup>();
+
+            webBuilder.ConfigureServices(services =>
             {
-                try
-                {
-                    // Enable support for HTTP1 and HTTP2 (required if you want to host gRPC endpoints)
-                    listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                    // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
-                    listenOptions.UseHttps(LoadCertificate(fi.Directory.FullName));
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
+                // This is important, the call to AddControllers()
+                // cannot be made before the usage of ConfigureWebHostDefaults
+                //services.AddNewtonsoftJson(options =>
+                //{
+                //    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                //    options.SerializerSettings.TypeNameHandling = TypeNameHandling.Auto;
+                //    options.SerializerSettings.Formatting = Formatting.Indented;
+                //    options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                //    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                //});
+                services.AddRazorPages();
+                services.AddHydro();
             });
-    });
 
-var app = builder.Build();
+            webBuilder.UseConfiguration(config);
+            webBuilder.ConfigureLogging((context,
+                                         loggingBuilder) => {
+                // NLog: Setup NLog for Dependency injection
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-else {
-    app.UseDeveloperExceptionPage();
+                loggingBuilder.ClearProviders();
+                loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace); // TODO: Config
 
-}
+                String nlogConfigFilename = "nlog.config";
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+                if (context.HostingEnvironment.IsDevelopment()) {
+                    var developmentNlogConfigFilename = "nlog.development.config";
+                    if (File.Exists(Path.Combine(context.HostingEnvironment.ContentRootPath,
+                            developmentNlogConfigFilename))) {
+                        nlogConfigFilename = developmentNlogConfigFilename;
+                    }
+                }
 
-app.UseRouting();
+                NLog.LogManager.Setup().LoadConfigurationFromFile(nlogConfigFilename);
+                loggingBuilder.AddNLog();
 
-//app.UseCors("test");
+                var loggerFactory = new NLog.Extensions.Logging.NLogLoggerFactory();
+                var l = loggerFactory.CreateLogger("");
+                Shared.Logger.Logger.Initialise(l);
+                //Configuration.LogConfiguration(Logger.LogWarning);
+            });
+            webBuilder.UseKestrel(options => {
+                var port = 5004;
 
-app.UseAuthentication();
-app.UseAuthorization();
+                options.Listen(IPAddress.Any, port, listenOptions => {
+                    try {
+                        // Enable support for HTTP1 and HTTP2 (required if you want to host gRPC endpoints)
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                        // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
+                        listenOptions.UseHttps(Program.LoadCertificate(fi.Directory.FullName));
+                    }
+                    catch (Exception e) {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                });
+            });
+        });
+        return hostBuilder;
+    }
 
-app.UseHydro(builder.Environment);
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-});
-
-app.Run();
-
-
-static X509Certificate2 LoadCertificate(String path)
-{
-    //just to ensure that we are picking the right file! little bit of ugly code:
-    var files = Directory.GetFiles(path);
-    var certificateFile = files.First(name => name.Contains("pfx"));
-    Console.WriteLine($"Certficate File: {certificateFile}");
-    return new X509Certificate2(certificateFile, "password");
+    private static X509Certificate2 LoadCertificate(String path)
+    {
+        //just to ensure that we are picking the right file! little bit of ugly code:
+        var files = Directory.GetFiles(path);
+        var certificateFile = files.First(name => name.Contains("pfx"));
+        Console.WriteLine($"Certficate File: {certificateFile}");
+        return new X509Certificate2(certificateFile, "password");
+    }
 }
