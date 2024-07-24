@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using NLog;
 using NLog.Extensions.Logging;
+using Shared.Extensions;
 using Shared.General;
 
 public class Startup {
@@ -129,7 +130,7 @@ public class Program {
                                          loggingBuilder) => {
                 // NLog: Setup NLog for Dependency injection
 
-                loggingBuilder.ClearProviders();
+                //loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace); // TODO: Config
 
                 String nlogConfigFilename = "nlog.config";
@@ -148,19 +149,23 @@ public class Program {
                 var loggerFactory = new NLog.Extensions.Logging.NLogLoggerFactory();
                 var l = loggerFactory.CreateLogger("");
                 Shared.Logger.Logger.Initialise(l);
-                //Configuration.LogConfiguration(Logger.LogWarning);
+                //Startup.Configuration.LogConfiguration(Shared.Logger.Logger.LogWarning);
             });
-            webBuilder.UseKestrel(options => {
+            webBuilder.UseKestrel(options =>
+            {
                 var port = 5004;
 
-                options.Listen(IPAddress.Any, port, listenOptions => {
-                    try {
+                options.Listen(IPAddress.Any, port, listenOptions =>
+                {
+                    try
+                    {
                         // Enable support for HTTP1 and HTTP2 (required if you want to host gRPC endpoints)
                         listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
                         // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
                         listenOptions.UseHttps(Program.LoadCertificate(fi.Directory.FullName));
                     }
-                    catch (Exception e) {
+                    catch (Exception e)
+                    {
                         Console.WriteLine(e);
                         throw;
                     }
@@ -170,12 +175,14 @@ public class Program {
         return hostBuilder;
     }
 
-    private static X509Certificate2 LoadCertificate(String path)
-    {
+    private static X509Certificate2 LoadCertificate(String path) {
         //just to ensure that we are picking the right file! little bit of ugly code:
-        var files = Directory.GetFiles(path);
+        var files = Directory.GetFiles($"{path}\\Certificates");
         var certificateFile = files.First(name => name.Contains("pfx"));
         Console.WriteLine($"Certficate File: {certificateFile}");
-        return new X509Certificate2(certificateFile, "password");
+        
+        var x509 = new X509Certificate2(certificateFile, "password");
+        
+        return x509;
     }
 }
