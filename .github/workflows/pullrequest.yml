@@ -67,6 +67,9 @@ jobs:
     - name: Build Docker Image
       run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
 
+    - name: Restore Nuget Packages
+      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+
     - name: Run Integration Tests (Chrome)
       env:
         Browser: Chrome
