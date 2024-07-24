@@ -154,13 +154,13 @@ public class Program {
             webBuilder.UseKestrel(options =>
             {
                 var port = 5004;
-
+                
                 options.Listen(IPAddress.Any, port, listenOptions =>
                 {
                     try
                     {
                         // Enable support for HTTP1 and HTTP2 (required if you want to host gRPC endpoints)
-                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
                         // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
                         listenOptions.UseHttps(Program.LoadCertificate(fi.Directory.FullName));
                     }
