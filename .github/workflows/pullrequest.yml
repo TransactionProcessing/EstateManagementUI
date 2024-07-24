@@ -65,13 +65,13 @@ jobs:
         sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
             
     - name: Build Docker Image
-      run: docker build . --file EstateAdministrationUI/Dockerfile --tag estateadministrationui:latest
+      run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
 
     - name: Run Integration Tests (Chrome)
       env:
         Browser: Chrome
         IsCI: true
-      run: dotnet test "EstateAdministrationUI.IntegrationTests\EstateAdministrationUI.IntegrationTests.csproj" --filter Category=PRTest
+      run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" #--filter Category=PRTest
       
     - uses: actions/upload-artifact@v2
       if: ${{ failure() }}
