@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
     <ProjectReference Include="..\EstateManagementUI.Testing\EstateManagementUI.Testing.csproj" />
     <ProjectReference Include="..\EstateManagementUI\EstateManagementUI.csproj" />
   </ItemGroup>

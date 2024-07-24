@@ -1,6 +1,5 @@
 ﻿using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagementUI.Testing;
-using EstateManagmentUI.BusinessLogic.Requests;
 using EstateManagementUI.BusinessLogic.Models;
 using Shouldly;
 using EstateManagementUI.BusinessLogic.Common;

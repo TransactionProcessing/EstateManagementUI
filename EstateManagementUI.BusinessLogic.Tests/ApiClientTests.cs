@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Text;
-using System.Threading.Tasks;
-using EstateManagement.Client;
-using EstateManagement.DataTransferObjects.Responses.Estate;
+﻿using EstateManagement.Client;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.Testing;
 using Moq;
