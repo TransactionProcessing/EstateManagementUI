@@ -6,6 +6,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EstateManagementUI/NuGet.Config", "."]
+COPY ["EstateManagementUI/Certificates/*.*", "Certificates/"]
 COPY ["EstateManagementUI/EstateManagementUI.csproj", "EstateManagementUI/"]
 COPY ["EstateManagementUI.BusinessLogic/EstateManagementUI.BusinessLogic.csproj", "EstateManagementUI.BusinessLogic/"]
 RUN dotnet restore "./EstateManagementUI/EstateManagementUI.csproj"

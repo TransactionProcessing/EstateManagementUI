@@ -176,13 +176,27 @@ public class Program {
     }
 
     private static X509Certificate2 LoadCertificate(String path) {
-        //just to ensure that we are picking the right file! little bit of ugly code:
-        var files = Directory.GetFiles($"{path}\\Certificates");
-        var certificateFile = files.First(name => name.Contains("pfx"));
-        Console.WriteLine($"Certficate File: {certificateFile}");
-        
-        var x509 = new X509Certificate2(certificateFile, "password");
-        
-        return x509;
+        Shared.Logger.Logger.LogWarning(path);
+        var g = Directory.Exists($"{path}//Certificates");
+        if (g) {
+            {
+
+                //just to ensure that we are picking the right file! little bit of ugly code:
+                var files = Directory.GetFiles($"{path}/Certificates");
+                foreach (String file in files) {
+                    Shared.Logger.Logger.LogWarning(file);
+                }
+                var certificateFile = files.First(name => name.Contains("pfx"));
+                Console.WriteLine($"Certficate File: {certificateFile}");
+
+                var x509 = new X509Certificate2(certificateFile, "password");
+                return x509;
+            }
+        }
+        else {
+            Shared.Logger.Logger.LogWarning($"Folder [{path}//Certificates] doesnt exist");
+        }
+
+        return null;
     }
 }
