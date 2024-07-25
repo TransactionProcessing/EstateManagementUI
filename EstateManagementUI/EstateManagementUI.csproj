@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>b601ba2b-0272-463e-b9ee-2127e2bce7c4</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>.</DockerfileContext>
+	  <ContainerDevelopmentMode>Regular</ContainerDevelopmentMode>
+	  <UserSecretsId>246afedf-f035-44d4-b568-e928505d5060</UserSecretsId>
+	  <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EstateManagmentUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
+    <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,10 +32,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="aspnetapp-root-cert.cer">
+	  <None Update="..\.dockerignore">
+		  <DependentUpon>dockerfile</DependentUpon>
+	  </None>
+	  <None Update="aspnetapp-root-cert.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="aspnetapp-web-api.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Certificates\aspnetapp-root-cert.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Certificates\aspnetapp-web-api.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

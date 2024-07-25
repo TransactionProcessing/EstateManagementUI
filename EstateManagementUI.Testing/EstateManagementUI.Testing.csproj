@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EstateManagmentUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
+    <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
   </ItemGroup>
 
   <ItemGroup>

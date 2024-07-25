@@ -35,6 +35,17 @@
       },
       "publishAllPorts": true,
       "useSSL": true
+    },
+    "EstateAdministrationUI": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "https://192.168.1.86:5004",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://192.168.1.86:5004",
+      "jsWebView2Debugging": true
     }
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
