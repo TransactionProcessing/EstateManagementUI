@@ -149,7 +149,7 @@ public class Program {
                 var loggerFactory = new NLog.Extensions.Logging.NLogLoggerFactory();
                 var l = loggerFactory.CreateLogger("");
                 Shared.Logger.Logger.Initialise(l);
-                //Startup.Configuration.LogConfiguration(Shared.Logger.Logger.LogWarning);
+                Startup.Configuration.LogConfiguration(Shared.Logger.Logger.LogWarning);
             });
             webBuilder.UseKestrel(options =>
             {
