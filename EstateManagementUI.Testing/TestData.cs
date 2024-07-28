@@ -1,3 +1,4 @@
+using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagmentUI.BusinessLogic.Requests;
@@ -56,19 +57,52 @@ namespace EstateManagementUI.Testing
                     SettlementSchedule = SettlementSchedule.Immediate,
                     MerchantReference = "Reference1",
                     MerchantName = "Test Merchant 1",
-                    MerchantId = Guid.Parse("2F8431D9-8D04-4AE5-B66C-DB40DFADE581")
+                    MerchantId = Guid.Parse("2F8431D9-8D04-4AE5-B66C-DB40DFADE581"),
+                    Addresses = new List<AddressResponse> {
+                        new AddressResponse {
+                            AddressLine1 = "Address Line 1",
+                            Town = "Test Town 1"
+                        }
+                    },
+                    Contacts = new List<ContactResponse> {
+                        new ContactResponse {
+                            ContactName = "Contact 1"
+                        }
+                    }
                 },
                 new MerchantResponse {
                     SettlementSchedule = SettlementSchedule.Weekly,
                     MerchantReference = "Reference2",
                     MerchantName = "Test Merchant 2",
-                    MerchantId = Guid.Parse("8959608C-2448-48EA-AFB4-9D10FFFB6140")
+                    MerchantId = Guid.Parse("8959608C-2448-48EA-AFB4-9D10FFFB6140"),
+                    Addresses = new List<AddressResponse> {
+                        new AddressResponse {
+                            AddressLine1 = "Address Line 2",
+                            Town = "Test Town 2"
+                        }
+                    },
+                    Contacts = new List<ContactResponse> {
+                        new ContactResponse {
+                            ContactName = "Contact 2"
+                        }
+                    }
                 },
                 new MerchantResponse {
                     SettlementSchedule = SettlementSchedule.Monthly,
                     MerchantReference = "Reference3",
                     MerchantName = "Test Merchant 3",
-                    MerchantId = Guid.Parse("877D7384-9A72-4A73-A275-9DB62BF32EDB")
+                    MerchantId = Guid.Parse("877D7384-9A72-4A73-A275-9DB62BF32EDB"),
+                    Addresses = new List<AddressResponse> {
+                        new AddressResponse {
+                            AddressLine1 = "Address Line 3",
+                            Town = "Test Town 3"
+                        }
+                    },
+                    Contacts = new List<ContactResponse> {
+                        new ContactResponse {
+                            ContactName = "Contact 3"
+                        }
+                    }
                 }
             };
     }
