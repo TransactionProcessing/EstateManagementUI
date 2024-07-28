@@ -1,5 +1,6 @@
 ﻿using EstateManagement.Client;
 using EstateManagement.DataTransferObjects.Responses.Estate;
+using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.Models;
 using Shared.Logger;
@@ -23,6 +24,18 @@ public class ApiClient : IApiClient {
             EstateResponse? estate = await this.EstateClient.GetEstate(accessToken, estateId, cancellationToken);
 
             return ModelFactory.ConvertFrom(estate);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<List<MerchantModel>> GetMerchants(String accessToken, Guid actionId, Guid estateId, CancellationToken cancellationToken)
+    {
+        async Task<Result<List<MerchantModel>>> ClientMethod()
+        {
+            List<MerchantResponse> merchants = await this.EstateClient.GetMerchants(accessToken, estateId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(merchants);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);

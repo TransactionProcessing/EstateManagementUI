@@ -1,4 +1,5 @@
 ﻿using EstateManagement.DataTransferObjects.Responses.Estate;
+using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 
@@ -21,6 +22,28 @@ public static class ModelFactory
             SecurityUsers = ConvertSecurityUsers(source.SecurityUsers)
         };
         return model;
+    }
+
+    public static List<MerchantModel> ConvertFrom(List<MerchantResponse> source) {
+        if (source == null || source.Any() == false) {
+            return new List<MerchantModel>();
+        }
+
+        List<MerchantModel> models = new List<MerchantModel>();
+        foreach (MerchantResponse merchantResponse in source) {
+            MerchantModel model = new MerchantModel {
+                MerchantId = merchantResponse.MerchantId, 
+                MerchantName = merchantResponse.MerchantName,
+                MerchantReference = merchantResponse.MerchantReference,
+                SettlementSchedule = merchantResponse.SettlementSchedule.ToString(),
+                AddressLine1 = merchantResponse.Addresses.FirstOrDefault().AddressLine1,
+                ContactName = merchantResponse.Contacts.FirstOrDefault().ContactName,
+                Town = merchantResponse.Addresses.FirstOrDefault().Town
+            };
+            models.Add(model);
+        }
+        
+        return models;
     }
 
     public static List<EstateOperatorModel> ConvertOperators(List<EstateOperatorResponse> estateResponseOperators)

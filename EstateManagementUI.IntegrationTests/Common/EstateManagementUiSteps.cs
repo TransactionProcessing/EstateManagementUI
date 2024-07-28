@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using EstateManagementUI.IntegrationTests.Steps;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
 using Shared.IntegrationTesting;
@@ -108,12 +109,12 @@ public class EstateManagementUiHelpers{
 
     public async Task VerifyOnTheEstateDetailsScreen()
     {
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("Estate Details"); });
+        await Retry.For(async () => { this.VerifyPageTitle("View Estate"); });
     }
 
     public async Task VerifyOnTheMerchantsListScreen()
     {
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("Merchants"); });
+        await Retry.For(async () => { this.VerifyPageTitle("View Merchants"); });
     }
 
     public async Task VerifyOnTheOperatorsListScreen(){
@@ -130,13 +131,18 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.WebDriver.Title.ShouldContain("Transaction Fees for Product - "); });
     }
 
-    public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName){
+    public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName, String estateReference){
         await Retry.For(async () => {
-                            IWebElement element = this.WebDriver.FindElement(By.Id("EstateName"));
+                            IWebElement element = this.WebDriver.FindElement(By.Id("Name"));
                             element.ShouldNotBeNull();
                             String elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(estateName);
-                        });
+
+                            element = this.WebDriver.FindElement(By.Id("Reference"));
+                            element.ShouldNotBeNull();
+                            elementValue = element.GetDomProperty("value");
+                            elementValue.ShouldBe(estateReference);
+        });
     }
 
     public async Task VerifyTheAvailableBalanceIsDisplayed(Decimal availableBalance){
@@ -248,12 +254,12 @@ public class EstateManagementUiHelpers{
 
                                     rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].Text == merchant.MerchantName)
-                                    {
+                                    if (rowTD[0].Text == merchant.MerchantName) {
                                         // Compare other fields
-                                        rowTD[1].Text.ShouldBe(merchant.ContactName);
-                                        rowTD[2].Text.ShouldBe(merchant.AddressLine1);
-                                        rowTD[3].Text.ShouldBe(merchant.Town);
+                                        rowTD[2].Text.ShouldBe(merchant.SettlementSchedule);
+                                        rowTD[3].Text.ShouldBe(merchant.ContactName);
+                                        rowTD[4].Text.ShouldBe(merchant.AddressLine1);
+                                        rowTD[5].Text.ShouldBe(merchant.Town);
 
                                         // We have found the row
                                         foundRowCount++;
@@ -529,6 +535,4 @@ public class EstateManagementUiHelpers{
         },
                         TimeSpan.FromSeconds(120));
     }
-
-    public record MerchantDetails(String MerchantName, String ContactName, String AddressLine1, String Town, String NumberOfUsers, String NumberOfDevices, String NumberOfOperators);
 }

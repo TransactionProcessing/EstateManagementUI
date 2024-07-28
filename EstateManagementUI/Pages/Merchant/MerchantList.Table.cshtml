@@ -1,0 +1,55 @@
+﻿@model EstateManagementUI.Pages.Merchant.MerchantsList
+
+<table class="table table-sm" id="merchantList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th class="col-2">Name</th>
+            <th class="col-1">Reference</th>
+            <th class="col-2">Settlement Schedule</th>
+            <th class="col-2">Contact</th>
+            <th class="col-2">Address Line 1</th>
+            <th class="col-2">Town</th>
+            <th class="col-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var merchantModel in Model.Merchants)
+    {
+            <tr class="hover d-flex">
+                <td class="col-2">
+                @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
+                    @merchantModel.Name
+                @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
+                </a> *@
+            </td>
+                <td class="col-1">
+                @merchantModel.Reference
+            </td>
+            <td class="col-2">
+                @merchantModel.SettlementSchedule
+            </td>
+                <td class="col-2">
+                @merchantModel.ContactName
+            </td>
+                <td class="col-2">
+                @merchantModel.AddressLine1
+            </td>
+            <td class="col-2">
+                @merchantModel.Town
+            </td>
+            <td class="col-1">
+            </td>
+            @* <td class="align-middle text-end">
+                @{
+                    var menuItems = new TableDropdownItem[]
+                    {
+                        new("Edit", () => Model.Edit(product.Id))
+                    };
+                }
+
+                <partial name="TableDropdown" model="@menuItems" />
+            </td> *@
+        </tr>
+    }
+    </tbody>
+</table>
