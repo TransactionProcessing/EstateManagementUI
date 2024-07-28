@@ -1,11 +1,12 @@
 ﻿@base @shared @uigeneral
-Feature: Estate Tests
+Feature: Merchant Tests
 
 Background: 
 
 	Given I create the following roles
 	| Role Name  |
 	| Estate |
+	| Merchant |
 
 	Given I create the following api scopes
 	| Name                 | DisplayName                  | Description                        |
@@ -50,8 +51,29 @@ Background:
 	| EmailAddress                 | Password | GivenName  | FamilyName | EstateName  |
 	| estateuser@testestate1.co.uk | 123456   | TestEstate | User1      | Test Estate |
 
+	Given I create the following merchants
+	| MerchantName    | SettlementSchedule | AddressLine1   | Town     | Region      | Country        | ContactName    | EmailAddress                 | EstateName       |
+	| Test Merchant 1 | Immediate          | Address Line 1 | TestTown | Test Region | United Kingdom | Test Contact 1 | testcontact1@merchant1.co.uk | Test Estate |
+	| Test Merchant 2 | Weekly             | Address Line 1 | TestTown | Test Region | United Kingdom | Test Contact 1 | testcontact1@merchant2.co.uk | Test Estate |
+	| Test Merchant 3 | Monthly            | Address Line 1 | TestTown | Test Region | United Kingdom | Test Contact 1 | testcontact1@merchant3.co.uk | Test Estate |
 
-Scenario: I Can Log Into The Application
+	When I assign the following  operator to the merchants
+	| OperatorName    | MerchantName    | MerchantNumber | TerminalNumber | EstateName    |
+	| Test Operator  | Test Merchant 1 | 00000001       | 10000001       | Test Estate  |
+	| Test Operator  | Test Merchant 2 | 00000001       | 10000001       | Test Estate  |
+	| Test Operator  | Test Merchant 3 | 00000001       | 10000001       | Test Estate  |
+
+	When I create the following security users
+	| EmailAddress                      | Password | GivenName    | FamilyName | MerchantName    | EstateName    |
+	| merchantuser1@testmerchant1.co.uk | 123456   | TestMerchant | User1      | Test Merchant 1 | Test Estate |
+	| merchantuser1@testmerchant2.co.uk | 123456   | TestMerchant | User1      | Test Merchant 2 | Test Estate |
+	| merchantuser1@testmerchant3.co.uk | 123456   | TestMerchant | User1      | Test Merchant 3 | Test Estate |
+
+	When I add the following devices to the merchant
+	| DeviceIdentifier | MerchantName    | EstateName    |
+	| TestDevice1      | Test Merchant 1 | Test Estate |
+	| TestDevice2      | Test Merchant 2 | Test Estate |
+	| TestDevice3      | Test Merchant 3 | Test Estate |
 
 	Given I am on the application home page
 
@@ -64,22 +86,13 @@ Scenario: I Can Log Into The Application
 	Then I am presented with the Estate Administrator Dashboard
 
 @PRTest
-Scenario: View Estate Details
+Scenario: View Merchant List
 
-	Given I am on the application home page
+	Given I click on the My Merchants sidebar option
+	Then I am presented with the Merchants List Screen
+	And the following merchants details are in the list
+	| MerchantName    | SettlementSchedule |ContactName    | AddressLine1   | Town     | 
+	| Test Merchant 1 | Immediate          |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 2 | Weekly             |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 3 | Monthly            |Test Contact 1 | Address Line 1 | TestTown | 
 
-	And I click on the Sign In Button
-	
-	Then I am presented with a login screen
-	
-	When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
-
-	Then I am presented with the Estate Administrator Dashboard
-
-	Given I click on the My Estate sidebar option
-
-	Then I am presented with the View Estate Page
-
-	And My Estate Details will be shown
-	| EstateName  | EstateReference |
-	| Test Estate | Test Estate     |

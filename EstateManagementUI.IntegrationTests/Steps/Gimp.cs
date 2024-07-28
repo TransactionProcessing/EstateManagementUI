@@ -40,17 +40,17 @@ namespace EstateManagementUI.IntegrationTests.Steps
         //    await this.UiHelpers.ClickContractsSidebarOption();
         //}
 
-        //[Given(@"I click on the My Estate sidebar option")]
-        //public async Task GivenIClickOnTheMyEstateSidebarOption()
-        //{
-        //    await this.UiHelpers.ClickMyEstateSidebarOption();
-        //}
+        [Given(@"I click on the My Estate sidebar option")]
+        public async Task GivenIClickOnTheMyEstateSidebarOption()
+        {
+            await this.UiHelpers.ClickMyEstateSidebarOption();
+        }
 
-        //[Given(@"I click on the My Merchants sidebar option")]
-        //public async Task GivenIClickOnTheMyMerchantsSidebarOption()
-        //{
-        //    await this.UiHelpers.ClickMyMerchantsSidebarOption();
-        //}
+        [Given(@"I click on the My Merchants sidebar option")]
+        public async Task GivenIClickOnTheMyMerchantsSidebarOption()
+        {
+            await this.UiHelpers.ClickMyMerchantsSidebarOption();
+        }
 
         //[Given(@"I click on the My Operators sidebar option")]
         //public async Task GivenIClickOnTheMyOperatorsSidebarOption()
@@ -124,17 +124,18 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheDashboard();
         }
 
-        //[Then(@"I am presented with the Estate Details Screen")]
-        //public async Task ThenIAmPresentedWithTheEstateDetailsScreen()
-        //{
-        //    await this.UiHelpers.VerifyOnTheEstateDetailsScreen();
-        //}
 
-        //[Then(@"I am presented with the Merchants List Screen")]
-        //public async Task ThenIAmPresentedWithTheMerchantsListScreen()
-        //{
-        //    await this.UiHelpers.VerifyOnTheMerchantsListScreen();
-        //}
+        [Then(@"I am presented with the View Estate Page")]
+        public async Task ThenIamPresentedWithTheViewEstatePage()
+        {
+            await this.UiHelpers.VerifyOnTheEstateDetailsScreen();
+        }
+
+        [Then(@"I am presented with the Merchants List Screen")]
+        public async Task ThenIAmPresentedWithTheMerchantsListScreen()
+        {
+            await this.UiHelpers.VerifyOnTheMerchantsListScreen();
+        }
 
         //[Then(@"I am presented with the Operators List Screen")]
         //public async Task ThenIAmPresentedWithTheOperatorsListScreen()
@@ -154,13 +155,14 @@ namespace EstateManagementUI.IntegrationTests.Steps
         //    await this.UiHelpers.VerifyOnTheTransactionFeeListScreen();
         //}
 
-        //[Then(@"My Estate Details will be shown")]
-        //public async Task ThenMyEstateDetailsWillBeShown(DataTable table)
-        //{
-        //    DataTableRow tableRow = table.Rows.Single();
-        //    String estateName = ReqnrollTableHelper.GetStringRowValue(tableRow, "EstateName").Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
-        //    await this.UiHelpers.VerifyTheCorrectEstateDetailsAreDisplayed(estateName);
-        //}
+        [Then(@"My Estate Details will be shown")]
+        public async Task ThenMyEstateDetailsWillBeShown(DataTable table)
+        {
+            DataTableRow tableRow = table.Rows.Single();
+            String estateName = ReqnrollTableHelper.GetStringRowValue(tableRow, "EstateName").Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
+            String estateReference = ReqnrollTableHelper.GetStringRowValue(tableRow, "EstateReference");
+            await this.UiHelpers.VerifyTheCorrectEstateDetailsAreDisplayed(estateName, estateReference);
+        }
 
         //[Then(@"the available balance for the merchant should be (.*)")]
         //public async Task ThenTheAvailableBalanceForTheMerchantShouldBe(Decimal availableBalance)
@@ -192,24 +194,18 @@ namespace EstateManagementUI.IntegrationTests.Steps
         //    await this.UiHelpers.VerifyTheFeeDetailsAreInTheList(feeDescriptions);
         //}
 
-        //[Then(@"the following merchants details are in the list")]
-        //public async Task ThenTheFollowingMerchantsDetailsAreInTheList(DataTable table)
-        //{
-        //    List<EstateManagementUiSteps.MerchantDetails> merchantDetailsList = new List<EstateManagementUiSteps.MerchantDetails>();
-        //    foreach (DataTableRow tableRow in table.Rows)
-        //    {
-        //        EstateManagementUiSteps.MerchantDetails m = new EstateManagementUiSteps.MerchantDetails(tableRow["MerchantName"],
-        //                                                                                                        tableRow["ContactName"],
-        //                                                                                                        tableRow["AddressLine1"],
-        //                                                                                                        tableRow["Town"],
-        //                                                                                                        tableRow["NumberOfUsers"],
-        //                                                                                                        tableRow["NumberOfDevices"],
-        //                                                                                                        tableRow["NumberOfOperators"]);
-        //        merchantDetailsList.Add(m);
-        //    }
+        [Then(@"the following merchants details are in the list")]
+        public async Task ThenTheFollowingMerchantsDetailsAreInTheList(DataTable table)
+        {
+            List<MerchantDetails> merchantDetailsList = new List<MerchantDetails>();
+            foreach (DataTableRow tableRow in table.Rows) {
+                MerchantDetails m = new MerchantDetails(tableRow["MerchantName"], tableRow["SettlementSchedule"],
+                    tableRow["ContactName"], tableRow["AddressLine1"], tableRow["Town"]);
+                merchantDetailsList.Add(m);
+            }
 
-        //    await this.UiHelpers.VerifyMerchantDetailsAreInTheList(merchantDetailsList);
-        //}
+            await this.UiHelpers.VerifyMerchantDetailsAreInTheList(merchantDetailsList);
+        }
 
         //[Then(@"the following operator details are in the list")]
         //public async Task ThenTheFollowingOperatorDetailsAreInTheList(DataTable table)
@@ -418,4 +414,5 @@ namespace EstateManagementUI.IntegrationTests.Steps
         //    await this.UiHelpers.ClickTheMerchantLinkForMerchant(merchantName);
         //}
     }
+    public record MerchantDetails(String MerchantName, String SettlementSchedule,String ContactName, String AddressLine1, String Town);
 }

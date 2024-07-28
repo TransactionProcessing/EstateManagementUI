@@ -102,6 +102,7 @@ namespace EstateManagementUI.Bootstrapper
             this.AddTransient<IMediator, Mediator>();
 
             this.AddSingleton<IRequestHandler<Queries.GetEstateQuery, EstateModel>, EstateRequestHandler>();
+            this.AddSingleton<IRequestHandler<Queries.GetMerchantsQuery, List<MerchantModel>>, MerchantRequestHandler>();
         }
     }
 

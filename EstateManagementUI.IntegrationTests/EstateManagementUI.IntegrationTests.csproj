@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Tests\Estate\" />
+    <Folder Include="Tests\Merchant\" />
   </ItemGroup>
 
 </Project>

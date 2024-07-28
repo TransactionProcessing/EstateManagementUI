@@ -19,6 +19,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
 
         public MediatorTests() {
             this.Requests.Add(TestData.GetEstateQuery);
+            this.Requests.Add(TestData.GetMerchantsQuery);
             
             Mock<IWebHostEnvironment> hostingEnvironment = new Mock<IWebHostEnvironment>();
             hostingEnvironment.Setup(he => he.EnvironmentName).Returns("IntegrationTest");
