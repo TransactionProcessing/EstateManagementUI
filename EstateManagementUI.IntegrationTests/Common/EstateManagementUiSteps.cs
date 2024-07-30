@@ -133,12 +133,12 @@ public class EstateManagementUiHelpers{
 
     public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName, String estateReference){
         await Retry.For(async () => {
-                            IWebElement element = this.WebDriver.FindElement(By.Id("Name"));
+                            IWebElement element = this.WebDriver.FindElement(By.Id("Estate_Name"));
                             element.ShouldNotBeNull();
                             String elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(estateName);
 
-                            element = this.WebDriver.FindElement(By.Id("Reference"));
+                            element = this.WebDriver.FindElement(By.Id("Estate_Reference"));
                             element.ShouldNotBeNull();
                             elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(estateReference);
