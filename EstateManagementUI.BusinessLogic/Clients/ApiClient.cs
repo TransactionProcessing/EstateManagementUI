@@ -1,6 +1,7 @@
 ﻿using EstateManagement.Client;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
+using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.Models;
 using Shared.Logger;
@@ -36,6 +37,20 @@ public class ApiClient : IApiClient {
             List<MerchantResponse> merchants = await this.EstateClient.GetMerchants(accessToken, estateId, cancellationToken);
 
             return ModelFactory.ConvertFrom(merchants);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<List<OperatorModel>> GetOperators(String accessToken,
+                                                  Guid actionId,
+                                                  Guid estateId,
+                                                  CancellationToken cancellationToken) {
+        async Task<Result<List<OperatorModel>>> ClientMethod()
+        {
+            List<OperatorResponse>? operators = await this.EstateClient.GetOperators(accessToken, estateId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(operators);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);

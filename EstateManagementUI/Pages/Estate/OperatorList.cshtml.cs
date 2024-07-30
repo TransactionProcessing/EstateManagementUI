@@ -1,10 +1,10 @@
-using Hydro;
-using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
+using Hydro;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 
 namespace EstateManagementUI.Pages.Estate
 {
@@ -14,24 +14,26 @@ namespace EstateManagementUI.Pages.Estate
 
         public OperatorList(IMediator mediator)
         {
-            this.Mediator = mediator;
-            this.Operators = new List<Operator>();
+            Mediator = mediator;
+            Operators = new List<ViewModels.Operator>();
         }
 
-        public List<Operator> Operators { get; set; }
+        public List<ViewModels.Operator> Operators { get; set; }
 
         public override async Task MountAsync()
         {
-            String accessToken = await this.HttpContext.GetTokenAsync("access_token");
+            string accessToken = await HttpContext.GetTokenAsync("access_token");
 
-            Guid estateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
+            Guid estateId = Helpers.GetClaimValue<Guid>(User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
 
             Queries.GetEstateQuery query = new Queries.GetEstateQuery(accessToken, estateId);
 
-            EstateModel response = await this.Mediator.Send(query, CancellationToken.None);
+            EstateModel response = await Mediator.Send(query, CancellationToken.None);
 
-            foreach (EstateOperatorModel estateOperatorModel in response.Operators) {
-                this.Operators.Add(new Operator {
+            foreach (EstateOperatorModel estateOperatorModel in response.Operators)
+            {
+                Operators.Add(new ViewModels.Operator
+                {
                     Id = estateOperatorModel.OperatorId,
                     Name = estateOperatorModel.Name,
                     RequireCustomTerminalNumber = estateOperatorModel.RequireCustomTerminalNumber ? "Yes" : "No",
@@ -41,15 +43,5 @@ namespace EstateManagementUI.Pages.Estate
         }
     }
 
-    public record Operator {
-        public string Name { get; set; }
-
-        public Guid Id { get; set; }
-
-        public String RequireCustomMerchantNumber { get; set; }
-
-        public String RequireCustomTerminalNumber { get; set; }
-
-        //public bool IsDeleted { get; set; }
-    }
+    
 }

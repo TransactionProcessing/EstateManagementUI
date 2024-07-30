@@ -4,6 +4,8 @@ using EstateManagementUI.Testing;
 using EstateManagementUI.BusinessLogic.Models;
 using Shouldly;
 using EstateManagementUI.BusinessLogic.Common;
+using EstateManagement.DataTransferObjects.Responses.Operator;
+using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Tests {
     public class ModelFactoryTests {
@@ -119,12 +121,12 @@ namespace EstateManagementUI.BusinessLogic.Tests {
 
         [Fact]
         public void ModelFactory_ConvertFrom_MerchantResponsesList_ModelIsConverted() {
-            var response = TestData.MerchantResponses;
+            List<MerchantResponse> response = TestData.MerchantResponses;
 
-            var models = ModelFactory.ConvertFrom(response);
+            List<MerchantModel> models = ModelFactory.ConvertFrom(response);
 
             foreach (MerchantResponse merchantResponse in response) {
-                var model = models.SingleOrDefault(m => m.MerchantId == merchantResponse.MerchantId);
+                MerchantModel? model = models.SingleOrDefault(m => m.MerchantId == merchantResponse.MerchantId);
                 model.ShouldNotBeNull();
                 model.MerchantName.ShouldBe(merchantResponse.MerchantName.ToString());
                 model.SettlementSchedule.ShouldBe(merchantResponse.SettlementSchedule.ToString());
@@ -133,6 +135,63 @@ namespace EstateManagementUI.BusinessLogic.Tests {
                 model.Town.ShouldBe(merchantResponse.Addresses.First().Town);
                 model.ContactName.ShouldBe(merchantResponse.Contacts.First().ContactName);
             }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_MerchantResponsesList_NullList_ModelIsConverted()
+        {
+            List<MerchantResponse> response = null;
+
+            List<MerchantModel> models = ModelFactory.ConvertFrom(response);
+
+            models.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_MerchantResponsesList_EmptyList_ModelIsConverted()
+        {
+            List<MerchantResponse> response = new List<MerchantResponse>();
+
+            List<MerchantModel> models = ModelFactory.ConvertFrom(response);
+
+            models.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_OperatorResponsesList_ModelIsConverted()
+        {
+           List<OperatorResponse> response = TestData.OperatorResponses;
+
+            List<OperatorModel> models = ModelFactory.ConvertFrom(response);
+
+            foreach (OperatorResponse operatorResponse in response)
+            {
+                OperatorModel? model = models.SingleOrDefault(m => m.OperatorId == operatorResponse.OperatorId);
+                model.ShouldNotBeNull();
+                model.Name.ShouldBe(operatorResponse.Name);
+                model.RequireCustomTerminalNumber.ShouldBe(operatorResponse.RequireCustomTerminalNumber);
+                model.RequireCustomMerchantNumber.ShouldBe(operatorResponse.RequireCustomMerchantNumber);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_OperatorResponsesList_NullList_ModelIsConverted()
+        {
+            List<OperatorResponse> response = null;
+
+            List<OperatorModel> models = ModelFactory.ConvertFrom(response);
+
+            models.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_OperatorResponsesList_EmptyList_ModelIsConverted()
+        {
+            List<OperatorResponse> response = new List<OperatorResponse>();
+
+            List<OperatorModel> models = ModelFactory.ConvertFrom(response);
+
+            models.ShouldBeEmpty();
         }
     }
 }

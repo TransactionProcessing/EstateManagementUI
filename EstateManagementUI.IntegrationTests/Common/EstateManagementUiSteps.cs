@@ -118,7 +118,7 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task VerifyOnTheOperatorsListScreen(){
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("Operators"); });
+        await Retry.For(async () => { this.VerifyPageTitle("View Operators"); });
     }
 
     public async Task VerifyOnTheProductsListScreen()
@@ -133,12 +133,12 @@ public class EstateManagementUiHelpers{
 
     public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName, String estateReference){
         await Retry.For(async () => {
-                            IWebElement element = this.WebDriver.FindElement(By.Id("Name"));
+                            IWebElement element = this.WebDriver.FindElement(By.Id("Estate_Name"));
                             element.ShouldNotBeNull();
                             String elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(estateName);
 
-                            element = this.WebDriver.FindElement(By.Id("Reference"));
+                            element = this.WebDriver.FindElement(By.Id("Estate_Reference"));
                             element.ShouldNotBeNull();
                             elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(estateReference);
@@ -273,14 +273,14 @@ public class EstateManagementUiHelpers{
                         TimeSpan.FromSeconds(180));
     }
 
-    public async Task VerifyOperatorDetailsAreInTheList(List<String> operatorDetails){
+    public async Task VerifyOperatorDetailsAreInTheList(List<(String, String, String)> operatorDetails){
         await Retry.For(async () => {
                             Int32 foundRowCount = 0;
                             IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
                             IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                             rows.Count.ShouldBe(operatorDetails.Count + 1);
-                            foreach (String operatorDetail in operatorDetails){
+                            foreach ((String, String, String) operatorDetail in operatorDetails){
                                 IList<IWebElement> rowTD;
                                 foreach (IWebElement row in rows){
                                     ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
@@ -292,12 +292,13 @@ public class EstateManagementUiHelpers{
 
                                     rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].Text == operatorDetail){
+                                    if (rowTD[0].Text == operatorDetail.Item1){
                                         // Compare other fields
-                                        rowTD[0].Text.ShouldBe(operatorDetail);
-
-                                        // We have found the row
-                                        foundRowCount++;
+                                        rowTD[0].Text.ShouldBe(operatorDetail.Item1);
+                        rowTD[1].Text.ShouldBe(operatorDetail.Item2);
+                        rowTD[2].Text.ShouldBe(operatorDetail.Item3);
+                        // We have found the row
+                        foundRowCount++;
                                         break;
                                     }
                                 }

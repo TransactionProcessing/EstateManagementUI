@@ -1,6 +1,7 @@
 using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
+using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagmentUI.BusinessLogic.Requests;
 
 namespace EstateManagementUI.Testing
@@ -10,6 +11,7 @@ namespace EstateManagementUI.Testing
         public static Guid EstateId = Guid.Parse("BD6F1ED7-6290-4285-A200-E4F8D25F4CBE");
         public static Queries.GetEstateQuery GetEstateQuery => new(AccessToken, EstateId);
         public static Queries.GetMerchantsQuery GetMerchantsQuery => new(AccessToken, EstateId);
+        public static Queries.GetOperatorsQuery GetOperatorsQuery => new(AccessToken, EstateId);
 
         public static String EstateName = "Test Estate 1";
 
@@ -48,6 +50,22 @@ namespace EstateManagementUI.Testing
                         SecurityUserId = TestData.SecurityUserId
 
                     }
+                }
+            };
+
+        public static List<OperatorResponse> OperatorResponses =>
+            new List<OperatorResponse> {
+                new OperatorResponse {
+                    Name = "Operator 1",
+                    OperatorId = Guid.Parse("257AA9F3-FBA8-4147-B1E5-CB759C3DD9DE"),
+                    RequireCustomMerchantNumber = false,
+                    RequireCustomTerminalNumber = false
+                },
+                new OperatorResponse {
+                    Name = "Operator 2",
+                    OperatorId = Guid.Parse("4412915E-02C5-442B-981C-1710F8770FBC"),
+                    RequireCustomMerchantNumber = false,
+                    RequireCustomTerminalNumber = false
                 }
             };
 
