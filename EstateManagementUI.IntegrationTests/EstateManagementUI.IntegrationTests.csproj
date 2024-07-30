@@ -36,9 +36,4 @@
 	  <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2024.7.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Tests\Estate\" />
-    <Folder Include="Tests\Merchant\" />
-  </ItemGroup>
-
 </Project>

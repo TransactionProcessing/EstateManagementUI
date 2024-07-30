@@ -13,5 +13,10 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                Guid actionId,
                                                Guid estateId,
                                                CancellationToken cancellationToken);
+
+        Task<List<OperatorModel>> GetOperators(String accessToken,
+                                               Guid actionId,
+                                               Guid estateId,
+                                               CancellationToken cancellationToken);
     }
 }

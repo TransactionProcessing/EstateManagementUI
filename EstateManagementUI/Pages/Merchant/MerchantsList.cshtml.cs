@@ -15,10 +15,10 @@ namespace EstateManagementUI.Pages.Merchant
         public MerchantsList(IMediator mediator)
         {
             this.Mediator = mediator;
-            this.Merchants = new List<Merchant>();
+            this.Merchants = new List<ViewModels.Merchant>();
         }
 
-        public List<Merchant> Merchants { get; set; }
+        public List<ViewModels.Merchant> Merchants { get; set; }
 
         public override async Task MountAsync()
         {
@@ -31,7 +31,7 @@ namespace EstateManagementUI.Pages.Merchant
             List<MerchantModel> response = await this.Mediator.Send(query, CancellationToken.None);
 
             foreach (MerchantModel merchantModel in response) {
-                this.Merchants.Add(new Merchant() {
+                this.Merchants.Add(new ViewModels.Merchant() {
                     Id = merchantModel.MerchantId,
                     Name = merchantModel.MerchantName,
                     SettlementSchedule = merchantModel.SettlementSchedule,
@@ -44,14 +44,5 @@ namespace EstateManagementUI.Pages.Merchant
         }
     }
 
-    public record Merchant {
-        public string Name { get; set; }
-        public string Reference { get; set; }
-        public string SettlementSchedule { get; set; }
-        public string ContactName { get; set; }
-        public string AddressLine1 { get; set; }
-        public string Town { get; set; }
-
-        public Guid Id { get; set; }
-    }
+    
 }

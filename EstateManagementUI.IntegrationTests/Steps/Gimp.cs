@@ -52,11 +52,10 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickMyMerchantsSidebarOption();
         }
 
-        //[Given(@"I click on the My Operators sidebar option")]
-        //public async Task GivenIClickOnTheMyOperatorsSidebarOption()
-        //{
-        //    await this.UiHelpers.ClickMyOperatorsSidebarOption();
-        //
+        [Given(@"I click on the My Operators sidebar option")]
+        public async Task GivenIClickOnTheMyOperatorsSidebarOption() {
+            await this.UiHelpers.ClickMyOperatorsSidebarOption();
+        }
 
         [Given(@"I click on the Sign In Button")]
         public async Task GivenIClickOnTheSignInButton()
@@ -137,11 +136,11 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheMerchantsListScreen();
         }
 
-        //[Then(@"I am presented with the Operators List Screen")]
-        //public async Task ThenIAmPresentedWithTheOperatorsListScreen()
-        //{
-        //    await this.UiHelpers.VerifyOnTheOperatorsListScreen();
-        //}
+        [Then(@"I am presented with the Operators List Screen")]
+        public async Task ThenIAmPresentedWithTheOperatorsListScreen()
+        {
+            await this.UiHelpers.VerifyOnTheOperatorsListScreen();
+        }
 
         //[Then(@"I am presented with the Products List Screen")]
         //public async Task ThenIAmPresentedWithTheProductsListScreen()
@@ -207,17 +206,19 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyMerchantDetailsAreInTheList(merchantDetailsList);
         }
 
-        //[Then(@"the following operator details are in the list")]
-        //public async Task ThenTheFollowingOperatorDetailsAreInTheList(DataTable table)
-        //{
-        //    List<String> operatorsList = new List<String>();
-        //    foreach (DataTableRow tableRow in table.Rows)
-        //    {
-        //        operatorsList.Add(ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName"));
-        //    }
+        [Then(@"the following operator details are in the list")]
+        public async Task ThenTheFollowingOperatorDetailsAreInTheList(DataTable table)
+        {
+            List<(String, String, String)> operatorsList = new List<(String, String, String)>();
+            foreach (DataTableRow tableRow in table.Rows)
+            {
+                operatorsList.Add((ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "RequireCustomMerchantNumber"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "RequireCustomTerminalNumber")));
+            }
 
-        //    await this.UiHelpers.VerifyOperatorDetailsAreInTheList(operatorsList);
-        //}
+            await this.UiHelpers.VerifyOperatorDetailsAreInTheList(operatorsList);
+        }
 
         //[Then(@"the following product details are in the list")]
         //public async Task ThenTheFollowingProductDetailsAreInTheList(DataTable table)

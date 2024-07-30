@@ -1,33 +1,32 @@
-﻿@model OperatorList
+﻿@model EstateManagementUI.Pages.Operator.OperatorsList
 
-<table class="table table-sm">
-    <thead>
-    <tr>
-        <th class="w-40">Name</th>
-        <th class="w-28">Custom Merchant</th>
-        <th class="w-24">Custom Terminal</th>
-        <th class="w-12"></th>
-    </tr>
+<table class="table table-sm" id="operatorList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th class="col-2">Name</th>
+            <th class="col-2">Custom Merchant</th>
+            <th class="col-2">Custom Terminal</th>
+            <th class="col-1"></th>
+        </tr>
     </thead>
     <tbody>
     @foreach (var operatorModel in Model.Operators)
     {
-        <tr class="hover">
-            <td>
+            <tr class="hover d-flex">
+                <td class="col-2">
                 @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
                     @operatorModel.Name
                 @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
                 </a> *@
             </td>
-
-            <td>
-                @operatorModel.RequireCustomMerchantNumber
+                <td class="col-2">
+                    @operatorModel.RequireCustomMerchantNumber
             </td>
-            <td>
-                @operatorModel.RequireCustomTerminalNumber
+            <td class="col-2">
+                    @operatorModel.RequireCustomTerminalNumber
             </td>
-            
-
+            <td class="col-1">
+            </td>
             @* <td class="align-middle text-end">
                 @{
                     var menuItems = new TableDropdownItem[]

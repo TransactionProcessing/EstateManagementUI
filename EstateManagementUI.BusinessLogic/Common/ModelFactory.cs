@@ -1,7 +1,9 @@
 ﻿using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
+using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
+using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Common;
 
@@ -82,6 +84,27 @@ public static class ModelFactory
             {
                 EmailAddress = estateResponseSecurityUser.EmailAddress,
                 SecurityUserId = estateResponseSecurityUser.SecurityUserId
+            });
+        }
+
+        return models;
+    }
+
+    public static List<OperatorModel> ConvertFrom(List<OperatorResponse> operators) {
+        if (operators == null || operators.Any() == false)
+        {
+            return new List<OperatorModel>();
+        }
+
+        List<OperatorModel> models = new List<OperatorModel>();
+        foreach (OperatorResponse @operator in operators)
+        {
+            models.Add(new OperatorModel
+            {
+                Name = @operator.Name,
+                RequireCustomTerminalNumber = @operator.RequireCustomTerminalNumber,
+                RequireCustomMerchantNumber = @operator.RequireCustomMerchantNumber,
+                OperatorId = @operator.OperatorId
             });
         }
 

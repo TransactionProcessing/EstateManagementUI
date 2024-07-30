@@ -2,4 +2,9 @@
 @model EstateManagementUI.Pages.Operator.IndexModel
 @{
 }
-<p>Operator Main Page</p>
+@{
+    ViewData["Title"] = "View Operators";
+    Layout = "_Layout";
+}
+
+<hydro name="OperatorsList" />

@@ -1,5 +1,8 @@
-﻿namespace EstateManagementUI.BusinessLogic.Models;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace EstateManagementUI.BusinessLogic.Models;
+
+[ExcludeFromCodeCoverage]
 public record MerchantModel {
     public Guid MerchantId { get; set; }
 
