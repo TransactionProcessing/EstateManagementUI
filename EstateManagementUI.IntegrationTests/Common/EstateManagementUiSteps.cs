@@ -73,7 +73,7 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task VerifyOnTheContractsListScreen(){
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("Contracts"); });
+        await Retry.For(async () => { this.VerifyPageTitle("View Contracts"); });
     }
 
     public async Task VerifyOnTheNewProductScreen()
@@ -157,14 +157,14 @@ public class EstateManagementUiHelpers{
                         TimeSpan.FromSeconds(30));
     }
 
-    public async Task VerifyTheContractDetailsAreInTheList(List<String> contractDescriptions){
+    public async Task VerifyTheContractDetailsAreInTheList(List<(String, String, Int32)> contractDescriptions){
         await Retry.For(async () => {
                             Int32 foundRowCount = 0;
                             IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractList"));
                             IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                             rows.Count.ShouldBe(contractDescriptions.Count + 1);
-                            foreach (String contractDescription in contractDescriptions){
+                            foreach ((String, String, Int32) contractDescription in contractDescriptions){
                                 IList<IWebElement> rowTD;
                                 foreach (IWebElement row in rows){
                                     ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
@@ -176,12 +176,14 @@ public class EstateManagementUiHelpers{
 
                                     rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].Text == contractDescription){
+                                    if (rowTD[0].Text == contractDescription.Item1){
                                         // Compare other fields
-                                        rowTD[0].Text.ShouldBe(contractDescription);
+                                        rowTD[0].Text.ShouldBe(contractDescription.Item1);
+                                        rowTD[1].Text.ShouldBe(contractDescription.Item2);
+                                        rowTD[2].Text.ShouldBe(contractDescription.Item3.ToString());
 
-                                        // We have found the row
-                                        foundRowCount++;
+                        // We have found the row
+                        foundRowCount++;
                                         break;
                                     }
                                 }

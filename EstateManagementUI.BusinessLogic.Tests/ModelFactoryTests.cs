@@ -6,6 +6,7 @@ using Shouldly;
 using EstateManagementUI.BusinessLogic.Common;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using SimpleResults;
+using EstateManagement.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BusinessLogic.Tests {
     public class ModelFactoryTests {
@@ -193,5 +194,43 @@ namespace EstateManagementUI.BusinessLogic.Tests {
 
             models.ShouldBeEmpty();
         }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractResponsesList_ModelIsConverted()
+        {
+            List<ContractResponse> response = TestData.ContractResponses;
+
+            List<ContractModel> models = ModelFactory.ConvertFrom(response);
+
+            foreach (ContractResponse contractResponse in response)
+            {
+                ContractModel? model = models.SingleOrDefault(m => m.ContractId == contractResponse.ContractId);
+                model.ShouldNotBeNull();
+                model.Description.ShouldBe(contractResponse.Description);
+                model.OperatorName.ShouldBe(contractResponse.OperatorName);
+                model.NumberOfProducts.ShouldBe(contractResponse.Products.Count);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractResponsesList_NullList_ModelIsConverted()
+        {
+            List<ContractResponse> response = null;
+
+            List<ContractModel> models = ModelFactory.ConvertFrom(response);
+
+            models.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractResponsesList_EmptyList_ModelIsConverted()
+        {
+            List<ContractResponse> response = new List<ContractResponse>();
+
+            List<ContractModel> models = ModelFactory.ConvertFrom(response);
+
+            models.ShouldBeEmpty();
+        }
+
     }
 }

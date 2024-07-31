@@ -34,11 +34,11 @@ namespace EstateManagementUI.IntegrationTests.Steps
             this.UiHelpers.NavigateToHomePage();
         }
 
-        //[Given(@"I click on the My Contracts sidebar option")]
-        //public async Task GivenIClickOnTheMyContractsSidebarOption()
-        //{
-        //    await this.UiHelpers.ClickContractsSidebarOption();
-        //}
+        [Given(@"I click on the My Contracts sidebar option")]
+        public async Task GivenIClickOnTheMyContractsSidebarOption()
+        {
+            await this.UiHelpers.ClickContractsSidebarOption();
+        }
 
         [Given(@"I click on the My Estate sidebar option")]
         public async Task GivenIClickOnTheMyEstateSidebarOption()
@@ -111,11 +111,11 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheLoginScreen();
         }
 
-        //[Then(@"I am presented with the Contracts List Screen")]
-        //public async Task ThenIAmPresentedWithTheContractsListScreen()
-        //{
-        //    await this.UiHelpers.VerifyOnTheContractsListScreen();
-        //}
+        [Then(@"I am presented with the Contracts List Screen")]
+        public async Task ThenIAmPresentedWithTheContractsListScreen()
+        {
+            await this.UiHelpers.VerifyOnTheContractsListScreen();
+        }
 
         [Then(@"I am presented with the Estate Administrator Dashboard")]
         public async Task ThenIAmPresentedWithTheEstateAdministratorDashboard()
@@ -169,18 +169,20 @@ namespace EstateManagementUI.IntegrationTests.Steps
         //    await this.UiHelpers.VerifyTheAvailableBalanceIsDisplayed(availableBalance);
         //}
 
-        //[Then(@"the following contract details are in the list")]
-        //public async Task ThenTheFollowingContractDetailsAreInTheList(DataTable table)
-        //{
-        //    List<String> contractDescriptions = new List<String>();
-        //    foreach (DataTableRow tableRow in table.Rows)
-        //    {
-        //        contractDescriptions.Add(ReqnrollTableHelper.GetStringRowValue(tableRow, "ContractDescription"));
-        //    }
+        [Then(@"the following contract details are in the list")]
+        public async Task ThenTheFollowingContractDetailsAreInTheList(DataTable table)
+        {
+            List<(String, String, Int32)> contractDescriptions = new List<(String, String, Int32)>();
+            foreach (DataTableRow tableRow in table.Rows)
+            {
+                contractDescriptions.Add((ReqnrollTableHelper.GetStringRowValue(tableRow, "Description"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName"), 
+                    ReqnrollTableHelper.GetIntValue(tableRow, "Products")));
+            }
 
-        //    await this.UiHelpers.VerifyTheContractDetailsAreInTheList(contractDescriptions);
-        //}
-
+            await this.UiHelpers.VerifyTheContractDetailsAreInTheList(contractDescriptions);
+        }
+        
         //[Then(@"the following fee details are in the list")]
         //public async Task ThenTheFollowingFeeDetailsAreInTheList(DataTable table)
         //{

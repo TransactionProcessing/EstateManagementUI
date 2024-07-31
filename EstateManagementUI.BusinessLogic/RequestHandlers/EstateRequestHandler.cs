@@ -1,14 +1,9 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EstateManagementUI.BusinessLogic.Clients;
+﻿using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
+using MediatR;
 
-namespace EstateManagmentUI.BusinessLogic.RequestHandlers
+namespace EstateManagementUI.BusinessLogic.RequestHandlers
 {
     public class EstateRequestHandler : IRequestHandler<Queries.GetEstateQuery, EstateModel>
     {

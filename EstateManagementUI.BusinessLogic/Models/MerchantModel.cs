@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using EstateManagement.DataTransferObjects.Responses.Contract;
+using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BusinessLogic.Models;
 

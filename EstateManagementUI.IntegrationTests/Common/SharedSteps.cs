@@ -1,9 +1,12 @@
 ﻿using EstateManagement.Database.Contexts;
+using EstateManagement.DataTransferObjects.Requests.Contract;
 using EstateManagement.DataTransferObjects.Requests.Estate;
 using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagement.DataTransferObjects.Requests.Operator;
+using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.IntegrationTesting.Helpers;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OpenQA.Selenium;
 using Reqnroll;
 using Reqnroll.BoDi;
@@ -253,7 +256,26 @@ namespace EstateManagementUI.IntegrationTests.Common
             await this.EstateManagementSteps.WhenICreateTheFollowingSecurityUsers(this.TestingContext.AccessToken, createUserRequests, this.TestingContext.Estates);
         }
 
-        
+        [Given(@"I have created the following contracts")]
+        public async Task GivenIHaveCreatedTheFollowingContracts(DataTable table)
+        {
+            List<(EstateDetails, CreateContractRequest)> requests = table.Rows.ToCreateContractRequests(this.TestingContext.Estates);
+
+            List<ContractResponse> results = await this.EstateManagementSteps.GivenICreateAContractWithTheFollowingValues(this.TestingContext.AccessToken, requests);
+
+            foreach (ContractResponse result in results)
+            {
+                this.TestingContext.Logger.LogInformation($"Contract {result.Description} created with Id {result.ContractId} for Estate {result.EstateId}");
+            }
+        }
+
+        [Given("I have created the following contract products")]
+        public async Task GivenIHaveCreatedTheFollowingContractProducts(DataTable table)
+        {
+            List<(EstateDetails, Contract, AddProductToContractRequest)> requests = table.Rows.ToAddProductToContractRequest(this.TestingContext.Estates);
+            await this.EstateManagementSteps.WhenICreateTheFollowingProducts(this.TestingContext.AccessToken, requests);
+        }
+
 
         private async Task CreateIdentityResource(CreateIdentityResourceRequest createIdentityResourceRequest,
                                                   CancellationToken cancellationToken)

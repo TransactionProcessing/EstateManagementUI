@@ -1,4 +1,5 @@
 ﻿using EstateManagement.Client;
+using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Clients;
@@ -66,6 +67,28 @@ namespace EstateManagementUI.BusinessLogic.Tests
             {
                 OperatorModel? @operatorModel = operatorsList.SingleOrDefault(m => m.OperatorId == operatorResponse.OperatorId);
                 operatorModel.ShouldNotBeNull();
+            }
+        }
+
+        [Fact]
+        public async Task ApiClient_GetContracts_ContractsReturned()
+        {
+            Mock<IEstateClient> estateClient = new Mock<IEstateClient>();
+            estateClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TestData.ContractResponses);
+
+            IApiClient apiClient = new ApiClient(estateClient.Object);
+
+            var contractsList = await apiClient.GetContracts(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
+
+            contractsList.ShouldNotBeNull();
+            contractsList.ShouldNotBeEmpty();
+            contractsList.Count.ShouldBe(1);
+
+            foreach (ContractResponse contractResponse in TestData.ContractResponses)
+            {
+                var contractModel = contractsList.SingleOrDefault(m => m.ContractId == contractResponse.ContractId);
+                contractModel.ShouldNotBeNull();
             }
         }
     }
