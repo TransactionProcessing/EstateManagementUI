@@ -1,4 +1,5 @@
 ﻿using EstateManagement.Client;
+using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
@@ -49,6 +50,20 @@ public class ApiClient : IApiClient {
         async Task<Result<List<OperatorModel>>> ClientMethod()
         {
             List<OperatorResponse>? operators = await this.EstateClient.GetOperators(accessToken, estateId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(operators);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<List<ContractModel>> GetContracts(String accessToken,
+                                                  Guid actionId,
+                                                  Guid estateId,
+                                                  CancellationToken cancellationToken) {
+        async Task<Result<List<ContractModel>>> ClientMethod()
+        {
+            List<ContractResponse>? operators = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
 
             return ModelFactory.ConvertFrom(operators);
         }

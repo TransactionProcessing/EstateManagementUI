@@ -15,5 +15,6 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
         public record GetEstateQuery(String AccessToken, Guid EstateId) : IRequest<EstateModel>;
         public record GetMerchantsQuery(String AccessToken, Guid EstateId) : IRequest<List<MerchantModel>>;
         public record GetOperatorsQuery(String AccessToken, Guid EstateId) : IRequest<List<OperatorModel>>;
+        public record GetContractsQuery(String AccessToken, Guid EstateId) : IRequest<List<ContractModel>>;
     }
 }

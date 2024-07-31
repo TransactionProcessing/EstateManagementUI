@@ -1,0 +1,44 @@
+﻿@using EstateManagementUI.ViewModels
+@model EstateManagementUI.Pages.Contract.ContractsList
+
+<table class="table table-sm" id="contractList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th class="col-3">Description</th>
+            <th class="col-2">Operator</th>
+            <th class="col-1">Products</th>
+            <th class="col-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (Contract contractModel in Model.Contracts)
+    {
+            <tr class="hover d-flex">
+                <td class="col-3">
+                @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
+                    @contractModel.Description
+                @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
+                </a> *@
+            </td>
+                <td class="col-2">
+                    @contractModel.OperatorName
+            </td>
+            <td class="col-1">
+            @contractModel.NumberOfProducts
+            </td>
+            <td class="col-1">
+            </td>
+            @* <td class="align-middle text-end">
+                @{
+                    var menuItems = new TableDropdownItem[]
+                    {
+                        new("Edit", () => Model.Edit(product.Id))
+                    };
+                }
+
+                <partial name="TableDropdown" model="@menuItems" />
+            </td> *@
+        </tr>
+    }
+    </tbody>
+</table>

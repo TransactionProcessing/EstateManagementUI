@@ -1,4 +1,5 @@
-﻿using EstateManagement.DataTransferObjects.Responses.Estate;
+﻿using EstateManagement.DataTransferObjects.Responses.Contract;
+using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Models;
@@ -105,6 +106,28 @@ public static class ModelFactory
                 RequireCustomTerminalNumber = @operator.RequireCustomTerminalNumber,
                 RequireCustomMerchantNumber = @operator.RequireCustomMerchantNumber,
                 OperatorId = @operator.OperatorId
+            });
+        }
+
+        return models;
+    }
+
+    public static List<ContractModel> ConvertFrom(List<ContractResponse> contracts)
+    {
+        if (contracts == null || contracts.Any() == false)
+        {
+            return new List<ContractModel>();
+        }
+
+        List<ContractModel> models = new List<ContractModel>();
+        foreach (ContractResponse contract in contracts)
+        {
+            models.Add(new ContractModel
+            {
+                Description = contract.Description,
+                NumberOfProducts = contract.Products.Count(),
+                OperatorName = contract.OperatorName,
+                ContractId = contract.ContractId
             });
         }
 

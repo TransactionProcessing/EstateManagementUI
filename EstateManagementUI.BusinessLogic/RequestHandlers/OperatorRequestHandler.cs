@@ -3,7 +3,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 
-namespace EstateManagmentUI.BusinessLogic.RequestHandlers;
+namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class OperatorRequestHandler : IRequestHandler<Queries.GetOperatorsQuery, List<OperatorModel>>
 {

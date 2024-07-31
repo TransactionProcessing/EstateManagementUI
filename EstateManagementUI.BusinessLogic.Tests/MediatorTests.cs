@@ -21,7 +21,8 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetEstateQuery);
             this.Requests.Add(TestData.GetMerchantsQuery);
             this.Requests.Add(TestData.GetOperatorsQuery);
-            
+            this.Requests.Add(TestData.GetContractsQuery);
+
             Mock<IWebHostEnvironment> hostingEnvironment = new Mock<IWebHostEnvironment>();
             hostingEnvironment.Setup(he => he.EnvironmentName).Returns("IntegrationTest");
             hostingEnvironment.Setup(he => he.ContentRootPath).Returns("/home");

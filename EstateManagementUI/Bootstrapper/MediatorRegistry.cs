@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Models;
-using EstateManagmentUI.BusinessLogic.RequestHandlers;
+using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagmentUI.BusinessLogic.Requests;
 using Lamar;
 using MediatR;
@@ -15,5 +15,6 @@ public class MediatorRegistry : ServiceRegistry {
         this.AddSingleton<IRequestHandler<Queries.GetEstateQuery, EstateModel>, EstateRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetMerchantsQuery, List<MerchantModel>>, MerchantRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetOperatorsQuery, List<OperatorModel>>, OperatorRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>, ContractRequestHandler>();
     }
 }
