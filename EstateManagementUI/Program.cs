@@ -2,10 +2,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using EstateManagementUI.Bootstrapper;
+using Hydro;
 using Hydro.Configuration;
 using Lamar;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Logging;
@@ -59,18 +61,43 @@ public class Startup {
 
         // TODO: where should the logging be configured??
 
-        // Configure the HTTP request pipeline.
-        if (!env.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error");
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
-        }
-        else
-        {
-            app.UseDeveloperExceptionPage();
+        //// Configure the HTTP request pipeline.
+        //if (!env.IsDevelopment())
+        //{
+        //    app.UseExceptionHandler("/Error");
+        //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        //    app.UseHsts();
+        //}
+        //else
+        //{
+        //    app.UseDeveloperExceptionPage();
 
-        }
+        //}
+
+        //app.UseExceptionHandler(b => b.Run(async context =>
+        //{
+        //    if (!context.IsHydro())
+        //    {
+        //        return;
+        //    }
+
+        //    IExceptionHandlerFeature contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+        //    switch (contextFeature?.Error)
+        //    {
+        //        // custom cases for custom exception types if needed
+
+        //        default:
+        //            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+        //            await context.Response.WriteAsJsonAsync(new UnhandledHydroError(
+        //                Message: "There was a problem with this operation and it wasn't finished",
+        //                Data: null
+        //            ));
+
+        //            return;
+        //    }
+        //}));
+
 
         app.UseHttpsRedirection();
         app.UseStaticFiles();
