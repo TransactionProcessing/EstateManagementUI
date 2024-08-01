@@ -5,14 +5,15 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using EstateManagementUI.BusinessLogic.Clients;
 
 namespace EstateManagementUI.Pages.Operator
 {
-    public class OperatorsList : HydroComponent
+    public class OperatorsList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
-        public OperatorsList(IMediator mediator)
+        public OperatorsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Operator, OperatorFunctions.ViewList, permissionsService)
         {
             this.Mediator = mediator;
             this.Operators = new List<ViewModels.Operator>();

@@ -1,4 +1,7 @@
-﻿@{
+﻿@using EstateManagementUI.BusinessLogic.Clients
+@using SimpleResults
+@inject IPermissionsService PermissionsService
+@{
     bool isAuthenticated = User.Identity.IsAuthenticated;
     var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
 }
@@ -9,12 +12,11 @@
             ? "btn btn-sm btn-neutral btn-active"
             : "btn btn-sm btn-ghost";
 
-    async Task RenderItem(string title, string name, String id)
-    {
-        // <a asp-page="/@name/Index" class="@GetCurrentPageClass(name)">
-        //     <partial name="Loading"/>
-        //     @title
-        // </a>
+    async Task RenderItem(string title, string name, String id) {
+        Result permisionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, name);
+        if (permisionResult.IsFailed)
+            return;
+
         <a class='nav-link' asp-page="/@name/Index" id="@id">
             @switch (name)
             {
@@ -49,10 +51,10 @@
 <li class="nav-item menu-open">
     @{
         await RenderItem("Dashboard", "Dashboard","dashboardLink");
-            await RenderItem("My Estate", "Estate", "estateDetailsLink");
-            await RenderItem("My Merchants", "Merchant", "merchantsLink");
-            await RenderItem("My Contracts", "Contract", "contractsLink");
-            await RenderItem("My Operators", "Operator", "operatorsLink");
+        await RenderItem("My Estate", "Estate", "estateDetailsLink");
+        await RenderItem("My Merchants", "Merchant", "merchantsLink");
+        await RenderItem("My Contracts", "Contract", "contractsLink");
+        await RenderItem("My Operators", "Operator", "operatorsLink");
         await RenderItem("Reports", "Reporting","reportingLink");
         await RenderItem("FileProcessing", "File Processing", "fileProcessingLink");
     }

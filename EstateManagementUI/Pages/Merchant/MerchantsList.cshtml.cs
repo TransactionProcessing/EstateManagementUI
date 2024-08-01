@@ -5,14 +5,15 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using EstateManagementUI.BusinessLogic.Clients;
 
 namespace EstateManagementUI.Pages.Merchant
 {
-    public class MerchantsList : HydroComponent
+    public class MerchantsList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
-        public MerchantsList(IMediator mediator)
+        public MerchantsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Merchant, MerchantFunctions.ViewList, permissionsService)
         {
             this.Mediator = mediator;
             this.Merchants = new List<ViewModels.Merchant>();

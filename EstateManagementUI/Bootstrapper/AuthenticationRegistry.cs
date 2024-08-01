@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.Common;
+﻿using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.Common;
 using IdentityModel;
 using Lamar;
 using Microsoft.AspNetCore.Authentication;
@@ -62,5 +63,7 @@ public class AuthenticationRegistry : ServiceRegistry {
         });
             
         this.AddAuthorization();
+        this.AddSingleton<IPermissionsService, PermissionsService>();
+        this.AddSingleton<IPermissionsRepository, PermissionsRepository>();
     }
 }

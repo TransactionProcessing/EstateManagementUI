@@ -1,6 +1,7 @@
 using Hydro;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
@@ -8,11 +9,11 @@ using MediatR;
 
 namespace EstateManagementUI.Pages.Contract
 {
-    public class ContractsList : HydroComponent
+    public class ContractsList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
-        public ContractsList(IMediator mediator)
+        public ContractsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Contract, ContractFunctions.ViewList, permissionsService)
         {
             this.Mediator = mediator;
             this.Contracts = new List<ViewModels.Contract>();

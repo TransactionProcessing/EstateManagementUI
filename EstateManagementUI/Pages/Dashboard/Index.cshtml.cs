@@ -1,13 +1,14 @@
+using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EstateManagementUI.Pages.Dashboard
 {
     [Authorize]
-    public class IndexModel : PageModel
+    public class IndexModel : SecurePageModel
     {
-        public IndexModel() {
-            
+        public IndexModel(IPermissionsService permissionsService) : base(permissionsService, 
+            ApplicationSections.Dashboard, DashboardFunctions.Dashboard) {
         }
     }
 }
