@@ -162,6 +162,7 @@ namespace EstateManagementUI.BusinessLogic.Clients
             result.Add(("ViewAllUser", "View All"));
             result.Add(("Administrator", "Administrator"));
             result.Add(("estateuser@productionestate1.co.uk", "Administrator"));
+            result.Add(("estateuser@testestate1.co.uk", "Administrator"));
             return result;
         }
 
