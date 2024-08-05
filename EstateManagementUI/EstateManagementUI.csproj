@@ -49,4 +49,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Pages\PermissionManagement\Roles\Components\" />
+  </ItemGroup>
+
 </Project>

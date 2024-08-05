@@ -6,6 +6,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 namespace EstateManagementUI.Pages.Contract
 {

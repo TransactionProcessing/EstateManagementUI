@@ -1,0 +1,30 @@
+﻿@model EnterUserCode
+
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Manage Permissions</h1>
+                    </div>
+                    <form id="estateForm">
+                        <div class="form-group">
+                            <label asp-for="UserCode" class="control-label">Access Code</label>
+                            <input asp-for="UserCode" hydro-bind class="form-control form-control-user" placeholder="Enter access code here..." required autofocus />
+                        </div>
+                        <button class="btn btn-primary mx-2" hydro-on:click="@(() => Model.Submit())">
+                            Submit
+                        </button>
+                    </form>
+                   
+                </div>
+            </div>
+            <div class="col-lg-5" align="center">
+                <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+            </div>
+        </div>
+    </div>
+</div>
+

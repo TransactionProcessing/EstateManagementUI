@@ -1,4 +1,8 @@
-﻿using EstateManagementUI.BusinessLogic.Clients;
+﻿using System.Net.Mime;
+using System.Reflection;
+using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.Common;
 using IdentityModel;
 using Lamar;
@@ -65,5 +69,10 @@ public class AuthenticationRegistry : ServiceRegistry {
         this.AddAuthorization();
         this.AddSingleton<IPermissionsService, PermissionsService>();
         this.AddSingleton<IPermissionsRepository, PermissionsRepository>();
+
+        String connectionString = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permisssions.db");
+        IDatabaseContext database = new DatabaseContext(connectionString);
+        this.AddSingleton<IDatabaseContext>(database);
+
     }
 }
