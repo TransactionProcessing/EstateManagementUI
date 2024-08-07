@@ -1,4 +1,5 @@
 ﻿using EstateManagementUI.BusinessLogic.PermissionService;
+using Shared.General;
 using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Clients;
@@ -9,6 +10,11 @@ public class PermissionsService : IPermissionsService {
     public async Task<Result> DoIHavePermissions(String userName,
                                                  String sectionName,
                                                  String function) {
+        Boolean permissionsBypass = ConfigurationReader.GetValueOrDefault<Boolean>("AppSettings", "PermissionsBypass", false);
+
+        if (permissionsBypass)
+            return Result.Success();
+
 
         if (this.RoleFunctions.Any() == false && this.UserRoles.Any() == false)
             await this.LoadPermissionsData();
