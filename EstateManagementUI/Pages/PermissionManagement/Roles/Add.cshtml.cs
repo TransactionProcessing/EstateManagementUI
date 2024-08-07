@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EstateManagementUI.Pages.PermissionManagement.Roles
 {
-    public class Edit : PermissionPageModel
+    public class Add : PermissionPageModel
     {
-        [BindProperty(SupportsGet = true)]
-        public Int32 Id { get; set; }
     }
 }

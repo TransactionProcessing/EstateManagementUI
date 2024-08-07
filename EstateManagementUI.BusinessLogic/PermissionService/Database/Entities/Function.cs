@@ -6,6 +6,6 @@ public class Function
 {
     [PrimaryKey, AutoIncrement]
     public Int32 FunctionId { get; set; }
-    [Indexed(Name = "IX_Name", Unique = true)]
+    public Int32 ApplicationSectionId { get; set; }
     public string Name { get; set; }
 }

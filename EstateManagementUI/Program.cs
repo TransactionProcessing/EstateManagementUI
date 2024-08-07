@@ -234,6 +234,8 @@ public class Program {
 public static class Extensions {
     public static async Task PreWarm(this IApplicationBuilder applicationBuilder) {
         IPermissionsRepository permissionsRepository = Startup.Container.GetService<IPermissionsRepository>();
+        var result = await permissionsRepository.MigrateDatabase(CancellationToken.None);
+        var x = result.Message;
         await permissionsRepository.SeedDatabase(CancellationToken.None);
     }
 }

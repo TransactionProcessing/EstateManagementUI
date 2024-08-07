@@ -62,8 +62,8 @@ public class PermissionsService : IPermissionsService {
 
     public async Task<Result> LoadPermissionsData() {
         // TODO: this will be cached and probably refershed periodically
-        this.RoleFunctions = await this.PermissionsRepository.GetRolesX();
-        this.UserRoles= await this.PermissionsRepository.GetUsers();
+        this.RoleFunctions = await this.PermissionsRepository.GetRolesFunctions();
+        this.UserRoles= await this.PermissionsRepository.GetUsers(CancellationToken.None);
 
         return Result.Success();
     }

@@ -1,0 +1,50 @@
+@using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.PermissionManagement.Roles.EditRole.EditRoleUsers
+
+<form class="flex flex-col flex-1" method="post">
+  <div class="flex-1 overflow-y-auto">
+    <div class="p-4">
+        <div class="card o-hidden border-0 shadow-sm my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="p-5">
+                            <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-4">Role @Model.Name Users</h1>
+                            </div>
+                                <partial name="RoleUsersList.Header.cshtml" />
+                            @if (Model.UsersList.Any() == false)
+                            {
+                                <div class="bg-base-200 rounded text-center p-4">
+                                    <h6>No users to show</h6>
+                                </div>
+                            }
+                            else
+                            {
+                                <partial name="RoleUsersList.Table.cshtml"/>
+                            }
+                        </div>
+                    </div>
+                    <div class="col-lg-3" align="center">
+                        <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="flex p-4 gap-2">
+    <button class="btn btn-primary" type="submit" hydro-on:click="@(() => Model.Save())">
+      <span class="loading loading-spinner loading-sm spinner" aria-hidden="true"></span>
+      <span>Save changes</span>
+    </button>
+
+    <button type="button" class="btn btn-outline-secondary" hydro-on:click="@(() => Model.Back())">
+      <span class="loading loading-spinner loading-sm spinner" aria-hidden="true"></span>
+      Cancel
+    </button>
+
+  </div>
+</form>

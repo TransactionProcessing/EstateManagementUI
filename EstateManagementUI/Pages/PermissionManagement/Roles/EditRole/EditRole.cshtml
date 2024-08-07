@@ -1,0 +1,91 @@
+@using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EditRole
+@{
+    async Task RenderTab(ApplicationSection applicationSection) {
+
+         var id = $"tab{applicationSection.ApplicationSectionId}";
+        // var href = $"#ApplicationSection{applicationSection.ApplicationSectionId}";
+        
+        <li class="nav-item">
+            <a class="nav-link" :class="{ 'active': tab === '@id' }" @@click.prevent="tab = '@id'" id="@id" href="#">@applicationSection.Name</a>
+         </li>
+    }
+    
+    async Task RenderTabContent(List<(Int32, String, Int32, String, Boolean)> permissions)
+    {
+        String id = $"tab{permissions.DistinctBy(d => d.Item1).Single().Item1}";
+        <div x-show="tab === '@id'">
+             @foreach(var p in permissions) {
+                 // var text = $"{p.Item1.Name} - {@p.Item2}";
+                 // <p>@text</p>
+                 String checkboxId = $"chk{@p.Item4}";
+                           <div class="form-check">
+        <input type="checkbox" class="mr-2" id="@p.Item3" hydro-on:click="@(() => Model.Toggle(p.Item1, p.Item3))" checked="@(p.Item5 ? "checked" : null)" />
+        <label for="@p.Item3">@p.Item4</label>
+                 </div>
+
+             }
+         </div>
+    }
+}
+
+<form class="flex flex-col flex-1" method="post">
+<div class="flex-1 overflow-y-auto">
+    <div class="p-4">
+        <div class="card o-hidden border-0 shadow-sm my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                    <div class="col-lg-9">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">Role @Model.Name Permissions</h1>
+                            </div>
+                            <div class="card card-primary card-tabs" id="tab_wrapper" x-data="{ tab: 'tab1' }">
+                                <div class="card-header p-0 pt-1">
+                                    <ul class="nav nav-tabs">
+                                        @{
+                                            IEnumerable<ApplicationSection> applicationSections = Model.Permissions.DistinctBy(p => p.Item1).Select(p => new ApplicationSection { ApplicationSectionId = p.Item1, Name = p.Item2 });
+                                            foreach (ApplicationSection appSection in applicationSections) {
+                                                await RenderTab(appSection);
+                                            }
+                                        }
+                                    </ul>
+                                </div> 
+          
+                                <div class="card-body">
+                                    <div class="tab-content">
+                                        @{
+                                            foreach (ApplicationSection appSection in applicationSections) {
+                                                List<(Int32, String, Int32, String, Boolean)> permissions = Model.Permissions.Where(m => m.Item1 == appSection.ApplicationSectionId).ToList();
+                                                await RenderTabContent(permissions);
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3" align="center">
+                        <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <div class="flex p-4 gap-2">
+    <button class="btn btn-primary" type="submit" hydro-on:click="@(() => Model.Save())">
+      <span class="loading loading-spinner loading-sm spinner" aria-hidden="true"></span>
+      <span>Save changes</span>
+    </button>
+
+    <button type="button" class="btn btn-outline-secondary" hydro-on:click="@(() => Model.Back())">
+      <span class="loading loading-spinner loading-sm spinner" aria-hidden="true"></span>
+      Cancel
+    </button>
+
+  </div>
+</form>

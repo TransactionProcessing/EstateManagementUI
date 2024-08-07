@@ -1,11 +1,14 @@
 @model IEnumerable<TableDropdownItem>
 
-<div class="dropdown dropdown-end">
-  <div tabindex="0" class="btn btn-sm btn-square"><partial name="Icons/MoreIcon"/></div>
-  <ul tabindex="0" class="p-2 shadow menu menu-xs dropdown-content z-[1] bg-base-100 border border-base-200 rounded">
-    @foreach (var item in Model)
-    {
-      <li><a href="#" hydro-on:click="@item.Action">@item.Text</a></li>
-    }
-  </ul>
+<div class="dropdown">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle='dropdown' aria-haspopup="true" aria-expanded="false">
+        <strong>...</strong>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        @foreach (TableDropdownItem item in Model)
+        {
+            <a class="dropdown-item"  href="#" hydro-on:click="@item.Action">@item.Text</a>
+        }
+    </div>
 </div>
+

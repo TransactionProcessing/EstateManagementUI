@@ -4,7 +4,7 @@ using Hydro;
 using Microsoft.AspNetCore.Mvc;
 using SimpleResults;
 
-namespace EstateManagementUI.Pages.PermissionManagement.Roles
+namespace EstateManagementUI.Pages.PermissionManagement.Roles.RoleList
 {
     public class RoleList : HydroComponent
     {
@@ -22,9 +22,10 @@ namespace EstateManagementUI.Pages.PermissionManagement.Roles
         {
             Result<List<BusinessLogic.PermissionService.Database.Entities.Role>> allRoles = await PermissionsRepository.GetRoles(CancellationToken.None);
 
-            if (allRoles.Status == ResultStatus.NotFound) {
+            if (allRoles.Status == ResultStatus.NotFound)
+            {
                 // No roles
-                this.Roles = new List<Role>();
+                Roles = new List<Role>();
                 return;
             }
 
@@ -42,18 +43,27 @@ namespace EstateManagementUI.Pages.PermissionManagement.Roles
             }
         }
 
-        //[SkipOutput]
-        //public void Add() =>
-        //Location(Url.Page("/Customers/Add"));
+        [SkipOutput]
+        public async Task Edit(int id) =>
+            Location(Url.Page("/PermissionManagement/Roles/Edit", new { id }));
 
         [SkipOutput]
-        public void Edit(Int32 id) =>
-            Location(Url.Page("/PermissionManagement/Roles/Edit", new { id }));
+        public async Task EditUsers(int id) =>
+            Location(Url.Page("/PermissionManagement/Roles/EditUsers", new { id }));
+
+        [SkipOutput]
+        public void Add() => Location(Url.Page("/PermissionManagement/Roles/Add"));
+
+        [SkipOutput]
+        public void Back()
+        {
+            Location(Url.Page("/PermissionManagement/Home"));
+        }
     }
 
     public class Role
     {
-        public Int32 Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }
