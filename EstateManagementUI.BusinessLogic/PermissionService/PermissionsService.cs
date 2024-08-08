@@ -40,6 +40,12 @@ public class PermissionsService : IPermissionsService {
 
     public async Task<Result> DoIHavePermissions(String userName,
                                                  String sectionName) {
+
+        Boolean permissionsBypass = ConfigurationReader.GetValueOrDefault<Boolean>("AppSettings", "PermissionsBypass", false);
+
+        if (permissionsBypass)
+            return Result.Success();
+
         if (this.RoleFunctions.Any() == false && this.UserRoles.Any() == false)
             await this.LoadPermissionsData();
 

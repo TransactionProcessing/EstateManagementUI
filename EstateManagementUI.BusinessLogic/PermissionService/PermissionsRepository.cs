@@ -23,9 +23,9 @@ public class PermissionsRepository : IPermissionsRepository {
 
         List<(String role, String section, String function)> result = new();
 
-        var allRoles = await this.GetRoles(CancellationToken.None);
+        Result<List<Role>> allRoles = await this.GetRoles(CancellationToken.None);
 
-        foreach (Role role in this.Roles) {
+        foreach (Role role in allRoles.Data) {
             var permissions = await this.GetRolePermissions(role.RoleId, CancellationToken.None);
             foreach (var permission in permissions.Data) {
                 result.Add((role.Name, permission.Item1.Name, permission.Item2.Name));
@@ -351,9 +351,7 @@ public class PermissionsRepository : IPermissionsRepository {
 
         return Result.Success();
     }
-
-    public List<Role> Roles;
-
+    
     public List<String> GetApplicationSections() {
         List<String> applicationSections  = GetActions<ApplicationSections>();
 
