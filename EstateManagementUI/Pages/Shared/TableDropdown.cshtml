@@ -1,0 +1,14 @@
+@model IEnumerable<TableDropdownItem>
+
+<div class="dropdown">
+    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle='dropdown' aria-haspopup="true" aria-expanded="false">
+        <strong>...</strong>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        @foreach (TableDropdownItem item in Model)
+        {
+            <a class="dropdown-item"  href="#" hydro-on:click="@item.Action">@item.Text</a>
+        }
+    </div>
+</div>
+

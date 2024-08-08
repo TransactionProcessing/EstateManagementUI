@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using EstateManagementUI.Bootstrapper;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using Hydro;
 using Hydro.Configuration;
 using Lamar;
@@ -113,6 +114,8 @@ public class Startup {
         {
             endpoints.MapRazorPages();
         });
+
+        app.PreWarm().Wait();
     }
 }
 
@@ -225,5 +228,14 @@ public class Program {
         }
 
         return null;
+    }
+}
+
+public static class Extensions {
+    public static async Task PreWarm(this IApplicationBuilder applicationBuilder) {
+        IPermissionsRepository permissionsRepository = Startup.Container.GetService<IPermissionsRepository>();
+        var result = await permissionsRepository.MigrateDatabase(CancellationToken.None);
+        var x = result.Message;
+        await permissionsRepository.SeedDatabase(CancellationToken.None);
     }
 }

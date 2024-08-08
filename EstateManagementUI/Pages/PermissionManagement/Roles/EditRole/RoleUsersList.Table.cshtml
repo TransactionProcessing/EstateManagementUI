@@ -1,0 +1,34 @@
+﻿@using EstateManagementUI.Pages.PermissionManagement.Roles.RoleList
+@using EstateManagementUI.Pages.Shared
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.PermissionManagement.Roles.EditRole.EditRoleUsers
+
+<table class="table table-sm" id="roleUsersList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th class="col-3">User Name</th>
+            <th class="col-3"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (String userName in Model.UsersList)
+    {
+            <tr class="hover d-flex">
+                <td class="col-3">
+                    <p>@userName</p>
+                </td>
+                <td class="align-middle text-end col-3">
+                    @{
+                        TableDropdownItem[] menuItems = new TableDropdownItem[]
+                        {
+                new("Remove", () => Model.Remove(Model.Id, userName))
+                        };
+                    }
+
+                    <partial name="TableDropdown" model="@menuItems" />
+                </td>
+            
+        </tr>
+    }
+    </tbody>
+</table>

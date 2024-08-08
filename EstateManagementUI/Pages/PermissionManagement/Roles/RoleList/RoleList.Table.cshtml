@@ -1,0 +1,36 @@
+﻿@using EstateManagementUI.Pages.Shared
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model RoleList
+
+<table class="table table-sm" id="contractList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th class="col-3">Role Name</th>
+            <th class="col-3"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (Role roleModel in Model.Roles)
+    {
+            <tr class="hover d-flex">
+                <td class="col-3">
+               <a href="#" hydro-on:click="@(() => Model.Edit(roleModel.Id))" class="link link-hover">
+                    @roleModel.Name
+                    @* <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span> *@
+                </a>
+            </td>
+            <td class="align-middle text-end col-3">
+                @{
+                    TableDropdownItem[] menuItems = new TableDropdownItem[]
+                    {
+                        new("Edit", () => Model.Edit(@roleModel.Id)),
+                        new("Edit Users", () => Model.EditUsers(@roleModel.Id))
+                    };
+                }
+
+                <partial name="TableDropdown" model="@menuItems" />
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

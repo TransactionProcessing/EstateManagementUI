@@ -1,8 +1,14 @@
-﻿using EstateManagementUI.BusinessLogic.Clients;
+﻿using System.Net.Mime;
+using System.Reflection;
+using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.Common;
 using IdentityModel;
 using Lamar;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Shared.General;
 
@@ -65,5 +71,21 @@ public class AuthenticationRegistry : ServiceRegistry {
         this.AddAuthorization();
         this.AddSingleton<IPermissionsService, PermissionsService>();
         this.AddSingleton<IPermissionsRepository, PermissionsRepository>();
+        String connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permisssions.db")}";
+        //this.AddDbContext<PermissionsContext>(o => {
+        //    o.UseSqlite(o => o.);
+        //});
+        
+        this.AddSingleton<IDbContextFactory<PermissionsContext>, DbContextFactory<PermissionsContext>>();
+        this.AddDbContextFactory<PermissionsContext>(options =>
+            options.UseSqlite(connectionString));
+        
+        //this.AddSingleton<Func<String, PermissionsContext>>(cont => connectionString => {
+        //    return new PermissionsContext(connectionString);
+        //});
+        //String connectionString = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permisssions.db");
+        //IDatabaseContext database = new DatabaseContext(connectionString);
+        //this.AddSingleton<IDatabaseContext>(database);
+
     }
 }
