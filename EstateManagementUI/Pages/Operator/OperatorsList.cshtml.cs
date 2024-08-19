@@ -40,7 +40,7 @@ namespace EstateManagementUI.Pages.Operator
             List<ViewModels.Operator> resultList = new();
             foreach (OperatorModel operatorModel in response)
             {
-                resultList.Add(new ViewModels.Operator()
+                resultList.Add(new ViewModels.Operator
                 {
                     Id = operatorModel.OperatorId,
                     Name = operatorModel.Name,

@@ -38,7 +38,7 @@ namespace EstateManagementUI.Pages.Merchant
             List<ViewModels.Merchant> resultList = new();
             foreach (MerchantModel merchantModel in response)
             {
-                resultList.Add(new ViewModels.Merchant()
+                resultList.Add(new ViewModels.Merchant
                 {
                     Id = merchantModel.MerchantId,
                     Name = merchantModel.MerchantName,
