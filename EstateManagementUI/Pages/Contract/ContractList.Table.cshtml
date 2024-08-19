@@ -1,12 +1,25 @@
 ﻿@using EstateManagementUI.ViewModels
 @model EstateManagementUI.Pages.Contract.ContractsList
 
+@{
+    string GetSorting(ContractSorting sorting) =>
+        Model.Sorting.Column == sorting
+            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
+            : null;
+}
+
 <table class="table table-sm" id="contractList">
     <thead class="thead-light">
         <tr class="d-flex">
-            <th class="col-3">Description</th>
-            <th class="col-2">Operator</th>
-            <th class="col-1">Products</th>
+            <th hydro-action="Sort" param-value="@ContractSorting.Description" role="button" class="col-3">
+                Description @GetSorting(ContractSorting.Description)
+            </th>
+            <th hydro-action="Sort" param-value="@ContractSorting.Operator" role="button" class="col-2">
+                Operator @GetSorting(ContractSorting.Operator)
+            </th>
+            <th hydro-action="Sort" param-value="@ContractSorting.NumberOfProducts" role="button" class="col-1">
+                Products @GetSorting(ContractSorting.NumberOfProducts)
+            </th>
             <th class="col-1"></th>
         </tr>
     </thead>
@@ -15,16 +28,13 @@
     {
             <tr class="hover d-flex">
                 <td class="col-3">
-                @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
                     @contractModel.Description
-                @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
-                </a> *@
             </td>
-                <td class="col-2">
-                    @contractModel.OperatorName
+            <td class="col-2">
+                @contractModel.OperatorName
             </td>
             <td class="col-1">
-            @contractModel.NumberOfProducts
+                @contractModel.NumberOfProducts
             </td>
             <td class="col-1">
             </td>

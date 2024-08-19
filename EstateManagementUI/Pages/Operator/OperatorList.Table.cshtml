@@ -1,11 +1,24 @@
 ﻿@model EstateManagementUI.Pages.Operator.OperatorsList
 
+@{
+    string GetSorting(OperatorSorting sorting) =>
+        Model.Sorting.Column == sorting
+            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
+            : null;
+}
+
 <table class="table table-sm" id="operatorList">
     <thead class="thead-light">
         <tr class="d-flex">
-            <th class="col-2">Name</th>
-            <th class="col-2">Custom Merchant</th>
-            <th class="col-2">Custom Terminal</th>
+            <th hydro-action="Sort" param-value="@OperatorSorting.Name" role="button" class="col-2">
+                Name @GetSorting(OperatorSorting.Name)
+            </th>
+            <th hydro-action="Sort" param-value="@OperatorSorting.RequireCustomMerchantNumber" role="button" class="col-2">
+                Custom Merchant @GetSorting(OperatorSorting.RequireCustomMerchantNumber)
+            </th>
+            <th hydro-action="Sort" param-value="@OperatorSorting.RequireCustomTerminalNumber" role="button" class="col-2">
+                Custom Terminal @GetSorting(OperatorSorting.RequireCustomTerminalNumber)
+            </th>
             <th class="col-1"></th>
         </tr>
     </thead>

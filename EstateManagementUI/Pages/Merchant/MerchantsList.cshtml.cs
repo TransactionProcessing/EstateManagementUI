@@ -35,7 +35,7 @@ namespace EstateManagementUI.Pages.Merchant
 
             List<MerchantModel> response = await this.Mediator.Send(query, CancellationToken.None);
 
-            var resultList = new List<ViewModels.Merchant>();
+            List<ViewModels.Merchant> resultList = new();
             foreach (MerchantModel merchantModel in response)
             {
                 resultList.Add(new ViewModels.Merchant()
