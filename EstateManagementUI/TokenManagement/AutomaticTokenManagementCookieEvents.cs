@@ -132,7 +132,7 @@
         /// <returns></returns>
         public override async Task SigningOut(CookieSigningOutContext context)
         {
-            if (this.AutomaticTokenManagementOptions.RevokeRefreshTokenOnSignout == false) return;
+            if (this.AutomaticTokenManagementOptions.RevokeRefreshTokenOnSignout == false) { return;}
 
             AuthenticateResult result = await context.HttpContext.AuthenticateAsync();
 
@@ -161,7 +161,6 @@
             if (response.IsError)
             {
                 this.Logger.LogWarning("Error revoking token: {error}", response.Error);
-                return;
             }
         }
     }

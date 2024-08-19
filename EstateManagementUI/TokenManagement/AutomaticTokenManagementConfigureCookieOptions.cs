@@ -43,6 +43,7 @@
         /// <param name="options">The options instance to configure.</param>
         public void Configure(CookieAuthenticationOptions options)
         {
+            // Nothing to be done in here, just satisfying the interface
         }
 
         /// <summary>
