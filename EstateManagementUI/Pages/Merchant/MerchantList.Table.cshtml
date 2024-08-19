@@ -1,37 +1,56 @@
-﻿@model EstateManagementUI.Pages.Merchant.MerchantsList
+﻿@using EstateManagementUI.ViewModels
+@model EstateManagementUI.Pages.Merchant.MerchantsList
+
+@{
+    string GetSorting(MerchantSorting sorting) =>
+        Model.Sorting.Column == sorting
+            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
+            : null;
+}
+
 
 <table class="table table-sm" id="merchantList">
     <thead class="thead-light">
-        <tr class="d-flex">
-            <th class="col-2">Name</th>
-            <th class="col-1">Reference</th>
-            <th class="col-2">Settlement Schedule</th>
-            <th class="col-2">Contact</th>
-            <th class="col-2">Address Line 1</th>
-            <th class="col-2">Town</th>
-            <th class="col-1"></th>
-        </tr>
+    <tr class="d-flex">
+        <th hydro-action="Sort" param-value="@MerchantSorting.Name" role="button" class="col-2">
+            Name @GetSorting(MerchantSorting.Name)
+        </th>
+        <th hydro-action="Sort" param-value="@MerchantSorting.Reference" role="button" class="col-1">
+            Reference @GetSorting(MerchantSorting.Reference)
+        </th>
+        <th hydro-action="Sort" param-value="@MerchantSorting.SettlementSchedule" role="button" class="col-2">
+            Settlement Schedule @GetSorting(MerchantSorting.SettlementSchedule)
+        </th>
+        <th hydro-action="Sort" param-value="@MerchantSorting.Contact" role="button" class="col-2">
+            Contact @GetSorting(MerchantSorting.Contact)
+        </th>
+        <th hydro-action="Sort" param-value="@MerchantSorting.AddressLine1" role="button" class="col-2">
+            Address Line 1 @GetSorting(MerchantSorting.AddressLine1)
+        </th>
+        <th hydro-action="Sort" param-value="@MerchantSorting.Town" role="button" class="col-2">
+            Town @GetSorting(MerchantSorting.Town)
+        </th>
+        <th class="col-1"></th>
+    </tr>
     </thead>
     <tbody>
-    @foreach (var merchantModel in Model.Merchants)
+    @foreach (Merchant merchantModel in Model.Merchants)
     {
-            <tr class="hover d-flex">
-                <td class="col-2">
-                @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
-                    @merchantModel.Name
-                @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
-                </a> *@
-            </td>
-                <td class="col-1">
+        <tr class="hover d-flex">
+            <td class="col-2">
+                @merchantModel.Name
+
+                </td>
+            <td class="col-1">
                 @merchantModel.Reference
             </td>
             <td class="col-2">
                 @merchantModel.SettlementSchedule
             </td>
-                <td class="col-2">
+            <td class="col-2">
                 @merchantModel.ContactName
             </td>
-                <td class="col-2">
+            <td class="col-2">
                 @merchantModel.AddressLine1
             </td>
             <td class="col-2">
@@ -53,3 +72,4 @@
     }
     </tbody>
 </table>
+
