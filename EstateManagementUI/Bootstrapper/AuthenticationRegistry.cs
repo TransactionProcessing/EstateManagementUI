@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using System.Reflection;
+using EstateAdministrationUI.TokenManagement;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
@@ -16,10 +17,20 @@ namespace EstateManagementUI.Bootstrapper;
 
 public class AuthenticationRegistry : ServiceRegistry {
     public AuthenticationRegistry() {
+        Boolean httpClientIgnoreCertificateErrors =
+            ConfigurationReader.GetValueOrDefault<Boolean>("AppSettings",
+                "HttpClientIgnoreCertificateErrors", false);
+        
         this.AddAuthentication(options => {
             options.DefaultScheme = "Cookies";
             options.DefaultChallengeScheme = "oidc";
-        }).AddCookie("Cookies").AddOpenIdConnect("oidc", options => {
+        })
+        .AddAutomaticTokenManagement(o => {
+            o.RefreshBeforeExpiration = TimeSpan.FromSeconds(30);
+            o.RevokeRefreshTokenOnSignout = true;
+            o.Scheme = "oidc";
+        })
+            .AddCookie("Cookies").AddOpenIdConnect("oidc", options => {
             String authority = ConfigurationReader.GetValue("Authority");
             String securityServiceLocalPort =
                 ConfigurationReader.GetValueOrDefault<String>("AppSettings", "SecurityServiceLocalPort", null);
@@ -29,10 +40,12 @@ public class AuthenticationRegistry : ServiceRegistry {
             (string authorityAddress, string issuerAddress) results =
                 Helpers.GetSecurityServiceAddresses(authority, securityServiceLocalPort, securityServicePort);
 
-            HttpClientHandler handler = new HttpClientHandler();
-            handler.ServerCertificateCustomValidationCallback =
-                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-            options.BackchannelHttpHandler = handler;
+            if (httpClientIgnoreCertificateErrors) {
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                options.BackchannelHttpHandler = handler;
+            }
 
             options.Authority = results.authorityAddress;
             options.TokenValidationParameters = new TokenValidationParameters {
@@ -72,20 +85,9 @@ public class AuthenticationRegistry : ServiceRegistry {
         this.AddSingleton<IPermissionsService, PermissionsService>();
         this.AddSingleton<IPermissionsRepository, PermissionsRepository>();
         String connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permisssions.db")}";
-        //this.AddDbContext<PermissionsContext>(o => {
-        //    o.UseSqlite(o => o.);
-        //});
         
         this.AddSingleton<IDbContextFactory<PermissionsContext>, DbContextFactory<PermissionsContext>>();
         this.AddDbContextFactory<PermissionsContext>(options =>
             options.UseSqlite(connectionString));
-        
-        //this.AddSingleton<Func<String, PermissionsContext>>(cont => connectionString => {
-        //    return new PermissionsContext(connectionString);
-        //});
-        //String connectionString = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permisssions.db");
-        //IDatabaseContext database = new DatabaseContext(connectionString);
-        //this.AddSingleton<IDatabaseContext>(database);
-
     }
 }

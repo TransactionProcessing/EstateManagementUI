@@ -159,6 +159,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:Authority=https://{this.SecurityServiceContainerName}:0");  // The port is set to 0 to stop defaulting to 443
             environmentVariables.Add($"AppSettings:SecurityServiceLocalPort={securityServiceLocalPort}");
             environmentVariables.Add($"AppSettings:SecurityServicePort={securityServiceContainerPort}");
+            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
             environmentVariables.Add($"AppSettings:PermissionsBypass=true");
             //environmentVariables.Add($"AppSettings:IsIntegrationTest=true");
             environmentVariables.Add($"ASPNETCORE_ENVIRONMENT=Development");
@@ -167,6 +168,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:ClientId=estateUIClient");
             environmentVariables.Add($"AppSettings:ClientSecret=Secret1");
             environmentVariables.Add($"DataReloadConfig:DefaultInSeconds=1");
+            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
             
             Trace("About to Built Estate Management UI Container");
             ContainerBuilder containerBuilder = new Builder().UseContainer()
