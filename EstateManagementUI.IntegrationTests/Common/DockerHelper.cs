@@ -167,6 +167,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:ClientId=estateUIClient");
             environmentVariables.Add($"AppSettings:ClientSecret=Secret1");
             environmentVariables.Add($"DataReloadConfig:DefaultInSeconds=1");
+            environmentVariables.Add("HttpClientIgnoreCertificateErrors=true");
             
             Trace("About to Built Estate Management UI Container");
             ContainerBuilder containerBuilder = new Builder().UseContainer()
