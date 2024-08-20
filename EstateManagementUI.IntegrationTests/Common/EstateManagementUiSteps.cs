@@ -68,8 +68,11 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Merchant Details"); });
     }
 
-    public async Task VerifyOnTheNewOperatorScreen(){
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Operator Details"); });
+    public async Task VerifyOnTheNewOperatorDialog(){
+        await Retry.For(async () => {
+            IWebElement element = this.WebDriver.FindElement(By.Id("AddNewOperatorDialog"));
+            element.ShouldNotBeNull();
+        });
     }
 
     public async Task VerifyOnTheContractsListScreen(){
@@ -365,11 +368,6 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { await this.WebDriver.ClickButtonById("newMerchantButton"); });
     }
 
-    public async Task ClickAddNewOperatorButton()
-    {
-        await Retry.For(async () => { await this.WebDriver.ClickButtonById("newOperatorButton"); });
-    }
-
     public async Task ClickAddNewProductButton()
     {
         await Retry.For(async () => { await this.WebDriver.ClickButtonById("newContractProductButton"); });
@@ -388,9 +386,14 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("createMerchantButton");
     }
 
-    public async Task ClickTheCreateOperatorButton()
+    public async Task ClickTheNewOperatorButton()
     {
-        await this.WebDriver.ClickButtonById("createOperatorButton");
+        await this.WebDriver.ClickButtonById("newOperatorButton");
+    }
+
+    public async Task ClickTheSaveNewOperatorButton()
+    {
+        await this.WebDriver.ClickButtonById("saveNewOperatorButton");
     }
 
     public async Task ClickTheCreateProductButton()
@@ -435,8 +438,17 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.SelectDropDownItemByText("settlementScheduleList", settlementSchedule);
     }
 
-    public async Task EnterOperatorDetails(String operatorName){
-        await this.WebDriver.FillIn("operatorName", operatorName);
+    public async Task EnterOperatorDetails(String operatorName,
+                                           Boolean requireCustomMerchantNumber,
+                                           Boolean requireCustomTerminalNumber) {
+        await this.WebDriver.FillInById("operatorName", operatorName);
+        if (requireCustomMerchantNumber) {
+            await this.WebDriver.ClickCheckBoxById("requireCustomMerchantNumber");
+        }
+
+        if (requireCustomTerminalNumber) {
+            await this.WebDriver.ClickCheckBoxById("requireCustomTerminalNumber");
+        }
     }
 
     public async Task EnterProductDetails(String productName, String displayText, String productValue, String productType){

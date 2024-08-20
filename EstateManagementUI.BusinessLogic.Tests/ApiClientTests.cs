@@ -1,4 +1,5 @@
 ﻿using EstateManagement.Client;
+using EstateManagement.DataTransferObjects.Requests.Operator;
 using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
@@ -7,21 +8,27 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Testing;
 using Moq;
+using Shared.Logger;
 using Shouldly;
+using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Tests
 {
-    public class ApiClientTests
-    {
+    public class ApiClientTests {
+        private IApiClient ApiClient;
+        private Mock<IEstateClient> EstateClient;
+        public ApiClientTests() {
+            this.EstateClient = new Mock<IEstateClient>();
+            
+            this.ApiClient = new ApiClient(this.EstateClient.Object);
+        }
+
         [Fact]
         public async Task ApiClient_GetEstate_EstateReturned() {
-            Mock<IEstateClient> estateClient = new Mock<IEstateClient>();
-            estateClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            this.EstateClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TestData.EstateResponse);
-
-            IApiClient apiClient = new ApiClient(estateClient.Object);
-
-            EstateModel estate = await apiClient.GetEstate(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
+            
+            EstateModel estate = await this.ApiClient.GetEstate(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
 
             estate.ShouldNotBeNull();
             estate.EstateName.ShouldBe(TestData.EstateName);
@@ -30,13 +37,10 @@ namespace EstateManagementUI.BusinessLogic.Tests
         [Fact]
         public async Task ApiClient_GetMerchants_MerchantsReturned()
         {
-            Mock<IEstateClient> estateClient = new Mock<IEstateClient>();
-            estateClient.Setup(e => e.GetMerchants(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            this.EstateClient.Setup(e => e.GetMerchants(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TestData.MerchantResponses);
 
-            IApiClient apiClient = new ApiClient(estateClient.Object);
-
-            List<MerchantModel> merchantList = await apiClient.GetMerchants(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
+            List<MerchantModel> merchantList = await this.ApiClient.GetMerchants(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
 
             merchantList.ShouldNotBeNull();
             merchantList.ShouldNotBeEmpty();
@@ -51,13 +55,11 @@ namespace EstateManagementUI.BusinessLogic.Tests
         [Fact]
         public async Task ApiClient_GetOperators_OperatorsReturned()
         {
-            Mock<IEstateClient> estateClient = new Mock<IEstateClient>();
-            estateClient.Setup(e => e.GetOperators(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            this.EstateClient.Setup(e => e.GetOperators(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TestData.OperatorResponses);
 
-            IApiClient apiClient = new ApiClient(estateClient.Object);
 
-            List<OperatorModel> operatorsList = await apiClient.GetOperators(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
+            List<OperatorModel> operatorsList = await this.ApiClient.GetOperators(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
 
             operatorsList.ShouldNotBeNull();
             operatorsList.ShouldNotBeEmpty();
@@ -73,13 +75,11 @@ namespace EstateManagementUI.BusinessLogic.Tests
         [Fact]
         public async Task ApiClient_GetContracts_ContractsReturned()
         {
-            Mock<IEstateClient> estateClient = new Mock<IEstateClient>();
-            estateClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            this.EstateClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(TestData.ContractResponses);
 
-            IApiClient apiClient = new ApiClient(estateClient.Object);
 
-            var contractsList = await apiClient.GetContracts(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
+            List<ContractModel> contractsList = await this.ApiClient.GetContracts(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
 
             contractsList.ShouldNotBeNull();
             contractsList.ShouldNotBeEmpty();
@@ -87,9 +87,52 @@ namespace EstateManagementUI.BusinessLogic.Tests
 
             foreach (ContractResponse contractResponse in TestData.ContractResponses)
             {
-                var contractModel = contractsList.SingleOrDefault(m => m.ContractId == contractResponse.ContractId);
+                ContractModel? contractModel = contractsList.SingleOrDefault(m => m.ContractId == contractResponse.ContractId);
                 contractModel.ShouldNotBeNull();
             }
+        }
+
+        [Fact]
+        public async Task ApiClient_CreateOperator_OperatorIsCreated() {
+
+            this.EstateClient
+                .Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateOperatorRequest>(),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(new CreateOperatorResponse {
+                    OperatorId = TestData.Operator1Id, EstateId = TestData.EstateId
+                });
+
+            CreateOperatorModel createOperatorModel = new CreateOperatorModel {
+                RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber,
+                OperatorName = TestData.Operator1Name,
+                OperatorId = TestData.Operator1Id
+            };
+
+            Result result = await this.ApiClient.CreateOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, createOperatorModel,
+                CancellationToken.None);
+
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_CreateOperator_ErrorAtServer_OperatorIsCreated() {
+
+            Logger.Initialise(NullLogger.Instance);
+            this.EstateClient.Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(),
+                It.IsAny<CreateOperatorRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+            
+            CreateOperatorModel createOperatorModel = new CreateOperatorModel
+            {
+                RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber,
+                OperatorName = TestData.Operator1Name,
+                OperatorId = TestData.Operator1Id
+            };
+
+            Result result = await this.ApiClient.CreateOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, createOperatorModel,
+                CancellationToken.None);
+
+            result.IsFailed.ShouldBeTrue();
         }
     }
 }

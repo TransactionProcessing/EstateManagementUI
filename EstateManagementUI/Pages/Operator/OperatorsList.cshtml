@@ -11,6 +11,13 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Operators</h1>
                         </div>
+                        <div>
+
+                            <button class="btn btn-primary" type="button" hydro-action="Add" id="newOperatorButton">
+                                New Operator
+                            </button>
+                        </div>
+
                         @if (Model.Operators.Any() == false)
                         {
                             <div class="bg-base-200 rounded text-center p-4">
@@ -21,6 +28,12 @@
                         {
                             <partial name="OperatorList.Table.cshtml"/>
                         }
+                        
+                        @if (Model.ShowAddDialog)
+                        {
+                            <hydro name="AddNewOperatorDialog"/>
+                        }
+
                     </div>
                 </div>
                 <div class="col-lg-3" align="center">

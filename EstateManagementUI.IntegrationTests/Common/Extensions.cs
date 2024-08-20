@@ -28,6 +28,26 @@ namespace EstateManagementUI.IntegrationTests.Common
                             }, timeout);
         }
 
+        public static async Task FillInById(this IWebDriver webDriver,
+                                        String elementId,
+                                        String value,
+                                        Boolean clearExistingText = false,
+                                        TimeSpan? timeout = null)
+        {
+            await Retry.For(async () =>
+            {
+                IWebElement webElement = webDriver.FindElement(By.Id(elementId));
+                webElement.ShouldNotBeNull();
+                webElement.Displayed.ShouldBe(true);
+                webElement.Enabled.ShouldBe(true);
+                if (clearExistingText)
+                {
+                    webElement.Clear();
+                }
+                webElement.SendKeys(value);
+            }, timeout);
+        }
+
         public static async Task<IWebElement> FindButtonById(this IWebDriver webDriver,
                                                              String buttonId,
                                                              TimeSpan? timeout = null)
@@ -68,8 +88,33 @@ namespace EstateManagementUI.IntegrationTests.Common
             webElement.Click();
         }
 
+        public static async Task ClickCheckBox(this IWebDriver webDriver,
+                                               String elementName,
+                                               TimeSpan? timeout = null) {
+            await Retry.For(async () => {
+                IWebElement webElement = webDriver.FindElement(By.Name(elementName));
+                webElement.ShouldNotBeNull();
+                webElement.Displayed.ShouldBe(true);
+                webElement.Enabled.ShouldBe(true);
+                webElement.Click();
+            }, timeout);
+        }
+
+        public static async Task ClickCheckBoxById(this IWebDriver webDriver,
+                                               String elementId,
+                                               TimeSpan? timeout = null)
+        {
+            await Retry.For(async () => {
+                IWebElement webElement = webDriver.FindElement(By.Id(elementId));
+                webElement.ShouldNotBeNull();
+                webElement.Displayed.ShouldBe(true);
+                webElement.Enabled.ShouldBe(true);
+                webElement.Click();
+            }, timeout);
+        }
+
         public static async Task ClickButtonById(this IWebDriver webDriver,
-                                           String buttonId)
+                                                 String buttonId)
         {
             IWebElement webElement = await webDriver.FindButtonById(buttonId);
             webElement.ShouldNotBeNull();

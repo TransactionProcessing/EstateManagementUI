@@ -9,6 +9,8 @@ using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Pages.Merchant;
 using System.Collections.Generic;
+using EstateManagementUI.Pages.Shared.Components;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Operator
 {
@@ -16,10 +18,20 @@ namespace EstateManagementUI.Pages.Operator
     {
         private readonly IMediator Mediator;
 
+        public bool ShowAddDialog { get; set; }
+
         public OperatorsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Operator, OperatorFunctions.ViewList, permissionsService)
         {
             this.Mediator = mediator;
             this.Operators = new List<ViewModels.Operator>();
+
+            Subscribe<OperatorEvents.OperatorCreatedEvent>(async _ => {
+                // Sleep for a second
+                await Task.Delay(1000); // TODO: might be a better way of handling this
+                await this.GetOperators();
+            });
+            Subscribe<OperatorPageEvents.ShowNewOperatorDialog>(_ => ShowAddDialog = true);
+            Subscribe<OperatorPageEvents.HideNewOperatorDialog>(_ => ShowAddDialog = false);
         }
 
         public List<ViewModels.Operator> Operators { get; set; }
@@ -28,6 +40,9 @@ namespace EstateManagementUI.Pages.Operator
             await this.GetOperators();
         }
 
+        public void Add() =>
+            Dispatch(new OperatorPageEvents.ShowNewOperatorDialog(), Scope.Global);
+
         private async Task GetOperators() {
             String accessToken = await this.HttpContext.GetTokenAsync("access_token");
 
@@ -35,10 +50,15 @@ namespace EstateManagementUI.Pages.Operator
 
             Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(accessToken, estateId);
 
-            List<OperatorModel> response = await this.Mediator.Send(query, CancellationToken.None);
+            Result<List<OperatorModel>> response = await this.Mediator.Send(query, CancellationToken.None);
+
+            if (response.IsFailed) {
+                Dispatch(new ShowMessage("Error getting Operator List", ToastType.Error), Scope.Global);
+                return;
+            }
 
             List<ViewModels.Operator> resultList = new();
-            foreach (OperatorModel operatorModel in response)
+            foreach (OperatorModel operatorModel in response.Data)
             {
                 resultList.Add(new ViewModels.Operator
                 {

@@ -280,14 +280,14 @@ namespace EstateManagementUI.IntegrationTests.Tests
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("View Operator List")]
+        [NUnit.Framework.DescriptionAttribute("Operator PR Test")]
         [NUnit.Framework.CategoryAttribute("PRTest")]
-        public async System.Threading.Tasks.Task ViewOperatorList()
+        public async System.Threading.Tasks.Task OperatorPRTest()
         {
             string[] tagsOfScenario = new string[] {
                     "PRTest"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Operator List", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Operator PR Test", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 68
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -325,6 +325,52 @@ await this.FeatureBackgroundAsync();
                             "Yes"});
 #line 72
  await testRunner.AndAsync("the following operator details are in the list", ((string)(null)), table50, "And ");
+#line hidden
+#line 77
+ await testRunner.WhenAsync("I click on the New Operator Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 78
+ await testRunner.ThenAsync("the Add New Operator Dialog is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table51 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "RequireCustomMerchantNumber",
+                            "RequireCustomTerminalNumber"});
+                table51.AddRow(new string[] {
+                            "Test Operator 4",
+                            "Yes",
+                            "Yes"});
+#line 79
+ await testRunner.WhenAsync("I enter the following details for the new Operator", ((string)(null)), table51, "When ");
+#line hidden
+#line 82
+ await testRunner.AndAsync("click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 83
+ await testRunner.ThenAsync("I am presented with the Operators List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table52 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "RequireCustomMerchantNumber",
+                            "RequireCustomTerminalNumber"});
+                table52.AddRow(new string[] {
+                            "Test Operator 1",
+                            "Yes",
+                            "Yes"});
+                table52.AddRow(new string[] {
+                            "Test Operator 2",
+                            "Yes",
+                            "No"});
+                table52.AddRow(new string[] {
+                            "Test Operator 3",
+                            "No",
+                            "Yes"});
+                table52.AddRow(new string[] {
+                            "Test Operator 4",
+                            "Yes",
+                            "Yes"});
+#line 84
+ await testRunner.AndAsync("the following operator details are in the list", ((string)(null)), table52, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

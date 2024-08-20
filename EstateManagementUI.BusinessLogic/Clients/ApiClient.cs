@@ -1,4 +1,5 @@
 ﻿using EstateManagement.Client;
+using EstateManagement.DataTransferObjects.Requests.Operator;
 using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
@@ -43,7 +44,7 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
-    public async Task<List<OperatorModel>> GetOperators(String accessToken,
+    public async Task<Result<List<OperatorModel>>> GetOperators(String accessToken,
                                                   Guid actionId,
                                                   Guid estateId,
                                                   CancellationToken cancellationToken) {
@@ -71,11 +72,47 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
+    public async Task<Result> CreateOperator(String accessToken,
+                                             Guid actionId,
+                                             Guid estateId,
+                                             CreateOperatorModel createOperatorModel,
+                                             CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod() {
+            CreateOperatorRequest request = new CreateOperatorRequest {
+                RequireCustomMerchantNumber = createOperatorModel.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = createOperatorModel.RequireCustomTerminalNumber,
+                Name = createOperatorModel.OperatorName,
+                OperatorId = createOperatorModel.OperatorId
+            };
+
+            await this.EstateClient.CreateOperator(accessToken, estateId, request, cancellationToken);
+
+            return Result.Success();
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     private async Task<Result<T>> CallClientMethod<T>(Func<Task<Result<T>>> clientMethod, CancellationToken cancellationToken)
     {
         try
         {
             Result<T> clientResult = await clientMethod();
+            return Result.Success(clientResult);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e);
+            return Result.Failure(e.Message);
+
+        }
+    }
+
+    private async Task<Result> CallClientMethod(Func<Task<Result>> clientMethod, CancellationToken cancellationToken)
+    {
+        try
+        {
+            Result clientResult = await clientMethod();
             return Result.Success(clientResult);
         }
         catch (Exception e)
