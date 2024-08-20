@@ -14,6 +14,8 @@ namespace EstateManagementUI.Testing
         public static Queries.GetOperatorsQuery GetOperatorsQuery => new(AccessToken, EstateId);
         public static Queries.GetContractsQuery GetContractsQuery => new(AccessToken, EstateId);
 
+        public static Commands.AddNewOperatorCommand AddNewOperatorCommand => new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber, RequireCustomTerminalNumber);
+
         public static String EstateName = "Test Estate 1";
 
         public static String Operator1Name = "Operator 1";

@@ -1,4 +1,5 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
+using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Clients
 {
@@ -14,14 +15,20 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                Guid estateId,
                                                CancellationToken cancellationToken);
 
-        Task<List<OperatorModel>> GetOperators(String accessToken,
-                                               Guid actionId,
-                                               Guid estateId,
-                                               CancellationToken cancellationToken);
+        Task<Result<List<OperatorModel>>> GetOperators(String accessToken,
+                                                       Guid actionId,
+                                                       Guid estateId,
+                                                       CancellationToken cancellationToken);
 
         Task<List<ContractModel>> GetContracts(String accessToken,
                                                Guid actionId,
                                                Guid estateId,
                                                CancellationToken cancellationToken);
+
+        Task<Result> CreateOperator(String accessToken,
+                                    Guid actionId,
+                                    Guid estateId,
+                                    CreateOperatorModel createOperatorModel,
+                                    CancellationToken cancellationToken);
     }
 }

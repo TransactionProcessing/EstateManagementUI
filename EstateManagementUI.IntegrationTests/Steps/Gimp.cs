@@ -416,6 +416,49 @@ namespace EstateManagementUI.IntegrationTests.Steps
         //{
         //    await this.UiHelpers.ClickTheMerchantLinkForMerchant(merchantName);
         //}
+
+        [When("I click on the New Operator Button")]
+        public async Task WhenIClickOnTheNewOperatorButton()
+        {
+            await this.UiHelpers.ClickTheNewOperatorButton();
+        }
+
+        [Then("the Add New Operator Dialog is displayed")]
+        public async Task ThenTheAddNewOperatorDialogIsDisplayed() {
+            await this.UiHelpers.VerifyOnTheNewOperatorDialog();
+        }
+
+        [When("I enter the following details for the new Operator")]
+        public async Task WhenIEnterTheFollowingDetailsForTheNewOperator(DataTable dataTable)
+        {
+            DataTableRow operatorDetails = dataTable.Rows.Single();
+            String operatorName= ReqnrollTableHelper.GetStringRowValue(operatorDetails, "OperatorName");
+            String requireCustomMerchantNumberString = ReqnrollTableHelper.GetStringRowValue(operatorDetails, "RequireCustomMerchantNumber");
+            String requireCustomTerminalNumberString = ReqnrollTableHelper.GetStringRowValue(operatorDetails, "RequireCustomTerminalNumber");
+
+            // Translate the boolean flags
+            Boolean requireCustomMerchantNumber = requireCustomMerchantNumberString switch {
+                "Yes" => true,
+                _ => false
+            };
+
+            Boolean requireCustomTerminalNumber = requireCustomTerminalNumberString switch
+            {
+                "Yes" => true,
+                _ => false
+            };
+
+
+            await this.UiHelpers.EnterOperatorDetails(operatorName, requireCustomMerchantNumber,
+                requireCustomTerminalNumber);
+        }
+
+        [When("click the Save button")]
+        public async Task WhenClickTheSaveButton() {
+            await this.UiHelpers.ClickTheSaveNewOperatorButton();
+        }
+
+
     }
     public record MerchantDetails(String MerchantName, String SettlementSchedule,String ContactName, String AddressLine1, String Town);
 }

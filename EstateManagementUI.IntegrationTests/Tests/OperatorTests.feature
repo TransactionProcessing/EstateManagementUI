@@ -65,12 +65,25 @@ Background:
 	Then I am presented with the Estate Administrator Dashboard
 
 @PRTest
-Scenario: View Operator List
+Scenario: Operator PR Test
 
 	Given I click on the My Operators sidebar option
 	Then I am presented with the Operators List Screen
 	And the following operator details are in the list
-	| OperatorName  | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
-	| Test Operator 1 | Yes                        | Yes                        |
-	| Test Operator 2 | Yes                        | No                       |
-	| Test Operator 3 | No                       | Yes                        |
+	| OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+	| Test Operator 1 | Yes                         | Yes                         |
+	| Test Operator 2 | Yes                         | No                          |
+	| Test Operator 3 | No                          | Yes                         |
+	When I click on the New Operator Button
+	Then the Add New Operator Dialog is displayed
+	When I enter the following details for the new Operator
+	| OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+	| Test Operator 4 | Yes                         | Yes                         |
+	And click the Save button
+	Then I am presented with the Operators List Screen
+	And the following operator details are in the list
+	| OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+	| Test Operator 1 | Yes                         | Yes                         |
+	| Test Operator 2 | Yes                         | No                          |
+	| Test Operator 3 | No                          | Yes                         |
+	| Test Operator 4 | Yes                         | Yes                         |
