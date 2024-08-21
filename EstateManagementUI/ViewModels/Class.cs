@@ -48,4 +48,12 @@
         public Int32 NumberOfProducts { get; set; }
 
     }
+
+    public record ContractProduct {
+        public String ProductName { get; set; }
+        public String ProductType { get; set; }
+        public String DisplayText { get; set; }
+        public String Value { get; set; }
+        public Int32 NumberOfFees { get; set; }
+    }
 }

@@ -31,6 +31,12 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                Guid estateId,
                                                CancellationToken cancellationToken);
 
+        Task<Result<ContractModel>> GetContract(String accessToken,
+                                                        Guid actionId,
+                                                        Guid estateId,
+                                                        Guid contractId,
+                                                        CancellationToken cancellationToken);
+
         Task<Result> CreateOperator(String accessToken,
                                     Guid actionId,
                                     Guid estateId,

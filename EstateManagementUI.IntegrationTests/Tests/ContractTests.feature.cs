@@ -358,14 +358,14 @@ namespace EstateManagementUI.IntegrationTests.Tests
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("View Contract List")]
+        [NUnit.Framework.DescriptionAttribute("Contract PR Test")]
         [NUnit.Framework.CategoryAttribute("PRTest")]
-        public async System.Threading.Tasks.Task ViewContractList()
+        public async System.Threading.Tasks.Task ContractPRTest()
         {
             string[] tagsOfScenario = new string[] {
                     "PRTest"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Contract List", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Contract PR Test", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 83
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -403,6 +403,30 @@ await this.FeatureBackgroundAsync();
                             "1"});
 #line 87
  await testRunner.AndAsync("the following contract details are in the list", ((string)(null)), table13, "And ");
+#line hidden
+#line 92
+ await testRunner.WhenAsync("I click on the View Products Button for \'Operator 1 Contract\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 93
+ await testRunner.ThenAsync("the Contract Products List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
+                            "ProductName",
+                            "DisplayText",
+                            "Value",
+                            "ProductType"});
+                table14.AddRow(new string[] {
+                            "100 KES Topup",
+                            "100 KES",
+                            "100.00",
+                            "MobileTopup"});
+                table14.AddRow(new string[] {
+                            "Variable Topup 1",
+                            "Custom",
+                            "Variable",
+                            "MobileTopup"});
+#line 94
+ await testRunner.AndAsync("the following contract product details are in the list", ((string)(null)), table14, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

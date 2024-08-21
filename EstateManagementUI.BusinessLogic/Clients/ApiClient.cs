@@ -79,12 +79,28 @@ public class ApiClient : IApiClient {
                                                         CancellationToken cancellationToken) {
         async Task<Result<List<ContractModel>>> ClientMethod()
         {
-            List<ContractResponse>? operators = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
+            List<ContractResponse>? contracts = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
 
-            return ModelFactory.ConvertFrom(operators);
+            return ModelFactory.ConvertFrom(contracts);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<ContractModel>> GetContract(String accessToken,
+                                                                Guid actionId,
+                                                                Guid estateId,
+                                                                Guid contractId,
+                                                                CancellationToken cancellationToken) {
+        async Task<Result<ContractModel>> ClientMethod()
+        {
+            ContractResponse? contract = await this.EstateClient.GetContract(accessToken, estateId, contractId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(contract);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+
     }
 
     public async Task<Result> CreateOperator(String accessToken,
