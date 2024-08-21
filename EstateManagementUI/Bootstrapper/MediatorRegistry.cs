@@ -8,6 +8,8 @@ using SimpleResults;
 
 namespace EstateManagementUI.Bootstrapper;
 
+
+
 [ExcludeFromCodeCoverage]
 public class MediatorRegistry : ServiceRegistry {
     public MediatorRegistry() {
