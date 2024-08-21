@@ -28,11 +28,9 @@ namespace EstateManagementUI.Pages.Contract
         }
 
         private async Task GetContracts() {
-            String accessToken = await this.HttpContext.GetTokenAsync("access_token");
+            await this.PopulateTokenAndEstateId();
 
-            Guid estateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
-
-            Queries.GetContractsQuery query = new Queries.GetContractsQuery(accessToken, estateId);
+            Queries.GetContractsQuery query = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
 
             List<ContractModel> response = await this.Mediator.Send(query, CancellationToken.None);
 

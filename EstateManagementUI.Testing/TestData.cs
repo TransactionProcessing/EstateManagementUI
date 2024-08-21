@@ -12,9 +12,11 @@ namespace EstateManagementUI.Testing
         public static Queries.GetEstateQuery GetEstateQuery => new(AccessToken, EstateId);
         public static Queries.GetMerchantsQuery GetMerchantsQuery => new(AccessToken, EstateId);
         public static Queries.GetOperatorsQuery GetOperatorsQuery => new(AccessToken, EstateId);
+        public static Queries.GetOperatorQuery GetOperatorQuery => new(AccessToken, EstateId, Operator1Id);
         public static Queries.GetContractsQuery GetContractsQuery => new(AccessToken, EstateId);
 
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand => new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber, RequireCustomTerminalNumber);
+        public static Commands.UpdateOperatorCommand UpdateOperatorCommand => new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber, RequireCustomTerminalNumber);
 
         public static String EstateName = "Test Estate 1";
 
@@ -87,6 +89,15 @@ namespace EstateManagementUI.Testing
 
                     }
                 }
+            };
+
+
+        public static OperatorResponse OperatorResponse =>
+            new OperatorResponse {
+                    Name = Operator1Name,
+                    OperatorId = Operator1Id,
+                    RequireCustomMerchantNumber = false,
+                    RequireCustomTerminalNumber = false
             };
 
         public static List<OperatorResponse> OperatorResponses =>

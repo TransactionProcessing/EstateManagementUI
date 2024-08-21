@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using Hydro;
@@ -8,11 +10,11 @@ using Microsoft.AspNetCore.Authentication;
 
 namespace EstateManagementUI.Pages.Estate
 {
-    public class OperatorList : HydroComponent
+    public class OperatorList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
-        public OperatorList(IMediator mediator)
+        public OperatorList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.ViewEstateOperators, permissionsService)
         {
             Mediator = mediator;
             Operators = new List<ViewModels.Operator>();
@@ -20,13 +22,10 @@ namespace EstateManagementUI.Pages.Estate
 
         public List<ViewModels.Operator> Operators { get; set; }
 
-        public override async Task MountAsync()
-        {
-            string accessToken = await HttpContext.GetTokenAsync("access_token");
+        public override async Task MountAsync() {
+            await this.PopulateTokenAndEstateId();
 
-            Guid estateId = Helpers.GetClaimValue<Guid>(User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
-
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(accessToken, estateId);
+            Queries.GetEstateQuery query = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
 
             EstateModel response = await Mediator.Send(query, CancellationToken.None);
 

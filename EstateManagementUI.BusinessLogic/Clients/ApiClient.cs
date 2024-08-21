@@ -58,10 +58,25 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
+    public async Task<Result<OperatorModel>> GetOperator(String accessToken,
+                                                         Guid actionId,
+                                                         Guid estateId,
+                                                         Guid operatorId,
+                                                         CancellationToken cancellationToken) {
+        async Task<Result<OperatorModel>> ClientMethod()
+        {
+            OperatorResponse @operator = await this.EstateClient.GetOperator(accessToken, estateId, operatorId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(@operator);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     public async Task<List<ContractModel>> GetContracts(String accessToken,
-                                                  Guid actionId,
-                                                  Guid estateId,
-                                                  CancellationToken cancellationToken) {
+                                                        Guid actionId,
+                                                        Guid estateId,
+                                                        CancellationToken cancellationToken) {
         async Task<Result<List<ContractModel>>> ClientMethod()
         {
             List<ContractResponse>? operators = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
@@ -86,6 +101,28 @@ public class ApiClient : IApiClient {
             };
 
             await this.EstateClient.CreateOperator(accessToken, estateId, request, cancellationToken);
+
+            return Result.Success();
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> UpdateOperator(String accessToken,
+                                             Guid actionId,
+                                             Guid estateId,
+                                             UpdateOperatorModel updateOperatorModel,
+                                             CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            UpdateOperatorRequest request = new UpdateOperatorRequest
+            {
+                RequireCustomMerchantNumber = updateOperatorModel.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = updateOperatorModel.RequireCustomTerminalNumber,
+                Name = updateOperatorModel.OperatorName
+            };
+
+            await this.EstateClient.UpdateOperator(accessToken, estateId, updateOperatorModel.OperatorId, request, cancellationToken);
 
             return Result.Success();
         }

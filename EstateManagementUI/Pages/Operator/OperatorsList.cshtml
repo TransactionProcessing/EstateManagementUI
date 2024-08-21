@@ -29,9 +29,9 @@
                             <partial name="OperatorList.Table.cshtml"/>
                         }
                         
-                        @if (Model.ShowAddDialog)
+                        @if (Model.ShowDialog)
                         {
-                            <hydro name="AddNewOperatorDialog"/>
+                            <hydro name="OperatorDialog" params="@(new {OperatorId = Model.OperatorId})"/>
                         }
 
                     </div>

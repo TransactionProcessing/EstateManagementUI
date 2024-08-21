@@ -7,7 +7,13 @@
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         @foreach (TableDropdownItem item in Model)
         {
-            <a class="dropdown-item"  href="#" hydro-on:click="@item.Action">@item.Text</a>
+            if (@item.Id == null) {
+                <a class="dropdown-item" href="#" hydro-on:click="@item.Action">@item.Text</a>
+            }
+            else {
+                <a class="dropdown-item" id="@item.Id" href="#" hydro-on:click="@item.Action">@item.Text</a>    
+            }
+            
         }
     </div>
 </div>

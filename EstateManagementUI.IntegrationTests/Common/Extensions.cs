@@ -113,6 +113,20 @@ namespace EstateManagementUI.IntegrationTests.Common
             }, timeout);
         }
 
+        public static async Task<Boolean> IsCheckboxChecked(this IWebDriver webDriver,
+                                                   String elementId,
+                                                   TimeSpan? timeout = null) {
+            Boolean isChecked = false;
+            await Retry.For(async () => {
+                IWebElement webElement = webDriver.FindElement(By.Id(elementId));
+                webElement.ShouldNotBeNull();
+                webElement.Displayed.ShouldBe(true);
+                webElement.Enabled.ShouldBe(true);
+                isChecked = webElement.Selected;
+            }, timeout);
+            return isChecked;
+        }
+
         public static async Task ClickButtonById(this IWebDriver webDriver,
                                                  String buttonId)
         {

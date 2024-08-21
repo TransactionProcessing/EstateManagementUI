@@ -9,31 +9,66 @@ using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Pages.Merchant;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using EstateManagementUI.Pages.Shared.Components;
 using SimpleResults;
+using static EstateManagementUI.Pages.Operator.OperatorPageEvents;
 
 namespace EstateManagementUI.Pages.Operator
 {
     public class OperatorsList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
-
-        public bool ShowAddDialog { get; set; }
+        public Guid OperatorId { get; set; }
+        public Boolean ShowDialog { get; set; }
 
         public OperatorsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Operator, OperatorFunctions.ViewList, permissionsService)
         {
             this.Mediator = mediator;
             this.Operators = new List<ViewModels.Operator>();
 
-            Subscribe<OperatorEvents.OperatorCreatedEvent>(async _ => {
-                // Sleep for a second
-                await Task.Delay(1000); // TODO: might be a better way of handling this
-                await this.GetOperators();
-            });
-            Subscribe<OperatorPageEvents.ShowNewOperatorDialog>(_ => ShowAddDialog = true);
-            Subscribe<OperatorPageEvents.HideNewOperatorDialog>(_ => ShowAddDialog = false);
+            Subscribe<OperatorPageEvents.OperatorCreatedEvent>(Handle);
+            Subscribe<OperatorPageEvents.OperatorUpdatedEvent>(Handle);
+            Subscribe<OperatorPageEvents.ShowNewOperatorDialog>(Handle);
+            Subscribe<OperatorPageEvents.HideNewOperatorDialog>(Handle);
+            Subscribe<OperatorPageEvents.ShowEditOperatorDialog>(Handle);
+            Subscribe<OperatorPageEvents.HideEditOperatorDialog>(Handle);
         }
 
+        public async Task Handle(OperatorCreatedEvent @event) {
+            // Sleep for a second
+            await Task.Delay(1000); // TODO: might be a better way of handling this
+            await this.GetOperators();
+        }
+
+        public async Task Handle(OperatorUpdatedEvent @event)
+        {
+            // Sleep for a second
+            await Task.Delay(1000); // TODO: might be a better way of handling this
+            await this.GetOperators();
+        }
+
+        public async Task Handle(ShowNewOperatorDialog @event)
+        {
+            this.OperatorId = Guid.Empty;
+            this.ShowDialog = true;
+        }
+        public async Task Handle(HideNewOperatorDialog @event)
+       {
+           this.OperatorId = Guid.Empty;
+            this.ShowDialog = false;
+        }
+        public async Task Handle(ShowEditOperatorDialog @event)
+        {
+            this.OperatorId = @event.OperatorId;
+            this.ShowDialog = true;
+        }
+        public async Task Handle(HideEditOperatorDialog @event)
+        {
+            this.OperatorId = Guid.Empty;
+            this.ShowDialog = false;
+        }
+        
         public List<ViewModels.Operator> Operators { get; set; }
 
         public override async Task MountAsync() {
@@ -43,12 +78,13 @@ namespace EstateManagementUI.Pages.Operator
         public void Add() =>
             Dispatch(new OperatorPageEvents.ShowNewOperatorDialog(), Scope.Global);
 
+        public async Task Edit(Guid operatorId)=>
+            Dispatch(new OperatorPageEvents.ShowEditOperatorDialog(operatorId), Scope.Global);
+
         private async Task GetOperators() {
-            String accessToken = await this.HttpContext.GetTokenAsync("access_token");
+            await this.PopulateTokenAndEstateId();
 
-            Guid estateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
-
-            Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(accessToken, estateId);
+            Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(this.AccessToken, this.EstateId);
 
             Result<List<OperatorModel>> response = await this.Mediator.Send(query, CancellationToken.None);
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text;
 using EstateManagementUI.IntegrationTests.Steps;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
@@ -68,9 +69,9 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Merchant Details"); });
     }
 
-    public async Task VerifyOnTheNewOperatorDialog(){
+    public async Task VerifyOnTheOperatorDialog(){
         await Retry.For(async () => {
-            IWebElement element = this.WebDriver.FindElement(By.Id("AddNewOperatorDialog"));
+            IWebElement element = this.WebDriver.FindElement(By.Id("OperatorDialog"));
             element.ShouldNotBeNull();
         });
     }
@@ -278,40 +279,44 @@ public class EstateManagementUiHelpers{
                         TimeSpan.FromSeconds(180));
     }
 
-    public async Task VerifyOperatorDetailsAreInTheList(List<(String, String, String)> operatorDetails){
+    public async Task VerifyOperatorDetailsAreInTheList(List<(String, String, String)> operatorDetails) {
         await Retry.For(async () => {
-                            Int32 foundRowCount = 0;
-                            IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
-                            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
+            Int32 foundRowCount = 0;
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
-                            rows.Count.ShouldBe(operatorDetails.Count + 1);
-                            foreach ((String, String, String) operatorDetail in operatorDetails){
-                                IList<IWebElement> rowTD;
-                                foreach (IWebElement row in rows){
-                                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
+            rows.Count.ShouldBe(operatorDetails.Count + 1);
+            StringBuilder sb = new StringBuilder();
+            foreach ((String, String, String) operatorDetail in operatorDetails) {
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in rows) {
+                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
-                                    if (rowTH.Any()){
-                                        // header row so skip
-                                        continue;
-                                    }
+                    if (rowTH.Any()) {
+                        // header row so skip
+                        continue;
+                    }
 
-                                    rowTD = row.FindElements(By.TagName("td"));
+                    rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].Text == operatorDetail.Item1){
-                                        // Compare other fields
-                                        rowTD[0].Text.ShouldBe(operatorDetail.Item1);
+                    if (rowTD[0].Text == operatorDetail.Item1) {
+                        // Compare other fields
+                        rowTD[0].Text.ShouldBe(operatorDetail.Item1);
                         rowTD[1].Text.ShouldBe(operatorDetail.Item2);
                         rowTD[2].Text.ShouldBe(operatorDetail.Item3);
                         // We have found the row
                         foundRowCount++;
-                                        break;
-                                    }
-                                }
-                            }
+                        sb.AppendLine($"Found {operatorDetail.Item1}");
+                        break;
+                    }
+                    else {
+                        sb.AppendLine($"Not Found {operatorDetail.Item1}");
+                    }
+                }
+            }
 
-                            foundRowCount.ShouldBe(operatorDetails.Count);
-                        },
-                        TimeSpan.FromSeconds(120));
+            foundRowCount.ShouldBe(operatorDetails.Count, sb.ToString());
+        }, TimeSpan.FromSeconds(120));
     }
 
     public async Task VerifyProductDetailsAreInTheList(List<String> productDetails)
@@ -441,15 +446,34 @@ public class EstateManagementUiHelpers{
     public async Task EnterOperatorDetails(String operatorName,
                                            Boolean requireCustomMerchantNumber,
                                            Boolean requireCustomTerminalNumber) {
-        await this.WebDriver.FillInById("operatorName", operatorName);
-        if (requireCustomMerchantNumber) {
+        await this.WebDriver.FillInById("operatorName", operatorName, true);
+        Boolean requireCustomMerchantNumberIsChecked = await this.WebDriver.IsCheckboxChecked("requireCustomMerchantNumber");
+        Boolean clickRequireCustomMerchantNumberCheckBox = (requireCustomMerchantNumber, requireCustomMerchantNumberIsChecked) switch {
+            (true, true) => false,
+            (true, false) => true,
+            (false, false) => false,
+            _ => true
+        };
+        
+        if (clickRequireCustomMerchantNumberCheckBox) {
             await this.WebDriver.ClickCheckBoxById("requireCustomMerchantNumber");
         }
 
-        if (requireCustomTerminalNumber) {
+        Boolean requireCustomTerminalNumberIsChecked = await this.WebDriver.IsCheckboxChecked("requireCustomTerminalNumber");
+        Boolean clickRequireCustomTerminalNumberCheckBox = (requireCustomTerminalNumber, requireCustomTerminalNumberIsChecked) switch
+        {
+            (true, true) => false,
+            (true, false) => true,
+            (false, false) => false,
+            _ => true
+        };
+
+        if (clickRequireCustomTerminalNumberCheckBox) {
             await this.WebDriver.ClickCheckBoxById("requireCustomTerminalNumber");
         }
     }
+
+    
 
     public async Task EnterProductDetails(String productName, String displayText, String productValue, String productType){
         await this.WebDriver.FillIn("productName", productName);
@@ -549,5 +573,13 @@ public class EstateManagementUiHelpers{
             }
         },
                         TimeSpan.FromSeconds(120));
+    }
+
+    public async Task ClickTheEditOperatorButton(String operatorName) {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
+        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        dropdownMenuButton.Click();
+        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{operatorName}Edit"));
+        editButton.Click();
     }
 }

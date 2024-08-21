@@ -73,6 +73,18 @@ namespace EstateManagementUI.BusinessLogic.Tests
         }
 
         [Fact]
+        public async Task ApiClient_GetOperator_OperatorIsReturned()
+        {
+            this.EstateClient.Setup(e => e.GetOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(TestData.OperatorResponse);
+
+
+            OperatorModel @operator = await this.ApiClient.GetOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Operator1Id, CancellationToken.None);
+
+            @operator.ShouldNotBeNull();
+        }
+
+        [Fact]
         public async Task ApiClient_GetContracts_ContractsReturned()
         {
             this.EstateClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -115,7 +127,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         }
 
         [Fact]
-        public async Task ApiClient_CreateOperator_ErrorAtServer_OperatorIsCreated() {
+        public async Task ApiClient_CreateOperator_ErrorAtServer_OperatorIsNotCreated() {
 
             Logger.Initialise(NullLogger.Instance);
             this.EstateClient.Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(),
@@ -130,6 +142,48 @@ namespace EstateManagementUI.BusinessLogic.Tests
             };
 
             Result result = await this.ApiClient.CreateOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, createOperatorModel,
+                CancellationToken.None);
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_UpdateOperator_OperatorIsUpdated()
+        {
+            this.EstateClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(),
+                It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+
+            UpdateOperatorModel updateOperatorModel = new UpdateOperatorModel
+            {
+                RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber,
+                OperatorName = TestData.Operator1Name,
+                OperatorId = TestData.Operator1Id
+            };
+
+            Result result = await this.ApiClient.UpdateOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, updateOperatorModel,
+                CancellationToken.None);
+
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_UpdateOperator_ErrorAtServer_OperatorIsNotUpdated()
+        {
+
+            Logger.Initialise(NullLogger.Instance);
+            this.EstateClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(),
+                It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            UpdateOperatorModel updateOperatorModel = new UpdateOperatorModel
+            {
+                RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber,
+                OperatorName = TestData.Operator1Name,
+                OperatorId = TestData.Operator1Id
+            };
+
+            Result result = await this.ApiClient.UpdateOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, updateOperatorModel,
                 CancellationToken.None);
 
             result.IsFailed.ShouldBeTrue();
