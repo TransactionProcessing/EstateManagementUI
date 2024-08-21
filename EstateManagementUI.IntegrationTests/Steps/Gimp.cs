@@ -423,12 +423,26 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickTheNewOperatorButton();
         }
 
-        [Then("the Add New Operator Dialog is displayed")]
-        public async Task ThenTheAddNewOperatorDialogIsDisplayed() {
-            await this.UiHelpers.VerifyOnTheNewOperatorDialog();
+        [When("I click on the Edit Operator Button for {string}")]
+        public async Task WhenIClickOnTheEditOperatorButtonFor(string operatorName)
+        {
+            await this.UiHelpers.ClickTheEditOperatorButton(operatorName);
         }
 
+
+        [Then("the Add New Operator Dialog is displayed")]
+        public async Task ThenTheAddNewOperatorDialogIsDisplayed() {
+            await this.UiHelpers.VerifyOnTheOperatorDialog();
+        }
+
+        [Then("the Edit Operator Dialog is displayed")]
+        public async Task ThenTheEditOperatorDialogIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheOperatorDialog();
+        }
+        
         [When("I enter the following details for the new Operator")]
+        [When("I enter the following new details for the Operator")]
         public async Task WhenIEnterTheFollowingDetailsForTheNewOperator(DataTable dataTable)
         {
             DataTableRow operatorDetails = dataTable.Rows.Single();

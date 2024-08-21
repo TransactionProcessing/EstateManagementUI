@@ -27,11 +27,9 @@ namespace EstateManagementUI.Pages.Estate
         
         public override async Task MountAsync()
         {
-            String accessToken = await HttpContext.GetTokenAsync("access_token");
+            await this.PopulateTokenAndEstateId();
 
-            Guid estateId = Helpers.GetClaimValue<Guid>(User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
-
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(accessToken, estateId);
+            Queries.GetEstateQuery query = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
 
             EstateModel response = await Mediator.Send(query, CancellationToken.None);
 

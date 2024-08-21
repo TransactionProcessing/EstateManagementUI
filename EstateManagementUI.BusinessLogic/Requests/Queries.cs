@@ -17,9 +17,6 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
         public record GetMerchantsQuery(String AccessToken, Guid EstateId) : IRequest<List<MerchantModel>>;
         public record GetOperatorsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
         public record GetContractsQuery(String AccessToken, Guid EstateId) : IRequest<List<ContractModel>>;
-    }
-
-    public record Commands {
-        public record AddNewOperatorCommand(String AccessToken, Guid EstateId, Guid OperatorId, String OperatorName, Boolean RequireCustomMerchantNumber, Boolean RequireCustomTerminalNumber) : IRequest<Result>;
+        public record GetOperatorQuery(String AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
     }
 }

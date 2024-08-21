@@ -372,6 +372,52 @@ await this.FeatureBackgroundAsync();
 #line 84
  await testRunner.AndAsync("the following operator details are in the list", ((string)(null)), table52, "And ");
 #line hidden
+#line 90
+ await testRunner.WhenAsync("I click on the Edit Operator Button for \'Test Operator 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 91
+ await testRunner.ThenAsync("the Edit Operator Dialog is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table53 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "RequireCustomMerchantNumber",
+                            "RequireCustomTerminalNumber"});
+                table53.AddRow(new string[] {
+                            "Test Operator 1 update",
+                            "No",
+                            "No"});
+#line 92
+ await testRunner.WhenAsync("I enter the following new details for the Operator", ((string)(null)), table53, "When ");
+#line hidden
+#line 95
+ await testRunner.AndAsync("click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 96
+ await testRunner.ThenAsync("I am presented with the Operators List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table54 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "RequireCustomMerchantNumber",
+                            "RequireCustomTerminalNumber"});
+                table54.AddRow(new string[] {
+                            "Test Operator 1 update",
+                            "No",
+                            "No"});
+                table54.AddRow(new string[] {
+                            "Test Operator 2",
+                            "Yes",
+                            "No"});
+                table54.AddRow(new string[] {
+                            "Test Operator 3",
+                            "No",
+                            "Yes"});
+                table54.AddRow(new string[] {
+                            "Test Operator 4",
+                            "Yes",
+                            "Yes"});
+#line 97
+ await testRunner.AndAsync("the following operator details are in the list", ((string)(null)), table54, "And ");
+#line hidden
             }
             await this.ScenarioCleanupAsync();
         }

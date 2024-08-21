@@ -1,7 +1,10 @@
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.Pages.Operator;
 using Hydro;
+using Microsoft.AspNetCore.Authentication;
 using SimpleResults;
+using System.Security.Claims;
+using Hydro.Utils;
 
 namespace EstateManagementUI.Common;
 
@@ -21,6 +24,16 @@ public class SecureHydroComponent : HydroComponent {
         this.PageName = pageName;
     }
 
+    protected String AccessToken;
+    protected Guid EstateId;
+
+    protected async Task PopulateTokenAndEstateId() {
+        if (this.HttpContext != null)
+            this.AccessToken = await this.HttpContext.GetTokenAsync("access_token");
+
+        if (this.User != null)
+            this.EstateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
+    }
 
     public override async Task RenderAsync()
     {
@@ -32,6 +45,7 @@ public class SecureHydroComponent : HydroComponent {
             this.HttpContext.Response.Redirect("/Error");
             return;
         }
+        
         await base.RenderAsync();
     }
 }

@@ -1,55 +1,54 @@
-﻿@model EstateManagementUI.Pages.Operator.OperatorsList
+﻿@using EstateManagementUI.Pages.Shared
+@using EstateManagementUI.ViewModels
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.Operator.OperatorsList
 
 @{
-    string GetSorting(OperatorSorting sorting) =>
-        Model.Sorting.Column == sorting
-            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
-            : null;
+    String GetSorting(OperatorSorting sorting) {
+        return Model.Sorting.Column == sorting ? Model.Sorting.Ascending ? "\u2193" : "\u2191" : null;
+    }
 }
 
 <table class="table table-sm" id="operatorList">
     <thead class="thead-light">
-        <tr class="d-flex">
-            <th hydro-action="Sort" param-value="@OperatorSorting.Name" role="button" class="col-2">
-                Name @GetSorting(OperatorSorting.Name)
-            </th>
-            <th hydro-action="Sort" param-value="@OperatorSorting.RequireCustomMerchantNumber" role="button" class="col-2">
-                Custom Merchant @GetSorting(OperatorSorting.RequireCustomMerchantNumber)
-            </th>
-            <th hydro-action="Sort" param-value="@OperatorSorting.RequireCustomTerminalNumber" role="button" class="col-2">
-                Custom Terminal @GetSorting(OperatorSorting.RequireCustomTerminalNumber)
-            </th>
-            <th class="col-1"></th>
-        </tr>
+    <tr class="d-flex">
+        <th hydro-action="Sort" param-value="@OperatorSorting.Name" role="button" class="col-2">
+            Name @GetSorting(OperatorSorting.Name)
+        </th>
+        <th hydro-action="Sort" param-value="@OperatorSorting.RequireCustomMerchantNumber" role="button" class="col-2">
+            Custom Merchant @GetSorting(OperatorSorting.RequireCustomMerchantNumber)
+        </th>
+        <th hydro-action="Sort" param-value="@OperatorSorting.RequireCustomTerminalNumber" role="button" class="col-2">
+            Custom Terminal @GetSorting(OperatorSorting.RequireCustomTerminalNumber)
+        </th>
+        <th class="col-1"></th>
+    </tr>
     </thead>
     <tbody>
-    @foreach (var operatorModel in Model.Operators)
-    {
-            <tr class="hover d-flex">
-                <td class="col-2">
-                @* <a href="#" hydro-on:click="@(() => Model.Edit(product.Id))" class="link link-hover"> *@
-                    @operatorModel.Name
-                @*     <span class="spinner-border spinner-border-sm spinner" aria-hidden="true"></span>
-                </a> *@
-            </td>
-                <td class="col-2">
-                    @operatorModel.RequireCustomMerchantNumber
+    @foreach (Operator operatorModel in Model.Operators) {
+        <tr class="hover d-flex">
+            <td class="col-2">
+                @operatorModel.Name
             </td>
             <td class="col-2">
-                    @operatorModel.RequireCustomTerminalNumber
+                @operatorModel.RequireCustomMerchantNumber
+            </td>
+            <td class="col-2">
+                @operatorModel.RequireCustomTerminalNumber
             </td>
             <td class="col-1">
             </td>
-            @* <td class="align-middle text-end">
+            <td class="align-middle text-end">
                 @{
                     var menuItems = new TableDropdownItem[]
                     {
-                        new("Edit", () => Model.Edit(product.Id))
+                new("Edit", () => Model.Edit(@operatorModel.Id), $@"{operatorModel.Name}Edit")
                     };
                 }
 
                 <partial name="TableDropdown" model="@menuItems" />
-            </td> *@
+            </td>
         </tr>
     }
     </tbody>

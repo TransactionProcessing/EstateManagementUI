@@ -27,11 +27,9 @@ namespace EstateManagementUI.Pages.Merchant
         }
 
         private async Task GetMerchants() {
-            String accessToken = await this.HttpContext.GetTokenAsync("access_token");
+            await this.PopulateTokenAndEstateId();
 
-            Guid estateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
-
-            Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(accessToken, estateId);
+            Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.AccessToken, this.EstateId);
 
             List<MerchantModel> response = await this.Mediator.Send(query, CancellationToken.None);
 

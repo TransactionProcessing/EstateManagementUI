@@ -1,4 +1,6 @@
-﻿using EstateManagement.DataTransferObjects.Responses.Contract;
+﻿using System.Runtime.CompilerServices;
+using Azure;
+using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
@@ -100,13 +102,7 @@ public static class ModelFactory
         List<OperatorModel> models = new List<OperatorModel>();
         foreach (OperatorResponse @operator in operators)
         {
-            models.Add(new OperatorModel
-            {
-                Name = @operator.Name,
-                RequireCustomTerminalNumber = @operator.RequireCustomTerminalNumber,
-                RequireCustomMerchantNumber = @operator.RequireCustomMerchantNumber,
-                OperatorId = @operator.OperatorId
-            });
+            models.Add(ConvertFrom(@operator));
         }
 
         return models;
@@ -132,5 +128,19 @@ public static class ModelFactory
         }
 
         return models;
+    }
+
+    public static OperatorModel ConvertFrom(OperatorResponse @operator) {
+
+        if (@operator == null)
+            return null;
+
+        OperatorModel model = new OperatorModel {
+            Name = @operator.Name,
+            RequireCustomTerminalNumber = @operator.RequireCustomTerminalNumber,
+            RequireCustomMerchantNumber = @operator.RequireCustomMerchantNumber,
+            OperatorId = @operator.OperatorId
+        };
+        return model;
     }
 }
