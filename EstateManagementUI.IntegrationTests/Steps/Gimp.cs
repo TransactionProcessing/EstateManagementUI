@@ -10,6 +10,7 @@ using EstateManagementUI.IntegrationTests.Common;
 using OpenQA.Selenium;
 using Reqnroll.BoDi;
 using SecurityService.IntegrationTesting.Helpers;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EstateManagementUI.IntegrationTests.Steps
 {
@@ -117,6 +118,13 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheContractsListScreen();
         }
 
+        [Then("the Contract Products List Screen is displayed")]
+        public async Task ThenTheContractProductsListScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheContractProductsListScreen();
+        }
+
+
         [Then(@"I am presented with the Estate Administrator Dashboard")]
         public async Task ThenIAmPresentedWithTheEstateAdministratorDashboard()
         {
@@ -216,7 +224,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
             {
                 operatorsList.Add((ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName"),
                     ReqnrollTableHelper.GetStringRowValue(tableRow, "RequireCustomMerchantNumber"),
-                    ReqnrollTableHelper.GetStringRowValue(tableRow, "RequireCustomTerminalNumber")));
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "RequireCustomTerminalNumber")));   
             }
 
             await this.UiHelpers.VerifyOperatorDetailsAreInTheList(operatorsList);
@@ -470,6 +478,26 @@ namespace EstateManagementUI.IntegrationTests.Steps
         [When("click the Save button")]
         public async Task WhenClickTheSaveButton() {
             await this.UiHelpers.ClickTheSaveNewOperatorButton();
+        }
+
+        [When("I click on the View Products Button for {string}")]
+        public async Task WhenIClickOnTheViewProductsButtonFor(string contractName) {
+            await this.UiHelpers.ClickTheViewProductsContractButton(contractName);
+        }
+
+        [Then("the following contract product details are in the list")]
+        public async Task ThenTheFollowingContractProductDetailsAreInTheList(DataTable dataTable)
+        {
+            List<(String, String, String,String)> contractProductsDescriptions = new List<(String, String, String, String)>();
+            foreach (DataTableRow tableRow in dataTable.Rows)
+            {
+                contractProductsDescriptions.Add((ReqnrollTableHelper.GetStringRowValue(tableRow, "ProductName"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "ProductType"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "DisplayText"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "Value")));
+            }
+
+            await this.UiHelpers.VerifyTheContractProductDetailsAreInTheList(contractProductsDescriptions);
         }
 
 

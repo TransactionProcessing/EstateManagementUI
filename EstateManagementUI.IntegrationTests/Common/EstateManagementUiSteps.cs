@@ -80,6 +80,11 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.VerifyPageTitle("View Contracts"); });
     }
 
+    public async Task VerifyOnTheContractProductsListScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("View Contract Products"); });
+    }
+
     public async Task VerifyOnTheNewProductScreen()
     {
         await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Contract Product Details"); });
@@ -196,6 +201,49 @@ public class EstateManagementUiHelpers{
                             foundRowCount.ShouldBe(contractDescriptions.Count);
                         },
                         TimeSpan.FromSeconds(120));
+    }
+
+    public async Task VerifyTheContractProductDetailsAreInTheList(List<(String, String, String, String)> contractProductDescriptions)
+    {
+        await Retry.For(async () => {
+                Int32 foundRowCount = 0;
+                IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+                IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
+
+                rows.Count.ShouldBe(contractProductDescriptions.Count + 1);
+                foreach ((String, String, String,String) contractProductDescription in contractProductDescriptions)
+                {
+                    IList<IWebElement> rowTD;
+                    foreach (IWebElement row in rows)
+                    {
+                        ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
+
+                        if (rowTH.Any())
+                        {
+                            // header row so skip
+                            continue;
+                        }
+
+                        rowTD = row.FindElements(By.TagName("td"));
+
+                        if (rowTD[0].Text == contractProductDescription.Item1)
+                        {
+                            // Compare other fields
+                            rowTD[0].Text.ShouldBe(contractProductDescription.Item1);
+                            rowTD[1].Text.ShouldBe(contractProductDescription.Item2);
+                            rowTD[2].Text.ShouldBe(contractProductDescription.Item3.ToString());
+                            rowTD[3].Text.ShouldBe(contractProductDescription.Item4.ToString());
+
+                        // We have found the row
+                        foundRowCount++;
+                            break;
+                        }
+                    }
+                }
+
+                foundRowCount.ShouldBe(contractProductDescriptions.Count);
+            },
+            TimeSpan.FromSeconds(120));
     }
 
     public async Task VerifyTheFeeDetailsAreInTheList(List<String> feeDescriptions)
@@ -580,6 +628,15 @@ public class EstateManagementUiHelpers{
         var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
         dropdownMenuButton.Click();
         IWebElement editButton = this.WebDriver.FindElement(By.Id($"{operatorName}Edit"));
+        editButton.Click();
+    }
+
+    public async Task ClickTheViewProductsContractButton(String contractName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractList"));
+        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        dropdownMenuButton.Click();
+        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{contractName}ViewProducts"));
         editButton.Click();
     }
 }

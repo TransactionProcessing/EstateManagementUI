@@ -1,5 +1,8 @@
-﻿@using EstateManagementUI.ViewModels
-@model EstateManagementUI.Pages.Contract.ContractsList
+﻿@using EstateManagementUI.Pages.Shared
+@using EstateManagementUI.ViewModels
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ContractsList
 
 @{
     string GetSorting(ContractSorting sorting) =>
@@ -38,16 +41,17 @@
             </td>
             <td class="col-1">
             </td>
-            @* <td class="align-middle text-end">
-                @{
-                    var menuItems = new TableDropdownItem[]
-                    {
-                        new("Edit", () => Model.Edit(product.Id))
-                    };
-                }
+                <td class="align-middle text-end">
+                    @{
+                        TableDropdownItem[] menuItems = new TableDropdownItem[]
+                        {
+                            new("Edit", () => Model.Edit(@contractModel.ContractId), $@"{contractModel.Description}Edit"),
+                            new("View Products", () => Model.ViewProducts(@contractModel.ContractId), $@"{contractModel.Description}ViewProducts")
+                        };
+                    }
 
-                <partial name="TableDropdown" model="@menuItems" />
-            </td> *@
+                    <partial name="TableDropdown" model="@menuItems" />
+                </td>
         </tr>
     }
     </tbody>

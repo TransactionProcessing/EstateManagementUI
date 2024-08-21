@@ -1,15 +1,12 @@
-using Hydro;
-using Microsoft.AspNetCore.Authentication;
-using System.Security.Claims;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
-using EstateManagementUI.BusinessLogic.PermissionService.Constants;
-using EstateManagementUI.Pages.Merchant;
+using Microsoft.AspNetCore.Mvc;
 
-namespace EstateManagementUI.Pages.Contract
+namespace EstateManagementUI.Pages.Contract.Contracts
 {
     public class ContractsList : SecureHydroComponent
     {
@@ -23,11 +20,13 @@ namespace EstateManagementUI.Pages.Contract
 
         public List<ViewModels.Contract> Contracts { get; set; }
 
-        public override async Task MountAsync() {
+        public override async Task MountAsync()
+        {
             await this.GetContracts();
         }
 
-        private async Task GetContracts() {
+        private async Task GetContracts()
+        {
             await this.PopulateTokenAndEstateId();
 
             Queries.GetContractsQuery query = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
@@ -54,7 +53,7 @@ namespace EstateManagementUI.Pages.Contract
                 (ContractSorting.Operator, Ascending: true) => resultList.OrderByDescending(p => p.OperatorName),
                 (ContractSorting.NumberOfProducts, Ascending: false) => resultList.OrderBy(p => p.NumberOfProducts),
                 (ContractSorting.NumberOfProducts, Ascending: true) => resultList.OrderByDescending(p => p.NumberOfProducts),
-                
+
                 _ => resultList.AsEnumerable()
             };
 
@@ -64,15 +63,26 @@ namespace EstateManagementUI.Pages.Contract
 
         public async Task Sort(ContractSorting value)
         {
-            Sorting = (Column: value, Ascending: Sorting.Column == value && !Sorting.Ascending);
+            this.Sorting = (Column: value, Ascending: this.Sorting.Column == value && !this.Sorting.Ascending);
 
             await this.GetContracts();
         }
 
         public (ContractSorting Column, bool Ascending) Sorting { get; set; }
+
+        public async Task Edit(Guid contractId)
+        {
+
+        }
+
+        public async Task ViewProducts(Guid contractId)
+        {
+            this.Location(this.Url.Page("/Contract/ContractProducts", new { ContractId = contractId }));
+        }
     }
 
-    public enum ContractSorting {
+    public enum ContractSorting
+    {
         Description,
         Operator,
         NumberOfProducts

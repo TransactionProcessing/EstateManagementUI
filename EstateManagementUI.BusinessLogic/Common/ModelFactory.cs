@@ -108,6 +108,43 @@ public static class ModelFactory
         return models;
     }
 
+    public static ContractModel ConvertFrom(ContractResponse contract) {
+        ContractModel model = new ContractModel {
+            Description = contract.Description,
+            OperatorName = contract.OperatorName,
+            ContractId = contract.ContractId,
+        };
+
+        if (contract.Products != null && contract.Products.Any()) {
+            model.ContractProducts = new List<ContractProductModel>();
+            model.NumberOfProducts = contract.Products.Count;
+            // Convert the products as well
+            foreach (ContractProduct contractProduct in contract.Products) {
+                model.ContractProducts.Add(ConvertFrom(contractProduct));
+            }
+        }
+        
+        return model;
+    }
+
+    public static ContractProductModel ConvertFrom(ContractProduct contractProduct) {
+        ContractProductModel model = new ContractProductModel {
+            ProductName = contractProduct.Name,
+            ContractProductId = contractProduct.ProductId,
+            DisplayText = contractProduct.DisplayText,
+            ProductType = contractProduct.ProductType.ToString(),
+            Value = contractProduct.Value.HasValue ? contractProduct.Value.Value.ToString() : "Variable",
+        };
+
+        if (contractProduct.TransactionFees != null && contractProduct.TransactionFees.Any()) {
+            // TODO: Convert the fees
+            model.NumberOfFees = contractProduct.TransactionFees.Count;
+        }
+
+        return model;
+
+    }
+
     public static List<ContractModel> ConvertFrom(List<ContractResponse> contracts)
     {
         if (contracts == null || contracts.Any() == false)
@@ -118,13 +155,7 @@ public static class ModelFactory
         List<ContractModel> models = new List<ContractModel>();
         foreach (ContractResponse contract in contracts)
         {
-            models.Add(new ContractModel
-            {
-                Description = contract.Description,
-                NumberOfProducts = contract.Products.Count(),
-                OperatorName = contract.OperatorName,
-                ContractId = contract.ContractId
-            });
+            models.Add(ConvertFrom(contract));
         }
 
         return models;

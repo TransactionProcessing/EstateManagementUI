@@ -80,7 +80,7 @@ Background:
 	Then I am presented with the Estate Administrator Dashboard
 
 @PRTest
-Scenario: View Contract List
+Scenario: Contract PR Test
 
 	Given I click on the My Contracts sidebar option
 	Then I am presented with the Contracts List Screen
@@ -89,3 +89,9 @@ Scenario: View Contract List
 	| Operator 1 Contract | Test Operator 1 | 2        |
 	| Operator 2 Contract | Test Operator 2 | 3        |
 	| Operator 3 Contract | Test Operator 3 | 1        |
+	When I click on the View Products Button for 'Operator 1 Contract'
+	Then the Contract Products List Screen is displayed
+	And the following contract product details are in the list
+	| ProductName      | DisplayText | Value  | ProductType |
+	| 100 KES Topup    | 100 KES     | 100.00 | MobileTopup |
+	| Variable Topup 1 | Custom      | Variable       | MobileTopup |
