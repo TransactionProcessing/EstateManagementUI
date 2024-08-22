@@ -124,6 +124,11 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheContractProductsListScreen();
         }
 
+        [Then("the Contract Products Transaction Fees List Screen is displayed")]
+        public async Task ThenTheContractProductsTransactionFeesListScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheContractProductsFeesListScreen();
+        }
 
         [Then(@"I am presented with the Estate Administrator Dashboard")]
         public async Task ThenIAmPresentedWithTheEstateAdministratorDashboard()
@@ -482,8 +487,15 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
         [When("I click on the View Products Button for {string}")]
         public async Task WhenIClickOnTheViewProductsButtonFor(string contractName) {
-            await this.UiHelpers.ClickTheViewProductsContractButton(contractName);
+            await this.UiHelpers.ClickTheViewContractProductsButton(contractName);
         }
+
+        [When("I click on the View Fees Button for {string}")]
+        public async Task WhenIClickOnTheViewFeesButtonFor(string productName)
+        {
+            await this.UiHelpers.ClickTheViewContractProductFeesButton(productName);
+        }
+
 
         [Then("the following contract product details are in the list")]
         public async Task ThenTheFollowingContractProductDetailsAreInTheList(DataTable dataTable)

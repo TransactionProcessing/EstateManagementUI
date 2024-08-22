@@ -56,7 +56,7 @@
                 @{
                     TableDropdownItem[] menuItems = new TableDropdownItem[] {
                         //new("Edit", () => Model.Edit(@contractModel.ContractId), $@"{contractModel.Description}Edit"),
-                        //new("View Products", () => Model.ViewProducts(@contractModel.ContractId), $@"{contractModel.Description}Edit")
+                new("View Fees", () => Model.ViewProductFees(@contractProductModel.ContractProductId), $@"{@contractProductModel.ProductName.Replace(" ", "")}ViewFees")
                     };
                 }
 

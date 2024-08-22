@@ -428,6 +428,12 @@ await this.FeatureBackgroundAsync();
 #line 94
  await testRunner.AndAsync("the following contract product details are in the list", ((string)(null)), table14, "And ");
 #line hidden
+#line 98
+ await testRunner.WhenAsync("I click on the View Fees Button for \'100 KES Topup\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 99
+ await testRunner.ThenAsync("the Contract Products Transaction Fees List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
             }
             await this.ScenarioCleanupAsync();
         }

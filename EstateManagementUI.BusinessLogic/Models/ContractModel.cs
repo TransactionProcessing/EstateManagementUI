@@ -22,4 +22,15 @@ public record ContractProductModel {
     public String DisplayText { get; set; }
     public String Value { get; set; }
     public Int32 NumberOfFees { get; set; }
+
+    public List<ContractProductTransactionFeeModel> ContractProductTransactionFees { get; set; }
+}
+
+[ExcludeFromCodeCoverage]
+public record ContractProductTransactionFeeModel {
+    public Guid ContractProductTransactionFeeId { get; set; }
+    public String Description { get; set; }
+    public String FeeType { get; set; }
+    public String CalculationType { get; set; }
+    public Decimal Value { get; set; }
 }

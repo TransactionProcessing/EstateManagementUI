@@ -123,6 +123,9 @@ public static class ModelFactory
                 model.ContractProducts.Add(ConvertFrom(contractProduct));
             }
         }
+        else {
+            model.ContractProducts = new List<ContractProductModel>();
+        }
         
         return model;
     }
@@ -139,10 +142,27 @@ public static class ModelFactory
         if (contractProduct.TransactionFees != null && contractProduct.TransactionFees.Any()) {
             // TODO: Convert the fees
             model.NumberOfFees = contractProduct.TransactionFees.Count;
+            model.ContractProductTransactionFees = new List<ContractProductTransactionFeeModel>();
+            foreach (ContractProductTransactionFee contractProductTransactionFee in contractProduct.TransactionFees) {
+                model.ContractProductTransactionFees.Add(ConvertFrom(contractProductTransactionFee));
+            }
         }
-
+        else {
+            model.ContractProductTransactionFees = new List<ContractProductTransactionFeeModel>();
+        }
         return model;
 
+    }
+
+    public static ContractProductTransactionFeeModel ConvertFrom(ContractProductTransactionFee transactionFee) {
+        ContractProductTransactionFeeModel model = new ContractProductTransactionFeeModel {
+            Description = transactionFee.Description,
+            Value = transactionFee.Value,
+            CalculationType = transactionFee.CalculationType.ToString(),
+            ContractProductTransactionFeeId = transactionFee.TransactionFeeId,
+            FeeType = transactionFee.FeeType.ToString()
+        };
+        return model;
     }
 
     public static List<ContractModel> ConvertFrom(List<ContractResponse> contracts)
