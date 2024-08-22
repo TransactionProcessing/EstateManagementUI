@@ -1,0 +1,62 @@
+﻿@using EstateManagementUI.Pages.Shared
+@using EstateManagementUI.ViewModels
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Pages.Contract.ContractProductTransactionFee.ContractProductTransactionFeeList
+
+@{
+    string GetSorting(ContractProductTransactionFeeSorting sorting) =>
+        Model.Sorting.Column == sorting
+            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
+            : null;
+}
+
+<table class="table table-sm" id="contractProductList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th hydro-action="Sort" param-value="@ContractProductTransactionFeeSorting.Description" role="button" class="col-2">
+                Description @GetSorting(ContractProductTransactionFeeSorting.Description)
+            </th>
+            <th hydro-action="Sort" param-value="@ContractProductTransactionFeeSorting.CalculationType" role="button" class="col-2">
+                Calculation Type @GetSorting(ContractProductTransactionFeeSorting.CalculationType)
+            </th>
+            <th hydro-action="Sort" param-value="@ContractProductTransactionFeeSorting.FeeType" role="button" class="col-2">
+                Fee Type @GetSorting(ContractProductTransactionFeeSorting.FeeType)
+            </th>
+            <th hydro-action="Sort" param-value="@ContractProductTransactionFeeSorting.Value" role="button" class="col-1">
+                Value @GetSorting(ContractProductTransactionFeeSorting.Value)
+            </th>
+            <th class="col-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var contractProductTransactionFeeModel in Model.ContractProductTransactionFees) {
+        <tr class="hover d-flex">
+            <td class="col-2">
+                    @contractProductTransactionFeeModel.Description
+            </td>
+            <td class="col-2">
+                    @contractProductTransactionFeeModel.CalculationType
+            </td>
+            <td class="col-2">
+                    @contractProductTransactionFeeModel.FeeType
+            </td>
+            <td class="col-1">
+                    @contractProductTransactionFeeModel.Value
+            </td>
+            <td class="col-1">
+            </td>
+            <td class="align-middle text-end">
+                @{
+                    TableDropdownItem[] menuItems = new TableDropdownItem[] {
+                        //new("Edit", () => Model.Edit(@contractModel.ContractId), $@"{contractModel.Description}Edit"),
+                        //new("View Products", () => Model.ViewProducts(@contractModel.ContractId), $@"{contractModel.Description}Edit")
+                    };
+                }
+
+                <partial name="TableDropdown" model="@menuItems"/>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

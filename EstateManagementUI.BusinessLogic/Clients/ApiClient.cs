@@ -95,7 +95,7 @@ public class ApiClient : IApiClient {
         async Task<Result<ContractModel>> ClientMethod()
         {
             ContractResponse? contract = await this.EstateClient.GetContract(accessToken, estateId, contractId, cancellationToken);
-
+            
             return ModelFactory.ConvertFrom(contract);
         }
 

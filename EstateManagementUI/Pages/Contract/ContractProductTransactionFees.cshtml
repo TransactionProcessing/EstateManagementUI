@@ -1,0 +1,8 @@
+﻿@page
+@model EstateManagementUI.Pages.Contract.ContractProductTransactionFees
+@{
+    ViewData["Title"] = "View Contract Product Fees";
+    Layout = "_Layout";
+}
+
+<hydro name="ContractProductTransactionFeeList" param-contractId="@Model.ContractId" param-contractProductId="@Model.ContractProductId" />

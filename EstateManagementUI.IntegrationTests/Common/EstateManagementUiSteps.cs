@@ -85,6 +85,10 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.VerifyPageTitle("View Contract Products"); });
     }
 
+    public async Task VerifyOnTheContractProductsFeesListScreen() {
+        await Retry.For(async () => { this.VerifyPageTitle("View Contract Product Fees"); });
+    }
+
     public async Task VerifyOnTheNewProductScreen()
     {
         await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Contract Product Details"); });
@@ -631,12 +635,21 @@ public class EstateManagementUiHelpers{
         editButton.Click();
     }
 
-    public async Task ClickTheViewProductsContractButton(String contractName)
+    public async Task ClickTheViewContractProductsButton(String contractName)
     {
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractList"));
         var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
         dropdownMenuButton.Click();
         IWebElement editButton = this.WebDriver.FindElement(By.Id($"{contractName}ViewProducts"));
+        editButton.Click();
+    }
+
+    public async Task ClickTheViewContractProductFeesButton(String productName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        dropdownMenuButton.Click();
+        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{productName.Replace(" ", "")}ViewFees"));
         editButton.Click();
     }
 }

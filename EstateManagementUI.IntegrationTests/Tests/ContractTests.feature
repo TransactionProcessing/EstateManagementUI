@@ -61,12 +61,12 @@ Background:
 	| Test Estate | Test Operator 3 | Operator 3 Contract |
 
 	Given I have created the following contract products
-	| EstateName  | OperatorName     | ContractDescription | ProductName      | DisplayText | Value  | ProductType |
-	| Test Estate | Test Operator 1  | Operator 1 Contract | 100 KES Topup    | 100 KES     | 100.00 | MobileTopup |
-	| Test Estate | Test Operator 1  | Operator 1 Contract | Variable Topup 1 | Custom      |        | MobileTopup |
-	| Test Estate | Test Operator 2  | Operator 2 Contract | 200 KES Topup    | 200 KES     | 500.00 | MobileTopup |
-	| Test Estate | Test Operator 2  | Operator 2 Contract | 500 KES Topup    | 500 KES     | 500.00 | MobileTopup |
-	| Test Estate | Test Operator 2  | Operator 2 Contract | Variable Topup 1 | Custom      |        | MobileTopup |
+	| EstateName  | OperatorName    | ContractDescription | ProductName      | DisplayText | Value  | ProductType |
+	| Test Estate | Test Operator 1 | Operator 1 Contract | 100 KES Topup    | 100 KES     | 100.00 | MobileTopup |
+	| Test Estate | Test Operator 1 | Operator 1 Contract | Variable Topup 1 | Custom      |        | MobileTopup |
+	| Test Estate | Test Operator 2 | Operator 2 Contract | 200 KES Topup    | 200 KES     | 500.00 | MobileTopup |
+	| Test Estate | Test Operator 2 | Operator 2 Contract | 500 KES Topup    | 500 KES     | 500.00 | MobileTopup |
+	| Test Estate | Test Operator 2 | Operator 2 Contract | Variable Topup 1 | Custom      |        | MobileTopup |
 	| Test Estate | Test Operator 3 | Operator 3 Contract | 50 KES Topup     | 50 KES      | 50.00  | MobileTopup |
 	
 	Given I am on the application home page
@@ -92,6 +92,9 @@ Scenario: Contract PR Test
 	When I click on the View Products Button for 'Operator 1 Contract'
 	Then the Contract Products List Screen is displayed
 	And the following contract product details are in the list
-	| ProductName      | DisplayText | Value  | ProductType |
-	| 100 KES Topup    | 100 KES     | 100.00 | MobileTopup |
-	| Variable Topup 1 | Custom      | Variable       | MobileTopup |
+	| ProductName      | DisplayText | Value    | ProductType |
+	| 100 KES Topup    | 100 KES     | 100.00   | MobileTopup |
+	| Variable Topup 1 | Custom      | Variable | MobileTopup |
+	When I click on the View Fees Button for '100 KES Topup'
+	Then the Contract Products Transaction Fees List Screen is displayed
+	#And the following contract product transaction fee details are in the list

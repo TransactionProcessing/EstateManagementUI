@@ -9,6 +9,8 @@ using MediatR;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Contracts;
 
 namespace EstateManagementUI.Pages.Contract.ContractProduct
 {
@@ -46,6 +48,7 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
             {
                 resultList.Add(new ViewModels.ContractProduct
                 {
+                    ContractProductId = responseContractProduct.ContractProductId,
                     DisplayText = responseContractProduct.DisplayText,
                     NumberOfFees = responseContractProduct.NumberOfFees,
                     ProductName = responseContractProduct.ProductName,
@@ -89,7 +92,7 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
 
         public async Task ViewProductFees(Guid contractProductId)
         {
-
+            this.Location(this.Url.Page("/Contract/ContractProductTransactionFees", new { ContractId = this.ContractId, ContractProductId = contractProductId }));
         }
     }
 
