@@ -1,0 +1,126 @@
+﻿name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  buildlinux:
+    name: "Release"
+    env:
+        ASPNETCORE_ENVIRONMENT: "Production"
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2.3.4
+    
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+    - name: Restore Nuget Packages
+      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+
+    - name: Build Code
+      run: dotnet build EstateManagementUI.sln --configuration Release
+
+    - name: Run Unit Tests
+      run: |
+        echo "ASPNETCORE_ENVIRONMENT are > ${ASPNETCORE_ENVIRONMENT}"
+        dotnet test "EstateManagementUI.BusinessLogic.Tests\EstateManagementUI.BusinessLogic.Tests.csproj"  
+   
+    - name: Publish Images to Docker Hub - Pre Release
+      if: ${{ github.event.release.prerelease == true }} 
+      run: |
+        docker build . --file EstateManagementUI/Dockerfile --tag stuartferguson/estatemanagementui:dev
+        docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
+        docker push stuartferguson/estatemanagementui:dev
+
+    - name: Publish Images to Docker Hub - Formal Release
+      if: ${{ github.event.release.prerelease == false }} 
+      run: |
+        docker build . --file EstateManagementUI/Dockerfile --tag stuartferguson/estatemanagementui:latest
+        docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
+        docker push stuartferguson/estatemanagementui:latest
+    
+    - name: Publish UI
+      if: ${{ github.event.release.prerelease == false }} 
+      run: dotnet publish "EstateManagementUI\EstateManagementUI.csproj" --configuration Release --output publishOutput -r win-x64 --self-contained             
+
+    - name: Build Release Package
+      run: |
+         cd /home/runner/work/EstateManagementUI/EstateManagementUI/publishOutput
+         zip -r ../estatemanagementui.zip ./*
+
+    - name: Upload the artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: estatemanagementui
+        path: estatemanagementui.zip    
+        
+  deploystaging:
+    runs-on: stagingserver
+    needs: buildlinux
+    environment: staging
+    name: "Deploy to Staging"
+    
+    steps:
+      - name: Download the artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: estatemanagementui
+
+      - name: Remove existing  Windows service
+        run: |
+          $serviceName = "Transaction Processing - Estate Management UI"
+          # Check if the service exists
+          if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+            Stop-Service -Name $serviceName
+            sc.exe delete $serviceName
+          }
+
+      - name: Unzip the files
+        run: |
+          Expand-Archive -Path estatemanagementui.zip -DestinationPath "C:\txnproc\transactionprocessing\estatemanagementui" -Force
+      
+      - name: Install as a Windows service
+        run: |
+          $serviceName = "Transaction Processing - Estate Management UI"
+          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.exe"
+                   
+          New-Service -Name $serviceName -BinaryPathName $servicePath -Description "Transaction Processing - Estate Management UI" -DisplayName "Transaction Processing - Estate Management UI" -StartupType Automatic
+          Start-Service -Name $serviceName    
+
+  deployproduction:
+    runs-on: productionserver
+    needs: [buildlinux, deploystaging]
+    environment: production
+    name: "Deploy to Production"
+    
+    steps:
+      - name: Download the artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: estatemanagementui
+
+      - name: Remove existing  Windows service
+        run: |
+          $serviceName = "Transaction Processing - Estate Management UI"
+          # Check if the service exists
+          if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+            Stop-Service -Name $serviceName
+            sc.exe delete $serviceName
+          }
+
+      - name: Unzip the files
+        run: |
+          Expand-Archive -Path estatemanagementui.zip -DestinationPath "C:\txnproc\transactionprocessing\estatemanagementui" -Force
+      
+      - name: Install as a Windows service
+        run: |
+          $serviceName = "Transaction Processing - Estate Management UI"
+          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.exe"
+                   
+          New-Service -Name $serviceName -BinaryPathName $servicePath -Description "Transaction Processing - Estate Management UI" -DisplayName "Transaction Processing - Estate Management UI" -StartupType Automatic
+          Start-Service -Name $serviceName 
