@@ -1,4 +1,5 @@
-﻿using System.Net.Mime;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Mime;
 using System.Reflection;
 using EstateAdministrationUI.TokenManagement;
 using EstateManagementUI.BusinessLogic.Clients;
@@ -15,6 +16,7 @@ using Shared.General;
 
 namespace EstateManagementUI.Bootstrapper;
 
+[ExcludeFromCodeCoverage]
 public class AuthenticationRegistry : ServiceRegistry {
     public AuthenticationRegistry() {
         Boolean httpClientIgnoreCertificateErrors =

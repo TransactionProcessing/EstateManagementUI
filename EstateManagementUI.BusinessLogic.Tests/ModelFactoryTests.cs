@@ -7,6 +7,7 @@ using EstateManagementUI.BusinessLogic.Common;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using SimpleResults;
 using EstateManagement.DataTransferObjects.Responses.Contract;
+using FileProcessor.DataTransferObjects.Responses;
 
 namespace EstateManagementUI.BusinessLogic.Tests {
     public class ModelFactoryTests {
@@ -139,8 +140,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_MerchantResponsesList_NullList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_MerchantResponsesList_NullList_ModelIsConverted() {
             List<MerchantResponse> response = null;
 
             List<MerchantModel> models = ModelFactory.ConvertFrom(response);
@@ -149,8 +149,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_MerchantResponsesList_EmptyList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_MerchantResponsesList_EmptyList_ModelIsConverted() {
             List<MerchantResponse> response = new List<MerchantResponse>();
 
             List<MerchantModel> models = ModelFactory.ConvertFrom(response);
@@ -159,14 +158,12 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_OperatorResponsesList_ModelIsConverted()
-        {
-           List<OperatorResponse> response = TestData.OperatorResponses;
+        public void ModelFactory_ConvertFrom_OperatorResponsesList_ModelIsConverted() {
+            List<OperatorResponse> response = TestData.OperatorResponses;
 
             List<OperatorModel> models = ModelFactory.ConvertFrom(response);
 
-            foreach (OperatorResponse operatorResponse in response)
-            {
+            foreach (OperatorResponse operatorResponse in response) {
                 OperatorModel? model = models.SingleOrDefault(m => m.OperatorId == operatorResponse.OperatorId);
                 model.ShouldNotBeNull();
                 model.Name.ShouldBe(operatorResponse.Name);
@@ -176,8 +173,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_OperatorResponsesList_NullList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_OperatorResponsesList_NullList_ModelIsConverted() {
             List<OperatorResponse> response = null;
 
             List<OperatorModel> models = ModelFactory.ConvertFrom(response);
@@ -186,8 +182,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_OperatorResponsesList_EmptyList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_OperatorResponsesList_EmptyList_ModelIsConverted() {
             List<OperatorResponse> response = new List<OperatorResponse>();
 
             List<OperatorModel> models = ModelFactory.ConvertFrom(response);
@@ -196,14 +191,22 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_ContractResponsesList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_OperatorResponse_OperatorIsNull_ModelIsConverted() {
+            OperatorResponse response = null;
+
+            OperatorModel model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractResponsesList_ModelIsConverted() {
             List<ContractResponse> response = TestData.ContractResponses;
 
             List<ContractModel> models = ModelFactory.ConvertFrom(response);
 
-            foreach (ContractResponse contractResponse in response)
-            {
+            foreach (ContractResponse contractResponse in response) {
                 ContractModel? model = models.SingleOrDefault(m => m.ContractId == contractResponse.ContractId);
                 model.ShouldNotBeNull();
                 model.Description.ShouldBe(contractResponse.Description);
@@ -213,8 +216,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_ContractResponsesList_NullList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_ContractResponsesList_NullList_ModelIsConverted() {
             List<ContractResponse> response = null;
 
             List<ContractModel> models = ModelFactory.ConvertFrom(response);
@@ -223,8 +225,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_ContractResponsesList_EmptyList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_ContractResponsesList_EmptyList_ModelIsConverted() {
             List<ContractResponse> response = new List<ContractResponse>();
 
             List<ContractModel> models = ModelFactory.ConvertFrom(response);
@@ -232,5 +233,91 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             models.ShouldBeEmpty();
         }
 
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractResponse_NullProducts_ModelIsConverted() {
+            ContractResponse response = TestData.ContractResponseNullProducts;
+
+            ContractModel model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldNotBeNull();
+            model.Description.ShouldBe(response.Description);
+            model.OperatorName.ShouldBe(response.OperatorName);
+            model.NumberOfProducts.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractResponse_EmptyProducts_ModelIsConverted() {
+            ContractResponse response = TestData.ContractResponseEmptyProducts;
+
+            ContractModel model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldNotBeNull();
+            model.Description.ShouldBe(response.Description);
+            model.OperatorName.ShouldBe(response.OperatorName);
+            model.NumberOfProducts.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ContractProduct_ModelIsConverted() {
+            ContractProduct contractProduct = TestData.ContractProduct1;
+
+            var model = ModelFactory.ConvertFrom(contractProduct);
+            model.ShouldNotBeNull();
+            model.Value.ShouldBe(contractProduct.Value.ToString());
+            model.DisplayText.ShouldBe(contractProduct.DisplayText);
+            model.ContractProductId.ShouldBe(contractProduct.ProductId);
+            model.ProductName.ShouldBe(contractProduct.Name);
+            model.ProductType.ShouldBe(contractProduct.ProductType.ToString());
+            model.NumberOfFees.ShouldBe(contractProduct.TransactionFees.Count);
+
+            foreach (ContractProductTransactionFee contractProductTransactionFee in contractProduct.TransactionFees) {
+                ContractProductTransactionFeeModel? modelFee = model.ContractProductTransactionFees.SingleOrDefault(p =>
+                    p.ContractProductTransactionFeeId == contractProductTransactionFee.TransactionFeeId);
+                modelFee.ShouldNotBeNull();
+                modelFee.Value.ShouldBe(contractProductTransactionFee.Value);
+                modelFee.CalculationType.ShouldBe(contractProductTransactionFee.CalculationType.ToString());
+                modelFee.Description.ShouldBe(contractProductTransactionFee.Description);
+                modelFee.FeeType.ShouldBe(contractProductTransactionFee.FeeType.ToString());
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_FileImportLogList_ModelIsConverted() {
+            FileImportLogList fileImportLogList = TestData.FileImportLogList;
+
+            List<FileImportLogModel> model = ModelFactory.ConvertFrom(fileImportLogList);
+
+            model.ShouldNotBeNull();
+            model.Count.ShouldBe(fileImportLogList.FileImportLogs.Count);
+
+            foreach (FileImportLog fileImportLog in fileImportLogList.FileImportLogs) {
+                FileImportLogModel? fileImportLogModel =
+                    model.SingleOrDefault(m => m.FileImportLogId == fileImportLog.FileImportLogId);
+                fileImportLogModel.ShouldNotBeNull();
+                fileImportLogModel.ImportLogDateTime.ShouldBe(fileImportLog.ImportLogDateTime);
+                fileImportLogModel.FileCount.ShouldBe(fileImportLog.FileCount);
+                fileImportLogModel.ImportLogDate.ShouldBe(fileImportLog.ImportLogDate);
+                fileImportLogModel.ImportLogTime.ShouldBe(fileImportLog.ImportLogTime);
+
+                foreach (FileImportLogFile fileImportLogFile in fileImportLog.Files) {
+                    FileImportLogFileModel? fileModel =
+                        fileImportLogModel.Files.SingleOrDefault(f => f.FileId == fileImportLogFile.FileId);
+                    fileModel.ShouldNotBeNull();
+                    fileModel.MerchantId.ShouldBe(fileImportLogFile.MerchantId);
+                    fileModel.FilePath.ShouldBe(fileImportLogFile.FilePath);
+                    fileModel.OriginalFileName.ShouldBe(fileImportLogFile.OriginalFileName);
+                    fileModel.FileUploadedDateTime.ShouldBe(fileImportLogFile.FileUploadedDateTime);
+                    fileModel.UserId.ShouldBe(fileImportLogFile.UserId);
+                }
+            }
+        }
+        
+        [Fact]
+        public void ModelFactory_ConvertFrom_FileImportLogList_NullInput_ModelIsConverted() {
+            FileImportLogList fileImportLogList = null;
+            List<FileImportLogModel> model = ModelFactory.ConvertFrom(fileImportLogList);
+            model.ShouldNotBeNull();
+            model.ShouldBeEmpty();
+        }
     }
 }

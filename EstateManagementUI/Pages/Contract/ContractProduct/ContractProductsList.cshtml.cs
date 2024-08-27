@@ -8,9 +8,9 @@ using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Pages.Merchant;
-using EstateManagementUI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Contracts;
+using EstateManagementUI.BusinessLogic.PermissionService;
 
 namespace EstateManagementUI.Pages.Contract.ContractProduct
 {

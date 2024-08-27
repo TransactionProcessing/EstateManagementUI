@@ -4,8 +4,5 @@ namespace EstateManagementUI.Pages.FileProcessing
 {
     public class IndexModel : PageModel
     {
-        public void OnGet()
-        {
-        }
     }
 }

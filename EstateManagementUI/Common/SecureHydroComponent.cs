@@ -4,6 +4,7 @@ using Hydro;
 using Microsoft.AspNetCore.Authentication;
 using SimpleResults;
 using System.Security.Claims;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using Hydro.Utils;
 
 namespace EstateManagementUI.Common;
@@ -24,8 +25,8 @@ public class SecureHydroComponent : HydroComponent {
         this.PageName = pageName;
     }
 
-    protected String AccessToken;
-    protected Guid EstateId;
+    public String AccessToken;
+    public Guid EstateId;
 
     protected async Task PopulateTokenAndEstateId() {
         if (this.HttpContext != null)

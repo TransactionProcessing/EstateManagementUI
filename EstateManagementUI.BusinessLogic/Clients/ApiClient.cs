@@ -6,6 +6,8 @@ using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.Models;
+using FileProcessor.Client;
+using FileProcessor.DataTransferObjects.Responses;
 using Shared.Logger;
 using SimpleResults;
 
@@ -13,11 +15,30 @@ namespace EstateManagementUI.BusinessLogic.Clients;
 
 public class ApiClient : IApiClient {
     private readonly IEstateClient EstateClient;
+    private readonly IFileProcessorClient FileProcessorClient;
 
-    public ApiClient(IEstateClient estateClient) {
+    public ApiClient(IEstateClient estateClient, IFileProcessorClient fileProcessorClient) {
         this.EstateClient = estateClient;
+        this.FileProcessorClient = fileProcessorClient;
     }
-        
+
+    public async Task<Result<List<FileImportLogModel>>> GetFileImportLogList(String accessToken,
+                                                                            Guid actionId,
+                                                                            Guid estateId,
+                                                                            Guid merchantId,
+                                                                            DateTime startDate,
+                                                                            DateTime endDate,
+                                                                            CancellationToken cancellationToken) {
+        async Task<Result<List<FileImportLogModel>>> ClientMethod() {
+            FileImportLogList? fileImportLogs = await this.FileProcessorClient.GetFileImportLogs(accessToken, estateId,
+                startDate, endDate, merchantId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(fileImportLogs);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     public async Task<EstateModel> GetEstate(String accessToken,
                                              Guid actionId,
                                              Guid estateId,

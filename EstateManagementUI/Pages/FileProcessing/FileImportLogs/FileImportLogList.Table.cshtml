@@ -1,0 +1,50 @@
+﻿@using EstateManagementUI.Pages.Shared
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model FileImportLogList
+
+@{
+    string GetSorting(FileImportLogListSorting sorting) =>
+        Model.Sorting.Column == sorting
+            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
+            : null;
+}
+
+<table class="table table-sm" id="contractList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th hydro-action="Sort" param-value="@FileImportLogListSorting.ImportLogDate" role="button" class="col-3">
+                Date @GetSorting(FileImportLogListSorting.ImportLogDate)
+            </th>
+            <th hydro-action="Sort" param-value="@FileImportLogListSorting.NumberOfFiles" role="button" class="col-2">
+                Number of Files @GetSorting(FileImportLogListSorting.NumberOfFiles)
+            </th>
+            <th class="col-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (ViewModels.FileImportLogList fileImportLogModel in Model.FileImportLogs)
+    {
+            <tr class="hover d-flex">
+                <td class="col-3">
+                    @fileImportLogModel.ImportLogDate.ToString("dd/MM/yyyy")
+            </td>
+            <td class="col-2">
+                    @fileImportLogModel.FileCount
+            </td>
+            <td class="col-1">
+            </td>
+                <td class="align-middle text-end">
+                    @{
+                        TableDropdownItem[] menuItems = new TableDropdownItem[]
+                        {
+                            new("View Files", () => Model.ViewFiles(@fileImportLogModel.FileImportLogId), $@"{fileImportLogModel.ImportLogDate}ViewFiles")
+                        };
+                    }
+
+                    <partial name="TableDropdown" model="@menuItems" />
+                </td>
+        </tr>
+    }
+    </tbody>
+</table>

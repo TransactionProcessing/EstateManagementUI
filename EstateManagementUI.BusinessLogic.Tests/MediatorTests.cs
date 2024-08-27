@@ -18,11 +18,16 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         private IMediator mediator;
 
         public MediatorTests() {
+            // Queries
             this.Requests.Add(TestData.GetEstateQuery);
             this.Requests.Add(TestData.GetMerchantsQuery);
             this.Requests.Add(TestData.GetOperatorsQuery);
             this.Requests.Add(TestData.GetOperatorQuery);
             this.Requests.Add(TestData.GetContractsQuery);
+            this.Requests.Add(TestData.GetContractQuery);
+            this.Requests.Add(TestData.GetFileImportLogsListQuery);
+
+            // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);
             this.Requests.Add(TestData.UpdateOperatorCommand);
 

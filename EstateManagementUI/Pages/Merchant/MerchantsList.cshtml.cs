@@ -6,6 +6,7 @@ using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 namespace EstateManagementUI.Pages.Merchant

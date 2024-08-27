@@ -3,8 +3,15 @@ using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Clients
 {
-    public interface IApiClient
-    {
+    public interface IApiClient {
+        Task<Result<List<FileImportLogModel>>> GetFileImportLogList(String accessToken,
+                                                                    Guid actionId,
+                                                                    Guid estateId,
+                                                                    Guid merchantId,
+                                                                    DateTime startDate,
+                                                                    DateTime endDate,
+                                                                    CancellationToken cancellationToken);
+
         Task<EstateModel> GetEstate(String accessToken,
                                     Guid actionId,
                                     Guid estateId,

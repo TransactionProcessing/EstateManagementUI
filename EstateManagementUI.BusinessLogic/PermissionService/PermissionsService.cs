@@ -1,9 +1,10 @@
-﻿using EstateManagementUI.BusinessLogic.PermissionService;
-using Shared.General;
+﻿using Shared.General;
 using SimpleResults;
+using System.Diagnostics.CodeAnalysis;
 
-namespace EstateManagementUI.BusinessLogic.Clients;
+namespace EstateManagementUI.BusinessLogic.PermissionService;
 
+[ExcludeFromCodeCoverage]
 public class PermissionsService : IPermissionsService {
     private readonly IPermissionsRepository PermissionsRepository;
 

@@ -1,5 +1,8 @@
-﻿namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
+
+[ExcludeFromCodeCoverage]
 public class ApplicationSections
 {
     public const string Dashboard = "Dashboard";
