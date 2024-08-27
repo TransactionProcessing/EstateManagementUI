@@ -1,5 +1,8 @@
-﻿namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
+
+[ExcludeFromCodeCoverage]
 public class EstateFunctions
 {
     public const string View = "View Estate";

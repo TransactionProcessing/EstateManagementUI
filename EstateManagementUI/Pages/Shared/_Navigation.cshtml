@@ -1,4 +1,5 @@
 ﻿@using EstateManagementUI.BusinessLogic.Clients
+@using EstateManagementUI.BusinessLogic.PermissionService
 @using SimpleResults
 @inject IPermissionsService PermissionsService
 @{
@@ -56,7 +57,7 @@
         await RenderItem("My Contracts", "Contract", "contractsLink");
         await RenderItem("My Operators", "Operator", "operatorsLink");
         await RenderItem("Reports", "Reporting","reportingLink");
-        await RenderItem("File Processing", "File Processing", "fileProcessingLink");
+        await RenderItem("File Processing", "FileProcessing", "fileProcessingLink");
     }
 </li>
 </ul>

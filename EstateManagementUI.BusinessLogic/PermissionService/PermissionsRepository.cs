@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Text;
 using System.Threading;
+using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
@@ -12,6 +13,7 @@ using SQLite;
 
 namespace EstateManagementUI.BusinessLogic.PermissionService;
 
+[ExcludeFromCodeCoverage]
 public class PermissionsRepository : IPermissionsRepository {
     private readonly IDbContextFactory<PermissionsContext> PermissionsContextFactory;
 
@@ -393,26 +395,4 @@ public class PermissionsRepository : IPermissionsRepository {
             .ToList();
     }
 
-}
-
-public static class ExceptionHelper
-{
-    public static string GetCombinedExceptionMessages(this Exception ex)
-    {
-        StringBuilder sb = new StringBuilder();
-        AppendExceptionMessages(ex, sb);
-        return sb.ToString();
-    }
-
-    private static void AppendExceptionMessages(Exception ex, StringBuilder sb)
-    {
-        if (ex == null) return;
-
-        sb.AppendLine(ex.Message);
-
-        if (ex.InnerException != null)
-        {
-            AppendExceptionMessages(ex.InnerException, sb);
-        }
-    }
 }

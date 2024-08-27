@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EstateManagementUI.BusinessLogic.PermissionService.Database
 {
+    [ExcludeFromCodeCoverage]
     public class PermissionsContext : DbContext
     {
         public DbSet<ApplicationSection>ApplicationSections { get; set; }

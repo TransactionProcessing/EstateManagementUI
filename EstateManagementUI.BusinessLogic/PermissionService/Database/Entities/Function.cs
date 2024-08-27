@@ -1,7 +1,9 @@
 ﻿using SQLite;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 
+[ExcludeFromCodeCoverage]
 public class Function
 {
     [PrimaryKey, AutoIncrement]

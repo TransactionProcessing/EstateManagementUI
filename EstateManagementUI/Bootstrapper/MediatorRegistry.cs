@@ -20,7 +20,8 @@ public class MediatorRegistry : ServiceRegistry {
         this.AddSingleton<IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetOperatorQuery, Result<OperatorModel>>, OperatorRequestHandler>();
-        
+        this.AddSingleton<IRequestHandler<Queries.GetFileImportLogsList, Result<List<FileImportLogModel>>>, FileRequestHandler>();
+
         // Commands
         this.AddSingleton<IRequestHandler<Commands.AddNewOperatorCommand, Result>, OperatorRequestHandler>();
         this.AddSingleton<IRequestHandler<Commands.UpdateOperatorCommand, Result>, OperatorRequestHandler>();

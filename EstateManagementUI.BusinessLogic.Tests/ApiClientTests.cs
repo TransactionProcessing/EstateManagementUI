@@ -7,6 +7,7 @@ using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Testing;
+using FileProcessor.Client;
 using Moq;
 using Shared.Logger;
 using Shouldly;
@@ -17,10 +18,15 @@ namespace EstateManagementUI.BusinessLogic.Tests
     public class ApiClientTests {
         private IApiClient ApiClient;
         private Mock<IEstateClient> EstateClient;
+        private Mock<IFileProcessorClient> FileProcessorClient;
+
         public ApiClientTests() {
+            Logger.Initialise(NullLogger.Instance);
+
             this.EstateClient = new Mock<IEstateClient>();
-            
-            this.ApiClient = new ApiClient(this.EstateClient.Object);
+            this.FileProcessorClient = new Mock<IFileProcessorClient>();
+
+            this.ApiClient = new ApiClient(this.EstateClient.Object, this.FileProcessorClient.Object);
         }
 
         [Fact]
@@ -105,6 +111,28 @@ namespace EstateManagementUI.BusinessLogic.Tests
         }
 
         [Fact]
+        public async Task ApiClient_GetContract_ContractIsReturned() {
+            this.EstateClient
+                .Setup(e => e.GetContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(TestData.ContractResponse1);
+
+
+            ContractModel contractModel = await this.ApiClient.GetContract(TestData.AccessToken, Guid.NewGuid(),
+                TestData.EstateId, TestData.Contract1Id, CancellationToken.None);
+
+            contractModel.ShouldNotBeNull();
+            contractModel.ContractId.ShouldBe(TestData.ContractResponse1.ContractId);
+            contractModel.Description.ShouldBe(TestData.ContractResponse1.Description);
+            contractModel.OperatorName.ShouldBe(TestData.ContractResponse1.OperatorName);
+            contractModel.NumberOfProducts.ShouldBe(TestData.ContractResponse1.Products.Count);
+            foreach (ContractProduct contractResponse1Product in TestData.ContractResponse1.Products) {
+                ContractProductModel? modelProduct = contractModel.ContractProducts.SingleOrDefault(cp =>
+                    cp.ContractProductId == contractResponse1Product.ProductId);
+                modelProduct.ShouldNotBeNull();
+            }
+        }
+
+        [Fact]
         public async Task ApiClient_CreateOperator_OperatorIsCreated() {
 
             this.EstateClient
@@ -170,8 +198,6 @@ namespace EstateManagementUI.BusinessLogic.Tests
         [Fact]
         public async Task ApiClient_UpdateOperator_ErrorAtServer_OperatorIsNotUpdated()
         {
-
-            Logger.Initialise(NullLogger.Instance);
             this.EstateClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(),
                 It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
@@ -185,6 +211,30 @@ namespace EstateManagementUI.BusinessLogic.Tests
 
             Result result = await this.ApiClient.UpdateOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, updateOperatorModel,
                 CancellationToken.None);
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetFileImportLogList_DataIsReturned()
+        {
+            this.FileProcessorClient.Setup(e => e.GetFileImportLogs(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<DateTime>(),
+                It.IsAny<DateTime>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.FileImportLogList);
+            
+            Result<List<FileImportLogModel>> result = await this.ApiClient.GetFileImportLogList(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.FileImportLogQueryStartDate,
+                TestData.FileImportLogQueryEndDate, System.Threading.CancellationToken.None);
+
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetFileImportLogList_ErrorAtServer_NoDataIsReturned()
+        {
+            this.FileProcessorClient.Setup(e => e.GetFileImportLogs(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<DateTime>(),
+                It.IsAny<DateTime>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<List<FileImportLogModel>> result = await this.ApiClient.GetFileImportLogList(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.FileImportLogQueryStartDate,
+                TestData.FileImportLogQueryEndDate, System.Threading.CancellationToken.None);
 
             result.IsFailed.ShouldBeTrue();
         }

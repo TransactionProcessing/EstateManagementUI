@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Pages.Merchant;
-using EstateManagementUI.ViewModels;
 
 namespace EstateManagementUI.Pages.Contract.ContractProductTransactionFee
 {
