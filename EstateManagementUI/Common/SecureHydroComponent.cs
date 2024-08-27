@@ -25,8 +25,8 @@ public class SecureHydroComponent : HydroComponent {
         this.PageName = pageName;
     }
 
-    public String AccessToken;
-    public Guid EstateId;
+    protected String AccessToken;
+    protected Guid EstateId;
 
     protected async Task PopulateTokenAndEstateId() {
         if (this.HttpContext != null)
