@@ -21,5 +21,8 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
         public record GetContractQuery(String AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;
         public record GetFileImportLogsList(String AccessToken, Guid EstateId, Guid MerchantId, DateTime StartDate, DateTime EndDate)
             : IRequest<Result<List<FileImportLogModel>>>;
+
+        public record GetFileImportLog(String AccessToken, Guid EstateId, Guid MerchantId, Guid FileImportLogId)
+            : IRequest<Result<FileImportLogModel>>;
     }
 }

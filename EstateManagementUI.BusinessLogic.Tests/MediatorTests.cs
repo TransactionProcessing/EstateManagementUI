@@ -26,6 +26,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetContractsQuery);
             this.Requests.Add(TestData.GetContractQuery);
             this.Requests.Add(TestData.GetFileImportLogsListQuery);
+            this.Requests.Add(TestData.GetFileImportLogQuery);
 
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);

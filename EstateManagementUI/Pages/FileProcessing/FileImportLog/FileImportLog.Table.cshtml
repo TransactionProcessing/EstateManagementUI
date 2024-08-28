@@ -1,7 +1,9 @@
-﻿@*@using EstateManagementUI.Pages.Shared
+﻿@using EstateManagementUI.Pages.FileProcessing.FileImportLogs
+@using EstateManagementUI.Pages.Shared
+@using EstateManagementUI.ViewModels
 @using Hydro.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
-@model EstateManagementUI.ViewModels.FileImportLogList
+@model EstateManagementUI.Pages.FileProcessing.FileImportLog.FileImportLog
 
 @{
     string GetSorting(FileImportLogSorting sorting) =>
@@ -10,28 +12,46 @@
             : null;
 }
 
-<table class="table table-sm" id="contractList">
+<table class="table table-sm" id="fileList">
     <thead class="thead-light">
         <tr class="d-flex">
-            <th hydro-action="Sort" param-value="@FileImportLogSorting.ImportLogDate" role="button" class="col-3">
-                Date @GetSorting(FileImportLogSorting.ImportLogDate)
+            <th hydro-action="Sort" param-value="@FileImportLogSorting.FileName" role="button" class="col-3">
+                File Name @GetSorting(FileImportLogSorting.FileName)
             </th>
-            <th hydro-action="Sort" param-value="@FileImportLogSorting.NumberOfFiles" role="button" class="col-2">
-                Number of Files @GetSorting(FileImportLogSorting.NumberOfFiles)
+            <th hydro-action="Sort" param-value="@FileImportLogSorting.OriginalFileName" role="button" class="col-1">
+                Original File Name @GetSorting(FileImportLogSorting.OriginalFileName)
+            </th>
+            <th hydro-action="Sort" param-value="@FileImportLogSorting.DateTimeUploaded" role="button" class="col-2">
+                Uploaded @GetSorting(FileImportLogSorting.DateTimeUploaded)
+            </th>
+            <th hydro-action="Sort" param-value="@FileImportLogSorting.FileProfile" role="button" class="col-2">
+                File Profile @GetSorting(FileImportLogSorting.FileProfile)
+            </th>
+            <th hydro-action="Sort" param-value="@FileImportLogSorting.UserName" role="button" class="col-2">
+                Uploaded By @GetSorting(FileImportLogSorting.UserName)
             </th>
             <th class="col-1"></th>
         </tr>
     </thead>
     <tbody>
-    @foreach (FileImportLog fileImportLogModel in Model.FileImportLogs)
+    @foreach (File fileModel in Model.Files)
     {
             <tr class="hover d-flex">
                 <td class="col-3">
-                    @fileImportLogModel.ImportLogDate.ToString("dd/MM/yyyy")
+                    @fileModel.FilePath
+            </td>
+            <td class="col-1">
+                @fileModel.OriginalFileName
             </td>
             <td class="col-2">
-                    @fileImportLogModel.FileCount
+                @fileModel.UploadDateTime.ToString("dd/MM/yyyy HH:mm")
             </td>
+            <td class="col-2">
+                @fileModel.FileProfileName
+            </td>
+                <td class="col-2">
+                    @fileModel.UserName
+                </td>
             <td class="col-1">
             </td>
                 <td class="align-middle text-end">
@@ -39,7 +59,7 @@
                         TableDropdownItem[] menuItems = new TableDropdownItem[]
                         {
                             //new("Edit", () => Model.Edit(@contractModel.ContractId), $@"{contractModel.Description}Edit"),
-                new("View Files", () => Model.ViewFiles(@fileImportLogModel.FileImportLogId), $@"{fileImportLogModel.ImportLogDate}ViewFiles")
+                //new("View Files", () => Model.ViewFiles(@fileImportLogModel.FileImportLogId), $@"{fileImportLogModel.ImportLogDate}ViewFiles")
                         };
                     }
 
@@ -48,4 +68,4 @@
         </tr>
     }
     </tbody>
-</table>*@
+</table>

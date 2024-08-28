@@ -238,5 +238,24 @@ namespace EstateManagementUI.BusinessLogic.Tests
 
             result.IsFailed.ShouldBeTrue();
         }
+
+        [Fact]
+        public async Task ApiClient_GetFileImportLog_DataIsReturned()
+        {
+            this.FileProcessorClient.Setup(e => e.GetFileImportLog(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.FileImportLog1);
+
+            Result<FileImportLogModel> result = await this.ApiClient.GetFileImportLog(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.FileImportLogId, System.Threading.CancellationToken.None);
+
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetFileImportLog_ErrorAtServer_NoDataIsReturned()
+        {
+            this.FileProcessorClient.Setup(e => e.GetFileImportLog(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<FileImportLogModel> result = await this.ApiClient.GetFileImportLog(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.FileImportLogId, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
     }
 }

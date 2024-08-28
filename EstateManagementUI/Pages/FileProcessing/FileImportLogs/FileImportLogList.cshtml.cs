@@ -88,10 +88,10 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
 
             Queries.GetFileImportLogsList query = new Queries.GetFileImportLogsList(this.AccessToken, this.EstateId, Guid.Parse(this.Merchant.MerchantId), this.StartDate.SelectedDate, this.EndDate.SelectedDate);
 
-            Result<List<FileImportLogModel>> response = await this.Mediator.Send(query, CancellationToken.None);
+            Result<List<BusinessLogic.Models.FileImportLogModel>> response = await this.Mediator.Send(query, CancellationToken.None);
 
             List<ViewModels.FileImportLogList> resultList = new();
-            foreach (FileImportLogModel fileImportLogModel in response.Data) {
+            foreach (BusinessLogic.Models.FileImportLogModel fileImportLogModel in response.Data) {
                 resultList.Add(new ViewModels.FileImportLogList() {
                     ImportLogDate = fileImportLogModel.ImportLogDate,
                     FileCount = fileImportLogModel.FileCount,
@@ -131,7 +131,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
 
         public async Task ViewFiles(Guid fileImportLogId)
         {
-        //    this.Location(this.Url.Page("/Contract/ContractProducts", new { ContractId = contractId }));
+          this.Location(this.Url.Page("/FileProcessing/FileImportLog", new { FileImportLogId = fileImportLogId, MerchantId = Guid.Parse(this.Merchant.MerchantId)}));
         }
     }
 
