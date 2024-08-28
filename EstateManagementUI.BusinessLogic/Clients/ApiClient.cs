@@ -167,6 +167,24 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
+    public async Task<Result<FileImportLogModel>> GetFileImportLog(String accessToken,
+                                                                   Guid actionId,
+                                                                   Guid estateId,
+                                                                   Guid merchantId,
+                                                                   Guid fileImportLogId,
+                                                                   CancellationToken cancellationToken) {
+        async Task<Result<FileImportLogModel>> ClientMethod()
+        {
+            FileImportLog? response = await this.FileProcessorClient.GetFileImportLog(accessToken, fileImportLogId, estateId, merchantId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(response);
+
+
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     private async Task<Result<T>> CallClientMethod<T>(Func<Task<Result<T>>> clientMethod, CancellationToken cancellationToken)
     {
         try

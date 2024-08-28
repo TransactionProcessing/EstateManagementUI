@@ -1,0 +1,7 @@
+﻿@page
+@model EstateManagementUI.Pages.FileProcessing.FileImportLogModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "View File Import Log";
+}
+<hydro name="FileImportLog" param-fileImportLogId="@Model.FileImportLogId" param-merchantId="@Model.MerchantId" />

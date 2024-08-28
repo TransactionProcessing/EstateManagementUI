@@ -1,30 +1,23 @@
-/*using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
-using Hydro.Utils;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
 using SimpleResults;
 using File = EstateManagementUI.ViewModels.File;
 
 
-namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
+namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
 {
     public class FileImportLog : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
         public Guid FileImportLogId { get; set; }
-
-        public DateTime ImportLogDateTime { get; set; }
-
+        
         public DateTime ImportLogDate { get; set; }
-
-        public TimeSpan ImportLogTime { get; set; }
+        public Guid MerchantId{ get; set; }
 
         public List<ViewModels.File> Files { get; set; }
 
@@ -36,7 +29,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
        
 
         public override async Task MountAsync() {
-            //await this.GetMerchants();
+            await this.GetFileImportLog();
             //this.StartDate = new DateModel { SelectedDate = DateTime.Now };
             //this.EndDate = new DateModel { SelectedDate = DateTime.Now };
         }
@@ -46,69 +39,71 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
         //    {
         //        await this.GetFiles();
         //    }
+        //}
+
+        private async Task GetFileImportLog() {
+            await this.PopulateTokenAndEstateId();
+
+            var estateQuery = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
+            var estate = await this.Mediator.Send(estateQuery);
+
+            Queries.GetFileImportLog query = new Queries.GetFileImportLog(this.AccessToken, this.EstateId,
+                this.MerchantId, this.FileImportLogId);
+
+            Result<BusinessLogic.Models.FileImportLogModel> response =
+                await this.Mediator.Send(query, CancellationToken.None);
+
+            this.ImportLogDate = response.Data.ImportLogDate;
+            this.FileImportLogId = response.Data.FileImportLogId;
+            List<File> resultList = new List<File>();
+            foreach (FileImportLogFileModel fileImportLogFileModel in response.Data.Files) {
+                var user = estate.SecurityUsers.SingleOrDefault(u => u.SecurityUserId == fileImportLogFileModel.UserId);
+                var fileProfile = fileImportLogFileModel.FileProfileId.ToString().ToUpper() switch {
+                    "B2A59ABF-293D-4A6B-B81B-7007503C3476" => "Safaricom Topup",
+                    "8806EDBC-3ED6-406B-9E5F-A9078356BE99" => "Voucher Issue",
+                    _ => "Unknown File Type"
+                };
+                resultList.Add(new File {
+                    MerchantName = fileImportLogFileModel.MerchantId.ToString(),
+                    MerchantId = fileImportLogFileModel.MerchantId,
+                    UserId = fileImportLogFileModel.UserId,
+                    UserName = user == null? "N/A" :user.EmailAddress,
+                    UploadDateTime = fileImportLogFileModel.FileUploadedDateTime,
+                    OriginalFileName = fileImportLogFileModel.OriginalFileName,
+                    FilePath = fileImportLogFileModel.FilePath,
+                    FileId = fileImportLogFileModel.FileId,
+                    FileProfileId = fileImportLogFileModel.FileProfileId,
+                    FileProfileName = fileProfile
+                });
+            }
+
+            IEnumerable<ViewModels.File> sortQuery = this.Sorting switch {
+                (FileImportLogSorting.OriginalFileName, Ascending: false) => resultList.OrderBy(p => p.OriginalFileName),
+                (FileImportLogSorting.OriginalFileName, Ascending: true) => resultList.OrderByDescending(p =>
+                    p.OriginalFileName),
+                (FileImportLogSorting.DateTimeUploaded, Ascending: false) => resultList.OrderBy(p => p.UploadDateTime),
+                (FileImportLogSorting.DateTimeUploaded, Ascending: true) => resultList.OrderByDescending(p =>
+                    p.UploadDateTime),
+                (FileImportLogSorting.FileName, Ascending: false) => resultList.OrderBy(p => p.FilePath),
+                (FileImportLogSorting.FileName, Ascending: true) => resultList.OrderByDescending(p =>
+                    p.FilePath),
+                (FileImportLogSorting.FileProfile, Ascending: false) => resultList.OrderBy(p => p.FileProfileName),
+                (FileImportLogSorting.FileProfile, Ascending: true) => resultList.OrderByDescending(p =>
+                    p.FileProfileName),
+                (FileImportLogSorting.UserName, Ascending: false) => resultList.OrderBy(p => p.UserName),
+                (FileImportLogSorting.UserName, Ascending: true) => resultList.OrderByDescending(p =>
+                    p.UserName),
+                _ => resultList.AsEnumerable()
+            };
+
+            this.Files= sortQuery.ToList();
         }
-
-        //private async Task GetMerchants()
-        //{
-        //    await this.PopulateTokenAndEstateId();
-
-        //    Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.AccessToken, this.EstateId);
-
-        //    List<MerchantModel> response = await this.Mediator.Send(query, CancellationToken.None);
-
-        //    List<SelectListItem> resultList = new();
-        //    foreach (MerchantModel merchantModel in response)
-        //    {
-        //        resultList.Add(new SelectListItem
-        //        {
-        //            Value = merchantModel.MerchantId.ToString(),
-        //            Text = merchantModel.MerchantName,
-        //        });
-        //    }
-
-        //    List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();
-        //    ordered.Insert(0, new SelectListItem("- Select a Merchant -", "", true));
-        //    this.Merchant = new MerchantListModel { Merchants = ordered };
-        //}
-
-        //private async Task GetFiles()
-        //{
-        //    await this.PopulateTokenAndEstateId();
-
-        //    Queries.GetFileImportLogsList query = new Queries.GetFileImportLogsList(this.AccessToken, this.EstateId, Guid.Parse(this.Merchant.MerchantId), this.StartDate.SelectedDate, this.EndDate.SelectedDate);
-
-        //    Result<List<FileImportLogModel>> response = await this.Mediator.Send(query, CancellationToken.None);
-
-        //    List<ViewModels.FileImportLog> resultList = new();
-        //    foreach (FileImportLogModel fileImportLogModel in response.Data) {
-        //        resultList.Add(new ViewModels.FileImportLog() {
-        //            ImportLogDate = fileImportLogModel.ImportLogDate,
-        //            FileCount = fileImportLogModel.FileCount,
-        //            FileImportLogId = fileImportLogModel.FileImportLogId,
-        //            ImportLogDateTime = fileImportLogModel.ImportLogDateTime,
-        //            ImportLogTime = fileImportLogModel.ImportLogTime
-        //        });
-        //    }
-
-        //    IEnumerable<ViewModels.FileImportLog> sortQuery = this.Sorting switch
-        //    {
-        //        (FileImportLogSorting.ImportLogDate, Ascending: false) => resultList.OrderBy(p => p.ImportLogDate),
-        //        (FileImportLogSorting.ImportLogDate, Ascending: true) => resultList.OrderByDescending(p => p.ImportLogDate),
-        //        (FileImportLogSorting.NumberOfFiles, Ascending: false) => resultList.OrderBy(p => p.FileCount),
-        //        (FileImportLogSorting.NumberOfFiles, Ascending: true) => resultList.OrderByDescending(p => p.FileCount),
-                
-        //        _ => resultList.AsEnumerable()
-        //    };
-
-        //    this.FileImportLogs = sortQuery.ToList();
-
-        //}
-
+        
         public async Task Sort(FileImportLogSorting value)
         {
             this.Sorting = (Column: value, Ascending: this.Sorting.Column == value && !this.Sorting.Ascending);
 
-            await this.GetFiles();
+            await this.GetFileImportLog();
         }
 
         public (FileImportLogSorting Column, bool Ascending) Sorting { get; set; }
@@ -127,7 +122,9 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
     public enum FileImportLogSorting
     {
         FileName,
-        FileProfile
-        NumberOfFiles
+        FileProfile,
+        UserName,
+        OriginalFileName,
+        DateTimeUploaded
     }
-}*/
+}

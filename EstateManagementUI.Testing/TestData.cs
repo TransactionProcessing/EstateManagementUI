@@ -21,6 +21,8 @@ namespace EstateManagementUI.Testing
             new Queries.GetFileImportLogsList(AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
                 FileImportLogQueryEndDate);
 
+        public static Queries.GetFileImportLog GetFileImportLogQuery =>
+            new Queries.GetFileImportLog(AccessToken, EstateId, Merchant1Id, FileImportLogId);
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
                 RequireCustomTerminalNumber);
