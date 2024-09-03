@@ -24,5 +24,7 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
 
         public record GetFileImportLog(String AccessToken, Guid EstateId, Guid MerchantId, Guid FileImportLogId)
             : IRequest<Result<FileImportLogModel>>;
+
+        public record GetFileDetails(String AccessToken, Guid EstateId, Guid FileId) : IRequest<Result<FileDetailsModel>>;
     }
 }

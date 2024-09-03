@@ -257,5 +257,24 @@ namespace EstateManagementUI.BusinessLogic.Tests
             Result<FileImportLogModel> result = await this.ApiClient.GetFileImportLog(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.FileImportLogId, System.Threading.CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
+
+        [Fact]
+        public async Task ApiClient_GetFileDetails_DataIsReturned() {
+            
+            this.FileProcessorClient.Setup(e => e.GetFile(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.FileDetails1);
+
+            Result<FileDetailsModel> result = await this.ApiClient.GetFileDetails(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId,  TestData.FileId1, System.Threading.CancellationToken.None);
+
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetFileDetails_ErrorAtServer_NoDataIsReturned()
+        {
+            this.FileProcessorClient.Setup(e => e.GetFile(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<FileDetailsModel> result = await this.ApiClient.GetFileDetails(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.FileId1, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
     }
 }

@@ -62,5 +62,11 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                                     Guid merchantId,
                                                                     Guid fileImportLogId,
                                                                     CancellationToken cancellationToken);
+
+        Task<Result<FileDetailsModel>> GetFileDetails(String accessToken,
+                                                      Guid actionId,
+                                                      Guid estateId,
+                                                      Guid fileId,
+                                                      CancellationToken cancellationToken);
     }
 }

@@ -23,6 +23,10 @@ namespace EstateManagementUI.Testing
 
         public static Queries.GetFileImportLog GetFileImportLogQuery =>
             new Queries.GetFileImportLog(AccessToken, EstateId, Merchant1Id, FileImportLogId);
+
+        public static Queries.GetFileDetails GetFileDetailsQuery =>
+            new(AccessToken, EstateId, FileImportLogFile1.FileId);
+
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
                 RequireCustomTerminalNumber);
@@ -265,6 +269,7 @@ namespace EstateManagementUI.Testing
         public static DateTime ImportLogDateTime = DateTime.Now;
         public static Guid FileImportLogId = Guid.Parse("6D747595-C718-4CB0-B7BA-8FB470E5DB0E");
         public static Guid FileProfileId1 = Guid.Parse("55036A79-DFAA-471D-8EB0-4E3DFBF9685B");
+        public static String FileProfileName1 = "File Profile 1";
 
         public static FileImportLogFile FileImportLogFile1 = new FileImportLogFile {
             FileImportLogId = FileImportLogId,
@@ -300,6 +305,147 @@ namespace EstateManagementUI.Testing
                     FileImportLogFile2
                 },
                 ImportLogTime = ImportLogDateTime.TimeOfDay
+            };
+
+        public static Guid FileId1 = Guid.Parse("90BEB4AA-2162-435E-816B-BEA12BAE0E30");
+        public static String FileLocation1 = "C:\\Temp\\File1.txt";
+
+        public static FileDetails FileDetails1 =>
+            new FileDetails {
+                EstateId = EstateId,
+                FileId = FileId1,
+                FileImportLogId = FileImportLogId,
+                FileLocation = FileLocation1,
+                FileProfileId = FileProfileId1,
+                FileProfileName = FileProfileName1,
+                MerchantId = Merchant1Id,
+                MerchantName = Merchant1Name,
+                ProcessingCompleted = true,
+                UserEmailAddress = EmailAddress,
+                UserId = SecurityUserId,
+                ProcessingSummary =
+                    new FileProcessingSummary {
+                        FailedLines = 1,
+                        IgnoredLines = 2,
+                        NotProcessedLines = 4, // Includes Unknown
+                        RejectedLines = 4,
+                        SuccessfullyProcessedLines = 5,
+                        TotalLines = 16
+                    },
+                FileLines = new List<FileLine> {
+                    new FileLine {
+                        LineNumber = 1,
+                        ProcessingResult = FileLineProcessingResult.Failed,
+                        RejectionReason = "Rejected",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 2,
+                        ProcessingResult = FileLineProcessingResult.Ignored,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 3,
+                        ProcessingResult = FileLineProcessingResult.Ignored,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 4,
+                        ProcessingResult = FileLineProcessingResult.NotProcessed,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 5,
+                        ProcessingResult = FileLineProcessingResult.NotProcessed,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 6,
+                        ProcessingResult = FileLineProcessingResult.NotProcessed,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 7,
+                        ProcessingResult = FileLineProcessingResult.Rejected,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 8,
+                        ProcessingResult = FileLineProcessingResult.Rejected,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 9,
+                        ProcessingResult = FileLineProcessingResult.Rejected,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 10,
+                        ProcessingResult = FileLineProcessingResult.Rejected,
+                        RejectionReason = "",
+                        TransactionId = Guid.Empty,
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 11,
+                        ProcessingResult = FileLineProcessingResult.Successful,
+                        RejectionReason = "",
+                        TransactionId = Guid.NewGuid(),
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 12,
+                        ProcessingResult = FileLineProcessingResult.Successful,
+                        RejectionReason = "",
+                        TransactionId = Guid.NewGuid(),
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 13,
+                        ProcessingResult = FileLineProcessingResult.Successful,
+                        RejectionReason = "",
+                        TransactionId = Guid.NewGuid(),
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 14,
+                        ProcessingResult = FileLineProcessingResult.Successful,
+                        RejectionReason = "",
+                        TransactionId = Guid.NewGuid(),
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 15,
+                        ProcessingResult = FileLineProcessingResult.Successful,
+                        RejectionReason = "",
+                        TransactionId = Guid.NewGuid(),
+                        LineData = "1,2,3"
+                    },
+                    new FileLine {
+                        LineNumber = 16,
+                        ProcessingResult = FileLineProcessingResult.Unknown,
+                        RejectionReason = "",
+                        TransactionId = Guid.NewGuid(),
+                        LineData = "1,2,3"
+                    },
+                }
             };
     }
 }

@@ -58,8 +58,7 @@
                     @{
                         TableDropdownItem[] menuItems = new TableDropdownItem[]
                         {
-                            //new("Edit", () => Model.Edit(@contractModel.ContractId), $@"{contractModel.Description}Edit"),
-                //new("View Files", () => Model.ViewFiles(@fileImportLogModel.FileImportLogId), $@"{fileImportLogModel.ImportLogDate}ViewFiles")
+                        new("View Details", () => Model.ViewFileDetails(@fileModel.FileId), $@"{@fileModel.FileId.ToString().Replace("-", "")}ViewFiles")
                         };
                     }
 

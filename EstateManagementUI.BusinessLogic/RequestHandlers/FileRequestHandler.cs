@@ -7,8 +7,8 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class FileRequestHandler : IRequestHandler<Queries.GetFileImportLogsList, Result<List<FileImportLogModel>>>,
-                                  IRequestHandler<Queries.GetFileImportLog, Result<FileImportLogModel>>
-{
+                                  IRequestHandler<Queries.GetFileImportLog, Result<FileImportLogModel>>,
+                                  IRequestHandler<Queries.GetFileDetails, Result<FileDetailsModel>> {
 
     private readonly IApiClient ApiClient;
     public FileRequestHandler(IApiClient apiClient) {
@@ -25,6 +25,13 @@ public class FileRequestHandler : IRequestHandler<Queries.GetFileImportLogsList,
     public async Task<Result<FileImportLogModel>> Handle(Queries.GetFileImportLog request, CancellationToken cancellationToken) {
         Result<FileImportLogModel> model = await this.ApiClient.GetFileImportLog(request.AccessToken, Guid.Empty, request.EstateId,
             request.MerchantId, request.FileImportLogId, cancellationToken);
+        return model;
+    }
+
+    public async Task<Result<FileDetailsModel>> Handle(Queries.GetFileDetails request,
+                                                       CancellationToken cancellationToken) {
+        Result<FileDetailsModel> model = await this.ApiClient.GetFileDetails(request.AccessToken, Guid.Empty, request.EstateId,
+            request.FileId, cancellationToken);
         return model;
     }
 }
