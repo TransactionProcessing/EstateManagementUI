@@ -3,7 +3,9 @@ using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
+using FileProcessor.DataTransferObjects.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using SimpleResults;
 using File = EstateManagementUI.ViewModels.File;
 
@@ -30,22 +32,13 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
 
         public override async Task MountAsync() {
             await this.GetFileImportLog();
-            //this.StartDate = new DateModel { SelectedDate = DateTime.Now };
-            //this.EndDate = new DateModel { SelectedDate = DateTime.Now };
         }
-
-        //public async Task Query() {
-        //    if (String.IsNullOrEmpty(this.Merchant.MerchantId) == false)
-        //    {
-        //        await this.GetFiles();
-        //    }
-        //}
 
         private async Task GetFileImportLog() {
             await this.PopulateTokenAndEstateId();
 
-            var estateQuery = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
-            var estate = await this.Mediator.Send(estateQuery);
+            Queries.GetEstateQuery estateQuery = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
+            EstateModel estate = await this.Mediator.Send(estateQuery);
 
             Queries.GetFileImportLog query = new Queries.GetFileImportLog(this.AccessToken, this.EstateId,
                 this.MerchantId, this.FileImportLogId);
@@ -57,8 +50,8 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
             this.FileImportLogId = response.Data.FileImportLogId;
             List<File> resultList = new List<File>();
             foreach (FileImportLogFileModel fileImportLogFileModel in response.Data.Files) {
-                var user = estate.SecurityUsers.SingleOrDefault(u => u.SecurityUserId == fileImportLogFileModel.UserId);
-                var fileProfile = fileImportLogFileModel.FileProfileId.ToString().ToUpper() switch {
+                SecurityUserModel user = estate.SecurityUsers.SingleOrDefault(u => u.SecurityUserId == fileImportLogFileModel.UserId);
+                String fileProfile = fileImportLogFileModel.FileProfileId.ToString().ToUpper() switch {
                     "B2A59ABF-293D-4A6B-B81B-7007503C3476" => "Safaricom Topup",
                     "8806EDBC-3ED6-406B-9E5F-A9078356BE99" => "Voucher Issue",
                     _ => "Unknown File Type"
@@ -108,14 +101,9 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
 
         public (FileImportLogSorting Column, bool Ascending) Sorting { get; set; }
 
-        //public async Task Edit(Guid contractId)
-        //{
-
-        //}
-
-        public async Task ViewFiles(Guid fileImportLogId)
+        public async Task ViewFileDetails(Guid fileId)
         {
-        //    this.Location(this.Url.Page("/Contract/ContractProducts", new { ContractId = contractId }));
+            this.Location(this.Url.Page("/FileProcessing/FileDetails", new { FileId = fileId}));
         }
     }
 

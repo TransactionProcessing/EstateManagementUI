@@ -8,6 +8,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using FileProcessor.DataTransferObjects.Responses;
 using SimpleResults;
+using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
 
 namespace EstateManagementUI.BusinessLogic.Common;
 
@@ -243,6 +244,50 @@ public static class ModelFactory
                     UserId = fileImportLogFile.UserId
                 });
             }
+        }
+
+        return model;
+    }
+
+    public static FileDetailsModel ConvertFrom(FileDetails source) {
+        FileDetailsModel model = new FileDetailsModel {
+            EstateId = source.EstateId,
+            FileId = source.FileId,
+            FileImportLogId = source.FileImportLogId,
+            FileLocation = source.FileLocation,
+            FileProfileId = source.FileProfileId,
+            FileProfileName = source.FileProfileName,
+            MerchantId = source.MerchantId,
+            MerchantName = source.MerchantName,
+            ProcessingCompleted = source.ProcessingCompleted,
+            UserEmailAddress = source.UserEmailAddress,
+            UserId = source.UserId,
+            FileLines = new List<FileLineModel>(),
+            ProcessingSummary = new FileProcessingSummaryModel {
+                FailedLines = source.ProcessingSummary.FailedLines,
+                IgnoredLines = source.ProcessingSummary.IgnoredLines,
+                NotProcessedLines = source.ProcessingSummary.NotProcessedLines,
+                RejectedLines = source.ProcessingSummary.RejectedLines,
+                SuccessfullyProcessedLines = source.ProcessingSummary.SuccessfullyProcessedLines,
+                TotalLines = source.ProcessingSummary.TotalLines
+            }
+        };
+
+        foreach (FileLine sourceFileLine in source.FileLines) {
+            model.FileLines.Add(new FileLineModel {
+                LineData = sourceFileLine.LineData,
+                LineNumber = sourceFileLine.LineNumber,
+                RejectionReason = sourceFileLine.RejectionReason,
+                TransactionId = sourceFileLine.TransactionId,
+                ProcessingResult = sourceFileLine.ProcessingResult switch {
+                    FileLineProcessingResult.Failed => Models.FileLineProcessingResult.Failed,
+                    FileLineProcessingResult.Ignored => Models.FileLineProcessingResult.Ignored,
+                    FileLineProcessingResult.NotProcessed => Models.FileLineProcessingResult.NotProcessed,
+                    FileLineProcessingResult.Rejected => Models.FileLineProcessingResult.Rejected,
+                    FileLineProcessingResult.Successful => Models.FileLineProcessingResult.Successful,
+                    _ => Models.FileLineProcessingResult.Unknown
+                }
+            });
         }
 
         return model;

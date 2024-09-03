@@ -185,6 +185,22 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
+    public async Task<Result<FileDetailsModel>> GetFileDetails(String accessToken,
+                                             Guid actionId,
+                                             Guid estateId,
+                                             Guid fileId,
+                                             CancellationToken cancellationToken) {
+        
+        async Task<Result<FileDetailsModel>> ClientMethod()
+        {
+            FileDetails? response = await this.FileProcessorClient.GetFile(accessToken, estateId, fileId, cancellationToken);
+
+             return ModelFactory.ConvertFrom(response);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     private async Task<Result<T>> CallClientMethod<T>(Func<Task<Result<T>>> clientMethod, CancellationToken cancellationToken)
     {
         try

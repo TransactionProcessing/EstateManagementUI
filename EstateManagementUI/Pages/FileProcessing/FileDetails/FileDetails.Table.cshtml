@@ -1,0 +1,65 @@
+﻿@using EstateManagementUI.Pages.FileProcessing.FileImportLogs
+@using EstateManagementUI.Pages.Shared
+@using EstateManagementUI.ViewModels
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.FileProcessing.FileDetails.FileDetails
+
+@{
+    string GetSorting(FileDetailsSorting sorting) =>
+        Model.Sorting.Column == sorting
+            ? Model.Sorting.Ascending ? "\u2193" : "\u2191"
+            : null;
+
+    async Task RenderFileLineStatus(FileLineProcessingResult processingResult, String rejectionReason)
+    {
+
+        // var id = $"tab{applicationSection.ApplicationSectionId}";
+        // // var href = $"#ApplicationSection{applicationSection.ApplicationSectionId}";
+        
+        // <li class="nav-item">
+        //     <a class="nav-link" :class="{ 'active': tab === '@id' }" @@click.prevent="tab = '@id'" id="@id" href="#">@applicationSection.Name</a>
+        // </li>
+        if (processingResult == FileLineProcessingResult.Successful) {
+            <p style="color: green">@processingResult</p>
+        }
+        else if (processingResult == FileLineProcessingResult.Failed || processingResult == FileLineProcessingResult.Rejected) {
+            <p style="color: red" class="tipsy-tooltip" title="@rejectionReason">@processingResult</p>
+        }
+        else {
+            <p style="color: orange">@processingResult</p>
+        }
+    }
+}
+
+<table class="table table-sm" id="fileList">
+    <thead class="thead-light">
+        <tr class="d-flex">
+            <th hydro-action="Sort" param-value="@FileDetailsSorting.LineNumber" role="button" class="col-1">
+                Line Number @GetSorting(FileDetailsSorting.LineNumber)
+            </th>
+            <th class="col-3">
+                Line Data
+            </th>
+            <th hydro-action="Sort" param-value="@FileDetailsSorting.Result" role="button" class="col-2">
+                Result @GetSorting(FileDetailsSorting.Result)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (FileLine fileLineModel in Model.FileLines)
+    {
+            <tr class="hover d-flex">
+                <td class="col-1">
+                    @fileLineModel.LineNumber
+            </td>
+            <td class="col-3">
+                @fileLineModel.Data
+            </td>
+            <td class="col-2">
+                @{ await RenderFileLineStatus(fileLineModel.ProcessingResult, fileLineModel.RejectionReason); }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
