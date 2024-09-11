@@ -30,6 +30,10 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetFileImportLogQuery);
             this.Requests.Add(TestData.GetFileDetailsQuery);
             this.Requests.Add(TestData.GetComparisonDatesQuery);
+            this.Requests.Add(TestData.GetTodaysSalesQuery);
+            this.Requests.Add(TestData.GetTodaysSettlementQuery);
+            this.Requests.Add(TestData.GetTodaysSalesCountByHourQuery);
+            this.Requests.Add(TestData.GetTodaysSalesValueByHourQuery);
 
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);

@@ -105,7 +105,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
             Result<List<BusinessLogic.Models.TodaysSalesCountByHourModel>> getTodaysSalesCountByHourQueryResult = await this.Mediator.Send(getTodaysSalesCountByHourQuery, CancellationToken.None);
             if (getTodaysSalesCountByHourQueryResult.IsSuccess && getTodaysSalesCountByHourQueryResult.Data != null)
             {
-                this.TodaysSalesCountByHour = new TodaysSalesCountByHour()
+                this.TodaysSalesCountByHour = new TodaysSalesCountByHour
                 {
                     Hours = new List<TodaysSalesCountByHourModel>()
                 };
@@ -122,7 +122,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
             }
             else
             {
-                this.TodaysSalesCountByHour = new TodaysSalesCountByHour()
+                this.TodaysSalesCountByHour = new TodaysSalesCountByHour
                 {
                     Hours = new List<TodaysSalesCountByHourModel>()
                 };
