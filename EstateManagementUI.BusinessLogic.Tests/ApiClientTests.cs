@@ -7,6 +7,7 @@ using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Testing;
+using EstateReportingAPI.Client;
 using FileProcessor.Client;
 using Moq;
 using Shared.Logger;
@@ -19,14 +20,17 @@ namespace EstateManagementUI.BusinessLogic.Tests
         private IApiClient ApiClient;
         private Mock<IEstateClient> EstateClient;
         private Mock<IFileProcessorClient> FileProcessorClient;
+        private Mock<IEstateReportingApiClient> EstateReportingApiClient;
 
         public ApiClientTests() {
             Logger.Initialise(NullLogger.Instance);
 
             this.EstateClient = new Mock<IEstateClient>();
             this.FileProcessorClient = new Mock<IFileProcessorClient>();
+            this.EstateReportingApiClient = new Mock<IEstateReportingApiClient>();
 
-            this.ApiClient = new ApiClient(this.EstateClient.Object, this.FileProcessorClient.Object);
+            this.ApiClient = new ApiClient(this.EstateClient.Object, this.FileProcessorClient.Object,
+                    this.EstateReportingApiClient.Object);
         }
 
         [Fact]

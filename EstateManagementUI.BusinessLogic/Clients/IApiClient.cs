@@ -68,5 +68,42 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                       Guid estateId,
                                                       Guid fileId,
                                                       CancellationToken cancellationToken);
+
+        Task<Result<List<ComparisonDateModel>>> GetComparisonDates(String accessToken,
+                                                                   Guid actionId,
+                                                                   Guid estateId,
+                                                                   CancellationToken cancellationToken);
+
+        Task<Result<TodaysSalesModel>> GetTodaysSales(String accessToken,
+                                                      Guid actionId,
+                                                      Guid estateId,
+                                                      Int32? merchantReportingId,
+                                                      Int32? operatorReportingId,
+                                                      DateTime comparisonDate,
+                                                      CancellationToken cancellationToken);
+
+        Task<Result<List<TodaysSalesCountByHourModel>>> GetTodaysSalesCountByHour(String accessToken,
+            Guid actionId,
+            Guid estateId,
+            Guid? merchantId,
+            Guid? operatorId,
+            DateTime comparisonDate,
+            CancellationToken cancellationToken);
+
+        Task<Result<List<TodaysSalesValueByHourModel>>> GetTodaysSalesValueByHour(String accessToken,
+            Guid actionId,
+            Guid estateId,
+            Guid? merchantId,
+            Guid? operatorId,
+            DateTime comparisonDate,
+            CancellationToken cancellationToken);
+
+        Task<Result<TodaysSettlementModel>> GetTodaysSettlement(String accessToken,
+                                                                Guid actionId,
+                                                                Guid estateId,
+                                                                Int32? merchantReportingId,
+                                                                Int32? operatorReportingId,
+                                                                DateTime comparisonDate,
+                                                                CancellationToken cancellationToken);
     }
 }

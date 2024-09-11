@@ -17,15 +17,17 @@ namespace EstateManagementUI.Testing
         public static Queries.GetContractsQuery GetContractsQuery => new(AccessToken, EstateId);
         public static Queries.GetContractQuery GetContractQuery => new(AccessToken, EstateId, Contract1Id);
 
-        public static Queries.GetFileImportLogsList GetFileImportLogsListQuery =>
-            new Queries.GetFileImportLogsList(AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
+        public static Queries.GetFileImportLogsListQuery GetFileImportLogsListQuery =>
+            new Queries.GetFileImportLogsListQuery(AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
                 FileImportLogQueryEndDate);
 
-        public static Queries.GetFileImportLog GetFileImportLogQuery =>
-            new Queries.GetFileImportLog(AccessToken, EstateId, Merchant1Id, FileImportLogId);
+        public static Queries.GetFileImportLogQuery GetFileImportLogQuery =>
+            new Queries.GetFileImportLogQuery(AccessToken, EstateId, Merchant1Id, FileImportLogId);
 
-        public static Queries.GetFileDetails GetFileDetailsQuery =>
+        public static Queries.GetFileDetailsQuery GetFileDetailsQuery =>
             new(AccessToken, EstateId, FileImportLogFile1.FileId);
+
+        public static Queries.GetComparisonDatesQuery GetComparisonDatesQuery => new(AccessToken, EstateId);
 
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,

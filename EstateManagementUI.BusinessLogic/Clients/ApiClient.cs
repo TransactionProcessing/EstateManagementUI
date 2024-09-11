@@ -6,6 +6,9 @@ using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateReportingAPI.Client;
+using EstateReportingAPI.DataTransferObjects;
+using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.Client;
 using FileProcessor.DataTransferObjects.Responses;
 using Shared.Logger;
@@ -16,10 +19,13 @@ namespace EstateManagementUI.BusinessLogic.Clients;
 public class ApiClient : IApiClient {
     private readonly IEstateClient EstateClient;
     private readonly IFileProcessorClient FileProcessorClient;
+    private readonly IEstateReportingApiClient EstateReportingApiClient;
 
-    public ApiClient(IEstateClient estateClient, IFileProcessorClient fileProcessorClient) {
+    public ApiClient(IEstateClient estateClient, IFileProcessorClient fileProcessorClient,
+                     IEstateReportingApiClient estateReportingApiClient) {
         this.EstateClient = estateClient;
         this.FileProcessorClient = fileProcessorClient;
+        this.EstateReportingApiClient = estateReportingApiClient;
     }
 
     public async Task<Result<List<FileImportLogModel>>> GetFileImportLogList(String accessToken,
@@ -196,6 +202,81 @@ public class ApiClient : IApiClient {
             FileDetails? response = await this.FileProcessorClient.GetFile(accessToken, estateId, fileId, cancellationToken);
 
              return ModelFactory.ConvertFrom(response);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(String accessToken, Guid actionId, Guid estateId, CancellationToken cancellationToken)
+    {
+        async Task<Result<List<ComparisonDateModel>>> ClientMethod()
+        {
+            List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
+
+            return Result.Success(ModelFactory.ConvertFrom(apiResponse));
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<TodaysSalesModel>> GetTodaysSales(String accessToken,
+                                                               Guid actionId,
+                                                               Guid estateId,
+                                                               Int32? merchantReportingId,
+                                                               Int32? operatorReportingId,
+                                                               DateTime comparisonDate,
+                                                               CancellationToken cancellationToken)
+    {
+        async Task<Result<TodaysSalesModel>> ClientMethod()
+        {
+            TodaysSales apiResponse = await this.EstateReportingApiClient.GetTodaysSales(accessToken, estateId, merchantReportingId.GetValueOrDefault(0), operatorReportingId.GetValueOrDefault(0), comparisonDate, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<TodaysSettlementModel>> GetTodaysSettlement(String accessToken,
+                                                                         Guid actionId,
+                                                                         Guid estateId,
+                                                                         Int32? merchantReportingId,
+                                                                         Int32? operatorReportingId,
+                                                                         DateTime comparisonDate,
+                                                                         CancellationToken cancellationToken)
+    {
+        async Task<Result<TodaysSettlementModel>> ClientMethod()
+        {
+            TodaysSettlement apiResponse = await this.EstateReportingApiClient.GetTodaysSettlement(accessToken, estateId, merchantReportingId.GetValueOrDefault(0), operatorReportingId.GetValueOrDefault(0), comparisonDate, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<List<TodaysSalesCountByHourModel>>> GetTodaysSalesCountByHour(string accessToken, Guid actionId, Guid estateId, Guid? merchantId, Guid? operatorId, DateTime comparisonDate,
+        CancellationToken cancellationToken)
+    {
+        async Task<Result<List<TodaysSalesCountByHourModel>>> ClientMethod()
+        {
+            List<TodaysSalesCountByHour> apiResponse =
+                await this.EstateReportingApiClient.GetTodaysSalesCountByHour(accessToken, estateId, 0, 0,
+                    comparisonDate, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<List<TodaysSalesValueByHourModel>>> GetTodaysSalesValueByHour(String accessToken, Guid actionId, Guid estateId, Guid? merchantId, Guid? operatorId, DateTime comparisonDate, CancellationToken cancellationToken)
+    {
+        async Task<Result<List<TodaysSalesValueByHourModel>>> ClientMethod()
+        {
+            List<TodaysSalesValueByHour> apiResponse = await this.EstateReportingApiClient.GetTodaysSalesValueByHour(accessToken, estateId, 0, 0, comparisonDate, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);

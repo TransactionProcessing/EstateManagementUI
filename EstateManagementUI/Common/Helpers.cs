@@ -60,5 +60,37 @@ namespace EstateManagementUI.Common
 
             return (authorityAddress, issuerAddress);
         }
+
+        public static Decimal SafeDivision(this Decimal numerator, Decimal denominator)
+        {
+            return (denominator == 0) ? 0 : numerator / denominator;
+        }
+
+        public static async Task<String> RenderKpiCardClass(Decimal variance, Boolean lessIsGood)
+        {
+            String className = null;
+            if (lessIsGood)
+            {
+                className = variance switch
+                {
+                    var n when n < 0 => "info-box bg-success",
+                    var n when n == 0 => "info-box bg-info",
+                    var n when n is > 0 and < 0.2m => "info-box bg-warning",
+                    _ => "info-box bg-danger"
+                };
+            }
+            else
+            {
+                className = variance switch
+                {
+                    var n when n > 0 => "info-box bg-success",
+                    var n when n == 0 => "info-box bg-info",
+                    var n when n is < 0 and >= -0.2m => "info-box bg-warning",
+                    _ => "info-box bg-danger"
+                };
+            }
+
+            return className;
+        }
     }
 }
