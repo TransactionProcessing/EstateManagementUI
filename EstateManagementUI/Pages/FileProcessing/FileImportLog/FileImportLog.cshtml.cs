@@ -40,7 +40,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
             Queries.GetEstateQuery estateQuery = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
             EstateModel estate = await this.Mediator.Send(estateQuery);
 
-            Queries.GetFileImportLog query = new Queries.GetFileImportLog(this.AccessToken, this.EstateId,
+            Queries.GetFileImportLogQuery query = new Queries.GetFileImportLogQuery(this.AccessToken, this.EstateId,
                 this.MerchantId, this.FileImportLogId);
 
             Result<BusinessLogic.Models.FileImportLogModel> response =

@@ -3,11 +3,14 @@ using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagmentUI.BusinessLogic.Requests;
+using EstateReportingAPI.DataTransferObjects;
+using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
 
 namespace EstateManagementUI.Testing
 {
     public static class TestData {
+        public static DateTime ComparisonDate = new DateTime(2024,1,1);
         public static String AccessToken = "token1";
         public static Guid EstateId = Guid.Parse("BD6F1ED7-6290-4285-A200-E4F8D25F4CBE");
         public static Queries.GetEstateQuery GetEstateQuery => new(AccessToken, EstateId);
@@ -17,15 +20,21 @@ namespace EstateManagementUI.Testing
         public static Queries.GetContractsQuery GetContractsQuery => new(AccessToken, EstateId);
         public static Queries.GetContractQuery GetContractQuery => new(AccessToken, EstateId, Contract1Id);
 
-        public static Queries.GetFileImportLogsList GetFileImportLogsListQuery =>
-            new Queries.GetFileImportLogsList(AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
+        public static Queries.GetFileImportLogsListQuery GetFileImportLogsListQuery =>
+            new Queries.GetFileImportLogsListQuery(AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
                 FileImportLogQueryEndDate);
 
-        public static Queries.GetFileImportLog GetFileImportLogQuery =>
-            new Queries.GetFileImportLog(AccessToken, EstateId, Merchant1Id, FileImportLogId);
+        public static Queries.GetFileImportLogQuery GetFileImportLogQuery =>
+            new Queries.GetFileImportLogQuery(AccessToken, EstateId, Merchant1Id, FileImportLogId);
 
-        public static Queries.GetFileDetails GetFileDetailsQuery =>
+        public static Queries.GetFileDetailsQuery GetFileDetailsQuery =>
             new(AccessToken, EstateId, FileImportLogFile1.FileId);
+
+        public static Queries.GetComparisonDatesQuery GetComparisonDatesQuery => new(AccessToken, EstateId);
+        public static Queries.GetTodaysSalesQuery GetTodaysSalesQuery => new(AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetTodaysSettlementQuery GetTodaysSettlementQuery => new(AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetTodaysSalesCountByHourQuery GetTodaysSalesCountByHourQuery => new(AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetTodaysSalesValueByHourQuery GetTodaysSalesValueByHourQuery => new(AccessToken, EstateId, DateTime.Now);
 
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
@@ -447,5 +456,40 @@ namespace EstateManagementUI.Testing
                     },
                 }
             };
+
+        public static TodaysSettlement TodaysSettlement => new TodaysSettlement
+        {
+            ComparisonSettlementCount = 100,
+            ComparisonSettlementValue = 1000,
+            TodaysSettlementCount = 50,
+            TodaysSettlementValue = 500
+        };
+
+        public static TodaysSales TodaysSales => new TodaysSales
+        {
+            ComparisonSalesCount = 100,
+            ComparisonSalesValue = 1000,
+            TodaysSalesCount = 50,
+            TodaysSalesValue = 500
+        };
+
+        public static List<ComparisonDate> ComparisonDates => new List<ComparisonDate> {
+            new ComparisonDate {
+                Date = new DateTime(2024, 1, 1), Description = new DateTime(2024, 1, 1).ToString(), OrderValue = 0
+            },
+            new ComparisonDate {
+                Date = new DateTime(2024, 1, 2), Description = new DateTime(2024, 1, 2).ToString(), OrderValue = 0
+            }
+        };
+
+        public static List<TodaysSalesCountByHour> TodaysSalesCountByHour => new List<TodaysSalesCountByHour> {
+            new TodaysSalesCountByHour { TodaysSalesCount = 100, ComparisonSalesCount = 85, Hour = 0 },
+            new TodaysSalesCountByHour { TodaysSalesCount = 90, ComparisonSalesCount = 87, Hour = 1 }
+        };
+
+        public static List<TodaysSalesValueByHour> TodaysSalesValueByHour => new List<TodaysSalesValueByHour> {
+            new TodaysSalesValueByHour { TodaysSalesValue = 100, ComparisonSalesValue = 85, Hour = 0 },
+            new TodaysSalesValueByHour { TodaysSalesValue = 90, ComparisonSalesValue = 87, Hour = 1 }
+        };
     }
 }

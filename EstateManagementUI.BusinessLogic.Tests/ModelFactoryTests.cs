@@ -7,10 +7,64 @@ using EstateManagementUI.BusinessLogic.Common;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using SimpleResults;
 using EstateManagement.DataTransferObjects.Responses.Contract;
+using EstateReportingAPI.DataTransferObjects;
 using FileProcessor.DataTransferObjects.Responses;
+using EstateManagementUI.ViewModels;
+using EstateReportingAPI.DataTrasferObjects;
+using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
+using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
+using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
+using TodaysSales = EstateReportingAPI.DataTransferObjects.TodaysSales;
+using TodaysSalesCountByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesCountByHour;
+using TodaysSalesCountByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesCountByHourModel;
+using TodaysSalesValueByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesValueByHour;
+using TodaysSalesValueByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesValueByHourModel;
+using TodaysSettlement = EstateReportingAPI.DataTransferObjects.TodaysSettlement;
 
 namespace EstateManagementUI.BusinessLogic.Tests {
     public class ModelFactoryTests {
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSettlement_ModelIsConverted() {
+            TodaysSettlement response = TestData.TodaysSettlement;
+
+            TodaysSettlementModel model = ModelFactory.ConvertFrom(response);
+            model.ComparisonSettlementValue.ShouldBe(response.ComparisonSettlementValue);
+            model.ComparisonSettlementCount.ShouldBe(response.ComparisonSettlementCount);
+            model.TodaysSettlementCount.ShouldBe(response.TodaysSettlementCount);
+            model.TodaysSettlementValue.ShouldBe(response.TodaysSettlementValue);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSales_ResponseIsNull_ErrorThrown() {
+            TodaysSales response = null;
+
+            Should.Throw<ArgumentNullException>(() => {
+                ModelFactory.ConvertFrom(response);
+            });
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSales_ModelIsConverted() {
+            TodaysSales response = TestData.TodaysSales;
+
+            TodaysSalesModel model = ModelFactory.ConvertFrom(response);
+            model.ComparisonSalesValue.ShouldBe(response.ComparisonSalesValue);
+            model.ComparisonSalesCount.ShouldBe(response.ComparisonSalesCount);
+            model.TodaysSalesCount.ShouldBe(response.TodaysSalesCount);
+            model.TodaysSalesValue.ShouldBe(response.TodaysSalesValue);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSettlement_ResponseIsNull_ErrorThrown()
+        {
+            TodaysSettlement response = null;
+
+            Should.Throw<ArgumentNullException>(() => {
+                ModelFactory.ConvertFrom(response);
+            });
+        }
+
         [Fact]
         public void ModelFactory_ConvertFrom_EstateResponse_EmptyOperators_ModelIsConverted() {
             EstateResponse response = TestData.EstateResponse;
@@ -261,7 +315,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         public void ModelFactory_ConvertFrom_ContractProduct_ModelIsConverted() {
             ContractProduct contractProduct = TestData.ContractProduct1;
 
-            var model = ModelFactory.ConvertFrom(contractProduct);
+            ContractProductModel model = ModelFactory.ConvertFrom(contractProduct);
             model.ShouldNotBeNull();
             model.Value.ShouldBe(contractProduct.Value.ToString());
             model.DisplayText.ShouldBe(contractProduct.DisplayText);
@@ -318,6 +372,108 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             List<FileImportLogModel> model = ModelFactory.ConvertFrom(fileImportLogList);
             model.ShouldNotBeNull();
             model.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ComparisonDates_ModelIsConverted() {
+            List<ComparisonDate> response = TestData.ComparisonDates;
+
+            List<ComparisonDateModel> model = ModelFactory.ConvertFrom(response);
+
+            foreach (ComparisonDate comparisonDate in response) {
+                ComparisonDateModel? dateModel = model.SingleOrDefault(m => m.Date == comparisonDate.Date);
+                dateModel.ShouldNotBeNull();
+                dateModel.Description.ShouldBe(comparisonDate.Description);
+                dateModel.OrderValue.ShouldBe(comparisonDate.OrderValue);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ComparisonDates_NullList_ModelIsConverted() {
+            List<ComparisonDate> response = null;
+
+            List<ComparisonDateModel> model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_ComparisonDates_EmptyList_ModelIsConverted() {
+            List<ComparisonDate> response = new List<ComparisonDate>();
+
+            List<ComparisonDateModel> model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSalesCountByHourModel_ModelIsConverted() {
+            List<TodaysSalesCountByHour> response = TestData.TodaysSalesCountByHour;
+
+            List<TodaysSalesCountByHourModel> model = ModelFactory.ConvertFrom(response);
+
+            foreach (TodaysSalesCountByHour todaysSalesCountByHour in response) {
+                TodaysSalesCountByHourModel? hourModel = model.SingleOrDefault(m => m.Hour == todaysSalesCountByHour.Hour);
+                hourModel.ShouldNotBeNull();
+                hourModel.TodaysSalesCount.ShouldBe(todaysSalesCountByHour.TodaysSalesCount);
+                hourModel.ComparisonSalesCount.ShouldBe(todaysSalesCountByHour.ComparisonSalesCount);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSalesCountByHourModel_NullResponse_ModelIsConverted() {
+            List<TodaysSalesCountByHour> response = null;
+
+            List<TodaysSalesCountByHourModel> model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSalesCountByHourModel_EmptyList_ModelIsConverted() {
+            List<TodaysSalesCountByHour> response = new List<TodaysSalesCountByHour>();
+
+            List<TodaysSalesCountByHourModel> model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+
+
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_ModelIsConverted() {
+            List<TodaysSalesValueByHour> response = TestData.TodaysSalesValueByHour;
+
+            List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
+
+            foreach (TodaysSalesValueByHour todaysSalesValueByHour in response)
+            {
+                TodaysSalesValueByHourModel? hourModel = model.SingleOrDefault(m => m.Hour == todaysSalesValueByHour.Hour);
+                hourModel.ShouldNotBeNull();
+                hourModel.TodaysSalesValue.ShouldBe(todaysSalesValueByHour.TodaysSalesValue);
+                hourModel.ComparisonSalesValue.ShouldBe(todaysSalesValueByHour.ComparisonSalesValue);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_NullResponse_ModelIsConverted()
+        {
+            List<TodaysSalesValueByHour> response = null;
+
+            List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_EmptyList_ModelIsConverted()
+        {
+            List<TodaysSalesValueByHour> response = new List<TodaysSalesValueByHour>();
+
+            List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
         }
     }
 }

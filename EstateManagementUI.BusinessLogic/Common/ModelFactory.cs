@@ -6,6 +6,8 @@ using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
+using EstateReportingAPI.DataTransferObjects;
+using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
 using SimpleResults;
 using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
@@ -14,6 +16,25 @@ namespace EstateManagementUI.BusinessLogic.Common;
 
 public static class ModelFactory
 {
+    public static List<ComparisonDateModel> ConvertFrom(List<ComparisonDate> source)
+    {
+        if (source == null || source.Any() == false)
+        {
+            return null;
+        }
+
+        List<ComparisonDateModel> models = new List<ComparisonDateModel>();
+        source.ForEach(s => {
+            models.Add(new ComparisonDateModel
+            {
+                Date = s.Date,
+                Description = s.Description,
+                OrderValue = s.OrderValue
+            });
+        });
+
+        return models;
+    }
     public static EstateModel ConvertFrom(EstateResponse source)
     {
         if (source == null)
@@ -291,5 +312,78 @@ public static class ModelFactory
         }
 
         return model;
+    }
+
+    public static TodaysSettlementModel ConvertFrom(TodaysSettlement source)
+    {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        TodaysSettlementModel model = new TodaysSettlementModel
+        {
+            ComparisonSettlementCount = source.ComparisonSettlementCount,
+            ComparisonSettlementValue = source.ComparisonSettlementValue,
+            TodaysSettlementCount = source.TodaysSettlementCount,
+            TodaysSettlementValue = source.TodaysSettlementValue
+        };
+        return model;
+    }
+
+    public static TodaysSalesModel ConvertFrom(TodaysSales source)
+    {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        TodaysSalesModel model = new TodaysSalesModel
+        {
+            TodaysSalesCount = source.TodaysSalesCount,
+            ComparisonSalesCount = source.ComparisonSalesCount,
+            ComparisonSalesValue = source.ComparisonSalesValue,
+            TodaysSalesValue = source.TodaysSalesValue
+        };
+        return model;
+    }
+
+    public static List<TodaysSalesCountByHourModel> ConvertFrom(List<TodaysSalesCountByHour> source)
+    {
+        if (source == null || source.Any() == false)
+        {
+            return null;
+        }
+
+        List<TodaysSalesCountByHourModel> models = new List<TodaysSalesCountByHourModel>();
+
+        source.ForEach(s => {
+            models.Add(new TodaysSalesCountByHourModel
+            {
+                ComparisonSalesCount = s.ComparisonSalesCount,
+                Hour = s.Hour,
+                TodaysSalesCount = s.TodaysSalesCount,
+            });
+        });
+        return models;
+    }
+
+    public static List<TodaysSalesValueByHourModel> ConvertFrom(List<TodaysSalesValueByHour> source)
+    {
+        if (source == null || source.Any() == false)
+        {
+            return null;
+        }
+
+        List<TodaysSalesValueByHourModel> models = new List<TodaysSalesValueByHourModel>();
+        source.ForEach(s => {
+            models.Add(new TodaysSalesValueByHourModel
+            {
+                ComparisonSalesValue = s.ComparisonSalesValue,
+                Hour = s.Hour,
+                TodaysSalesValue = s.TodaysSalesValue,
+            });
+        });
+        return models;
     }
 }

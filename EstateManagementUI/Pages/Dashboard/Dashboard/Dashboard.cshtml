@@ -1,0 +1,77 @@
+﻿@using EstateManagementUI.Common
+@model EstateManagementUI.Pages.Dashboard.Dashboard.Dashboard
+@{
+    
+}
+
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Estate Performance Analysis</h1>
+                    </div>
+
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <label asp-for="Merchant"></label>
+                                <select asp-for="Merchant.MerchantId" asp-items="Model.Merchant.Merchants" class="form-control" hydro-bind hydro-on:change="@(() => Model.Query())"></select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label asp-for="Operator"></label>
+                                <select asp-for="Operator.OperatorId" asp-items="Model.Operator.Operators" class="form-control" hydro-bind hydro-on:change="@(() => Model.Query())"></select>
+                            </div>
+                            <div class="col-lg-3">
+                                <label asp-for="ComparisonDate"></label>
+                                <select asp-for="ComparisonDate.SelectedDate" asp-items="Model.ComparisonDate.Dates" class="form-control" hydro-bind hydro-on:change="@(() => Model.Query())"></select>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-12">
+            <div id="salesKpi" class="@await Helpers.RenderKpiCardClass(Model.TodaysSales.Variance, false)">
+                <span class="info-box-icon">
+                    <i class="fa fa-receipt"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Today's Sales</span>
+                    <span class="info-box-number" id="todaysSalesLabel">@Model.TodaysSales.TodaysSalesValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text" id="comparisonDateSalesLabelText">@Model.TodaysSales.ComparisonLabel</span>
+                    <span class="info-box-number" id="comparisonDateSalesLabel">@Model.TodaysSales.ComparisonSalesValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text">Variance</span>
+                    <span class="info-box-text" id="salesVarianceLabelText">@Model.TodaysSales.Variance.ToString("P2")</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <div id="settlementKpi" class="@await Helpers.RenderKpiCardClass(Model.TodaysSettlement.Variance, false)">
+                <span class="info-box-icon">
+                    <i class="fa fa-money-bill-wave"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Today's Settlement</span>
+                    <span class="info-box-number" id="todaysSettlementLabel">@Model.TodaysSettlement.TodaysSettlementValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text" id="comparisonDateSettlementLabelText">@Model.TodaysSettlement.ComparisonLabel</span>
+                    <span class="info-box-number" id="comparisonDateSettlementLabel">@Model.TodaysSettlement.ComparisonSettlementValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text">Variance</span>
+                    <span class="info-box-text" id="settlementVarianceLabelText">@Model.TodaysSettlement.Variance.ToString("P2")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+            <div class="col-md-6" id="salesvaluebyhourchart" style="height: 400px"></div>
+            <div class="col-md-6" id="salescountbyhourchart" style="height: 400px"></div>
+    </div>
+</div>
+
+
+
+
+

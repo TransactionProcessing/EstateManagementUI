@@ -7,6 +7,7 @@ using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Testing;
+using EstateReportingAPI.Client;
 using FileProcessor.Client;
 using Moq;
 using Shared.Logger;
@@ -16,17 +17,20 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.Tests
 {
     public class ApiClientTests {
-        private IApiClient ApiClient;
-        private Mock<IEstateClient> EstateClient;
-        private Mock<IFileProcessorClient> FileProcessorClient;
+        private readonly IApiClient ApiClient;
+        private readonly Mock<IEstateClient> EstateClient;
+        private readonly Mock<IFileProcessorClient> FileProcessorClient;
+        private readonly Mock<IEstateReportingApiClient> EstateReportingApiClient;
 
         public ApiClientTests() {
             Logger.Initialise(NullLogger.Instance);
 
             this.EstateClient = new Mock<IEstateClient>();
             this.FileProcessorClient = new Mock<IFileProcessorClient>();
+            this.EstateReportingApiClient = new Mock<IEstateReportingApiClient>();
 
-            this.ApiClient = new ApiClient(this.EstateClient.Object, this.FileProcessorClient.Object);
+            this.ApiClient = new ApiClient(this.EstateClient.Object, this.FileProcessorClient.Object,
+                    this.EstateReportingApiClient.Object);
         }
 
         [Fact]
@@ -274,6 +278,98 @@ namespace EstateManagementUI.BusinessLogic.Tests
             this.FileProcessorClient.Setup(e => e.GetFile(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
             Result<FileDetailsModel> result = await this.ApiClient.GetFileDetails(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.FileId1, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+
+        [Fact]
+        public async Task ApiClient_GetComparisonDates_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetComparisonDates(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.ComparisonDates);
+
+            Result<List<ComparisonDateModel>> result = await this.ApiClient.GetComparisonDates(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, System.Threading.CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetComparisonDates_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetComparisonDates(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<List<ComparisonDateModel>> result = await this.ApiClient.GetComparisonDates(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSales_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSales(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(),It.IsAny<DateTime>(),It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSales);
+
+            Result<TodaysSalesModel> result = await this.ApiClient.GetTodaysSales(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, null, null, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSales_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetComparisonDates(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<TodaysSalesModel> result = await this.ApiClient.GetTodaysSales(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, null, null, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSettlement_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSettlement(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSettlement);
+
+            Result<TodaysSettlementModel> result = await this.ApiClient.GetTodaysSettlement(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, 
+                null, null, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSettlement_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSettlement(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(),It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<TodaysSettlementModel> result = await this.ApiClient.GetTodaysSettlement(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, 
+                null, null, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSalesCountByHour_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSalesCountByHour(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSalesCountByHour);
+
+            Result<List<TodaysSalesCountByHourModel>> result = await this.ApiClient.GetTodaysSalesCountByHour(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId,TestData.Merchant1Id, TestData.Operator1Id, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSalesCountByHour_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSalesCountByHour(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<List<TodaysSalesCountByHourModel>> result = await this.ApiClient.GetTodaysSalesCountByHour(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.Operator1Id, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact] public async Task ApiClient_GetTodaysSalesValueByHour_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSalesValueByHour(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSalesValueByHour);
+
+            Result<List<TodaysSalesValueByHourModel>> result = await this.ApiClient.GetTodaysSalesValueByHour(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.Operator1Id, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysSalesValueByHour_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysSalesValueByHour(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<List<TodaysSalesValueByHourModel>> result = await this.ApiClient.GetTodaysSalesValueByHour(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.Operator1Id, TestData.ComparisonDate, System.Threading.CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
     }

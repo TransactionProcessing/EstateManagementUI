@@ -9,22 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.ViewModels;
 using SimpleResults;
 
 namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
 {
-    public class MerchantListModel {
-        public List<SelectListItem> Merchants { get; set; }
-
-        public String MerchantId { get; set; }
-    }
-
-    public class DateModel {
-        [Required]
-        [DataType(DataType.Date)]
-        public DateTime SelectedDate { get; set; }
-    }
-
     public class FileImportLogList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
@@ -86,7 +75,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
         {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetFileImportLogsList query = new Queries.GetFileImportLogsList(this.AccessToken, this.EstateId, Guid.Parse(this.Merchant.MerchantId), this.StartDate.SelectedDate, this.EndDate.SelectedDate);
+            Queries.GetFileImportLogsListQuery query = new Queries.GetFileImportLogsListQuery(this.AccessToken, this.EstateId, Guid.Parse(this.Merchant.MerchantId), this.StartDate.SelectedDate.Value, this.EndDate.SelectedDate.Value);
 
             Result<List<BusinessLogic.Models.FileImportLogModel>> response = await this.Mediator.Send(query, CancellationToken.None);
 

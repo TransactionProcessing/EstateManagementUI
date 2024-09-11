@@ -36,7 +36,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileDetails
         private async Task GetFileDetails() {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetFileDetails fileDetailsQuery = new Queries.GetFileDetails(this.AccessToken, this.EstateId, this.FileId);
+            Queries.GetFileDetailsQuery fileDetailsQuery = new Queries.GetFileDetailsQuery(this.AccessToken, this.EstateId, this.FileId);
 
             Result<BusinessLogic.Models.FileDetailsModel> response = await this.Mediator.Send(fileDetailsQuery, CancellationToken.None);
 

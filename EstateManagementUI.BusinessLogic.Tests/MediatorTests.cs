@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Moq;
 using Shared.Logger;
+using static EstateManagmentUI.BusinessLogic.Requests.Queries;
 
 namespace EstateManagementUI.BusinessLogic.Tests {
     public class MediatorTests {
@@ -28,6 +29,11 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetFileImportLogsListQuery);
             this.Requests.Add(TestData.GetFileImportLogQuery);
             this.Requests.Add(TestData.GetFileDetailsQuery);
+            this.Requests.Add(TestData.GetComparisonDatesQuery);
+            this.Requests.Add(TestData.GetTodaysSalesQuery);
+            this.Requests.Add(TestData.GetTodaysSettlementQuery);
+            this.Requests.Add(TestData.GetTodaysSalesCountByHourQuery);
+            this.Requests.Add(TestData.GetTodaysSalesValueByHourQuery);
 
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);
@@ -86,6 +92,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             configuration.Add("AppSettings:MessagingServiceApi", "http://127.0.0.1");
             configuration.Add("AppSettings:TransactionProcessorApi", "http://127.0.0.1");
             configuration.Add("AppSettings:DatabaseEngine", "SqlServer");
+            configuration.Add("AppSettings:EstateReportingApi", "http://127.0.0.1");
 
             builder.AddInMemoryCollection(configuration);
 
