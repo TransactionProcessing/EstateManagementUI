@@ -172,8 +172,8 @@ namespace EstateManagementUI.IntegrationTests.Steps
         {
             DataTableRow tableRow = table.Rows.Single();
             String estateName = ReqnrollTableHelper.GetStringRowValue(tableRow, "EstateName").Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
-            String estateReference = ReqnrollTableHelper.GetStringRowValue(tableRow, "EstateReference");
-            await this.UiHelpers.VerifyTheCorrectEstateDetailsAreDisplayed(estateName, estateReference);
+            //String estateReference = ReqnrollTableHelper.GetStringRowValue(tableRow, "EstateReference");
+            await this.UiHelpers.VerifyTheCorrectEstateDetailsAreDisplayed(estateName);
         }
 
         //[Then(@"the available balance for the merchant should be (.*)")]

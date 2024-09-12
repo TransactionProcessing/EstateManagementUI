@@ -46,6 +46,7 @@ public static class ModelFactory
         {
             EstateId = source.EstateId,
             EstateName = source.EstateName,
+            Reference = source.EstateReference,
             Operators = ConvertOperators(source.Operators),
             SecurityUsers = ConvertSecurityUsers(source.SecurityUsers)
         };
