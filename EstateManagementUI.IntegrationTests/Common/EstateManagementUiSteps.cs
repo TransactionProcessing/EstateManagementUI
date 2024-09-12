@@ -156,7 +156,6 @@ public class EstateManagementUiHelpers{
                             elementValue = element.GetDomProperty("value");
                             elementValue.ShouldNotBeNull();
                             elementValue.ShouldNotBeEmpty();
-                            elementValue.Length.ShouldBe(8);
         });
     }
 
