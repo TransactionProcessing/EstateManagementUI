@@ -49,7 +49,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             String? browser = Environment.GetEnvironmentVariable("Browser");
             String? isCi = Environment.GetEnvironmentVariable("IsCI");
             
-            //browser = "Firefox";
+            browser = "Edge";
             switch (browser)
             {
                 case null:
