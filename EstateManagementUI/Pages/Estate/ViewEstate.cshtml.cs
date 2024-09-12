@@ -38,7 +38,7 @@ namespace EstateManagementUI.Pages.Estate
             {
                 Name = response.EstateName,
                 Id = response.EstateId,
-                Reference = response.EstateName
+                Reference = response.Reference
             };
         }
     }

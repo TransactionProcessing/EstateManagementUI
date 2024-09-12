@@ -144,7 +144,7 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.WebDriver.Title.ShouldContain("Transaction Fees for Product - "); });
     }
 
-    public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName, String estateReference){
+    public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName){
         await Retry.For(async () => {
                             IWebElement element = this.WebDriver.FindElement(By.Id("Estate_Name"));
                             element.ShouldNotBeNull();
@@ -154,7 +154,9 @@ public class EstateManagementUiHelpers{
                             element = this.WebDriver.FindElement(By.Id("Estate_Reference"));
                             element.ShouldNotBeNull();
                             elementValue = element.GetDomProperty("value");
-                            elementValue.ShouldBe(estateReference);
+                            elementValue.ShouldNotBeNull();
+                            elementValue.ShouldNotBeEmpty();
+                            elementValue.Length.ShouldBe(8);
         });
     }
 

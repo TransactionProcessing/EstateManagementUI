@@ -9,7 +9,7 @@ public record EstateModel {
     public Guid EstateId { get; set; }
 
     public String EstateName { get; set; }
-
+    public String Reference { get; set; }
     public List<EstateOperatorModel> Operators { get; set; }
 
     public List<SecurityUserModel> SecurityUsers { get; set; }
