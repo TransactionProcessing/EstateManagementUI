@@ -195,7 +195,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
                 seriesList[1].Data.Add(todaysSalesValueByHourModel.ComparisonSalesValue);
             }
 
-            return ChartBuilder.BuildChartOptions(categoryList, seriesList, "line", $"Sales Value Comparison - Today vs {this.ComparisonDate.SelectedDate.Value:yyyy-MM-dd}",
+            return ChartBuilder.BuildLineChartOptions(categoryList, seriesList, "line", $"Sales Value Comparison - Today vs {this.ComparisonDate.SelectedDate.Value:yyyy-MM-dd}",
                 yAxisFormatFunction: StandardJavascriptFunctions.CurrencyFormatter);
         }
 
@@ -219,7 +219,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
                 seriesList[1].Data.Add(todaysSalesCountByHourModel.ComparisonSalesCount);
             }
 
-            return ChartBuilder.BuildChartOptions(categoryList, seriesList, "line", $"Sales Count Comparison - Today vs {this.ComparisonDate.SelectedDate.Value:yyyy-MM-dd}",
+            return ChartBuilder.BuildLineChartOptions(categoryList, seriesList, "line", $"Sales Count Comparison - Today vs {this.ComparisonDate.SelectedDate.Value:yyyy-MM-dd}",
                 yAxisFormatFunction: StandardJavascriptFunctions.CurrencyFormatter);
         }
 

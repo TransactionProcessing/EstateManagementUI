@@ -34,5 +34,18 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
 
         public record GetTodaysSalesCountByHourQuery(String AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesCountByHourModel>>>;
         public record GetTodaysSalesValueByHourQuery(String AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesValueByHourModel>>>;
+
+        public record GetMerchantKpiQuery(String AccessToken, Guid EstateId) : IRequest<Result<MerchantKpiModel>>;
+
+        public record GetTodaysFailedSalesQuery(String AccessToken, Guid EstateId, String ResponseCode, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
+
+        public record GetTopProductDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomProductDataModel>>>;
+        public record GetBottomProductDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomProductDataModel>>>;
+
+        public record GetTopMerchantDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomMerchantDataModel>>>;
+        public record GetBottomMerchantDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomMerchantDataModel>>>;
+
+        public record GetTopOperatorDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomOperatorDataModel>>>;
+        public record GetBottomOperatorDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomOperatorDataModel>>>;
     }
 }

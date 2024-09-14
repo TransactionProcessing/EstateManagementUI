@@ -34,6 +34,14 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetTodaysSettlementQuery);
             this.Requests.Add(TestData.GetTodaysSalesCountByHourQuery);
             this.Requests.Add(TestData.GetTodaysSalesValueByHourQuery);
+            this.Requests.Add(TestData.GetMerchantKpiQuery);
+            this.Requests.Add(TestData.GetTodaysFailedSalesQuery);
+            this.Requests.Add(TestData.GetTopProductDataQuery);
+            this.Requests.Add(TestData.GetBottomProductDataQuery);
+            this.Requests.Add(TestData.GetTopMerchantDataQuery);
+            this.Requests.Add(TestData.GetBottomMerchantDataQuery);
+            this.Requests.Add(TestData.GetTopOperatorDataQuery);
+            this.Requests.Add(TestData.GetBottomOperatorDataQuery);
 
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);

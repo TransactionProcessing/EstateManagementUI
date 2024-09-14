@@ -387,4 +387,74 @@ public static class ModelFactory
         });
         return models;
     }
+
+    public static MerchantKpiModel ConvertFrom(MerchantKpi source)
+    {
+        if (source == null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        MerchantKpiModel model = new MerchantKpiModel
+        {
+            MerchantsWithNoSaleInLast7Days = source.MerchantsWithNoSaleInLast7Days,
+            MerchantsWithNoSaleToday = source.MerchantsWithNoSaleToday,
+            MerchantsWithSaleInLastHour = source.MerchantsWithSaleInLastHour
+        };
+        return model;
+    }
+
+    public static List<TopBottomOperatorDataModel> ConvertFrom(List<TopBottomOperatorData> source)
+    {
+        if (source == null || source.Any() == false)
+        {
+            return null;
+        }
+
+        List<TopBottomOperatorDataModel> models = new List<TopBottomOperatorDataModel>();
+        source.ForEach(s => {
+            models.Add(new TopBottomOperatorDataModel
+            {
+                SalesValue = s.SalesValue,
+                OperatorName = s.OperatorName,
+            });
+        });
+        return models;
+    }
+
+    public static List<TopBottomMerchantDataModel> ConvertFrom(List<TopBottomMerchantData> source)
+    {
+        if (source == null || source.Any() == false)
+        {
+            return null;
+        }
+
+        List<TopBottomMerchantDataModel> models = new List<TopBottomMerchantDataModel>();
+        source.ForEach(s => {
+            models.Add(new TopBottomMerchantDataModel
+            {
+                SalesValue = s.SalesValue,
+                MerchantName = s.MerchantName,
+            });
+        });
+        return models;
+    }
+
+    public static List<TopBottomProductDataModel> ConvertFrom(List<TopBottomProductData> source)
+    {
+        if (source == null || source.Any() == false)
+        {
+            return null;
+        }
+
+        List<TopBottomProductDataModel> models = new List<TopBottomProductDataModel>();
+        source.ForEach(s => {
+            models.Add(new TopBottomProductDataModel
+            {
+                SalesValue = s.SalesValue,
+                ProductName = s.ProductName,
+            });
+        });
+        return models;
+    }
 }

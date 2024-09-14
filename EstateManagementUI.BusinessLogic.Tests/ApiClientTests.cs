@@ -8,6 +8,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Testing;
 using EstateReportingAPI.Client;
+using EstateReportingAPI.DataTransferObjects;
 using FileProcessor.Client;
 using Moq;
 using Shared.Logger;
@@ -356,7 +357,8 @@ namespace EstateManagementUI.BusinessLogic.Tests
             result.IsFailed.ShouldBeTrue();
         }
 
-        [Fact] public async Task ApiClient_GetTodaysSalesValueByHour_DataIsReturned()
+        [Fact] 
+        public async Task ApiClient_GetTodaysSalesValueByHour_DataIsReturned()
         {
             this.EstateReportingApiClient.Setup(e => e.GetTodaysSalesValueByHour(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSalesValueByHour);
 
@@ -370,6 +372,98 @@ namespace EstateManagementUI.BusinessLogic.Tests
             this.EstateReportingApiClient.Setup(e => e.GetTodaysSalesValueByHour(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
             Result<List<TodaysSalesValueByHourModel>> result = await this.ApiClient.GetTodaysSalesValueByHour(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, TestData.Operator1Id, TestData.ComparisonDate, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetMerchantKpi_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetMerchantKpi(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.MerchantKpi);
+
+            Result<MerchantKpiModel> result = await this.ApiClient.GetMerchantKpi(TestData.AccessToken, TestData.EstateId, System.Threading.CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetMerchantKpi_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetMerchantKpi(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result<MerchantKpiModel> result = await this.ApiClient.GetMerchantKpi(TestData.AccessToken, TestData.EstateId, System.Threading.CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+
+        [Fact]
+        public async Task ApiClient_GetTodaysFailedSales_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysFailedSales(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<String>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSales);
+
+            var result = await this.ApiClient.GetTodaysFailedSales(TestData.AccessToken, TestData.EstateId, "1009",TestData.ComparisonDate,CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTodaysFailedSales_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTodaysFailedSales(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<String>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            var result = await this.ApiClient.GetTodaysFailedSales(TestData.AccessToken, TestData.EstateId, "1009", TestData.ComparisonDate, CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+
+        [Fact]
+        public async Task ApiClient_GetTopBottomMerchantData_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTopBottomMerchantData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TopBottomMerchantDataList);
+
+            var result = await this.ApiClient.GetTopBottomMerchantData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTopBottomMerchantData_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTopBottomMerchantData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            var result = await this.ApiClient.GetTopBottomMerchantData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTopBottomProductData_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTopBottomProductData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TopBottomProductDataList);
+
+            var result = await this.ApiClient.GetTopBottomProductData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTopBottomProductData_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTopBottomProductData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            var result = await this.ApiClient.GetTopBottomProductData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTopBottomOperatorData_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTopBottomOperatorData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TopBottomOperatorDataList);
+
+            var result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetTopBottomOperatorData_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetTopBottomOperatorData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            var result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
     }

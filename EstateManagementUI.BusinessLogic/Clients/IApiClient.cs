@@ -1,4 +1,5 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
+using EstateReportingAPI.DataTransferObjects;
 using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Clients
@@ -105,5 +106,35 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                                 Int32? operatorReportingId,
                                                                 DateTime comparisonDate,
                                                                 CancellationToken cancellationToken);
+
+        Task<Result<TodaysSalesModel>> GetTodaysFailedSales(
+            string accessToken,
+            Guid estateId,
+            string responseCode,
+            DateTime comparisonDate,
+            CancellationToken cancellationToken);
+
+        Task<Result<List<TopBottomOperatorDataModel>>> GetTopBottomOperatorData(
+            string accessToken,
+            Guid estateId,
+            TopBottom topBottom,
+            int resultCount,
+            CancellationToken cancellationToken);
+
+        Task<Result<List<TopBottomMerchantDataModel>>> GetTopBottomMerchantData(
+            string accessToken,
+            Guid estateId,
+            TopBottom topBottom,
+            int resultCount,
+            CancellationToken cancellationToken);
+
+        Task<Result<List<TopBottomProductDataModel>>> GetTopBottomProductData(
+            string accessToken,
+            Guid estateId,
+            TopBottom topBottom,
+            int resultCount,
+            CancellationToken cancellationToken);
+
+        Task<Result<MerchantKpiModel>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
     }
 }

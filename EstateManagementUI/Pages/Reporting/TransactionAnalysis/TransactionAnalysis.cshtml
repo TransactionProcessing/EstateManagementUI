@@ -1,0 +1,99 @@
+﻿@using EstateManagementUI.Common
+@model EstateManagementUI.Pages.Reporting.TransactionAnalysis.TransactionAnalysis
+@{
+}
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Transaction Analysis</h1>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <label asp-for="ComparisonDate"></label>
+                            <select asp-for="ComparisonDate.SelectedDate" asp-items="Model.ComparisonDate.Dates" class="form-control" hydro-bind hydro-on:change="@(() => Model.Query())"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-12">
+            <div id="salesKpi" class="@await Helpers.RenderKpiCardClass(Model.TodaysSales.Variance, false)">
+                <span class="info-box-icon">
+                    <i class="fa fa-receipt"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Today's Sales</span>
+                    <span class="info-box-number" id="todaysSalesLabel">@Model.TodaysSales.TodaysSalesValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text" id="comparisonDateSalesLabelText">@Model.TodaysSales.ComparisonLabel</span>
+                    <span class="info-box-number" id="comparisonDateSalesLabel">@Model.TodaysSales.ComparisonSalesValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text">Variance</span>
+                    <span class="info-box-text" id="salesVarianceLabelText">@Model.TodaysSales.Variance.ToString("P2")</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <div id="failedSalesKpi" class="@await Helpers.RenderKpiCardClass(Model.TodaysFailedSales.Variance, false)">
+                <span class="info-box-icon">
+                    <i class="fa fa-receipt"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Today's Failed Sales Due to Low Credit</span>
+                    <span class="info-box-number" id="todaysSalesLabel">@Model.TodaysFailedSales.TodaysSalesValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text" id="comparisonDateSalesLabelText">@Model.TodaysFailedSales.ComparisonLabel</span>
+                    <span class="info-box-number" id="comparisonDateSalesLabel">@Model.TodaysFailedSales.ComparisonSalesValue.ToString("C", new System.Globalization.CultureInfo("en-KE"))</span>
+                    <span class="info-box-text">Variance</span>
+                    <span class="info-box-text" id="salesVarianceLabelText">@Model.TodaysFailedSales.Variance.ToString("P2")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box bg-info">
+                <span class="info-box-icon">
+                    <i class="fa fa-receipt"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Today's Active Merchants</span>
+                    <span class="info-box-number" id="activeMerchantsLabel">@Model.MerchantKpi.MerchantsWithSaleInLastHour</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box bg-warning">
+                <span class="info-box-icon">
+                    <i class="fa fa-receipt"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Merchants with no sales in last hour</span>
+                    <span class="info-box-number" id="merchantsNoSalesInLastHourLabel">@Model.MerchantKpi.MerchantsWithNoSaleToday</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box bg-danger">
+                <span class="info-box-icon">
+                    <i class="fa fa-receipt"></i>
+                </span>
+                <div class="info-box-content">
+                    <span class="info-box-text">Merchants with no sales in last 7 days</span>
+                    <span class="info-box-number" id="merchantsNoSalesInLast7DaysLabel">@Model.MerchantKpi.MerchantsWithNoSaleInLast7Days</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4" id="bottommerchantsbysaleschart" style="height: 400px"></div>
+        <div class="col-md-4" id="bottomoperatorssbysaleschart" style="height: 400px"></div>
+        <div class="col-md-4" id="bottomproductsbysaleschart" style="height: 400px"></div>
+    </div>
+</div>

@@ -45,6 +45,12 @@ public class ChartBuilder {
             public string Curve { get; set; }
         }
 
+        public class BarStroke : Stroke
+        {
+            [JsonProperty("colors")]
+            public List<String> Colors { get; set; } = new List<String>();
+        }
+
         public class Title
         {
             [JsonProperty("text")] 
@@ -96,7 +102,19 @@ public class ChartBuilder {
             }
         }
 
-        public class ChartOptions<T>
+        public class PlotOptions{
+            [JsonProperty("bar")]
+            public Bar Bar { get; set; }
+        }
+
+        public class Bar {
+            [JsonProperty("horizontal")]
+            public Boolean Horizontal { get; set; }
+            [JsonProperty("dataLabels")]
+            public DataLabels DataLabels { get; set; }
+        }
+
+        public class BaseChartOptions<T>
         {
             [JsonProperty("series")] 
             public List<Series<T>> Series { get; set; }
@@ -108,33 +126,92 @@ public class ChartBuilder {
             public Stroke Stroke { get; set; }
             [JsonProperty("title")] 
             public Title Title { get; set; }
-            [JsonProperty("grid")] 
-            public Grid Grid { get; set; }
             [JsonProperty("xaxis")] 
             public XAxis XAxis { get; set; }
             [JsonProperty("yaxis")] 
             public YAxis YAxis { get; set; }
         }
+
+        public class LineChartOptions<T> : BaseChartOptions<T>
+        {
+            [JsonProperty("grid")] 
+            public Grid Grid { get; set; }
+        }
+
+        public class BarChartOptions<T> : BaseChartOptions<T>
+        {
+            [JsonProperty("stroke")]
+            public BarStroke Stroke { get; set; }
+
+            [JsonProperty("plotOptions")]
+            public PlotOptions PlotOptions { get; set; }
+        }
     }
 
-    public static String BuildChartOptions<T>(List<String> categories,
+    //public static String BuildChartOptions<T>(List<String> categories,
+    //                                          List<ChartObjects.Series<T>> seriesList,
+    //                                          String chartType,
+    //                                          String title,
+    //                                          JavaScriptFunction xAxisFormatFunction = null,
+    //                                          JavaScriptFunction yAxisFormatFunction = null) {
+    //    ChartObjects.ChartOptions<T> chartOptions = new ChartObjects.ChartOptions<T> {
+    //        Series = seriesList,
+    //        Chart = new ChartObjects.Chart { Height = 350, Type = chartType, Zoom = new ChartObjects.Zoom { Enabled = true } },
+    //        DataLabels = new ChartObjects.DataLabels { Enabled = false },
+    //        Title = new ChartObjects.Title { Text = title, Align = "left" },
+    //        //Grid = new ChartObjects.Grid { Row = new ChartObjects.Row { Colors = new List<string> { "#f3f3f3", "transparent" }, Opacity = 0.5 } },
+    //        XAxis = new ChartObjects.XAxis { Categories = categories, Labels = new Label()},
+    //        YAxis = new ChartObjects.YAxis { Labels = new Label()}
+    //    };
+
+    //    if (chartType == "line") {
+    //        chartOptions.Stroke = new ChartObjects.Stroke { Curve = "straight" };
+    //        chartOptions.PlotOptions = new PlotOptions();
+    //    }
+
+    //    if (chartType == "bar") {
+    //        chartOptions.Stroke = new Stroke { Colors = new List<String> { "transparent" } };
+    //        chartOptions.PlotOptions = new PlotOptions { Bar = new Bar { Horizontal = false } };
+    //    }
+
+    //    if (xAxisFormatFunction != null) {
+    //        chartOptions.XAxis.Labels.Formatter = xAxisFormatFunction;
+    //    }
+    //    if (yAxisFormatFunction != null)
+    //    {
+    //        chartOptions.YAxis.Labels.Formatter = yAxisFormatFunction;
+    //    }
+
+    //    JsonSerializerSettings settings = new JsonSerializerSettings
+    //    {
+    //        Converters = new List<JsonConverter> { new JavaScriptFunctionConverter() },
+    //    };
+
+    //    return JsonConvert.SerializeObject(chartOptions, settings);
+    //}
+
+    public static String BuildLineChartOptions<T>(List<String> categories,
                                               List<ChartObjects.Series<T>> seriesList,
                                               String chartType,
                                               String title,
                                               JavaScriptFunction xAxisFormatFunction = null,
-                                              JavaScriptFunction yAxisFormatFunction = null) {
-        ChartObjects.ChartOptions<T> chartOptions = new ChartObjects.ChartOptions<T> {
+                                              JavaScriptFunction yAxisFormatFunction = null)
+    {
+        ChartObjects.LineChartOptions<T> chartOptions = new ChartObjects.LineChartOptions<T>()
+        {
             Series = seriesList,
             Chart = new ChartObjects.Chart { Height = 350, Type = chartType, Zoom = new ChartObjects.Zoom { Enabled = true } },
             DataLabels = new ChartObjects.DataLabels { Enabled = false },
-            Stroke = new ChartObjects.Stroke { Curve = "straight" },
             Title = new ChartObjects.Title { Text = title, Align = "left" },
             Grid = new ChartObjects.Grid { Row = new ChartObjects.Row { Colors = new List<string> { "#f3f3f3", "transparent" }, Opacity = 0.5 } },
-            XAxis = new ChartObjects.XAxis { Categories = categories, Labels = new Label()},
-            YAxis = new ChartObjects.YAxis { Labels = new Label()}
+            XAxis = new ChartObjects.XAxis { Categories = categories, Labels = new Label() },
+            YAxis = new ChartObjects.YAxis { Labels = new Label() }
         };
 
-        if (xAxisFormatFunction != null) {
+        chartOptions.Stroke = new ChartObjects.Stroke { Curve = "straight" };
+        
+        if (xAxisFormatFunction != null)
+        {
             chartOptions.XAxis.Labels.Formatter = xAxisFormatFunction;
         }
         if (yAxisFormatFunction != null)
@@ -147,6 +224,50 @@ public class ChartBuilder {
             Converters = new List<JsonConverter> { new JavaScriptFunctionConverter() },
         };
 
+        var x = JsonConvert.SerializeObject(chartOptions, settings);
+        return JsonConvert.SerializeObject(chartOptions, settings);
+    }
+
+    public static String BuildBarChartOptions<T>(List<String> categories,
+                                                  List<ChartObjects.Series<T>> seriesList,
+                                                  String chartType,
+                                                  String title,
+                                                  JavaScriptFunction xAxisFormatFunction = null,
+                                                  JavaScriptFunction yAxisFormatFunction = null)
+    {
+        ChartObjects.BarChartOptions<T> chartOptions = new ChartObjects.BarChartOptions<T>()
+        {
+            Series = seriesList,
+            Chart = new ChartObjects.Chart { Height = 350, Type = chartType, Zoom = new ChartObjects.Zoom { Enabled = true } },
+            DataLabels = new ChartObjects.DataLabels { Enabled = false },
+            Title = new ChartObjects.Title { Text = title, Align = "left" },
+            XAxis = new ChartObjects.XAxis { Categories = categories, Labels = new Label() },
+            YAxis = new ChartObjects.YAxis { Labels = new Label() }
+        };
+        chartOptions.PlotOptions = new PlotOptions { Bar = new Bar { Horizontal = false, DataLabels = new DataLabels{ Enabled = false}} };
+        chartOptions.Stroke = new ChartObjects.BarStroke() { Curve = "straight", Colors = new List<String> {"transparent"}};
+
+        if (xAxisFormatFunction != null)
+        {
+            chartOptions.XAxis.Labels.Formatter = xAxisFormatFunction;
+        }
+        else {
+            chartOptions.XAxis.Labels.Formatter = StandardJavascriptFunctions.EmptyFunction;
+        }
+        if (yAxisFormatFunction != null)
+        {
+            chartOptions.YAxis.Labels.Formatter = yAxisFormatFunction;
+        }
+        else
+        {
+            chartOptions.YAxis.Labels.Formatter = StandardJavascriptFunctions.EmptyFunction;
+        }
+        JsonSerializerSettings settings = new JsonSerializerSettings
+        {
+            Converters = new List<JsonConverter> { new JavaScriptFunctionConverter() },
+        };
+
+        var x = JsonConvert.SerializeObject(chartOptions, settings);
         return JsonConvert.SerializeObject(chartOptions, settings);
     }
 
@@ -155,7 +276,7 @@ public class ChartBuilder {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             var jsFunction = value as JavaScriptFunction;
-            if (jsFunction != null)
+            if (jsFunction != null && String.IsNullOrEmpty(jsFunction.Body) == false)
             {
                 writer.WriteRawValue(jsFunction.Body);
             }
@@ -169,6 +290,10 @@ public class ChartBuilder {
 
         public override bool CanConvert(Type objectType)
         {
+            if (objectType == typeof(JavaScriptFunction)) {
+                int i = 0;
+            }
+
             return objectType == typeof(JavaScriptFunction);
         }
     }
@@ -176,6 +301,7 @@ public class ChartBuilder {
     public class StandardJavascriptFunctions {
         public static JavaScriptFunction CurrencyFormatter =>
             new JavaScriptFunction("function (value) {\r\n      return \"KES \" + value;\r\n    }");
-
+        public static JavaScriptFunction EmptyFunction =>
+            new JavaScriptFunction("function (value) {\r\n      return value;\r\n    }");
     }
 }
