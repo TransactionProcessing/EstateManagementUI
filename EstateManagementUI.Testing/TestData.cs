@@ -36,6 +36,20 @@ namespace EstateManagementUI.Testing
         public static Queries.GetTodaysSalesCountByHourQuery GetTodaysSalesCountByHourQuery => new(AccessToken, EstateId, DateTime.Now);
         public static Queries.GetTodaysSalesValueByHourQuery GetTodaysSalesValueByHourQuery => new(AccessToken, EstateId, DateTime.Now);
 
+        public static Queries.GetMerchantKpiQuery GetMerchantKpiQuery => new (AccessToken, EstateId);
+
+        public static Queries.GetTodaysFailedSalesQuery GetTodaysFailedSalesQuery =>
+            new(AccessToken, EstateId, "1009", DateTime.Now);
+
+        public static Queries.GetTopProductDataQuery GetTopProductDataQuery =>
+            new Queries.GetTopProductDataQuery(AccessToken, EstateId, 1);
+
+        public static Queries.GetBottomProductDataQuery GetBottomProductDataQuery => new(AccessToken, EstateId, 1);
+        public static Queries.GetTopMerchantDataQuery GetTopMerchantDataQuery => new(AccessToken, EstateId, 1);
+        public static Queries.GetBottomMerchantDataQuery GetBottomMerchantDataQuery => new(AccessToken, EstateId, 1);
+        public static Queries.GetTopOperatorDataQuery GetTopOperatorDataQuery => new(AccessToken, EstateId, 1);
+        public static Queries.GetBottomOperatorDataQuery GetBottomOperatorDataQuery => new(AccessToken, EstateId, 1);
+
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
                 RequireCustomTerminalNumber);
@@ -490,6 +504,46 @@ namespace EstateManagementUI.Testing
         public static List<TodaysSalesValueByHour> TodaysSalesValueByHour => new List<TodaysSalesValueByHour> {
             new TodaysSalesValueByHour { TodaysSalesValue = 100, ComparisonSalesValue = 85, Hour = 0 },
             new TodaysSalesValueByHour { TodaysSalesValue = 90, ComparisonSalesValue = 87, Hour = 1 }
+        };
+
+        public static List<TopBottomProductData> TopBottomProductDataList => new List<TopBottomProductData>{
+            new TopBottomProductData(){
+                ProductName = "Product 1",
+                SalesValue = 100
+            },
+            new TopBottomProductData(){
+                ProductName = "Product 2",
+                SalesValue = 200
+            }
+        };
+
+        public static List<TopBottomMerchantData> TopBottomMerchantDataList => new List<TopBottomMerchantData>{
+            new TopBottomMerchantData(){
+                MerchantName = "Merchant 1",
+                SalesValue = 100
+            },
+            new TopBottomMerchantData(){
+                MerchantName = "Merchant 2",
+                SalesValue = 200
+            }
+        };
+
+        public static List<TopBottomOperatorData> TopBottomOperatorDataList => new List<TopBottomOperatorData>{
+            new TopBottomOperatorData(){
+                OperatorName = "Operator 1",
+                SalesValue = 100
+            },
+            new TopBottomOperatorData(){
+                OperatorName = "Operator 2",
+                SalesValue = 200
+            }
+        };
+
+        public static MerchantKpi MerchantKpi => new MerchantKpi()
+        {
+            MerchantsWithNoSaleInLast7Days = 1,
+            MerchantsWithNoSaleToday = 2,
+            MerchantsWithSaleInLastHour = 3
         };
     }
 }

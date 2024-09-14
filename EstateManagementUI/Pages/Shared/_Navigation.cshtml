@@ -3,22 +3,17 @@
 @using SimpleResults
 @inject IPermissionsService PermissionsService
 @{
-    bool isAuthenticated = User.Identity.IsAuthenticated;
-    var page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
-}
+    string GetCurrentPageClass(string prefix) {
+        String page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
+        return page.StartsWith($"/{prefix}") ? "btn btn-sm btn-neutral btn-active" : "btn btn-sm btn-ghost";
+    }
 
-@{
-    string GetCurrentPageClass(string prefix) =>
-        page.StartsWith($"/{prefix}")
-            ? "btn btn-sm btn-neutral btn-active"
-            : "btn btn-sm btn-ghost";
-
-    async Task RenderItem(string title, string name, String id) {
+    async Task RenderItem(string title, string name, String id, String pageName="Index") {
         Result permisionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, name);
         if (permisionResult.IsFailed)
             return;
-
-        <a class='nav-link' asp-page="/@name/Index" id="@id">
+        var link = $"/{name}/{pageName}";
+        <a class='nav-link' asp-page="@link" id="@id">
             @switch (name)
             {
                 case "Estate":

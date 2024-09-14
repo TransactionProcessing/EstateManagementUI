@@ -60,4 +60,38 @@ namespace EstateManagementUI.BusinessLogic.Models
 
         public Decimal ComparisonSalesValue { get; set; }
     }
+
+    [ExcludeFromCodeCoverage]
+    public class MerchantKpiModel
+    {
+        public int MerchantsWithSaleInLastHour { get; set; }
+
+        public int MerchantsWithNoSaleToday { get; set; }
+
+        public int MerchantsWithNoSaleInLast7Days { get; set; }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class TopBottomOperatorDataModel
+    {
+        public string OperatorName { get; set; }
+
+        public Decimal SalesValue { get; set; }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class TopBottomProductDataModel
+    {
+        public string ProductName { get; set; }
+
+        public Decimal SalesValue { get; set; }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class TopBottomMerchantDataModel
+    {
+        public string MerchantName { get; set; }
+
+        public Decimal SalesValue { get; set; }
+    }
 }

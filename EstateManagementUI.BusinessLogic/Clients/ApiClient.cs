@@ -311,4 +311,81 @@ public class ApiClient : IApiClient {
 
         }
     }
+
+    public async Task<Result<TodaysSalesModel>> GetTodaysFailedSales(String accessToken, Guid estateId, String responseCode, DateTime comparisonDate, CancellationToken cancellationToken)
+    {
+        async Task<Result<TodaysSalesModel>> ClientMethod()
+        {
+            TodaysSales apiResponse = await this.EstateReportingApiClient.GetTodaysFailedSales(accessToken, estateId, 0, 0, responseCode, comparisonDate, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<List<TopBottomOperatorDataModel>>> GetTopBottomOperatorData(String accessToken, Guid estateId, TopBottom topBottom, Int32 resultCount, CancellationToken cancellationToken)
+    {
+        async Task<Result<List<TopBottomOperatorDataModel>>> ClientMethod()
+        {
+            List<TopBottomOperatorData> apiResponse = await this.EstateReportingApiClient.GetTopBottomOperatorData(accessToken, estateId, this.Convert(topBottom), resultCount, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<List<TopBottomMerchantDataModel>>> GetTopBottomMerchantData(string accessToken,
+                                                                                         Guid estateId,
+                                                                                         TopBottom topBottom,
+                                                                                         int resultCount,
+                                                                                         CancellationToken cancellationToken)
+    {
+        async Task<Result<List<TopBottomMerchantDataModel>>> ClientMethod()
+        {
+            List<TopBottomMerchantData> apiResponse = await this.EstateReportingApiClient.GetTopBottomMerchantData(accessToken, estateId, this.Convert(topBottom), resultCount, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<List<TopBottomProductDataModel>>> GetTopBottomProductData(string accessToken,
+                                                                                       Guid estateId,
+                                                                                       TopBottom topBottom,
+                                                                                       int resultCount,
+                                                                                       CancellationToken cancellationToken)
+    {
+        async Task<Result<List<TopBottomProductDataModel>>> ClientMethod()
+        {
+            List<TopBottomProductData> apiResponse = await this.EstateReportingApiClient.GetTopBottomProductData(accessToken, estateId, this.Convert(topBottom), resultCount, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<MerchantKpiModel>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken)
+    {
+        async Task<Result<MerchantKpiModel>> ClientMethod()
+        {
+            MerchantKpi apiResponse = await this.EstateReportingApiClient.GetMerchantKpi(accessToken, estateId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    private EstateReportingAPI.DataTransferObjects.TopBottom Convert(TopBottom model)
+    {
+        return model switch
+        {
+            TopBottom.Bottom => EstateReportingAPI.DataTransferObjects.TopBottom.Bottom,
+            _ => EstateReportingAPI.DataTransferObjects.TopBottom.Top
+        };
+    }
 }

@@ -4,6 +4,7 @@ using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagmentUI.BusinessLogic.Requests;
 using Lamar;
 using MediatR;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SimpleResults;
 using static EstateManagmentUI.BusinessLogic.Requests.Queries;
 
@@ -14,26 +15,56 @@ public class MediatorRegistry : ServiceRegistry {
     public MediatorRegistry() {
         this.AddTransient<IMediator, Mediator>();
 
-        // Queries
+        this.RegisterEstateRequestHandler();
+        this.RegisterMerchantRequestHandler();
+        this.RegisterOperatorRequestHandler();
+        this.RegisterContractRequestHandler();
+        this.RegisterFileRequestHandler();
+        this.RegisterReportingRequestHandler();
+    }
+
+    private void RegisterEstateRequestHandler() {
         this.AddSingleton<IRequestHandler<Queries.GetEstateQuery, EstateModel>, EstateRequestHandler>();
+    }
+
+    private void RegisterMerchantRequestHandler() {
         this.AddSingleton<IRequestHandler<Queries.GetMerchantsQuery, List<MerchantModel>>, MerchantRequestHandler>();
+    }
+
+    private void RegisterOperatorRequestHandler() {
         this.AddSingleton<IRequestHandler<Queries.GetOperatorsQuery, Result<List<OperatorModel>>>, OperatorRequestHandler>();
+
+        this.AddSingleton<IRequestHandler<Commands.AddNewOperatorCommand, Result>, OperatorRequestHandler>();
+        this.AddSingleton<IRequestHandler<Commands.UpdateOperatorCommand, Result>, OperatorRequestHandler>();
+    }
+
+    private void RegisterContractRequestHandler() {
         this.AddSingleton<IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetOperatorQuery, Result<OperatorModel>>, OperatorRequestHandler>();
+    }
+
+    private void RegisterFileRequestHandler() {
         this.AddSingleton<IRequestHandler<Queries.GetFileImportLogsListQuery, Result<List<FileImportLogModel>>>, FileRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetFileImportLogQuery, Result<FileImportLogModel>>, FileRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetFileDetailsQuery, Result<FileDetailsModel>>, FileRequestHandler>();
-        
+    }
+
+    private void RegisterReportingRequestHandler() {
         this.AddSingleton<IRequestHandler<Queries.GetComparisonDatesQuery, Result<List<ComparisonDateModel>>>, ReportingRequestHandler>();
-        this.AddSingleton<IRequestHandler<GetTodaysSalesQuery, Result<TodaysSalesModel>>, ReportingRequestHandler>();
-        this.AddSingleton<IRequestHandler<GetTodaysSettlementQuery, Result<TodaysSettlementModel>>, ReportingRequestHandler>();
-        this.AddSingleton<IRequestHandler<GetTodaysSalesCountByHourQuery, Result<List<TodaysSalesCountByHourModel>>>, ReportingRequestHandler>();
-        this.AddSingleton<IRequestHandler<GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTodaysSalesQuery, Result<TodaysSalesModel>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTodaysSettlementQuery, Result<TodaysSettlementModel>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTodaysSalesCountByHourQuery, Result<List<TodaysSalesCountByHourModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>, ReportingRequestHandler>();
 
+        this.AddSingleton<IRequestHandler<Queries.GetMerchantKpiQuery, Result<MerchantKpiModel>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTopMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetBottomMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTopProductDataQuery, Result<List<TopBottomProductDataModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetBottomProductDataQuery, Result<List<TopBottomProductDataModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>, ReportingRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>, ReportingRequestHandler>();
 
-        // Commands
-        this.AddSingleton<IRequestHandler<Commands.AddNewOperatorCommand, Result>, OperatorRequestHandler>();
-        this.AddSingleton<IRequestHandler<Commands.UpdateOperatorCommand, Result>, OperatorRequestHandler>();
     }
 }

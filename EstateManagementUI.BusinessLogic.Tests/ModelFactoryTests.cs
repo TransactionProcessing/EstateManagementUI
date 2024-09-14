@@ -14,6 +14,7 @@ using EstateReportingAPI.DataTrasferObjects;
 using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
 using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
 using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
+using MerchantKpi = EstateReportingAPI.DataTransferObjects.MerchantKpi;
 using TodaysSales = EstateReportingAPI.DataTransferObjects.TodaysSales;
 using TodaysSalesCountByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesCountByHour;
 using TodaysSalesCountByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesCountByHourModel;
@@ -474,6 +475,129 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
 
             model.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_MerchantKpi_IsConverted()
+        {
+
+            MerchantKpi model = new MerchantKpi()
+            {
+                MerchantsWithNoSaleInLast7Days = 1,
+                MerchantsWithNoSaleToday = 2,
+                MerchantsWithSaleInLastHour = 3
+            };
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldNotBeNull();
+            result.MerchantsWithNoSaleInLast7Days.ShouldBe(model.MerchantsWithNoSaleInLast7Days);
+            result.MerchantsWithNoSaleToday.ShouldBe(model.MerchantsWithNoSaleToday);
+            result.MerchantsWithSaleInLastHour.ShouldBe(model.MerchantsWithSaleInLastHour);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_MerchantKpi_ModelIsNull_ErrorThrown()
+        {
+
+            MerchantKpi model = null;
+            Should.Throw<ArgumentNullException>(() => { ModelFactory.ConvertFrom(model); });
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomOperatorData_IsConverted() {
+            List<TopBottomOperatorData> model = TestData.TopBottomOperatorDataList;
+            var result = ModelFactory.ConvertFrom(model);
+
+            result.Count.ShouldBe(model.Count);
+            foreach (TopBottomOperatorData topBottomOperatorData in model)
+            {
+                var d = result.SingleOrDefault(r => r.OperatorName == topBottomOperatorData.OperatorName);
+                d.ShouldNotBeNull();
+                d.SalesValue.ShouldBe(topBottomOperatorData.SalesValue);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomOperatorData_ModelIsNull_NullReturned()
+        {
+
+            List<TopBottomOperatorData> model = null;
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomOperatorData_ModelIsEmpty_NullReturned()
+        {
+
+            List<TopBottomOperatorData> model = new List<TopBottomOperatorData>();
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomMerchantData_IsConverted() {
+            List<TopBottomMerchantData> model = TestData.TopBottomMerchantDataList;
+            var result = ModelFactory.ConvertFrom(model);
+
+            result.Count.ShouldBe(model.Count);
+            foreach (TopBottomMerchantData topBottomMerchantData in model)
+            {
+                var d = result.SingleOrDefault(r => r.MerchantName == topBottomMerchantData.MerchantName);
+                d.ShouldNotBeNull();
+                d.SalesValue.ShouldBe(topBottomMerchantData.SalesValue);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomMerchantData_ModelIsNull_NullReturned()
+        {
+
+            List<TopBottomMerchantData> model = null;
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomMerchantData_ModelIsEmpty_NullReturned()
+        {
+
+            List<TopBottomMerchantData> model = new List<TopBottomMerchantData>();
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
+        }
+
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomProductData_IsConverted() {
+            List<TopBottomProductData> model = TestData.TopBottomProductDataList;
+
+            var result = ModelFactory.ConvertFrom(model);
+
+            result.Count.ShouldBe(model.Count);
+            foreach (TopBottomProductData topBottomProductData in model)
+            {
+                var d = result.SingleOrDefault(r => r.ProductName == topBottomProductData.ProductName);
+                d.ShouldNotBeNull();
+                d.SalesValue.ShouldBe(topBottomProductData.SalesValue);
+            }
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomProductData_ModelIsNull_NullReturned()
+        {
+
+            List<TopBottomProductData> model = null;
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_TopBottomProductData_ModelIsEmpty_NullReturned()
+        {
+
+            List<TopBottomProductData> model = new List<TopBottomProductData>();
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
         }
     }
 }
