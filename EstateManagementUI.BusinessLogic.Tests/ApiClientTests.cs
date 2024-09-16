@@ -466,5 +466,23 @@ namespace EstateManagementUI.BusinessLogic.Tests
             var result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
+
+        [Fact]
+        public async Task ApiClient_GetLastSettlement_DataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetLastSettlement(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.LastSettlement);
+
+            var result = await this.ApiClient.GetLastSettlement(TestData.AccessToken, TestData.EstateId, null, null, CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_GetLastSettlement_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateReportingApiClient.Setup(e => e.GetLastSettlement(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            var result = await this.ApiClient.GetLastSettlement(TestData.AccessToken, TestData.EstateId, null, null, CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
     }
 }

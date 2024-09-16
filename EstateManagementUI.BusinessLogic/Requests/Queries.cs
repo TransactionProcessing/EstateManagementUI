@@ -47,5 +47,7 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
 
         public record GetTopOperatorDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomOperatorDataModel>>>;
         public record GetBottomOperatorDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomOperatorDataModel>>>;
+
+        public record GetLastSettlementQuery(String AccessToken, Guid EstateId) : IRequest<Result<LastSettlementModel>>;
     }
 }

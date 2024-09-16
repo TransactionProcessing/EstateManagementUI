@@ -457,4 +457,21 @@ public static class ModelFactory
         });
         return models;
     }
+
+    public static LastSettlementModel ConvertFrom(LastSettlement source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        LastSettlementModel model = new LastSettlementModel
+        {
+            FeesValue = source.FeesValue,
+            SalesCount = source.SalesCount,
+            SalesValue = source.SalesValue,
+            SettlementDate = source.SettlementDate
+        };
+        return model;
+    }
 }

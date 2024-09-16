@@ -10,6 +10,7 @@ using FileProcessor.DataTransferObjects.Responses;
 namespace EstateManagementUI.Testing
 {
     public static class TestData {
+        
         public static DateTime ComparisonDate = new DateTime(2024,1,1);
         public static String AccessToken = "token1";
         public static Guid EstateId = Guid.Parse("BD6F1ED7-6290-4285-A200-E4F8D25F4CBE");
@@ -49,6 +50,8 @@ namespace EstateManagementUI.Testing
         public static Queries.GetBottomMerchantDataQuery GetBottomMerchantDataQuery => new(AccessToken, EstateId, 1);
         public static Queries.GetTopOperatorDataQuery GetTopOperatorDataQuery => new(AccessToken, EstateId, 1);
         public static Queries.GetBottomOperatorDataQuery GetBottomOperatorDataQuery => new(AccessToken, EstateId, 1);
+
+        public static Queries.GetLastSettlementQuery GetLastSettlementQuery => new(AccessToken, EstateId);
 
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
@@ -545,5 +548,14 @@ namespace EstateManagementUI.Testing
             MerchantsWithNoSaleToday = 2,
             MerchantsWithSaleInLastHour = 3
         };
+
+        public static LastSettlement LastSettlement =>
+            new LastSettlement
+            {
+                SettlementDate = new DateTime(2024, 1, 1),
+                FeesValue = 100.00m,
+                SalesCount = 100,
+                SalesValue = 1000.00m
+            };
     }
 }

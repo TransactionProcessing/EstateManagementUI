@@ -42,6 +42,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetBottomMerchantDataQuery);
             this.Requests.Add(TestData.GetTopOperatorDataQuery);
             this.Requests.Add(TestData.GetBottomOperatorDataQuery);
+            this.Requests.Add(TestData.GetLastSettlementQuery);
 
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);
