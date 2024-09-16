@@ -136,5 +136,12 @@ namespace EstateManagementUI.BusinessLogic.Clients
             CancellationToken cancellationToken);
 
         Task<Result<MerchantKpiModel>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
+
+        Task<Result<LastSettlementModel>> GetLastSettlement(
+            string accessToken,
+            Guid estateId,
+            Int32? merchantReportingId,
+            Int32? operatorReportingId,
+            CancellationToken cancellationToken);
     }
 }

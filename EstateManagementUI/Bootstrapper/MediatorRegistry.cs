@@ -66,5 +66,7 @@ public class MediatorRegistry : ServiceRegistry {
         this.AddSingleton<IRequestHandler<Queries.GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>, ReportingRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>, ReportingRequestHandler>();
 
+        this.AddSingleton<IRequestHandler<Queries.GetLastSettlementQuery, Result<LastSettlementModel>>, ReportingRequestHandler>();
+
     }
 }

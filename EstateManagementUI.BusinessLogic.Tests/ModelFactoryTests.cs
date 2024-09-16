@@ -14,6 +14,7 @@ using EstateReportingAPI.DataTrasferObjects;
 using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
 using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
 using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
+using LastSettlement = EstateReportingAPI.DataTransferObjects.LastSettlement;
 using MerchantKpi = EstateReportingAPI.DataTransferObjects.MerchantKpi;
 using TodaysSales = EstateReportingAPI.DataTransferObjects.TodaysSales;
 using TodaysSalesCountByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesCountByHour;
@@ -596,6 +597,27 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         {
 
             List<TopBottomProductData> model = new List<TopBottomProductData>();
+            var result = ModelFactory.ConvertFrom(model);
+            result.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_LastSettlement_IsConverted() {
+            LastSettlement model = TestData.LastSettlement;
+
+            LastSettlementModel result = ModelFactory.ConvertFrom(model);
+            result.ShouldNotBeNull();
+            result.FeesValue.ShouldBe(model.FeesValue);
+            result.SalesCount.ShouldBe(model.SalesCount);
+            result.SalesValue.ShouldBe(model.SalesValue);
+            result.SettlementDate.ShouldBe(model.SettlementDate);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_LastSettlement_ModelIsNull_IsConverted()
+        {
+            LastSettlement model = null;
+
             var result = ModelFactory.ConvertFrom(model);
             result.ShouldBeNull();
         }

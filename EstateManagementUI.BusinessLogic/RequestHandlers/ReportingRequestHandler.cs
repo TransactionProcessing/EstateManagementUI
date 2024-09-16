@@ -3,6 +3,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using EstateReportingAPI.DataTransferObjects;
 using MediatR;
+using Microsoft.IdentityModel.Abstractions;
 using SimpleResults;
 using static EstateManagmentUI.BusinessLogic.Requests.Queries;
 
@@ -20,8 +21,8 @@ IRequestHandler<GetBottomProductDataQuery, Result<List<TopBottomProductDataModel
 IRequestHandler<GetTopMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>,
 IRequestHandler<GetBottomMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>,
 IRequestHandler<GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
-IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>
-{
+IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
+IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>> {
 
     private readonly IApiClient ApiClient;
     public ReportingRequestHandler(IApiClient apiClient)
@@ -115,6 +116,13 @@ IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataMod
                                                                        CancellationToken cancellationToken) {
         Result<List<TopBottomOperatorDataModel>> model = await this.ApiClient.GetTopBottomOperatorData(request.AccessToken, request.EstateId, TopBottom.Bottom,
             request.ResultCount, cancellationToken);
+        return model;
+    }
+
+    public async Task<Result<LastSettlementModel>> Handle(GetLastSettlementQuery request,
+                                                          CancellationToken cancellationToken) {
+        Result<LastSettlementModel> model = await this.ApiClient.GetLastSettlement(request.AccessToken, request.EstateId, null, null,
+            cancellationToken);
         return model;
     }
 }

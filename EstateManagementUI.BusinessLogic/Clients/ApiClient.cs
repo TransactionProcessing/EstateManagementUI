@@ -388,4 +388,16 @@ public class ApiClient : IApiClient {
             _ => EstateReportingAPI.DataTransferObjects.TopBottom.Top
         };
     }
+
+    public async Task<Result<LastSettlementModel>> GetLastSettlement(String accessToken, Guid estateId, Int32? merchantReportingId, Int32? operatorReportingId, CancellationToken cancellationToken)
+    {
+        async Task<Result<LastSettlementModel>> ClientMethod()
+        {
+            LastSettlement apiResponse = await this.EstateReportingApiClient.GetLastSettlement(accessToken, estateId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(apiResponse);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
 }
