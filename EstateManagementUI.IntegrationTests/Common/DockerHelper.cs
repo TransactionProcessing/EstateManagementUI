@@ -167,7 +167,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                                                                                Int32 securityServiceContainerPort,
                                                                                Int32 securityServiceLocalPort)
         {
-            Trace("About to Start Estate Management UI Container");
+            TraceX("About to Start Estate Management UI Container");
 
             List<String> environmentVariables = this.GetCommonEnvironmentVariables();
             environmentVariables.Add($"AppSettings:Authority=https://{this.SecurityServiceContainerName}:0");  // The port is set to 0 to stop defaulting to 443
@@ -183,8 +183,8 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:ClientSecret=Secret1");
             environmentVariables.Add($"DataReloadConfig:DefaultInSeconds=1");
             environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
-            
-            Trace("About to Built Estate Management UI Container");
+
+            TraceX("About to Built Estate Management UI Container");
             ContainerBuilder containerBuilder = new Builder().UseContainer()
                                                              .WithName(this.EstateManagementUiContainerName)
                                                              .UseImageDetails(("estatemanagementui", false))
@@ -193,7 +193,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                                                              .ExposePort(5004)
                                                              .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
                                                              .SetDockerCredentials(this.DockerCredentials);
-            Trace("About to Call .Start()");
+            TraceX("About to Call .Start()");
             IContainerService builtContainer = containerBuilder.Build();
             
             try{
@@ -201,7 +201,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 builtContainer.Start();
                 builtContainer.WaitForPort("5004/tcp", 30000);
                 this.EstateManagementUiPort = builtContainer.ToHostExposedEndpoint($"5004/tcp").Port;
-                Trace("Estate Management UI Started");
+                TraceX("Estate Management UI Started");
 
 
                 // TODO: Refactor this code once it works...
@@ -217,7 +217,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                     var response = await client.SendAsync(createRolesRequest, CancellationToken.None);
 
                     if (response.IsSuccessStatusCode == false) {
-                        Trace($"createRolesRequest failed [{response.StatusCode}]");
+                        TraceX($"createRolesRequest failed [{response.StatusCode}]");
                     }
                     HttpRequestMessage addUserToRoleRequest = new(HttpMethod.Post,
                         $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/addUserToRole");
@@ -231,7 +231,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                     response = await client.SendAsync(addUserToRoleRequest, CancellationToken.None);
                     if (response.IsSuccessStatusCode == false)
                     {
-                        Trace($"addUserToRoleRequest failed [{response.StatusCode}]");
+                        TraceX($"addUserToRoleRequest failed [{response.StatusCode}]");
                     }
 
 
@@ -242,7 +242,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
                     if (response.IsSuccessStatusCode == false)
                     {
-                        Trace($"getRolePermissionsRequest failed [{response.StatusCode}]");
+                        TraceX($"getRolePermissionsRequest failed [{response.StatusCode}]");
                     }
 
                     var x = await response.Content.ReadAsStringAsync(CancellationToken.None);
@@ -276,25 +276,25 @@ namespace EstateManagementUI.IntegrationTests.Common
                     response = await client.SendAsync(addRolePermissionsRequest, CancellationToken.None);
                     if (response.IsSuccessStatusCode == false)
                     {
-                        Trace($"addRolePermissionsRequest failed [{response.StatusCode}]");
+                        TraceX($"addRolePermissionsRequest failed [{response.StatusCode}]");
                     }
                 }
             }
             catch(Exception ex){
-                Trace(ex.GetCombinedExceptionMessages());
-                //ConsoleStream<String> logs = builtContainer.Logs(true, CancellationToken.None);
-                //IList<String> xx = logs.ReadToEnd();
-                //while (xx.Any())
-                //{
-                //    foreach (String s in xx)
-                //    {
-                //        Trace($"Logs|{s}");
-                //    }
-                //    xx = logs.ReadToEnd();
-                //}
+                TraceX(ex.GetCombinedExceptionMessages());
+                ConsoleStream<String> logs = builtContainer.Logs(true, CancellationToken.None);
+                IList<String> xx = logs.ReadToEnd();
+                while (xx.Any())
+                {
+                    foreach (String s in xx)
+                    {
+                        TraceX($"Logs|{s}");
+                    }
+                    xx = logs.ReadToEnd();
+                }
             }
 
-            Trace("About to attach networkServices");
+            TraceX("About to attach networkServices");
             foreach (INetworkService networkService in networkServices)
             {
                 networkService.Attach(builtContainer, false);
@@ -325,7 +325,7 @@ namespace EstateManagementUI.IntegrationTests.Common
         
         public override ContainerBuilder SetupSecurityServiceContainer()
         {
-            this.Trace("About to Start Security Container");
+            this.TraceX("About to Start Security Container");
 
             Retry.For(() => {
                           DockerHelper.AddEntryToHostsFile("127.0.0.1", SecurityServiceContainerName);
@@ -410,6 +410,11 @@ namespace EstateManagementUI.IntegrationTests.Common
             //var ctx = await contextFactory.CreateDbContextAsync(cancellationToken);
 
             return new PermissionsRepository(contextFactory);
+        }
+
+        public void TraceX(String msg) {
+            Trace(msg);
+            Console.WriteLine(msg);
         }
 
         #endregion
