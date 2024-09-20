@@ -21,13 +21,17 @@ namespace EstateManagementUI.Controllers
         public async Task<IActionResult> CreateRoles(List<String> rolesList, CancellationToken cancellationToken) {
             List<(Int32 roleId, String roleName)> results = new List<(Int32 roleId, String roleName)>();
             
+            Shared.Logger.Logger.LogWarning("In CreateRoles");
+
             foreach (String role in rolesList) {
                 Result<Int32> result = await this.PermissionsRepository.AddRole(role, CancellationToken.None);
                 if (result.IsSuccess) {
                     results.Add((result.Data, role));
                 }
             }
-            
+
+            Shared.Logger.Logger.LogWarning("Returning 200");
+
             return Ok(results);
         }
 
@@ -36,11 +40,14 @@ namespace EstateManagementUI.Controllers
         public async Task<IActionResult> AddUserToRole(List<AddUserToRole> userRolesList, CancellationToken cancellationToken)
         {
             List<(Int32 roleId, String roleName)> results = new List<(Int32 roleId, String roleName)>();
+            Shared.Logger.Logger.LogWarning("In AddUserToRole");
 
             foreach (var userRole in userRolesList) {
                 Result<Role> role = await this.PermissionsRepository.GetRole(userRole.RoleName, cancellationToken);
                 await this.PermissionsRepository.AddUserToRole(role.Data.RoleId, userRole.UserName, cancellationToken);
             }
+
+            Shared.Logger.Logger.LogWarning("Returning 200");
 
             return Ok(results);
         }
@@ -48,11 +55,14 @@ namespace EstateManagementUI.Controllers
         [HttpPost]
         [Route("addRolePermissions")]
         public async Task<IActionResult> AddRolePermissions(List<RolePermissions> rolePermissionsList, CancellationToken cancellationToken) {
+
+            Shared.Logger.Logger.LogWarning("In AddRolePermissions");
             foreach (RolePermissions rolePermissions in rolePermissionsList) {
                 Result<Role> role = await this.PermissionsRepository.GetRole(rolePermissions.RoleName, cancellationToken);
                 await this.PermissionsRepository.UpdateRolePermissions(role.Data.RoleId, rolePermissions.NewPermissions, CancellationToken.None);
             }
 
+            Shared.Logger.Logger.LogWarning("Returning 200");
             return this.Ok();
         }
 
