@@ -206,9 +206,11 @@ namespace EstateManagementUI.IntegrationTests.Common
 
                 TraceX("Estate Management UI Started");
 
-
+                HttpClientHandler handler = new HttpClientHandler();
+                handler.ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                 // TODO: Refactor this code once it works...
-                using (HttpClient client = new HttpClient()) {
+                using (HttpClient client = new HttpClient(handler)) {
                     HttpRequestMessage createRolesRequest = new (HttpMethod.Post,
                         $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/createRoles");
 
