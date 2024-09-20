@@ -201,6 +201,9 @@ namespace EstateManagementUI.IntegrationTests.Common
                 builtContainer.Start();
                 builtContainer.WaitForPort("5004/tcp", 30000);
                 this.EstateManagementUiPort = builtContainer.ToHostExposedEndpoint($"5004/tcp").Port;
+
+                await Task.Delay(5000);
+
                 TraceX("Estate Management UI Started");
 
 

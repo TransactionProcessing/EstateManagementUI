@@ -119,19 +119,7 @@ public class Startup {
 
             app.UseDeveloperExceptionPage();
         }
-
-
-        loggerFactory.ConfigureNLog(Path.Combine(env.ContentRootPath, nlogConfigFilename));
-        loggerFactory.AddNLog();
-
-        ILogger logger = loggerFactory.CreateLogger("EstateManagement");
-
-        Logger.Initialise(logger);
-
-        Startup.Configuration.LogConfiguration(Logger.LogWarning);
-
-        ConfigurationReader.Initialise(Startup.Configuration);
-
+        
         app.AddRequestLogging();
         app.AddResponseLogging();
         
