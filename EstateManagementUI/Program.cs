@@ -24,6 +24,7 @@ using NLog.Extensions.Logging;
 using Shared.Extensions;
 using Shared.General;
 using SimpleResults;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Logger = Shared.Logger.Logger;
 
 public class Startup {
@@ -106,7 +107,34 @@ public class Startup {
         //    }
         //}));
 
+        String nlogConfigFilename = "nlog.config";
 
+        if (env.IsDevelopment())
+        {
+            var developmentNlogConfigFilename = "nlog.development.config";
+            if (File.Exists(Path.Combine(env.ContentRootPath, developmentNlogConfigFilename)))
+            {
+                nlogConfigFilename = developmentNlogConfigFilename;
+            }
+
+            app.UseDeveloperExceptionPage();
+        }
+
+
+        loggerFactory.ConfigureNLog(Path.Combine(env.ContentRootPath, nlogConfigFilename));
+        loggerFactory.AddNLog();
+
+        ILogger logger = loggerFactory.CreateLogger("EstateManagement");
+
+        Logger.Initialise(logger);
+
+        Startup.Configuration.LogConfiguration(Logger.LogWarning);
+
+        ConfigurationReader.Initialise(Startup.Configuration);
+
+        app.AddRequestLogging();
+        app.AddResponseLogging();
+        
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
