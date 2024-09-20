@@ -28,7 +28,7 @@ public class AddRole : HydroComponent
             return;
         }
 
-        Result result = await this.PermissionsRepository.AddRole(this.RoleName, CancellationToken.None);
+        var result = await this.PermissionsRepository.AddRole(this.RoleName, CancellationToken.None);
 
         if (result.IsSuccess) {
             Back();

@@ -42,9 +42,13 @@ public class SecureHydroComponent : HydroComponent {
         Result permissionsResult = await this.PermissionsService.DoIHavePermissions(userName, this.SectionName, this.PageName);
         if (permissionsResult.IsFailed)
         {
+            Shared.Logger.Logger.LogWarning(permissionsResult.Message);
             // TODO: might make this configurable
             this.HttpContext.Response.Redirect("/Error");
             return;
+        }
+        else {
+            Shared.Logger.Logger.LogWarning($"Permission granted for userName: {userName} SectionName: {this.SectionName} PageName: {this.PageName}");
         }
         
         await base.RenderAsync();

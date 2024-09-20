@@ -81,13 +81,42 @@ public class AuthenticationRegistry : ServiceRegistry {
                 context.ProtocolMessage.IssuerAddress = $"{results.issuerAddress}/connect/authorize";
                 return Task.CompletedTask;
             };
+            options.Events.OnAccessDenied = context => {
+                
+                var r = context.Result;
+                if (r.Failure != null) {
+                    Shared.Logger.Logger.LogWarning($"context.Exception.Message {r.Failure.Message}");
+                }
+
+                if (r.Succeeded == false) {
+                    Shared.Logger.Logger.LogWarning($"r.Succeeded == false");
+                }
+                return Task.CompletedTask;
+            };
+            options.Events.OnAuthenticationFailed = context => {
+                Shared.Logger.Logger.LogWarning($"context.Exception.Message {context.Exception.Message}");
+                Shared.Logger.Logger.LogWarning($"context.ProtocolMessage.ErrorUri {context.ProtocolMessage.ErrorUri}");
+                Shared.Logger.Logger.LogWarning($"context.ProtocolMessage.Error {context.ProtocolMessage.Error}");
+                Shared.Logger.Logger.LogWarning($"context.ProtocolMessage.ErrorDescription {context.ProtocolMessage.ErrorDescription}");
+                return Task.CompletedTask;
+            };
+
         });
             
         this.AddAuthorization();
         this.AddSingleton<IPermissionsService, PermissionsService>();
         this.AddSingleton<IPermissionsRepository, PermissionsRepository>();
-        String connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permisssions.db")}";
-        
+        String dbFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permissions.db");
+        var fi = new FileInfo(dbFileName);
+        Shared.Logger.Logger.LogWarning($"File {dbFileName} exists [{fi.Exists}]");
+        String dbFileName1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permissions.db-shm");
+        var fi1 = new FileInfo(dbFileName1);
+        Shared.Logger.Logger.LogWarning($"File {dbFileName1} exists [{fi1.Exists}]");
+        String dbFileName2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permissions.db-wal");
+        var fi2 = new FileInfo(dbFileName2);
+        Shared.Logger.Logger.LogWarning($"File {dbFileName2} exists [{fi2.Exists}]");
+        String connectionString = $"Data Source={Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permissions.db")}";
+        Shared.Logger.Logger.LogWarning($"Permissions connection string {connectionString}");
         this.AddSingleton<IDbContextFactory<PermissionsContext>, DbContextFactory<PermissionsContext>>();
         this.AddDbContextFactory<PermissionsContext>(options =>
             options.UseSqlite(connectionString));

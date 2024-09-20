@@ -16,7 +16,7 @@ namespace EstateManagementUI.Pages.Contract.ContractProductTransactionFee
     {
         private readonly IMediator Mediator;
 
-        public ContractProductTransactionFeeList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Contract, ContractFunctions.ViewList, permissionsService)
+        public ContractProductTransactionFeeList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Contract, ContractFunctions.ViewProductFeesList, permissionsService)
         {
             Mediator = mediator;
             ContractProductTransactionFees = new List<ViewModels.ContractProductTransactionFee>();

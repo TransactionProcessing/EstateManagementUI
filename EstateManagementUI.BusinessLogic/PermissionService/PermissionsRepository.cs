@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
@@ -8,6 +9,7 @@ using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Shared.Logger;
 using SimpleResults;
 using SQLite;
 
@@ -35,60 +37,6 @@ public class PermissionsRepository : IPermissionsRepository {
         }
 
         return result;
-        //result.Add(("View All", ApplicationSections.Dashboard, DashboardFunctions.Dashboard));
-        //result.Add(("View Lists", ApplicationSections.Dashboard, DashboardFunctions.Dashboard));
-        //result.Add(("Administrator", ApplicationSections.Dashboard, DashboardFunctions.Dashboard));
-
-        //result.Add(("View All", ApplicationSections.Estate, EstateFunctions.View));
-        //result.Add(("View All", ApplicationSections.Merchant, MerchantFunctions.ViewList));
-        //result.Add(("View All", ApplicationSections.Merchant, MerchantFunctions.View));
-        //result.Add(("View All", ApplicationSections.Contract, ContractFunctions.ViewList));
-        //result.Add(("View All", ApplicationSections.Contract, ContractFunctions.View));
-        //result.Add(("View All", ApplicationSections.Operator, OperatorFunctions.ViewList));
-        //result.Add(("View All", ApplicationSections.Operator, OperatorFunctions.View));
-
-        //result.Add(("View Lists", ApplicationSections.Estate, EstateFunctions.View));
-        //result.Add(("View Lists", ApplicationSections.Merchant, MerchantFunctions.ViewList));
-        //result.Add(("View Lists", ApplicationSections.Contract, ContractFunctions.ViewList));
-        //result.Add(("View Lists", ApplicationSections.Operator, OperatorFunctions.ViewList));
-
-        //result.Add(("Administrator", ApplicationSections.Estate, EstateFunctions.View));
-        //result.Add(("Administrator", ApplicationSections.Estate, EstateFunctions.Edit));
-        //result.Add(("Administrator", ApplicationSections.Estate, EstateFunctions.AddOperator));
-        //result.Add(("Administrator", ApplicationSections.Estate, EstateFunctions.RemoveOperator));
-        //result.Add(("Administrator", ApplicationSections.Estate, EstateFunctions.AddUser));
-        //result.Add(("Administrator", ApplicationSections.Estate, EstateFunctions.RemoveUser));
-
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.ViewList));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.View));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.Edit));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.New));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.Remove));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.AddOperator));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.RemoveOperator));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.AddDevice));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.RemoveDevice));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.EditAddress));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.EditContact));
-        //result.Add(("Administrator", ApplicationSections.Merchant, MerchantFunctions.MakeDeposit));
-
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.ViewList));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.View));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.Edit));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.New));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.Remove));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.AddProduct));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.RemoveProduct));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.AddTransactionFee));
-        //result.Add(("Administrator", ApplicationSections.Contract, ContractFunctions.RemoveTransactionFee));
-
-        //result.Add(("Administrator", ApplicationSections.Operator, OperatorFunctions.ViewList));
-        //result.Add(("Administrator", ApplicationSections.Operator, OperatorFunctions.View));
-        //result.Add(("Administrator", ApplicationSections.Operator, OperatorFunctions.Edit));
-        //result.Add(("Administrator", ApplicationSections.Operator, OperatorFunctions.New));
-        //result.Add(("Administrator", ApplicationSections.Operator, OperatorFunctions.Remove));
-
-        //return result;
     }
 
     public async Task<Result<List<(String userName, String role)>>> GetUsers(CancellationToken cancellationToken) {
@@ -97,8 +45,9 @@ public class PermissionsRepository : IPermissionsRepository {
         PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
         var userRoles = await context.UserRoles.ToListAsync(cancellationToken);
         var roles = await context.Roles.ToListAsync(cancellationToken);
-
+        Logger.LogWarning($"User role count {userRoles.Count}");
         foreach (UserRole userRole in userRoles) {
+            Logger.LogWarning($"User role {userRole.RoleId} = {userRole.UserName}");
             var role = roles.SingleOrDefault(r => r.RoleId == userRole.RoleId);
             result.Add((userRole.UserName, role.Name));
         }
@@ -165,51 +114,6 @@ public class PermissionsRepository : IPermissionsRepository {
             return Result.Failure(ex.GetCombinedExceptionMessages());
         }
     }
-    
-    private async Task<Result> SeedRoles(PermissionsContext context,
-                                         CancellationToken cancellationToken) {
-        try {
-            await context.Roles.AddAsync(new Role { Name = "View" }, cancellationToken);
-            await context.Roles.AddAsync(new Role { Name = "ViewList" }, cancellationToken);
-            await context.Roles.AddAsync(new Role { Name = "Administrator" }, cancellationToken);
-
-            await context.SaveChangesAsync(cancellationToken);
-            return Result.Success();
-        }
-        catch (DbUpdateException sqex) when (sqex.InnerException.Message.Contains("UNIQUE"))
-        {
-            context.ChangeTracker.Clear();
-            return Result.Success();
-        }
-        catch (Exception ex) {
-            return Result.Failure(ex.GetCombinedExceptionMessages());
-        }
-    }
-
-    private async Task<Result> SeedUserRoles(PermissionsContext context,
-                                             List<(String,String)> usersRoles,
-                                         CancellationToken cancellationToken)
-    {
-        try
-        {
-            foreach ((String, String) userRole in usersRoles) {
-                Role? role = await context.Roles.SingleOrDefaultAsync(r => r.Name == userRole.Item2, cancellationToken);
-
-                await context.UserRoles.AddAsync(new UserRole() { RoleId = role.RoleId, UserName = userRole.Item1}, cancellationToken);
-            }
-            await context.SaveChangesAsync(cancellationToken);
-            return Result.Success();
-        }
-        catch (DbUpdateException sqex) when (sqex.InnerException.Message.Contains("UNIQUE"))
-        {
-            context.ChangeTracker.Clear();
-            return Result.Success();
-        }
-        catch (Exception ex)
-        {
-            return Result.Failure(ex.GetCombinedExceptionMessages());
-        }
-    }
 
     public async Task<Result> SeedDatabase(CancellationToken cancellationToken) {
         PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
@@ -220,16 +124,7 @@ public class PermissionsRepository : IPermissionsRepository {
         // TODO: handle failures
         await SeedApplicationSections(context, applicationSections, cancellationToken);
         await SeedApplicationFunctions(context, applicationFunctions, cancellationToken);
-        //await SeedRoles(context, cancellationToken);
-        //List<(String, String)> userRoles = new List<(String, String)>();
-        //userRoles.Add(("adminuser1", "Administrator"));
-        //userRoles.Add(("adminuser2", "Administrator"));
-        //userRoles.Add(("viewuser", "View"));
-        //userRoles.Add(("viewlistuser", "ViewList"));
-        //userRoles.Add(("viewalluser", "View"));
-        //userRoles.Add(("viewalluser", "ViewList"));
-        //await SeedUserRoles(context, userRoles, cancellationToken);
-
+        
         return Result.Success();
     }
 
@@ -243,6 +138,12 @@ public class PermissionsRepository : IPermissionsRepository {
                                             CancellationToken cancellationToken) {
         PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
         return await context.Roles.SingleOrDefaultAsync(t => t.RoleId == roleId, cancellationToken);
+    }
+
+    public async Task<Result<Role>> GetRole(String roleName,
+                                            CancellationToken cancellationToken) {
+        PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
+        return await context.Roles.SingleOrDefaultAsync(t => t.Name == roleName, cancellationToken);
     }
 
     private async  Task<Result<List<(ApplicationSection, Function)>>> GetRolePermissions(PermissionsContext context, Int32 roleId, CancellationToken cancellationToken)
@@ -344,16 +245,42 @@ public class PermissionsRepository : IPermissionsRepository {
         return Result.Success();
     }
 
-    public async Task<Result> AddRole(String roleName,
+    public async Task<Result<Int32>> AddRole(String roleName,
                                       CancellationToken cancellationToken) {
         PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
         Role role = new Role { Name = roleName };
         await context.Roles.AddAsync(role, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return Result.Success();
+        return Result.Success(role.RoleId);
     }
-    
+
+    public async Task<List<String>> GetTableList(CancellationToken cancellationToken) {
+        PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
+        List<String> tableList = new List<String>();
+        var connection = context.Database.GetDbConnection();
+        if (connection.State != ConnectionState.Open) {
+            await connection.OpenAsync(cancellationToken);
+
+            // Query to get the list of tables
+            var command = connection.CreateCommand();
+            command.CommandText = "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%';";
+
+            using (var reader = await command.ExecuteReaderAsync(cancellationToken))
+            {
+                while (reader.Read())
+                {
+                    string tableName = reader.GetString(0);
+                    tableList.Add(tableName);
+                }
+            }
+        }
+
+        await connection.CloseAsync();
+
+        return tableList;
+    }
+
     public List<String> GetApplicationSections() {
         List<String> applicationSections  = GetActions<ApplicationSections>();
 
@@ -373,6 +300,8 @@ public class PermissionsRepository : IPermissionsRepository {
         functions.AddRange(GetActions<ContractFunctions>("Contract"));
         //OperatorFunctions
         functions.AddRange(GetActions<OperatorFunctions>("Operator"));
+        functions.AddRange(GetActions<FileProcessingFunctions>("FileProcessing"));
+        functions.AddRange(GetActions<ReportingFunctions>("Reporting"));
 
         return functions;
     }

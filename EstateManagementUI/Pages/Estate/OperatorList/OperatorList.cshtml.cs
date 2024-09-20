@@ -9,13 +9,13 @@ using Hydro;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 
-namespace EstateManagementUI.Pages.Estate
+namespace EstateManagementUI.Pages.Estate.OperatorList
 {
     public class OperatorList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
-        public OperatorList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.ViewEstateOperators, permissionsService)
+        public OperatorList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.ViewOperatorsList, permissionsService)
         {
             Mediator = mediator;
             Operators = new List<ViewModels.Operator>();
@@ -23,10 +23,11 @@ namespace EstateManagementUI.Pages.Estate
 
         public List<ViewModels.Operator> Operators { get; set; }
 
-        public override async Task MountAsync() {
-            await this.PopulateTokenAndEstateId();
+        public override async Task MountAsync()
+        {
+            await PopulateTokenAndEstateId();
 
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
+            Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
 
             EstateModel response = await Mediator.Send(query, CancellationToken.None);
 
@@ -43,5 +44,5 @@ namespace EstateManagementUI.Pages.Estate
         }
     }
 
-    
+
 }

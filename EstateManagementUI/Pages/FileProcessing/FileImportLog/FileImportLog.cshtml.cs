@@ -23,7 +23,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
 
         public List<ViewModels.File> Files { get; set; }
 
-        public FileImportLog(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, ContractFunctions.ViewList, permissionsService)
+        public FileImportLog(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, FileProcessingFunctions.ViewImportLog, permissionsService)
         {
             this.Mediator = mediator;
             this.Files = new List<File>();

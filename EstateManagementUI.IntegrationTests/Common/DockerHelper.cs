@@ -1,11 +1,25 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Common;
 using Ductus.FluentDocker.Executors;
 using Ductus.FluentDocker.Extensions;
+using Ductus.FluentDocker.Model.Common;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
 using EstateManagement.Client;
+using EstateManagementUI.BusinessLogic.Common;
+using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.BusinessLogic.PermissionService.Constants;
+using EstateManagementUI.BusinessLogic.PermissionService.Database;
+using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
+using EstateManagementUI.Controllers;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SecurityService.Client;
 using Shared.IntegrationTesting;
 
@@ -160,8 +174,8 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:SecurityServiceLocalPort={securityServiceLocalPort}");
             environmentVariables.Add($"AppSettings:SecurityServicePort={securityServiceContainerPort}");
             environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
-            environmentVariables.Add($"AppSettings:PermissionsBypass=true");
-            //environmentVariables.Add($"AppSettings:IsIntegrationTest=true");
+            //environmentVariables.Add($"AppSettings:PermissionsBypass=true");
+            environmentVariables.Add($"AppSettings:IsIntegrationTest=true");
             environmentVariables.Add($"ASPNETCORE_ENVIRONMENT=Development");
             environmentVariables.Add($"EstateManagementScope=estateManagement");
             environmentVariables.Add("urls=https://*:5004");
@@ -181,22 +195,103 @@ namespace EstateManagementUI.IntegrationTests.Common
                                                              .SetDockerCredentials(this.DockerCredentials);
             Trace("About to Call .Start()");
             IContainerService builtContainer = containerBuilder.Build();
+            
             try{
+
                 builtContainer.Start();
+                builtContainer.WaitForPort("5004/tcp", 30000);
+                this.EstateManagementUiPort = builtContainer.ToHostExposedEndpoint($"5004/tcp").Port;
+                Trace("Estate Management UI Started");
+
+
+                // TODO: Refactor this code once it works...
+                using (HttpClient client = new HttpClient()) {
+                    HttpRequestMessage createRolesRequest = new (HttpMethod.Post,
+                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/createRoles");
+
+                    List<String> roles = ["Administrator"];
+
+                    createRolesRequest.Content = new StringContent(JsonConvert.SerializeObject(roles), Encoding.UTF8,
+                        "application/json");
+
+                    var response = await client.SendAsync(createRolesRequest, CancellationToken.None);
+
+                    if (response.IsSuccessStatusCode == false) {
+                        Trace($"createRolesRequest failed [{response.StatusCode}]");
+                    }
+                    HttpRequestMessage addUserToRoleRequest = new(HttpMethod.Post,
+                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/addUserToRole");
+                    List<AddUserToRole> userRolesList = new List<AddUserToRole> {
+                        new AddUserToRole { UserName = "estateuser@testestate1.co.uk", RoleName = "Administrator" }
+                    };
+
+                    addUserToRoleRequest.Content = new StringContent(JsonConvert.SerializeObject(userRolesList), Encoding.UTF8,
+                        "application/json");
+
+                    response = await client.SendAsync(addUserToRoleRequest, CancellationToken.None);
+                    if (response.IsSuccessStatusCode == false)
+                    {
+                        Trace($"addUserToRoleRequest failed [{response.StatusCode}]");
+                    }
+
+
+                    HttpRequestMessage getRolePermissionsRequest = new(HttpMethod.Get,
+                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/getRolePermissions?roleName=Administrator");
                     
-                    builtContainer.WaitForPort("5004/tcp", 30000);
+                    response = await client.SendAsync(getRolePermissionsRequest, CancellationToken.None);
+
+                    if (response.IsSuccessStatusCode == false)
+                    {
+                        Trace($"getRolePermissionsRequest failed [{response.StatusCode}]");
+                    }
+
+                    var x = await response.Content.ReadAsStringAsync(CancellationToken.None);
+
+                    RolePermissionsObject rolePermissionsObject = JsonConvert.DeserializeObject<RolePermissionsObject>(x);
+
+                    List<(int, string, int, string, bool)> Permissions = new();
+                    foreach (ApplicationSection applicationSection in rolePermissionsObject.ApplicationSections)
+                    {
+                        List<(Function, bool)> functionAccess = rolePermissionsObject.PermissionsList.Where(p =>
+                            p.ApplicationSection.ApplicationSectionId == applicationSection.ApplicationSectionId).Select(x => (x.Function, x.HasAccess)).ToList();
+
+                        foreach ((Function, bool) function in functionAccess)
+                        {
+                            Permissions.Add((applicationSection.ApplicationSectionId, applicationSection.Name, function.Item1.FunctionId, function.Item1.Name, function.Item2));
+                        }
+                    }
+
+                    List<(int, int, bool)> newPermissions = Permissions.Select(p => (p.Item1, p.Item3, true)).ToList();
+
+                    HttpRequestMessage addRolePermissionsRequest = new(HttpMethod.Post,
+                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/addRolePermissions");
+
+                    List<RolePermissions> rolePermissions = new() {
+                        new RolePermissions { NewPermissions = newPermissions, RoleName = "Administrator" }
+                    };
+
+                    addRolePermissionsRequest.Content = new StringContent(JsonConvert.SerializeObject(rolePermissions), Encoding.UTF8,
+                        "application/json");
+
+                    response = await client.SendAsync(addRolePermissionsRequest, CancellationToken.None);
+                    if (response.IsSuccessStatusCode == false)
+                    {
+                        Trace($"addRolePermissionsRequest failed [{response.StatusCode}]");
+                    }
+                }
             }
             catch(Exception ex){
-                ConsoleStream<String> logs = builtContainer.Logs(true, CancellationToken.None);
-                IList<String> xx = logs.ReadToEnd();
-                while (xx.Any())
-                {
-                    foreach (String s in xx)
-                    {
-                        Trace($"Logs|{s}");
-                    }
-                    xx = logs.ReadToEnd();
-                }
+                Trace(ex.GetCombinedExceptionMessages());
+                //ConsoleStream<String> logs = builtContainer.Logs(true, CancellationToken.None);
+                //IList<String> xx = logs.ReadToEnd();
+                //while (xx.Any())
+                //{
+                //    foreach (String s in xx)
+                //    {
+                //        Trace($"Logs|{s}");
+                //    }
+                //    xx = logs.ReadToEnd();
+                //}
             }
 
             Trace("About to attach networkServices");
@@ -214,9 +309,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             
 
-            this.EstateManagementUiPort = builtContainer.ToHostExposedEndpoint($"5004/tcp").Port;
-
-            Trace("Estate Management UI Started");
+            
             this.Containers.Add(((DockerServices)1024, builtContainer));
             //await Retry.For(async () =>
             //{
@@ -303,6 +396,21 @@ namespace EstateManagementUI.IntegrationTests.Common
             //}
         }
 
+        private async Task<IPermissionsRepository> CreatePermissionsRepository(String dbConnString, CancellationToken cancellationToken) {
+            var optionsBuilder = new DbContextOptionsBuilder<PermissionsContext>();
+            optionsBuilder.UseSqlite(dbConnString); // Configure for your database provider
+
+            var serviceProvider = new ServiceCollection()
+                .AddLogging(config => config.AddConsole())  // Add logging if needed
+                .BuildServiceProvider();
+
+            // Create the DbContextFactory instance
+            var contextFactory = new DbContextFactory<PermissionsContext>(serviceProvider, optionsBuilder.Options, new DbContextFactorySource<PermissionsContext>());
+
+            //var ctx = await contextFactory.CreateDbContextAsync(cancellationToken);
+
+            return new PermissionsRepository(contextFactory);
+        }
 
         #endregion
     }

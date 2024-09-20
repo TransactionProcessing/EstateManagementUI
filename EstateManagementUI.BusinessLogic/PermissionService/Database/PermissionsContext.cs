@@ -20,10 +20,8 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Database
 
         public string ConnectionString { get; }
 
-        //public PermissionsContext() {
-            
-        //}
-        //public PermissionsContext(String connectionString) {
+        //public PermissionsContext(String connectionString)
+        //{
         //    this.ConnectionString = connectionString;
         //}
 

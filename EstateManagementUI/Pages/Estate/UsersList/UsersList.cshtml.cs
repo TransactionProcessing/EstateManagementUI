@@ -10,30 +10,32 @@ using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 
-namespace EstateManagementUI.Pages.Estate
+namespace EstateManagementUI.Pages.Estate.UsersList
 {
     public class UsersList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
 
-        public UsersList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.ViewEstateUsers, permissionsService)
+        public UsersList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.ViewUsersList, permissionsService)
         {
-            this.Mediator = mediator;
-            this.Users = new List<User>();
+            Mediator = mediator;
+            Users = new List<User>();
         }
 
         public List<User> Users { get; set; }
 
         public override async Task MountAsync()
         {
-            await this.PopulateTokenAndEstateId();
+            await PopulateTokenAndEstateId();
 
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
+            Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
 
-            EstateModel response = await this.Mediator.Send(query, CancellationToken.None);
+            EstateModel response = await Mediator.Send(query, CancellationToken.None);
 
-            foreach (SecurityUserModel securityUserModel in response.SecurityUsers) {
-                this.Users.Add(new User() {
+            foreach (SecurityUserModel securityUserModel in response.SecurityUsers)
+            {
+                Users.Add(new User()
+                {
                     Id = securityUserModel.SecurityUserId,
                     EmailAddress = securityUserModel.EmailAddress
                 });
@@ -41,5 +43,5 @@ namespace EstateManagementUI.Pages.Estate
         }
     }
 
-    
+
 }
