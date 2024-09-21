@@ -20,7 +20,7 @@ namespace EstateManagementUI.Pages.Reporting.SettlementAnalysis
         [Display(Name = "Comparison Date")]
         public ComparisonDateListModel ComparisonDate { get; set; }
         
-        public SettlementAnalysis(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, ContractFunctions.ViewList, permissionsService)
+        public SettlementAnalysis(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Reporting, ReportingFunctions.SettlementAnalysis, permissionsService)
         {
             this.Mediator = mediator;
         }

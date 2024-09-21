@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static System.Collections.Specialized.BitVector32;
 
-namespace EstateManagementUI.Pages.Estate
+namespace EstateManagementUI.Pages.Estate.ViewEstate
 {
     public class ViewEstate : SecureHydroComponent
     {
@@ -22,15 +22,16 @@ namespace EstateManagementUI.Pages.Estate
 
         private readonly IMediator Mediator;
 
-        public ViewEstate(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.View, permissionsService) {
+        public ViewEstate(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Estate, EstateFunctions.View, permissionsService)
+        {
             Mediator = mediator;
         }
-        
+
         public override async Task MountAsync()
         {
-            await this.PopulateTokenAndEstateId();
+            await PopulateTokenAndEstateId();
 
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
+            Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
 
             EstateModel response = await Mediator.Send(query, CancellationToken.None);
 

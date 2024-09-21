@@ -24,7 +24,12 @@ public class SecurePageModel : PageModel {
 
         if (result.IsFailed)
         {
+            Shared.Logger.Logger.LogWarning(result.Message);
             context.Result = new ForbidResult();
+        }
+        else
+        {
+            Shared.Logger.Logger.LogWarning($"Permission granted for userName: {this.User.Identity.Name} SectionName: {this.SectionName} PageName: {this.PageName}");
         }
         await base.OnPageHandlerExecutionAsync(context, next);
     }

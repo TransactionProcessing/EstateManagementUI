@@ -26,7 +26,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
 
         public MerchantKpi MerchantKpi { get; set; }
 
-        public TransactionAnalysis(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, ContractFunctions.ViewList, permissionsService)
+        public TransactionAnalysis(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Reporting, ReportingFunctions.TransactionAnalysis, permissionsService)
         {
             this.Mediator = mediator;
         }

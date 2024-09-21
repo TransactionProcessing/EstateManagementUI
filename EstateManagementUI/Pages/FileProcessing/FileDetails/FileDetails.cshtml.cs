@@ -23,7 +23,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileDetails
         public String UploadedBy { get; set; }
         public List<FileLine> FileLines { get; set; }
 
-        public FileDetails(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, ContractFunctions.ViewList, permissionsService)
+        public FileDetails(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, FileProcessingFunctions.ViewFileDetails, permissionsService)
         {
             this.Mediator = mediator;
             this.FileLines = new();

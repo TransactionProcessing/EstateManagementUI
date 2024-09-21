@@ -1,6 +1,7 @@
 ﻿using Shared.General;
 using SimpleResults;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Identity.Client;
 
 namespace EstateManagementUI.BusinessLogic.PermissionService;
 

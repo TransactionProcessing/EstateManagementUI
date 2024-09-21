@@ -11,22 +11,23 @@ using EstateManagementUI.Pages.Merchant;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.Pages.Operator.OperatorDialogs;
 using EstateManagementUI.Pages.Shared.Components;
 using SimpleResults;
-using static EstateManagementUI.Pages.Operator.OperatorPageEvents;
+using static EstateManagementUI.Pages.Operator.OperatorDialogs.OperatorPageEvents;
 
-namespace EstateManagementUI.Pages.Operator
+namespace EstateManagementUI.Pages.Operator.OperatorsList
 {
     public class OperatorsList : SecureHydroComponent
     {
         private readonly IMediator Mediator;
         public Guid OperatorId { get; set; }
-        public Boolean ShowDialog { get; set; }
+        public bool ShowDialog { get; set; }
 
         public OperatorsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Operator, OperatorFunctions.ViewList, permissionsService)
         {
-            this.Mediator = mediator;
-            this.Operators = new List<ViewModels.Operator>();
+            Mediator = mediator;
+            Operators = new List<ViewModels.Operator>();
 
             Subscribe<OperatorPageEvents.OperatorCreatedEvent>(Handle);
             Subscribe<OperatorPageEvents.OperatorUpdatedEvent>(Handle);
@@ -36,60 +37,64 @@ namespace EstateManagementUI.Pages.Operator
             Subscribe<OperatorPageEvents.HideEditOperatorDialog>(Handle);
         }
 
-        public async Task Handle(OperatorCreatedEvent @event) {
-            // Sleep for a second
-            await Task.Delay(1000); // TODO: might be a better way of handling this
-            await this.GetOperators();
-        }
-
-        public async Task Handle(OperatorUpdatedEvent @event)
+        public async Task Handle(OperatorPageEvents.OperatorCreatedEvent @event)
         {
             // Sleep for a second
             await Task.Delay(1000); // TODO: might be a better way of handling this
-            await this.GetOperators();
+            await GetOperators();
         }
 
-        public async Task Handle(ShowNewOperatorDialog @event)
+        public async Task Handle(OperatorPageEvents.OperatorUpdatedEvent @event)
         {
-            this.OperatorId = Guid.Empty;
-            this.ShowDialog = true;
+            // Sleep for a second
+            await Task.Delay(1000); // TODO: might be a better way of handling this
+            await GetOperators();
         }
-        public async Task Handle(HideNewOperatorDialog @event)
-       {
-           this.OperatorId = Guid.Empty;
-            this.ShowDialog = false;
-        }
-        public async Task Handle(ShowEditOperatorDialog @event)
+
+        public async Task Handle(OperatorPageEvents.ShowNewOperatorDialog @event)
         {
-            this.OperatorId = @event.OperatorId;
-            this.ShowDialog = true;
+            OperatorId = Guid.Empty;
+            ShowDialog = true;
         }
-        public async Task Handle(HideEditOperatorDialog @event)
+        public async Task Handle(OperatorPageEvents.HideNewOperatorDialog @event)
         {
-            this.OperatorId = Guid.Empty;
-            this.ShowDialog = false;
+            OperatorId = Guid.Empty;
+            ShowDialog = false;
         }
-        
+        public async Task Handle(OperatorPageEvents.ShowEditOperatorDialog @event)
+        {
+            OperatorId = @event.OperatorId;
+            ShowDialog = true;
+        }
+        public async Task Handle(OperatorPageEvents.HideEditOperatorDialog @event)
+        {
+            OperatorId = Guid.Empty;
+            ShowDialog = false;
+        }
+
         public List<ViewModels.Operator> Operators { get; set; }
 
-        public override async Task MountAsync() {
-            await this.GetOperators();
+        public override async Task MountAsync()
+        {
+            await GetOperators();
         }
 
         public void Add() =>
             Dispatch(new OperatorPageEvents.ShowNewOperatorDialog(), Scope.Global);
 
-        public async Task Edit(Guid operatorId)=>
+        public async Task Edit(Guid operatorId) =>
             Dispatch(new OperatorPageEvents.ShowEditOperatorDialog(operatorId), Scope.Global);
 
-        private async Task GetOperators() {
-            await this.PopulateTokenAndEstateId();
+        private async Task GetOperators()
+        {
+            await PopulateTokenAndEstateId();
 
-            Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(this.AccessToken, this.EstateId);
+            Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(AccessToken, EstateId);
 
-            Result<List<OperatorModel>> response = await this.Mediator.Send(query, CancellationToken.None);
+            Result<List<OperatorModel>> response = await Mediator.Send(query, CancellationToken.None);
 
-            if (response.IsFailed) {
+            if (response.IsFailed)
+            {
                 Dispatch(new ShowMessage("Error getting Operator List", ToastType.Error), Scope.Global);
                 return;
             }
@@ -106,7 +111,7 @@ namespace EstateManagementUI.Pages.Operator
                 });
             }
 
-            IEnumerable<ViewModels.Operator> sortQuery = this.Sorting switch
+            IEnumerable<ViewModels.Operator> sortQuery = Sorting switch
             {
                 (OperatorSorting.Name, Ascending: false) => resultList.OrderBy(p => p.Name),
                 (OperatorSorting.Name, Ascending: true) => resultList.OrderByDescending(p => p.Name),
@@ -117,20 +122,21 @@ namespace EstateManagementUI.Pages.Operator
                 _ => resultList.AsEnumerable()
             };
 
-            this.Operators = sortQuery.ToList();
+            Operators = sortQuery.ToList();
         }
 
         public async Task Sort(OperatorSorting value)
         {
             Sorting = (Column: value, Ascending: Sorting.Column == value && !Sorting.Ascending);
 
-            await this.GetOperators();
+            await GetOperators();
         }
 
         public (OperatorSorting Column, bool Ascending) Sorting { get; set; }
     }
 
-    public enum OperatorSorting {
+    public enum OperatorSorting
+    {
         Name,
         RequireCustomTerminalNumber,
         RequireCustomMerchantNumber

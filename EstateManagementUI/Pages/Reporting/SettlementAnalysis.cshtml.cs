@@ -1,8 +1,17 @@
+using EstateManagementUI.BusinessLogic.PermissionService.Constants;
+using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EstateManagementUI.Pages.Reporting
 {
-    public class SettlementAnalysisModel : PageModel
+    [Authorize]
+    public class SettlementAnalysisModel : SecurePageModel
     {
+        public SettlementAnalysisModel(IPermissionsService permissionsService) : base(permissionsService,
+            ApplicationSections.Reporting, ReportingFunctions.SettlementAnalysis)
+        {
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
 
         private readonly IMediator Mediator;
 
-        public Dashboard(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, ContractFunctions.ViewList, permissionsService)
+        public Dashboard(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Dashboard, DashboardFunctions.Dashboard, permissionsService)
         {
             this.Mediator = mediator;
         }

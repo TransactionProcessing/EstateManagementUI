@@ -1,5 +1,6 @@
 ﻿@using EstateManagementUI.BusinessLogic.Clients
 @using EstateManagementUI.BusinessLogic.PermissionService
+@using global::Shared.Logger
 @using SimpleResults
 @inject IPermissionsService PermissionsService
 @{
@@ -10,8 +11,15 @@
 
     async Task RenderItem(string title, string name, String id, String pageName="Index") {
         Result permisionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, name);
-        if (permisionResult.IsFailed)
+        if (permisionResult.IsFailed) {
+            Logger.LogWarning(permisionResult.Message);
             return;
+        }
+        else
+        {
+            Logger.LogWarning($"Permission granted for userName: {User.Identity.Name} SectionName: {name}");
+        }
+
         var link = $"/{name}/{pageName}";
         <a class='nav-link' asp-page="@link" id="@id">
             @switch (name)

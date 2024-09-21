@@ -1,7 +1,6 @@
 ﻿@model OperatorsList
 
 
-
     <div class="card o-hidden border-0 shadow-sm my-5">
         <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
@@ -31,7 +30,12 @@
                         
                         @if (Model.ShowDialog)
                         {
-                            <hydro name="OperatorDialog" params="@(new {OperatorId = Model.OperatorId})"/>
+                            if (Model.OperatorId == Guid.Empty){
+                                <hydro name="NewOperatorDialog" />
+                            }
+                            else {
+                                <hydro name="EditOperatorDialog" params="@(new {OperatorId = Model.OperatorId})" />
+                            }
                         }
 
                     </div>

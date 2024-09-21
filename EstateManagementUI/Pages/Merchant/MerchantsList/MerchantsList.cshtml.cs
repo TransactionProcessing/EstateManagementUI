@@ -9,7 +9,7 @@ using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
-namespace EstateManagementUI.Pages.Merchant
+namespace EstateManagementUI.Pages.Merchant.MerchantsList
 {
     public class MerchantsList : SecureHydroComponent
     {
@@ -17,22 +17,24 @@ namespace EstateManagementUI.Pages.Merchant
 
         public MerchantsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Merchant, MerchantFunctions.ViewList, permissionsService)
         {
-            this.Mediator = mediator;
-            this.Merchants = new List<ViewModels.Merchant>();
+            Mediator = mediator;
+            Merchants = new List<ViewModels.Merchant>();
         }
 
         public List<ViewModels.Merchant> Merchants { get; set; }
 
-        public override async Task MountAsync() {
-            await this.GetMerchants();
+        public override async Task MountAsync()
+        {
+            await GetMerchants();
         }
 
-        private async Task GetMerchants() {
-            await this.PopulateTokenAndEstateId();
+        private async Task GetMerchants()
+        {
+            await PopulateTokenAndEstateId();
 
-            Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.AccessToken, this.EstateId);
+            Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(AccessToken, EstateId);
 
-            List<MerchantModel> response = await this.Mediator.Send(query, CancellationToken.None);
+            List<MerchantModel> response = await Mediator.Send(query, CancellationToken.None);
 
             List<ViewModels.Merchant> resultList = new();
             foreach (MerchantModel merchantModel in response)
@@ -49,7 +51,8 @@ namespace EstateManagementUI.Pages.Merchant
                 });
             }
 
-            IEnumerable<ViewModels.Merchant> sortQuery = this.Sorting switch {
+            IEnumerable<ViewModels.Merchant> sortQuery = Sorting switch
+            {
                 (MerchantSorting.Name, Ascending: false) => resultList.OrderBy(p => p.Name),
                 (MerchantSorting.Name, Ascending: true) => resultList.OrderByDescending(p => p.Name),
                 (MerchantSorting.Reference, Ascending: false) => resultList.OrderBy(p => p.Reference),
@@ -65,19 +68,21 @@ namespace EstateManagementUI.Pages.Merchant
                 _ => resultList.AsEnumerable()
             };
 
-            this.Merchants = sortQuery.ToList();
+            Merchants = sortQuery.ToList();
         }
 
-        public async Task Sort(MerchantSorting value) {
+        public async Task Sort(MerchantSorting value)
+        {
             Sorting = (Column: value, Ascending: Sorting.Column == value && !Sorting.Ascending);
 
-            await this.GetMerchants();
+            await GetMerchants();
         }
 
         public (MerchantSorting Column, bool Ascending) Sorting { get; set; }
     }
 
-    public enum MerchantSorting {
+    public enum MerchantSorting
+    {
         Name,
         Reference,
         SettlementSchedule,

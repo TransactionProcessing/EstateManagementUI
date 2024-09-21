@@ -26,7 +26,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
         [Display(Name = "End Date")]
         public DateModel EndDate { get; set; }
 
-        public FileImportLogList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, ContractFunctions.ViewList, permissionsService)
+        public FileImportLogList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.FileProcessing, FileProcessingFunctions.ViewImportLogList, permissionsService)
         {
             this.Mediator = mediator;
             this.FileImportLogs= new List<ViewModels.FileImportLogList>();
