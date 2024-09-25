@@ -79,7 +79,7 @@ Scenario: Operator PR Test
 	When I enter the following details for the new Operator
 	| OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
 	| Test Operator 4 | Yes                         | Yes                         |
-	And click the Save button
+	And click the Save Operator button
 	Then I am presented with the Operators List Screen
 	And the following operator details are in the list
 	| OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
@@ -92,7 +92,7 @@ Scenario: Operator PR Test
 	When I enter the following new details for the Operator
 	| OperatorName           | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
 	| Test Operator 1 update | No                          | No                          |
-	And click the Save button
+	And click the Save Operator button
 	Then I am presented with the Operators List Screen
 	And the following operator details are in the list
 	| OperatorName           | RequireCustomMerchantNumber | RequireCustomTerminalNumber |

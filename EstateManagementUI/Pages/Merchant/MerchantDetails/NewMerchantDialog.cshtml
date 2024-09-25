@@ -1,0 +1,88 @@
+﻿@model EstateManagementUI.Pages.Merchant.MerchantDetails.NewMerchantDialog
+<div class="modal d-block init" tabindex="-1">
+    <div class="modal-dialog modal-lg" id="MerchantDialog">
+        <div class="modal-content @(!Model.ModelState.IsValid ? "shake" : null)" x-init="@DateTime.Now.Ticks; @(!Model.ModelState.IsValid ? "setTimeout(() => $el.classList.remove('shake'), 300)" : null)">
+            <form hydro-on:submit="@(() => Model.Save())">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Merchant</h5>
+                    <button type="button" class="btn-close" aria-label="Close" hydro-action="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label asp-for="Name" class="form-label">Name</label>
+                                <input asp-for="Name" placeholder="Enter Merchant Name" class="form-control" x-init="$el.focus()" hydro-bind name="Name" id="merchantName" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label asp-for="SettlementSchedule"></label>
+                                <select asp-for="SettlementSchedule" asp-items="Model.SettlementSchedule.SettlementSchedule" class="form-control" hydro-bind name="SettlementSchedule.SettlementScheduleId" id="settlementSchedule"></select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <h4 class="h4 text-gray-900 mb-4">Address</h4>
+                                    <div class="col-md-8">
+                                        <label asp-for="Address.AddressLine1" class="control-label">Address Line 1</label>
+                                        <input asp-for="Address.AddressLine1" class="form-control form-control-user" hydro-bind name="Address.AddressLine1" id="addressLine1" autofocus />
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label asp-for="Address.AddressLine2" class="control-label">Address Line 2</label>
+                                        <input asp-for="Address.AddressLine2" class="form-control form-control-user" hydro-bind name="Address.AddressLine2" id="addressLine2" autofocus />
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label asp-for="Address.Town" class="control-label">Town</label>
+                                            <input asp-for="Address.Town" class="form-control form-control-user" hydro-bind name="Address.Town" id="town" autofocus />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label asp-for="Address.Region" class="control-label">Region</label>
+                                            <input asp-for="Address.Region" class="form-control form-control-user" hydro-bind name="Address.Region" id="region" autofocus />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label asp-for="Address.PostCode" class="control-label">Post Code</label>
+                                            <input asp-for="Address.PostCode" class="form-control form-control-user" hydro-bind name="Address.PostCode" id="postalCode" autofocus />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Address.Country" class="control-label">Country</label>
+                                            <input asp-for="Address.Country" class="form-control form-control-user" hydro-bind name="Address.Country" id="country" autofocus />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <h4 class="h4 text-gray-900 mb-4">Contact</h4>
+                                <div class="form-row">
+                                    <label asp-for="Contact.ContactName" class="control-label">Name</label>
+                                    <input asp-for="Contact.ContactName" class="form-control form-control-user" hydro-bind name="Contact.ContactName" id="contactName" autofocus />
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6">
+                                        <label asp-for="Contact.EmailAddress" class="control-label">Email Address</label>
+                                        <input asp-for="Contact.EmailAddress" class="form-control form-control-user" hydro-bind name="Contact.EmailAddress" id="contactEmailAddress" autofocus />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Contact.PhoneNumber" class="control-label">Phone Number</label>
+                                        <input asp-for="Contact.PhoneNumber" class="form-control form-control-user" hydro-bind name="Contact.PhoneNumber" id="contactPhoneNumber" autofocus />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" hydro-action="Close" id="closeButton">Close</button>
+                    <button type="submit" class="btn btn-primary" id="saveNewMerchantButton">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
