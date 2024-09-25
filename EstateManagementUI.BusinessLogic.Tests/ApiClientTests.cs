@@ -1,4 +1,5 @@
 ﻿using EstateManagement.Client;
+using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagement.DataTransferObjects.Requests.Operator;
 using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
@@ -14,6 +15,8 @@ using Moq;
 using Shared.Logger;
 using Shouldly;
 using SimpleResults;
+using CreateMerchantModel = EstateManagementUI.BusinessLogic.Models.CreateMerchantModel;
+using SettlementSchedule = EstateManagementUI.BusinessLogic.Models.SettlementSchedule;
 
 namespace EstateManagementUI.BusinessLogic.Tests
 {
@@ -399,7 +402,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTodaysFailedSales(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<String>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TodaysSales);
 
-            var result = await this.ApiClient.GetTodaysFailedSales(TestData.AccessToken, TestData.EstateId, "1009",TestData.ComparisonDate,CancellationToken.None);
+            Result<TodaysSalesModel> result = await this.ApiClient.GetTodaysFailedSales(TestData.AccessToken, TestData.EstateId, "1009",TestData.ComparisonDate,CancellationToken.None);
             result.IsSuccess.ShouldBeTrue();
         }
 
@@ -408,7 +411,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTodaysFailedSales(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Int32>(), It.IsAny<Int32>(), It.IsAny<String>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var result = await this.ApiClient.GetTodaysFailedSales(TestData.AccessToken, TestData.EstateId, "1009", TestData.ComparisonDate, CancellationToken.None);
+            Result<TodaysSalesModel> result = await this.ApiClient.GetTodaysFailedSales(TestData.AccessToken, TestData.EstateId, "1009", TestData.ComparisonDate, CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
 
@@ -418,7 +421,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTopBottomMerchantData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TopBottomMerchantDataList);
 
-            var result = await this.ApiClient.GetTopBottomMerchantData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            Result<List<TopBottomMerchantDataModel>> result = await this.ApiClient.GetTopBottomMerchantData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsSuccess.ShouldBeTrue();
         }
 
@@ -427,7 +430,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTopBottomMerchantData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var result = await this.ApiClient.GetTopBottomMerchantData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            Result<List<TopBottomMerchantDataModel>> result = await this.ApiClient.GetTopBottomMerchantData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
 
@@ -436,7 +439,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTopBottomProductData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TopBottomProductDataList);
 
-            var result = await this.ApiClient.GetTopBottomProductData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            Result<List<TopBottomProductDataModel>> result = await this.ApiClient.GetTopBottomProductData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsSuccess.ShouldBeTrue();
         }
 
@@ -445,7 +448,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTopBottomProductData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var result = await this.ApiClient.GetTopBottomProductData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            Result<List<TopBottomProductDataModel>> result = await this.ApiClient.GetTopBottomProductData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
 
@@ -454,7 +457,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTopBottomOperatorData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.TopBottomOperatorDataList);
 
-            var result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            Result<List<TopBottomOperatorDataModel>> result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsSuccess.ShouldBeTrue();
         }
 
@@ -463,7 +466,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetTopBottomOperatorData(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<TopBottom>(), It.IsAny<Int32>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
+            Result<List<TopBottomOperatorDataModel>> result = await this.ApiClient.GetTopBottomOperatorData(TestData.AccessToken, TestData.EstateId, TopBottom.Bottom, 10, CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
 
@@ -472,7 +475,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetLastSettlement(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.LastSettlement);
 
-            var result = await this.ApiClient.GetLastSettlement(TestData.AccessToken, TestData.EstateId, null, null, CancellationToken.None);
+            Result<LastSettlementModel> result = await this.ApiClient.GetLastSettlement(TestData.AccessToken, TestData.EstateId, null, null, CancellationToken.None);
             result.IsSuccess.ShouldBeTrue();
         }
 
@@ -481,7 +484,25 @@ namespace EstateManagementUI.BusinessLogic.Tests
         {
             this.EstateReportingApiClient.Setup(e => e.GetLastSettlement(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
-            var result = await this.ApiClient.GetLastSettlement(TestData.AccessToken, TestData.EstateId, null, null, CancellationToken.None);
+            Result<LastSettlementModel> result = await this.ApiClient.GetLastSettlement(TestData.AccessToken, TestData.EstateId, null, null, CancellationToken.None);
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_CreateMerchant_DataIsReturned()
+        {
+            this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.CreateMerchantResponse);
+
+            Result result = await this.ApiClient.CreateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
+            result.IsSuccess.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task ApiClient_CreateMerchant_ErrorAtServer_NoDataIsReturned()
+        {
+            this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+            Result result = await this.ApiClient.CreateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
             result.IsFailed.ShouldBeTrue();
         }
     }

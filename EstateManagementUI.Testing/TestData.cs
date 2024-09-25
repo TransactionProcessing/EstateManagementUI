@@ -2,10 +2,13 @@ using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
+using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using EstateReportingAPI.DataTransferObjects;
 using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
+using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
+using SettlementSchedule = EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule;
 
 namespace EstateManagementUI.Testing
 {
@@ -53,6 +56,37 @@ namespace EstateManagementUI.Testing
 
         public static Queries.GetLastSettlementQuery GetLastSettlementQuery => new(AccessToken, EstateId);
 
+        public static Commands.AddNewMerchantCommand AddNewMerchantCommand => new(AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
+
+        public static CreateMerchantResponse CreateMerchantResponse =>
+            new() { EstateId = EstateId, MerchantId = Merchant1Id };
+
+        public static CreateMerchantModel CreateMerchantModel(BusinessLogic.Models.SettlementSchedule settlementSchedule) =>
+            new CreateMerchantModel
+            {
+                MerchantName = Merchant1Name,
+                SettlementSchedule = settlementSchedule,
+                Contact = new ContactModel
+                {
+                    ContactName = TestData.Merchant1ContactName,
+                    ContactPhoneNumber = TestData.Merchant1ContactPhoneNumber,
+                    ContactEmailAddress = TestData.Merchant1ContactEmailAddress
+                },
+                Address = new AddressModel
+                {
+                    AddressLine4 = TestData.Merchant1AddressLine4,
+                    AddressLine1 = TestData.Merchant1AddressLine1,
+                    AddressLine2 = TestData.Merchant1AddressLine2,
+                    AddressLine3 = TestData.Merchant1AddressLine3,
+                    Country = TestData.Merchant1Country,
+                    PostalCode = TestData.Merchant1PostalCode,
+                    Region = TestData.Merchant1Region,
+                    Town = TestData.Merchant1Town
+                }
+            };
+
+
+
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
                 RequireCustomTerminalNumber);
@@ -81,8 +115,30 @@ namespace EstateManagementUI.Testing
         public static Guid Merchant1Id = Guid.Parse("2F8431D9-8D04-4AE5-B66C-DB40DFADE581");
         public static SettlementSchedule Merchant1SettlementSchedule = SettlementSchedule.Immediate;
 
+        public static String Merchant1AddressLine1 = "Address Line 1";
+
+        public static String Merchant1AddressLine2 = "Address Line 2";
+
+        public static String Merchant1AddressLine3 = "Address Line 3";
+
+        public static String Merchant1AddressLine4 = "Address Line 4";
+
+        public static String Merchant1ContactEmailAddress = "testcontact@merchant1.co.uk";
+
+        public static String Merchant1ContactName = "Mr Test Contact";
+
+        public static String Merchant1ContactPhoneNumber = "1234567890";
+
+        public static String Merchant1Country = "United Kingdom";
+
+        public static String Merchant1PostalCode = "TE571NG";
+
+        public static String Merchant1Region = "Test Region";
+
+        public static String Merchant1Town = "Test Town";
+
         public static AddressResponse Merchant1Address = new() {
-            AddressLine1 = "Address Line 1", Town = "Test Town 1"
+            AddressLine1 = Merchant1AddressLine1, Town = Merchant1Town
         };
 
         public static ContactResponse Merchant1Contact = new() { ContactName = "Contact 1" };

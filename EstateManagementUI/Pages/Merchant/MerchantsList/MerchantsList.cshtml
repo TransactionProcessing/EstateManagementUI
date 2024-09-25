@@ -1,7 +1,5 @@
 ﻿@model MerchantsList
 
-
-
     <div class="card o-hidden border-0 shadow-sm my-5">
         <div class="card-body p-0">
             <!-- Nested Row within Card Body -->
@@ -11,6 +9,12 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Merchants</h1>
                         </div>
+                    <div>
+
+                        <button class="btn btn-primary" type="button" hydro-action="Add" id="newMerchantButton">
+                            New Merchant
+                        </button>
+                    </div>
                         @if (Model.Merchants.Any() == false)
                         {
                             <div class="bg-base-200 rounded text-center p-4">
@@ -21,6 +25,18 @@
                         {
                             <partial name="MerchantList.Table.cshtml"/>
                         }
+
+                    @if (Model.ShowDialog)
+                    {
+                        if (Model.MerchantId == Guid.Empty)
+                        {
+                            <hydro name="NewMerchantDialog" />
+                        }
+                        @* else
+                        {
+                            <hydro name="EditOperatorDialog" params="@(new {OperatorId = Model.OperatorId})" />
+                        } *@
+                    }
                     </div>
                 </div>
                 <div class="col-lg-3" align="center">

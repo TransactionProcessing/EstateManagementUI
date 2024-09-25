@@ -436,12 +436,40 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickTheNewOperatorButton();
         }
 
+        [When("I click on the New Merchant Button")]
+        public async Task WhenIClickOnTheNewMerchantButton()
+        {
+            await this.UiHelpers.ClickTheNewMerchantButton();
+        }
+
+        [Then("the Add New Merchant Dialog is displayed")]
+        public async Task ThenTheAddNewMerchantDialogIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheMerchantDialog();
+        }
+
         [When("I click on the Edit Operator Button for {string}")]
         public async Task WhenIClickOnTheEditOperatorButtonFor(string operatorName)
         {
             await this.UiHelpers.ClickTheEditOperatorButton(operatorName);
         }
 
+        [When("I enter the following details for the new Merchant")]
+        public async Task WhenIEnterTheFollowingDetailsForTheNewMerchant(DataTable dataTable)
+        {
+            DataTableRow merchantDetails = dataTable.Rows.Single();
+            String merchantName = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "MerchantName");
+            String addressLine1 = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "AddressLine1");
+            String town = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "Town");
+            String region = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "Region");
+            String country = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "Country");
+            String contactName = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "ContactName");
+            String contactEmail = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "EmailAddress");
+            String settlementSchedule = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "SettlementSchedule");
+
+            await this.UiHelpers.EnterMerchantDetails(merchantName, addressLine1, town, region, null, country, contactName,
+                contactEmail, null, settlementSchedule);
+        }
 
         [Then("the Add New Operator Dialog is displayed")]
         public async Task ThenTheAddNewOperatorDialogIsDisplayed() {
@@ -480,9 +508,15 @@ namespace EstateManagementUI.IntegrationTests.Steps
                 requireCustomTerminalNumber);
         }
 
-        [When("click the Save button")]
-        public async Task WhenClickTheSaveButton() {
+        [When("click the Save Operator button")]
+        public async Task WhenClickTheSaveOperatorButton() {
             await this.UiHelpers.ClickTheSaveNewOperatorButton();
+        }
+
+        [When("click the Save Merchant button")]
+        public async Task WhenClickTheSaveMerchantButton()
+        {
+            await this.UiHelpers.ClickTheSaveNewMerchantButton();
         }
 
         [When("I click on the View Products Button for {string}")]

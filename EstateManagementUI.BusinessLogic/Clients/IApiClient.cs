@@ -143,5 +143,11 @@ namespace EstateManagementUI.BusinessLogic.Clients
             Int32? merchantReportingId,
             Int32? operatorReportingId,
             CancellationToken cancellationToken);
+
+        Task<Result> CreateMerchant(String accessToken,
+                                    Guid actionId,
+                                    Guid estateId,
+                                    CreateMerchantModel createMerchantModel,
+                                    CancellationToken cancellationToken);
     }
 }

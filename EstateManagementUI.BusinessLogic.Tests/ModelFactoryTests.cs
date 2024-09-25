@@ -1,4 +1,5 @@
-﻿using EstateManagement.DataTransferObjects.Responses.Estate;
+﻿using EstateManagement.DataTransferObjects.Requests.Merchant;
+using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagementUI.Testing;
 using EstateManagementUI.BusinessLogic.Models;
@@ -41,9 +42,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         public void ModelFactory_ConvertFrom_TodaysSales_ResponseIsNull_ErrorThrown() {
             TodaysSales response = null;
 
-            Should.Throw<ArgumentNullException>(() => {
-                ModelFactory.ConvertFrom(response);
-            });
+            Should.Throw<ArgumentNullException>(() => { ModelFactory.ConvertFrom(response); });
         }
 
         [Fact]
@@ -58,13 +57,10 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TodaysSettlement_ResponseIsNull_ErrorThrown()
-        {
+        public void ModelFactory_ConvertFrom_TodaysSettlement_ResponseIsNull_ErrorThrown() {
             TodaysSettlement response = null;
 
-            Should.Throw<ArgumentNullException>(() => {
-                ModelFactory.ConvertFrom(response);
-            });
+            Should.Throw<ArgumentNullException>(() => { ModelFactory.ConvertFrom(response); });
         }
 
         [Fact]
@@ -367,7 +363,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
                 }
             }
         }
-        
+
         [Fact]
         public void ModelFactory_ConvertFrom_FileImportLogList_NullInput_ModelIsConverted() {
             FileImportLogList fileImportLogList = null;
@@ -415,7 +411,8 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             List<TodaysSalesCountByHourModel> model = ModelFactory.ConvertFrom(response);
 
             foreach (TodaysSalesCountByHour todaysSalesCountByHour in response) {
-                TodaysSalesCountByHourModel? hourModel = model.SingleOrDefault(m => m.Hour == todaysSalesCountByHour.Hour);
+                TodaysSalesCountByHourModel? hourModel =
+                    model.SingleOrDefault(m => m.Hour == todaysSalesCountByHour.Hour);
                 hourModel.ShouldNotBeNull();
                 hourModel.TodaysSalesCount.ShouldBe(todaysSalesCountByHour.TodaysSalesCount);
                 hourModel.ComparisonSalesCount.ShouldBe(todaysSalesCountByHour.ComparisonSalesCount);
@@ -449,9 +446,9 @@ namespace EstateManagementUI.BusinessLogic.Tests {
 
             List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
 
-            foreach (TodaysSalesValueByHour todaysSalesValueByHour in response)
-            {
-                TodaysSalesValueByHourModel? hourModel = model.SingleOrDefault(m => m.Hour == todaysSalesValueByHour.Hour);
+            foreach (TodaysSalesValueByHour todaysSalesValueByHour in response) {
+                TodaysSalesValueByHourModel? hourModel =
+                    model.SingleOrDefault(m => m.Hour == todaysSalesValueByHour.Hour);
                 hourModel.ShouldNotBeNull();
                 hourModel.TodaysSalesValue.ShouldBe(todaysSalesValueByHour.TodaysSalesValue);
                 hourModel.ComparisonSalesValue.ShouldBe(todaysSalesValueByHour.ComparisonSalesValue);
@@ -459,8 +456,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_NullResponse_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_NullResponse_ModelIsConverted() {
             List<TodaysSalesValueByHour> response = null;
 
             List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
@@ -469,8 +465,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_EmptyList_ModelIsConverted()
-        {
+        public void ModelFactory_ConvertFrom_TodaysSalesValueByHourModel_EmptyList_ModelIsConverted() {
             List<TodaysSalesValueByHour> response = new List<TodaysSalesValueByHour>();
 
             List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
@@ -479,14 +474,10 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_MerchantKpi_IsConverted()
-        {
+        public void ModelFactory_ConvertFrom_MerchantKpi_IsConverted() {
 
-            MerchantKpi model = new MerchantKpi()
-            {
-                MerchantsWithNoSaleInLast7Days = 1,
-                MerchantsWithNoSaleToday = 2,
-                MerchantsWithSaleInLastHour = 3
+            MerchantKpi model = new MerchantKpi() {
+                MerchantsWithNoSaleInLast7Days = 1, MerchantsWithNoSaleToday = 2, MerchantsWithSaleInLastHour = 3
             };
             var result = ModelFactory.ConvertFrom(model);
             result.ShouldNotBeNull();
@@ -496,8 +487,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_MerchantKpi_ModelIsNull_ErrorThrown()
-        {
+        public void ModelFactory_ConvertFrom_MerchantKpi_ModelIsNull_ErrorThrown() {
 
             MerchantKpi model = null;
             Should.Throw<ArgumentNullException>(() => { ModelFactory.ConvertFrom(model); });
@@ -509,8 +499,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             var result = ModelFactory.ConvertFrom(model);
 
             result.Count.ShouldBe(model.Count);
-            foreach (TopBottomOperatorData topBottomOperatorData in model)
-            {
+            foreach (TopBottomOperatorData topBottomOperatorData in model) {
                 var d = result.SingleOrDefault(r => r.OperatorName == topBottomOperatorData.OperatorName);
                 d.ShouldNotBeNull();
                 d.SalesValue.ShouldBe(topBottomOperatorData.SalesValue);
@@ -518,8 +507,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TopBottomOperatorData_ModelIsNull_NullReturned()
-        {
+        public void ModelFactory_ConvertFrom_TopBottomOperatorData_ModelIsNull_NullReturned() {
 
             List<TopBottomOperatorData> model = null;
             var result = ModelFactory.ConvertFrom(model);
@@ -527,8 +515,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TopBottomOperatorData_ModelIsEmpty_NullReturned()
-        {
+        public void ModelFactory_ConvertFrom_TopBottomOperatorData_ModelIsEmpty_NullReturned() {
 
             List<TopBottomOperatorData> model = new List<TopBottomOperatorData>();
             var result = ModelFactory.ConvertFrom(model);
@@ -541,8 +528,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             var result = ModelFactory.ConvertFrom(model);
 
             result.Count.ShouldBe(model.Count);
-            foreach (TopBottomMerchantData topBottomMerchantData in model)
-            {
+            foreach (TopBottomMerchantData topBottomMerchantData in model) {
                 var d = result.SingleOrDefault(r => r.MerchantName == topBottomMerchantData.MerchantName);
                 d.ShouldNotBeNull();
                 d.SalesValue.ShouldBe(topBottomMerchantData.SalesValue);
@@ -550,8 +536,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TopBottomMerchantData_ModelIsNull_NullReturned()
-        {
+        public void ModelFactory_ConvertFrom_TopBottomMerchantData_ModelIsNull_NullReturned() {
 
             List<TopBottomMerchantData> model = null;
             var result = ModelFactory.ConvertFrom(model);
@@ -559,8 +544,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TopBottomMerchantData_ModelIsEmpty_NullReturned()
-        {
+        public void ModelFactory_ConvertFrom_TopBottomMerchantData_ModelIsEmpty_NullReturned() {
 
             List<TopBottomMerchantData> model = new List<TopBottomMerchantData>();
             var result = ModelFactory.ConvertFrom(model);
@@ -575,8 +559,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             var result = ModelFactory.ConvertFrom(model);
 
             result.Count.ShouldBe(model.Count);
-            foreach (TopBottomProductData topBottomProductData in model)
-            {
+            foreach (TopBottomProductData topBottomProductData in model) {
                 var d = result.SingleOrDefault(r => r.ProductName == topBottomProductData.ProductName);
                 d.ShouldNotBeNull();
                 d.SalesValue.ShouldBe(topBottomProductData.SalesValue);
@@ -584,8 +567,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TopBottomProductData_ModelIsNull_NullReturned()
-        {
+        public void ModelFactory_ConvertFrom_TopBottomProductData_ModelIsNull_NullReturned() {
 
             List<TopBottomProductData> model = null;
             var result = ModelFactory.ConvertFrom(model);
@@ -593,8 +575,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_TopBottomProductData_ModelIsEmpty_NullReturned()
-        {
+        public void ModelFactory_ConvertFrom_TopBottomProductData_ModelIsEmpty_NullReturned() {
 
             List<TopBottomProductData> model = new List<TopBottomProductData>();
             var result = ModelFactory.ConvertFrom(model);
@@ -614,12 +595,70 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
-        public void ModelFactory_ConvertFrom_LastSettlement_ModelIsNull_IsConverted()
-        {
+        public void ModelFactory_ConvertFrom_LastSettlement_ModelIsNull_IsConverted() {
             LastSettlement model = null;
 
             var result = ModelFactory.ConvertFrom(model);
             result.ShouldBeNull();
+        }
+
+        [Theory]
+        [InlineData(Models.SettlementSchedule.Immediate,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(Models.SettlementSchedule.Monthly,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        [InlineData(Models.SettlementSchedule.Weekly,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData((Models.SettlementSchedule)99,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        public void ModelFactory_ConvertFrom_SettlementSchedule_IsConverted(
+            Models.SettlementSchedule settlementSchedule,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedResult) {
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule result =
+                ModelFactory.ConvertFrom(settlementSchedule);
+            result.ShouldBe(expectedResult);
+        }
+
+        [Theory]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        public void ModelFactory_ConvertFrom_CreateMerchantModel_ModelIsConverted(
+            BusinessLogic.Models.SettlementSchedule settlementSchedule,
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
+            CreateMerchantModel model = TestData.CreateMerchantModel(settlementSchedule);
+
+            CreateMerchantRequest request = ModelFactory.ConvertFrom(model);
+
+            request.Contact.ShouldNotBeNull();
+            request.Contact.EmailAddress.ShouldBe(model.Contact.ContactEmailAddress);
+            request.Contact.PhoneNumber.ShouldBe(model.Contact.ContactPhoneNumber);
+            request.Contact.ContactName.ShouldBe(model.Contact.ContactName);
+
+            request.Address.ShouldNotBeNull();
+            request.Address.AddressLine1.ShouldBe(model.Address.AddressLine1);
+            request.Address.AddressLine2.ShouldBe(model.Address.AddressLine2);
+            request.Address.AddressLine3.ShouldBe(model.Address.AddressLine3);
+            request.Address.AddressLine4.ShouldBe(model.Address.AddressLine4);
+            request.Address.Town.ShouldBe(model.Address.Town);
+            request.Address.Region.ShouldBe(model.Address.Region);
+            request.Address.Country.ShouldBe(model.Address.Country);
+            request.Address.PostalCode.ShouldBe(model.Address.PostalCode);
+
+            request.Name.ShouldBe(model.MerchantName);
+            request.SettlementSchedule.ShouldBe(expectedSettlementSchedule);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_CreateMerchantModel_ModelIsNull_ModelIsConverted() {
+            CreateMerchantModel model = null;
+
+            CreateMerchantRequest request = ModelFactory.ConvertFrom(model);
+
+            request.ShouldBeNull();
         }
     }
 }

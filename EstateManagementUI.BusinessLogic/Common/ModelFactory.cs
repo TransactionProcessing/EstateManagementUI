@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Azure;
+using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
@@ -11,11 +12,54 @@ using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
 using SimpleResults;
 using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
+using SettlementSchedule = EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule;
 
 namespace EstateManagementUI.BusinessLogic.Common;
 
 public static class ModelFactory
 {
+    public static SettlementSchedule ConvertFrom(Models.SettlementSchedule settlementSchedule)
+    {
+        return settlementSchedule switch
+        {
+            Models.SettlementSchedule.Immediate => SettlementSchedule.Immediate,
+            Models.SettlementSchedule.Weekly => SettlementSchedule.Weekly,
+            Models.SettlementSchedule.Monthly => SettlementSchedule.Monthly,
+            _ => SettlementSchedule.Immediate
+        };
+    }
+
+    public static CreateMerchantRequest ConvertFrom(CreateMerchantModel source)
+    {
+        if (source == null) {
+            return null;
+        }
+
+        CreateMerchantRequest apiRequest = new CreateMerchantRequest
+        {
+            Address = new Address
+            {
+                AddressLine1 = source.Address.AddressLine1,
+                AddressLine2 = source.Address.AddressLine2,
+                AddressLine3 = source.Address.AddressLine3,
+                AddressLine4 = source.Address.AddressLine4,
+                Country = source.Address.Country,
+                PostalCode = source.Address.PostalCode,
+                Region = source.Address.Region,
+                Town = source.Address.Town
+            },
+            Contact = new Contact
+            {
+                ContactName = source.Contact.ContactName,
+                EmailAddress = source.Contact.ContactEmailAddress,
+                PhoneNumber = source.Contact.ContactPhoneNumber
+            },
+            Name = source.MerchantName,
+            SettlementSchedule = ConvertFrom(source.SettlementSchedule)
+        };
+
+        return apiRequest;
+    }
     public static List<ComparisonDateModel> ConvertFrom(List<ComparisonDate> source)
     {
         if (source == null || source.Any() == false)

@@ -92,27 +92,47 @@ public class PermissionsRepository : IPermissionsRepository {
     private async Task<Result> SeedApplicationFunctions(PermissionsContext context,
                                                         List<(String, String)> applicationFunctions,
                                                         CancellationToken cancellationToken) {
+        foreach ((String, String) applicationFunction in applicationFunctions) {
+            ApplicationSection? applicationSectionRecord =
+                await context.ApplicationSections.SingleOrDefaultAsync(a => a.Name == applicationFunction.Item1,
+                    cancellationToken: cancellationToken);
+
+            Function function = new Function {
+                ApplicationSectionId = applicationSectionRecord.ApplicationSectionId, Name = applicationFunction.Item2
+            };
+
+            Result result = await this.AddApplicationFunction(context, function, cancellationToken);
+
+            if (result.IsFailed) {
+                return Result.Failure(result.Message);
+            }
+        }
+
+        return Result.Success();
+    }
+
+    private async Task<Result> AddApplicationFunction(PermissionsContext context, Function function, CancellationToken cancellationToken) {
+        
+
         try {
-            foreach ((String, String) applicationFunction in applicationFunctions) {
-
-                ApplicationSection? applicationSectionRecord =
-                    await context.ApplicationSections.SingleOrDefaultAsync(a => a.Name == applicationFunction.Item1,
-                        cancellationToken: cancellationToken);
-
-                await context.Functions.AddAsync(new Function { ApplicationSectionId = applicationSectionRecord.ApplicationSectionId, Name = applicationFunction.Item2 }, cancellationToken);
+            if (function.Name == "New Merchant") {
+                var f = context.Functions.Where(f => f.ApplicationSectionId == function.ApplicationSectionId &&
+                                                     f.Name == function.Name).ToList();
             }
 
+            await context.Functions.AddAsync(function, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
-        catch (DbUpdateException sqex) when (sqex.InnerException.Message.Contains("UNIQUE"))
-        {
-            context.ChangeTracker.Clear();
+        catch (DbUpdateException sqex) when (sqex.InnerException.Message.Contains("UNIQUE")) {
+            // No updates needed atm
             return Result.Success();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             return Result.Failure(ex.GetCombinedExceptionMessages());
         }
+
     }
 
     public async Task<Result> SeedDatabase(CancellationToken cancellationToken) {

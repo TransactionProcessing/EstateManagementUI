@@ -8,6 +8,9 @@ using MediatR;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
+using EstateManagementUI.Pages.Operator.OperatorDialogs;
+using System.Reflection.Metadata;
+using EstateManagementUI.Pages.Merchant.MerchantDetails;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantsList
 {
@@ -15,10 +18,38 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
     {
         private readonly IMediator Mediator;
 
+        public Guid MerchantId { get; set; }
+        public bool ShowDialog { get; set; }
+
         public MerchantsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Merchant, MerchantFunctions.ViewList, permissionsService)
         {
             Mediator = mediator;
             Merchants = new List<ViewModels.Merchant>();
+
+            Subscribe<MerchantPageEvents.MerchantCreatedEvent>(Handle);
+            Subscribe<MerchantPageEvents.ShowNewMerchantDialog>(Handle);
+            Subscribe<MerchantPageEvents.HideNewMerchantDialog>(Handle);
+        }
+
+        public void Add() =>
+            Dispatch(new MerchantPageEvents.ShowNewMerchantDialog(), Scope.Global);
+
+        public async Task Handle(MerchantPageEvents.MerchantCreatedEvent @event)
+        {
+            // Sleep for a second
+            await Task.Delay(1000); // TODO: might be a better way of handling this
+            await this.GetMerchants();
+        }
+        
+        public async Task Handle(MerchantPageEvents.ShowNewMerchantDialog @event)
+        {
+            MerchantId = Guid.Empty;
+            ShowDialog = true;
+        }
+        public async Task Handle(MerchantPageEvents.HideNewMerchantDialog @event)
+        {
+            MerchantId = Guid.Empty;
+            ShowDialog = false;
         }
 
         public List<ViewModels.Merchant> Merchants { get; set; }

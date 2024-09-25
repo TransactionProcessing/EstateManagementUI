@@ -24,7 +24,10 @@ namespace EstateManagementUI.IntegrationTests.Common
                                 {
                                     webElement.Clear();
                                 }
-                                webElement.SendKeys(value);
+
+                                if (String.IsNullOrEmpty(value) == false) {
+                                    webElement.SendKeys(value);
+                                }
                             }, timeout);
         }
 
@@ -44,7 +47,10 @@ namespace EstateManagementUI.IntegrationTests.Common
                 {
                     webElement.Clear();
                 }
-                webElement.SendKeys(value);
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    webElement.SendKeys(value);
+                }
             }, timeout);
         }
 

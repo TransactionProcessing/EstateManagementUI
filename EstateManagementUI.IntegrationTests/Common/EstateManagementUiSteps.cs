@@ -76,6 +76,14 @@ public class EstateManagementUiHelpers{
         });
     }
 
+    public async Task VerifyOnTheMerchantDialog()
+    {
+        await Retry.For(async () => {
+            IWebElement element = this.WebDriver.FindElement(By.Id("MerchantDialog"));
+            element.ShouldNotBeNull();
+        });
+    }
+
     public async Task VerifyOnTheContractsListScreen(){
         await Retry.For(async () => { this.VerifyPageTitle("View Contracts"); });
     }
@@ -439,9 +447,9 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("createContractButton");
     }
 
-    public async Task ClickTheCreateMerchantButton()
+    public async Task ClickTheNewMerchantButton()
     {
-        await this.WebDriver.ClickButtonById("createMerchantButton");
+        await this.WebDriver.ClickButtonById("newMerchantButton");
     }
 
     public async Task ClickTheNewOperatorButton()
@@ -452,6 +460,11 @@ public class EstateManagementUiHelpers{
     public async Task ClickTheSaveNewOperatorButton()
     {
         await this.WebDriver.ClickButtonById("saveNewOperatorButton");
+    }
+
+    public async Task ClickTheSaveNewMerchantButton()
+    {
+        await this.WebDriver.ClickButtonById("saveNewMerchantButton");
     }
 
     public async Task ClickTheCreateProductButton()
@@ -484,16 +497,16 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task EnterMerchantDetails(String merchantName, String addressLine1, String town, String region, String postCode, String country, String contactName, String contactEmail, String contactPhoneNumber, String settlementSchedule){
-        await this.WebDriver.FillIn("merchantName", merchantName);
-        await this.WebDriver.FillIn("addressLine1", addressLine1);
-        await this.WebDriver.FillIn("town", town);
-        await this.WebDriver.FillIn("region", region);
-        await this.WebDriver.FillIn("postalCode", postCode);
-        await this.WebDriver.FillIn("country", country);
-        await this.WebDriver.FillIn("contactName", contactName);
-        await this.WebDriver.FillIn("contactEmailAddress", contactEmail);
-        await this.WebDriver.FillIn("contactPhoneNumber", contactPhoneNumber);
-        await this.WebDriver.SelectDropDownItemByText("settlementScheduleList", settlementSchedule);
+        await this.WebDriver.FillIn("Name", merchantName);
+        await this.WebDriver.FillIn("Address.AddressLine1", addressLine1);
+        await this.WebDriver.FillIn("Address.Town", town);
+        await this.WebDriver.FillIn("Address.Region", region);
+        await this.WebDriver.FillIn("Address.PostCode", postCode);
+        await this.WebDriver.FillIn("Address.Country", country);
+        await this.WebDriver.FillIn("Contact.ContactName", contactName);
+        await this.WebDriver.FillIn("Contact.EmailAddress", contactEmail);
+        await this.WebDriver.FillIn("Contact.PhoneNumber", contactPhoneNumber);
+        await this.WebDriver.SelectDropDownItemByText("settlementSchedule", settlementSchedule);
     }
 
     public async Task EnterOperatorDetails(String operatorName,

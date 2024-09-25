@@ -47,6 +47,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);
             this.Requests.Add(TestData.UpdateOperatorCommand);
+            this.Requests.Add(TestData.AddNewMerchantCommand);
 
             Mock<IWebHostEnvironment> hostingEnvironment = new Mock<IWebHostEnvironment>();
             hostingEnvironment.Setup(he => he.EnvironmentName).Returns("IntegrationTest");
