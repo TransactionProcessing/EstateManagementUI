@@ -26,17 +26,17 @@
                             <partial name="MerchantList.Table.cshtml"/>
                         }
 
-                    @if (Model.ShowDialog)
+                    @* @if (Model.ShowDialog)
                     {
                         if (Model.MerchantId == Guid.Empty)
                         {
                             <hydro name="NewMerchantDialog" />
                         }
-                        @* else
+                         else
                         {
-                            <hydro name="EditOperatorDialog" params="@(new {OperatorId = Model.OperatorId})" />
-                        } *@
-                    }
+                            <hydro name="EditMerchantDialog" params="@(new {MerchantId= Model.MerchantId})" />
+                        } 
+                    } *@
                     </div>
                 </div>
                 <div class="col-lg-3" align="center">

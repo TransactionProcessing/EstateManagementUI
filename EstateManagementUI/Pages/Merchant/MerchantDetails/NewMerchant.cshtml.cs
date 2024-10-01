@@ -12,9 +12,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails
 {
-    public class NewMerchantDialog : MerchantDialog
+    public class NewMerchant : Merchant
     {
-        public NewMerchantDialog(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, MerchantFunctions.New)
+        public NewMerchant(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, MerchantFunctions.New)
         {
 
         }

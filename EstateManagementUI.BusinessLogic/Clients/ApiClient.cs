@@ -60,13 +60,25 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
-    public async Task<List<MerchantModel>> GetMerchants(String accessToken, Guid actionId, Guid estateId, CancellationToken cancellationToken)
+    public async Task<Result<List<MerchantModel>>> GetMerchants(String accessToken, Guid actionId, Guid estateId, CancellationToken cancellationToken)
     {
         async Task<Result<List<MerchantModel>>> ClientMethod()
         {
             List<MerchantResponse> merchants = await this.EstateClient.GetMerchants(accessToken, estateId, cancellationToken);
 
             return ModelFactory.ConvertFrom(merchants);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result<MerchantModel>> GetMerchant(String accessToken, Guid actionId, Guid estateId,Guid merchantId, CancellationToken cancellationToken)
+    {
+        async Task<Result<MerchantModel>> ClientMethod()
+        {
+            MerchantResponse merchant = await this.EstateClient.GetMerchant(accessToken, estateId, merchantId, cancellationToken);
+
+            return ModelFactory.ConvertFrom(merchant);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -410,6 +422,56 @@ public class ApiClient : IApiClient {
 
             CreateMerchantResponse apiResponse = await this.EstateClient.CreateMerchant(accessToken, estateId, apiRequest, cancellationToken);
             
+            return Result.Success();
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> UpdateMerchant(String accessToken, Guid actionId, Guid estateId,Guid merchantId, UpdateMerchantModel updateMerchantModel, CancellationToken cancellationToken)
+    {
+        async Task<Result> ClientMethod() {
+            
+            UpdateMerchantRequest apiRequest = ModelFactory.ConvertFrom(updateMerchantModel);
+            
+            await this.EstateClient.UpdateMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+
+            return Result.Success();
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> UpdateMerchantAddress(String accessToken,
+                                                    Guid actionId,
+                                                    Guid estateId,
+                                                    Guid merchantId,
+                                                    AddressModel updateAddressModel,
+                                                    CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            Address apiRequest = ModelFactory.ConvertFrom(updateAddressModel);
+
+            await this.EstateClient.UpdateMerchantAddress(accessToken, estateId, merchantId, updateAddressModel.AddressId, apiRequest, cancellationToken);
+
+            return Result.Success();
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> UpdateMerchantContact(String accessToken,
+                                                    Guid actionId,
+                                                    Guid estateId,
+                                                    Guid merchantId,
+                                                    ContactModel updateContactModel,
+                                                    CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            Contact apiRequest = ModelFactory.ConvertFrom(updateContactModel);
+
+            await this.EstateClient.UpdateMerchantContact(accessToken, estateId, merchantId, updateContactModel.ContactId, apiRequest, cancellationToken);
+
             return Result.Success();
         }
 

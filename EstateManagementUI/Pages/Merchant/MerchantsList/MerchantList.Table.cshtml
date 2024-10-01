@@ -1,4 +1,5 @@
-﻿@using EstateManagementUI.ViewModels
+﻿@using EstateManagementUI.Pages.Shared
+@using EstateManagementUI.ViewModels
 @model EstateManagementUI.Pages.Merchant.MerchantsList.MerchantsList
 
 @{
@@ -58,16 +59,16 @@
             </td>
             <td class="col-1">
             </td>
-            @* <td class="align-middle text-end">
+            <td class="align-middle text-end">
                 @{
                     var menuItems = new TableDropdownItem[]
                     {
-                        new("Edit", () => Model.Edit(product.Id))
+                        new("Edit", () => Model.Edit(@merchantModel.Id), $@"{merchantModel.Name}Edit")
                     };
                 }
 
                 <partial name="TableDropdown" model="@menuItems" />
-            </td> *@
+            </td>
         </tr>
     }
     </tbody>

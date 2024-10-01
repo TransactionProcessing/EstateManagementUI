@@ -2,31 +2,69 @@
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Shared.Logger;
 using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
-public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, List<MerchantModel>>,
-                                      IRequestHandler<Commands.AddNewMerchantCommand, Result>
+public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantModel>>>,
+                                      IRequestHandler<Queries.GetMerchantQuery, Result<MerchantModel>>,
+                                      IRequestHandler<Commands.AddMerchantCommand, Result>,
+                                      IRequestHandler<Commands.UpdateMerchantCommand, Result>,
+                                      IRequestHandler<Commands.UpdateMerchantAddressCommand, Result>,
+                                      IRequestHandler<Commands.UpdateMerchantContactCommand, Result>
 {
     private readonly IApiClient ApiClient;
 
-    public MerchantRequestHandler(IApiClient apiClient)
-    {
+    public MerchantRequestHandler(IApiClient apiClient) {
         this.ApiClient = apiClient;
     }
 
-    public async Task<List<MerchantModel>> Handle(Queries.GetMerchantsQuery request,
-                                                  CancellationToken cancellationToken)
-    {
-        List<MerchantModel> models = await this.ApiClient.GetMerchants(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
-        return models;
+    public async Task<Result<List<MerchantModel>>> Handle(Queries.GetMerchantsQuery request,
+                                                  CancellationToken cancellationToken) {
+        try {
+            Result<List<MerchantModel>> result = await this.ApiClient.GetMerchants(request.AccessToken, Guid.Empty,
+                request.EstateId, cancellationToken);
+            return result;
+        }
+        catch (Exception ex) {
+            Logger.LogError(ex);
+            return Result.Failure(ex.Message);
+        }
     }
 
-    public async Task<Result> Handle(Commands.AddNewMerchantCommand request,
+    public async Task<Result> Handle(Commands.AddMerchantCommand request,
                                      CancellationToken cancellationToken) {
         Result result = await this.ApiClient.CreateMerchant(request.AccessToken, Guid.Empty, request.EstateId,
             request.CreateMerchantModel, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result<MerchantModel>> Handle(Queries.GetMerchantQuery request,
+                                                    CancellationToken cancellationToken) {
+        Result<MerchantModel> result = await this.ApiClient.GetMerchant(request.AccessToken, Guid.Empty, request.EstateId,
+            request.MerchantId, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result> Handle(Commands.UpdateMerchantCommand request,
+                                     CancellationToken cancellationToken) {
+        Result result = await this.ApiClient.UpdateMerchant(request.AccessToken, Guid.Empty, request.EstateId,
+            request.MerchantId, request.UpdateMerchantModel, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result> Handle(Commands.UpdateMerchantAddressCommand request,
+                                     CancellationToken cancellationToken) {
+        Result result = await this.ApiClient.UpdateMerchantAddress(request.AccessToken, Guid.Empty, request.EstateId,
+            request.MerchantId, request.UpdatedAddressModel, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result> Handle(Commands.UpdateMerchantContactCommand request,
+                                     CancellationToken cancellationToken) {
+        Result result = await this.ApiClient.UpdateMerchantContact(request.AccessToken, Guid.Empty, request.EstateId,
+            request.MerchantId, request.UpdatedContactModel, cancellationToken);
         return result;
     }
 }

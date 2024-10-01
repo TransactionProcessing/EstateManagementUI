@@ -66,7 +66,12 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task VerifyOnTheNewMerchantScreen(){
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Merchant Details"); });
+        await Retry.For(async () => { this.VerifyPageTitle("New Merchant"); });
+    }
+
+    public async Task VerifyOnTheEditMerchantScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("Edit Merchant"); });
     }
 
     public async Task VerifyOnTheOperatorDialog(){
@@ -75,15 +80,7 @@ public class EstateManagementUiHelpers{
             element.ShouldNotBeNull();
         });
     }
-
-    public async Task VerifyOnTheMerchantDialog()
-    {
-        await Retry.For(async () => {
-            IWebElement element = this.WebDriver.FindElement(By.Id("MerchantDialog"));
-            element.ShouldNotBeNull();
-        });
-    }
-
+    
     public async Task VerifyOnTheContractsListScreen(){
         await Retry.For(async () => { this.VerifyPageTitle("View Contracts"); });
     }
@@ -457,14 +454,14 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("newOperatorButton");
     }
 
-    public async Task ClickTheSaveNewOperatorButton()
+    public async Task ClickTheSaveOperatorButton()
     {
-        await this.WebDriver.ClickButtonById("saveNewOperatorButton");
+        await this.WebDriver.ClickButtonById("saveOperatorButton");
     }
 
-    public async Task ClickTheSaveNewMerchantButton()
+    public async Task ClickTheSaveMerchantButton()
     {
-        await this.WebDriver.ClickButtonById("saveNewMerchantButton");
+        await this.WebDriver.ClickButtonById("saveMerchantButton");
     }
 
     public async Task ClickTheCreateProductButton()
@@ -494,6 +491,39 @@ public class EstateManagementUiHelpers{
     public async Task EnterContractDetails(String contractDescription, String operatorName){
         await this.WebDriver.FillIn("contractDescription", contractDescription);
         await this.WebDriver.SelectDropDownItemByText("operatorList", operatorName);
+    }
+
+    public async Task ClickTab(String tabName) {
+        await this.WebDriver.ClickButtonById(tabName);
+    }
+
+    public async Task EnterMerchantUpdateDetails(List<EstateManagementUiSteps.MerchantUpdate> updates) {
+        foreach (EstateManagementUiSteps.MerchantUpdate update in updates) {
+            // Navigate to the tab
+            switch (update.tab) {
+                case "Details":
+                    await this.ClickTab("nav-merchantdetails-tab");
+                    break;
+                case "Address":
+                    await this.ClickTab("nav-address-tab");
+                    break;
+                case "Contact":
+                    await this.ClickTab("nav-contacts-tab");
+                    break;
+            }
+            // Fill in the field
+            switch (update.field) {
+                case "Name":
+                    await this.WebDriver.FillIn("Name", update.value, true);
+                    break;
+                case "AddressLine1":
+                    await this.WebDriver.FillIn("Address.AddressLine1", update.value, true);
+                    break;
+                case "ContactName":
+                    await this.WebDriver.FillIn("Contact.ContactName", update.value, true);
+                    break;
+            }
+        }
     }
 
     public async Task EnterMerchantDetails(String merchantName, String addressLine1, String town, String region, String postCode, String country, String contactName, String contactEmail, String contactPhoneNumber, String settlementSchedule){
@@ -646,6 +676,15 @@ public class EstateManagementUiHelpers{
         var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
         dropdownMenuButton.Click();
         IWebElement editButton = this.WebDriver.FindElement(By.Id($"{operatorName}Edit"));
+        editButton.Click();
+    }
+
+    public async Task ClickTheEditMerchantButton(String merchantName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        dropdownMenuButton.Click();
+        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{merchantName}Edit"));
         editButton.Click();
     }
 

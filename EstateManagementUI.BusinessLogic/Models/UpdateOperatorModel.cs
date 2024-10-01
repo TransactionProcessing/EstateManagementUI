@@ -35,6 +35,19 @@ public class CreateMerchantModel
 }
 
 [ExcludeFromCodeCoverage]
+public class UpdateMerchantModel
+{
+    #region Properties
+
+    public String MerchantName { get; set; }
+
+    public SettlementSchedule SettlementSchedule { get; set; }
+
+
+    #endregion
+}
+
+[ExcludeFromCodeCoverage]
 public class ContactModel
 {
     #region Properties

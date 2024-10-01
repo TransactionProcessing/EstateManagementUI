@@ -1,4 +1,4 @@
-﻿@using EstateManagementUI.Pages.Shared.Profile
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
 <html lang="en">
 <!--begin::Head-->
@@ -46,7 +46,7 @@
     <!--begin::Container-->
     <div class="container-fluid">
         <!--begin::Start Navbar Links-->
-        @await Html.PartialAsync("_SubNavigation")
+            @* @await Html.PartialAsync("_SubNavigation") *@
         <!--end::Start Navbar Links-->
 
         <!--begin::End Navbar Links-->
@@ -183,13 +183,13 @@
     <div class="sidebar-brand">
         <!--begin::Brand Link-->
         <a class="brand-link" href="/dist/pages/">
-            <!--begin::Brand Image-->
+            <!--begin::Brand MediaTypeNames.Image-->
             <img src="~/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-75 shadow">
-            <!--end::Brand Image-->
+            <!--end::Brand MediaTypeNames.Image-->
 
-            <!--begin::Brand Text-->
+            <!--begin::Brand MediaTypeNames.Text-->
             <span class="brand-text fw-light">AdminLTE 4</span>
-            <!--end::Brand Text-->
+            <!--end::Brand MediaTypeNames.Text-->
         </a> <!--end::Brand Link-->
     </div>
     <!--end::Sidebar Brand-->

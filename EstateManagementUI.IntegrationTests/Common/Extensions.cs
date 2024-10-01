@@ -138,6 +138,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             IWebElement webElement = await webDriver.FindButtonById(buttonId);
             webElement.ShouldNotBeNull();
+            webElement.Displayed.ShouldBe(true);
+            webElement.Enabled.ShouldBe(true);
             webElement.Click();
         }
 

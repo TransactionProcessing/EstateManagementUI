@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BusinessLogic.Models;
 

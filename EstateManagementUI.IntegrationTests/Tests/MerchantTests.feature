@@ -96,16 +96,31 @@ Scenario: Merchant PR Test
 	| Test Merchant 2 | Weekly             |Test Contact 1 | Address Line 1 | TestTown | 
 	| Test Merchant 3 | Monthly            |Test Contact 1 | Address Line 1 | TestTown | 
 	When I click on the New Merchant Button
-	Then the Add New Merchant Dialog is displayed
+	Then the Add New Merchant Screen is displayed
 	When I enter the following details for the new Merchant
 	| MerchantName    | SettlementSchedule | AddressLine1   | Town     | Region | Country | ContactName    | EmailAddress |
 	| Test Merchant 4 | Immediate          | Address Line 1 | TestTown | Region | Country | Test Contact 4 | 1@2.com      |
 	And click the Save Merchant button
 	Then I am presented with the Merchants List Screen
 	And the following merchants details are in the list
-	| MerchantName    | SettlementSchedule | ContactName    | AddressLine1   | Town      |
-	| Test Merchant 1 | Immediate          | Test Contact 1 | Address Line 1 | TestTown  |
-	| Test Merchant 2 | Weekly             | Test Contact 1 | Address Line 1 | TestTown  |
-	| Test Merchant 3 | Monthly            | Test Contact 1 | Address Line 1 | TestTown  |
+	| MerchantName    | SettlementSchedule | ContactName    | AddressLine1   | Town     |
+	| Test Merchant 1 | Immediate          | Test Contact 1 | Address Line 1 | TestTown |
+	| Test Merchant 2 | Weekly             | Test Contact 1 | Address Line 1 | TestTown |
+	| Test Merchant 3 | Monthly            | Test Contact 1 | Address Line 1 | TestTown |
 	| Test Merchant 4 | Immediate          | Test Contact 4 | Address Line 1 | TestTown |
+	When I click on the Edit Merchant Button for 'Test Merchant 1'
+	Then the Edit Merchant Screen is displayed
+	When I enter the following details for the updated Merchant
+	| Tab     | Field        | Value                  |
+	| Details | Name         | Test Merchant 1 Update |
+	| Address | AddressLine1 | Address Line 1 Update  |
+	| Contact | ContactName  | Test Contact 1 Update  |
+	And click the Save Merchant button
+	Then I am presented with the Merchants List Screen
+	And the following merchants details are in the list
+	| MerchantName           | SettlementSchedule | ContactName           | AddressLine1          | Town     |
+	| Test Merchant 1 Update | Immediate          | Test Contact 1 Update | Address Line 1 Update | TestTown |
+	| Test Merchant 2        | Weekly             | Test Contact 1        | Address Line 1        | TestTown |
+	| Test Merchant 3        | Monthly            | Test Contact 1        | Address Line 1        | TestTown |
+	| Test Merchant 4        | Immediate          | Test Contact 4        | Address Line 1        | TestTown |
 
