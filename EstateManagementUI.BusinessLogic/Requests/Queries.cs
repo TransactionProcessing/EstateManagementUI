@@ -14,7 +14,7 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
     [ExcludeFromCodeCoverage]
     public record Queries {
         public record GetEstateQuery(String AccessToken, Guid EstateId) : IRequest<EstateModel>;
-        public record GetMerchantsQuery(String AccessToken, Guid EstateId) : IRequest<List<MerchantModel>>;
+        public record GetMerchantsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<MerchantModel>>>;
         public record GetOperatorsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
         public record GetContractsQuery(String AccessToken, Guid EstateId) : IRequest<List<ContractModel>>;
         public record GetOperatorQuery(String AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
@@ -49,5 +49,7 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
         public record GetBottomOperatorDataQuery(String AccessToken, Guid EstateId, Int32 ResultCount) : IRequest<Result<List<TopBottomOperatorDataModel>>>;
 
         public record GetLastSettlementQuery(String AccessToken, Guid EstateId) : IRequest<Result<LastSettlementModel>>;
+
+        public record GetMerchantQuery(String AccessToken, Guid EstateId, Guid MerchantId) : IRequest<Result<MerchantModel>>;
     }
 }

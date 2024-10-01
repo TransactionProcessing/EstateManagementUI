@@ -1,5 +1,6 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
 using EstateReportingAPI.DataTransferObjects;
+using Microsoft.EntityFrameworkCore;
 using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Clients
@@ -18,10 +19,16 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                     Guid estateId,
                                     CancellationToken cancellationToken);
 
-        Task<List<MerchantModel>> GetMerchants(String accessToken,
+        Task<Result<List<MerchantModel>>> GetMerchants(String accessToken,
                                                Guid actionId,
                                                Guid estateId,
                                                CancellationToken cancellationToken);
+
+        Task<Result<MerchantModel>> GetMerchant(String accessToken,
+                                                       Guid actionId,
+                                                       Guid estateId,
+                                                       Guid merchantId,
+                                                       CancellationToken cancellationToken);
 
         Task<Result<List<OperatorModel>>> GetOperators(String accessToken,
                                                        Guid actionId,
@@ -149,5 +156,26 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                     Guid estateId,
                                     CreateMerchantModel createMerchantModel,
                                     CancellationToken cancellationToken);
+
+        Task<Result> UpdateMerchant(String accessToken,
+                                    Guid actionId,
+                                    Guid estateId,
+                                    Guid merchantId,
+                                    UpdateMerchantModel updateMerchantModel,
+                                    CancellationToken cancellationToken);
+
+        Task<Result> UpdateMerchantAddress(String accessToken,
+                                    Guid actionId,
+                                    Guid estateId,
+                                    Guid merchantId,
+                                    AddressModel updateAddressModel,
+                                    CancellationToken cancellationToken);
+
+        Task<Result> UpdateMerchantContact(String accessToken,
+                                           Guid actionId,
+                                           Guid estateId,
+                                           Guid merchantId,
+                                           ContactModel updateContactModel,
+                                           CancellationToken cancellationToken);
     }
 }

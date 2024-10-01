@@ -56,7 +56,7 @@ namespace EstateManagementUI.Testing
 
         public static Queries.GetLastSettlementQuery GetLastSettlementQuery => new(AccessToken, EstateId);
 
-        public static Commands.AddNewMerchantCommand AddNewMerchantCommand => new(AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
+        public static Commands.AddMerchantCommand AddNewMerchantCommand => new(AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
 
         public static CreateMerchantResponse CreateMerchantResponse =>
             new() { EstateId = EstateId, MerchantId = Merchant1Id };

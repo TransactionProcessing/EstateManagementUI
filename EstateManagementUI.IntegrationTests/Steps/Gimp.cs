@@ -442,10 +442,16 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickTheNewMerchantButton();
         }
 
-        [Then("the Add New Merchant Dialog is displayed")]
-        public async Task ThenTheAddNewMerchantDialogIsDisplayed()
+        [Then("the Edit Merchant Screen is displayed")]
+        public async Task ThenTheEditMerchantScreenIsDisplayed()
         {
-            await this.UiHelpers.VerifyOnTheMerchantDialog();
+            await this.UiHelpers.VerifyOnTheEditMerchantScreen();
+        }
+
+        [Then("the Add New Merchant Screen is displayed")]
+        public async Task ThenTheAddNewMerchantScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheNewMerchantScreen();
         }
 
         [When("I click on the Edit Operator Button for {string}")]
@@ -453,6 +459,24 @@ namespace EstateManagementUI.IntegrationTests.Steps
         {
             await this.UiHelpers.ClickTheEditOperatorButton(operatorName);
         }
+
+        [When("I click on the Edit Merchant Button for {string}")]
+        public async Task WhenIClickOnTheEditMerchantButtonFor(string merchantName)
+        {
+            await this.UiHelpers.ClickTheEditMerchantButton(merchantName);
+        }
+
+        [When("I enter the following details for the updated Merchant")]
+        public async Task WhenIEnterTheFollowingDetailsForTheUpdatedMerchant(DataTable dataTable) {
+            List<MerchantUpdate> updates = new List<MerchantUpdate>();
+            foreach (DataTableRow? row in dataTable.Rows) {
+                updates.Add(new MerchantUpdate(ReqnrollTableHelper.GetStringRowValue(row, "Tab"), ReqnrollTableHelper.GetStringRowValue(row, "Field"), ReqnrollTableHelper.GetStringRowValue(row, "Value")));
+            }
+
+            await this.UiHelpers.EnterMerchantUpdateDetails(updates);
+        }
+
+        public record MerchantUpdate(String tab, String field, String value);
 
         [When("I enter the following details for the new Merchant")]
         public async Task WhenIEnterTheFollowingDetailsForTheNewMerchant(DataTable dataTable)
@@ -510,13 +534,13 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
         [When("click the Save Operator button")]
         public async Task WhenClickTheSaveOperatorButton() {
-            await this.UiHelpers.ClickTheSaveNewOperatorButton();
+            await this.UiHelpers.ClickTheSaveOperatorButton();
         }
 
         [When("click the Save Merchant button")]
         public async Task WhenClickTheSaveMerchantButton()
         {
-            await this.UiHelpers.ClickTheSaveNewMerchantButton();
+            await this.UiHelpers.ClickTheSaveMerchantButton();
         }
 
         [When("I click on the View Products Button for {string}")]

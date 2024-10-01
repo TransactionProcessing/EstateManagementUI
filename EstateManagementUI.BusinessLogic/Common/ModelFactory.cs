@@ -60,6 +60,62 @@ public static class ModelFactory
 
         return apiRequest;
     }
+
+    public static UpdateMerchantRequest ConvertFrom(UpdateMerchantModel source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        UpdateMerchantRequest apiRequest = new UpdateMerchantRequest
+        {
+            Name = source.MerchantName,
+            SettlementSchedule = ConvertFrom(source.SettlementSchedule)
+        };
+
+        return apiRequest;
+    }
+
+    public static Address ConvertFrom(AddressModel source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        Address apiRequest = new Address
+        {
+            AddressLine1 = source.AddressLine1,
+            Region = source.Region,
+            AddressLine2 = source.AddressLine2,
+            Country = source.Country,
+            Town = source.Town,
+            PostalCode = source.PostalCode,
+            AddressLine3 = source.AddressLine3,
+            AddressLine4 = source.AddressLine4
+        };
+
+        return apiRequest;
+    }
+
+    public static Contact ConvertFrom(ContactModel source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        Contact apiRequest = new Contact
+        {
+            ContactName = source.ContactName,
+            EmailAddress = source.ContactEmailAddress,
+            PhoneNumber = source.ContactPhoneNumber
+        };
+
+        return apiRequest;
+    }
+
     public static List<ComparisonDateModel> ConvertFrom(List<ComparisonDate> source)
     {
         if (source == null || source.Any() == false)
@@ -104,19 +160,69 @@ public static class ModelFactory
 
         List<MerchantModel> models = new List<MerchantModel>();
         foreach (MerchantResponse merchantResponse in source) {
-            MerchantModel model = new MerchantModel {
-                MerchantId = merchantResponse.MerchantId, 
-                MerchantName = merchantResponse.MerchantName,
-                MerchantReference = merchantResponse.MerchantReference,
-                SettlementSchedule = merchantResponse.SettlementSchedule.ToString(),
-                AddressLine1 = merchantResponse.Addresses.FirstOrDefault().AddressLine1,
-                ContactName = merchantResponse.Contacts.FirstOrDefault().ContactName,
-                Town = merchantResponse.Addresses.FirstOrDefault().Town
-            };
-            models.Add(model);
+            models.Add(ConvertFrom(merchantResponse));
         }
         
         return models;
+    }
+
+    public static MerchantModel ConvertFrom(MerchantResponse source)
+    {
+        if (source == null) {
+            return null;
+        }
+
+        MerchantModel model = new MerchantModel
+        {
+            MerchantId = source.MerchantId,
+            MerchantName = source.MerchantName,
+            MerchantReference = source.MerchantReference,
+            SettlementSchedule = source.SettlementSchedule.ToString(),
+            Address = new AddressModel {
+                AddressLine1 = source.Addresses.FirstOrDefault().AddressLine1,
+                AddressLine2 = source.Addresses.FirstOrDefault().AddressLine2,
+                AddressLine3 = source.Addresses.FirstOrDefault().AddressLine3,
+                AddressLine4 = source.Addresses.FirstOrDefault().AddressLine4,
+                AddressId = source.Addresses.FirstOrDefault().AddressId,
+                Region = source.Addresses.FirstOrDefault().Region,
+                Country = source.Addresses.FirstOrDefault().Country,
+                PostalCode = source.Addresses.FirstOrDefault().PostalCode,
+                Town = source.Addresses.FirstOrDefault().Town,
+            },
+            Contact = new() {
+                ContactName = source.Contacts.FirstOrDefault().ContactName,
+                ContactId = source.Contacts.FirstOrDefault().ContactId,
+                ContactEmailAddress = source.Contacts.FirstOrDefault().ContactEmailAddress,
+                ContactPhoneNumber = source.Contacts.FirstOrDefault().ContactPhoneNumber
+            },
+            Devices = new Dictionary<Guid, String>(),
+            Operators = new List<MerchantOperatorModel>()
+        };
+
+        if (source.Operators != null) {
+            foreach (MerchantOperatorResponse merchantOperatorResponse in source.Operators) {
+                model.Operators.Add(ConvertFrom(merchantOperatorResponse));
+            }
+        }
+
+        if (source.Devices != null){
+            foreach (KeyValuePair<Guid, String> device in source.Devices) {
+                model.Devices.Add(device.Key, device.Value);
+            }
+        }
+        
+        return model;
+    }
+
+    private static MerchantOperatorModel ConvertFrom(MerchantOperatorResponse merchantOperatorResponse) {
+        MerchantOperatorModel model = new MerchantOperatorModel {
+            IsDeleted = merchantOperatorResponse.IsDeleted,
+            MerchantNumber = merchantOperatorResponse.MerchantNumber,
+            Name = merchantOperatorResponse.Name,
+            OperatorId = merchantOperatorResponse.OperatorId,
+            TerminalNumber = merchantOperatorResponse.TerminalNumber
+        };
+        return model;
     }
 
     public static List<EstateOperatorModel> ConvertOperators(List<EstateOperatorResponse> estateResponseOperators)

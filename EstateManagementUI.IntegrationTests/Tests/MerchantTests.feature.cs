@@ -444,7 +444,7 @@ await this.FeatureBackgroundAsync();
  await testRunner.WhenAsync("I click on the New Merchant Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 99
- await testRunner.ThenAsync("the Add New Merchant Dialog is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+ await testRunner.ThenAsync("the Add New Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table41 = new global::Reqnroll.Table(new string[] {
                             "MerchantName",
@@ -505,6 +505,70 @@ await this.FeatureBackgroundAsync();
                             "TestTown"});
 #line 105
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table42, "And ");
+#line hidden
+#line 111
+ await testRunner.WhenAsync("I click on the Edit Merchant Button for \'Test Merchant 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 112
+ await testRunner.ThenAsync("the Edit Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table43 = new global::Reqnroll.Table(new string[] {
+                            "Tab",
+                            "Field",
+                            "Value"});
+                table43.AddRow(new string[] {
+                            "Details",
+                            "Name",
+                            "Test Merchant 1 Update"});
+                table43.AddRow(new string[] {
+                            "Address",
+                            "AddressLine1",
+                            "Address Line 1 Update"});
+                table43.AddRow(new string[] {
+                            "Contact",
+                            "ContactName",
+                            "Test Contact 1 Update"});
+#line 113
+ await testRunner.WhenAsync("I enter the following details for the updated Merchant", ((string)(null)), table43, "When ");
+#line hidden
+#line 118
+ await testRunner.AndAsync("click the Save Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 119
+ await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table44 = new global::Reqnroll.Table(new string[] {
+                            "MerchantName",
+                            "SettlementSchedule",
+                            "ContactName",
+                            "AddressLine1",
+                            "Town"});
+                table44.AddRow(new string[] {
+                            "Test Merchant 1 Update",
+                            "Immediate",
+                            "Test Contact 1 Update",
+                            "Address Line 1 Update",
+                            "TestTown"});
+                table44.AddRow(new string[] {
+                            "Test Merchant 2",
+                            "Weekly",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table44.AddRow(new string[] {
+                            "Test Merchant 3",
+                            "Monthly",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table44.AddRow(new string[] {
+                            "Test Merchant 4",
+                            "Immediate",
+                            "Test Contact 4",
+                            "Address Line 1",
+                            "TestTown"});
+#line 120
+ await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table44, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

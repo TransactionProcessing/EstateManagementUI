@@ -185,9 +185,9 @@ namespace EstateManagementUI.BusinessLogic.Tests {
                 model.MerchantName.ShouldBe(merchantResponse.MerchantName.ToString());
                 model.SettlementSchedule.ShouldBe(merchantResponse.SettlementSchedule.ToString());
                 model.MerchantReference.ShouldBe(merchantResponse.MerchantReference.ToString());
-                model.AddressLine1.ShouldBe(merchantResponse.Addresses.First().AddressLine1);
-                model.Town.ShouldBe(merchantResponse.Addresses.First().Town);
-                model.ContactName.ShouldBe(merchantResponse.Contacts.First().ContactName);
+                model.Address.AddressLine1.ShouldBe(merchantResponse.Addresses.First().AddressLine1);
+                model.Address.Town.ShouldBe(merchantResponse.Addresses.First().Town);
+                model.Contact.ContactName.ShouldBe(merchantResponse.Contacts.First().ContactName);
             }
         }
 

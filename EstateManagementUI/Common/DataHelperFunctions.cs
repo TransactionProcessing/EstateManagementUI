@@ -64,10 +64,10 @@ public static class DataHelperFunctions {
     {
         Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(accessToken, estateId);
 
-        List<MerchantModel> response = await mediator.Send(query, CancellationToken.None);
+        Result<List<MerchantModel>> response = await mediator.Send(query, CancellationToken.None);
 
         List<SelectListItem> resultList = new();
-        foreach (MerchantModel merchantModel in response)
+        foreach (MerchantModel merchantModel in response.Data)
         {
             resultList.Add(new SelectListItem
             {
