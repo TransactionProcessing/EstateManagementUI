@@ -448,6 +448,12 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheEditMerchantScreen();
         }
 
+        [Then("the View Merchant Screen is displayed")]
+        public async Task ThenTheViewMerchantScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheViewMerchantScreen();
+        }
+
         [Then("the Add New Merchant Screen is displayed")]
         public async Task ThenTheAddNewMerchantScreenIsDisplayed()
         {
@@ -464,6 +470,12 @@ namespace EstateManagementUI.IntegrationTests.Steps
         public async Task WhenIClickOnTheEditMerchantButtonFor(string merchantName)
         {
             await this.UiHelpers.ClickTheEditMerchantButton(merchantName);
+        }
+
+        [When("I click on the View Merchant Button for {string}")]
+        public async Task  WhenIClickOnTheViewMerchantButtonFor(string merchantName)
+        {
+            await this.UiHelpers.ClickTheViewMerchantButton(merchantName);
         }
 
         [When("I enter the following details for the updated Merchant")]

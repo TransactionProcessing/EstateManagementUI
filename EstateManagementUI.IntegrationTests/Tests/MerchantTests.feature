@@ -123,4 +123,5 @@ Scenario: Merchant PR Test
 	| Test Merchant 2        | Weekly             | Test Contact 1        | Address Line 1        | TestTown |
 	| Test Merchant 3        | Monthly            | Test Contact 1        | Address Line 1        | TestTown |
 	| Test Merchant 4        | Immediate          | Test Contact 4        | Address Line 1        | TestTown |
-
+	When I click on the View Merchant Button for 'Test Merchant 1 Update'
+	Then the View Merchant Screen is displayed

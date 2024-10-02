@@ -27,3 +27,7 @@ body {
 .card {
     margin-right: 20px !important;
 }
+
+select[readonly] {
+    pointer-events: none;
+}

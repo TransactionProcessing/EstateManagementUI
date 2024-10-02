@@ -6,7 +6,7 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 public class MerchantFunctions
 {
     public const string ViewList = "View Merchant List";
-    //public const string View = "View Single Merchant";
+    public const string View = "View Single Merchant";
     public const string Edit = "Edit Merchant";
     public const string New = "New Merchant";
     //public const string Remove = "Remove Merchant";

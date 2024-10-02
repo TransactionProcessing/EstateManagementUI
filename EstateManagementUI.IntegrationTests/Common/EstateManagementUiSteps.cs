@@ -74,6 +74,11 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.VerifyPageTitle("Edit Merchant"); });
     }
 
+    public async Task VerifyOnTheViewMerchantScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("View Merchant"); });
+    }
+
     public async Task VerifyOnTheOperatorDialog(){
         await Retry.For(async () => {
             IWebElement element = this.WebDriver.FindElement(By.Id("OperatorDialog"));
@@ -685,6 +690,15 @@ public class EstateManagementUiHelpers{
         var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
         dropdownMenuButton.Click();
         IWebElement editButton = this.WebDriver.FindElement(By.Id($"{merchantName}Edit"));
+        editButton.Click();
+    }
+
+    public async Task ClickTheViewMerchantButton(String merchantName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        dropdownMenuButton.Click();
+        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{merchantName}View"));
         editButton.Click();
     }
 
