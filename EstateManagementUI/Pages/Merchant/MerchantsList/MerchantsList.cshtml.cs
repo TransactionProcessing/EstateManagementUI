@@ -34,21 +34,11 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
 
         public void Add() => this.Location(this.Url.Page("/Merchant/NewMerchant"));
 
+        public async Task View(Guid merchantId) =>
+            this.Location(this.Url.Page("/Merchant/ViewMerchant", new { MerchantId = merchantId }));
+
         public async Task Edit(Guid merchantId) =>
             this.Location(this.Url.Page("/Merchant/EditMerchant", new { MerchantId = merchantId }));
-        //public async Task Handle(MerchantPageEvents.MerchantCreatedEvent @event)
-        //{
-        //    // Sleep for a second
-        //    await Task.Delay(1000); // TODO: might be a better way of handling this
-        //    await this.GetMerchants();
-        //}
-
-        //public async Task Handle(MerchantPageEvents.MerchantUpdatedEvent @event) {
-        //    this.Dispatch(new ShowMessage("Merchant Updated Successfully", ToastType.Success), Scope.Global);
-        //    // Sleep for a second
-        //    await Task.Delay(1000); // TODO: might be a better way of handling this
-        //    await this.GetMerchants();
-        //}
         
         public List<ViewModels.Merchant> Merchants { get; set; }
 

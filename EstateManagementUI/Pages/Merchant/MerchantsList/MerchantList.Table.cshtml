@@ -63,7 +63,8 @@
                 @{
                     var menuItems = new TableDropdownItem[]
                     {
-                        new("Edit", () => Model.Edit(@merchantModel.Id), $@"{merchantModel.Name}Edit")
+                        new("Edit", () => Model.Edit(@merchantModel.Id), $@"{merchantModel.Name}Edit"),
+                new("View", () => Model.View(@merchantModel.Id), $@"{merchantModel.Name}View")
                     };
                 }
 

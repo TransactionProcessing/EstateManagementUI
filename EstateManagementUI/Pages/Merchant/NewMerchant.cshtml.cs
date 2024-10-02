@@ -11,7 +11,7 @@ namespace EstateManagementUI.Pages.Merchant
     public class NewMerchantModel : SecurePageModel
     {
         public NewMerchantModel(IPermissionsService permissionsService) : base(permissionsService,
-            ApplicationSections.Merchant, MerchantFunctions.ViewList)
+            ApplicationSections.Merchant, MerchantFunctions.New)
         {
         }
     }

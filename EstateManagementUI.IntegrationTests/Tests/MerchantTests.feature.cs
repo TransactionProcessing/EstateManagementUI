@@ -570,6 +570,12 @@ await this.FeatureBackgroundAsync();
 #line 120
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table44, "And ");
 #line hidden
+#line 126
+ await testRunner.WhenAsync("I click on the View Merchant Button for \'Test Merchant 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 127
+ await testRunner.ThenAsync("the View Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
             }
             await this.ScenarioCleanupAsync();
         }

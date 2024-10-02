@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace EstateManagementUI.Pages.Merchant
 {
     [Authorize]
-    public class EditMerchantModel : SecurePageModel
+    public class ViewMerchantModel : SecurePageModel
     {
         [BindProperty(SupportsGet = true)]
         public Guid MerchantId { get; set; }
 
-        public EditMerchantModel(IPermissionsService permissionsService) : base(permissionsService,
-            ApplicationSections.Merchant, MerchantFunctions.Edit)
+        public ViewMerchantModel(IPermissionsService permissionsService) : base(permissionsService,
+            ApplicationSections.Merchant, MerchantFunctions.View)
         {
         }
     }
