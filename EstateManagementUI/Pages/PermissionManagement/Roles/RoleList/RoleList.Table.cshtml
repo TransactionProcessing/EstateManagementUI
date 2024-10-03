@@ -23,8 +23,8 @@
                 @{
                     TableDropdownItem[] menuItems = new TableDropdownItem[]
                     {
-                        new("Edit", () => Model.Edit(@roleModel.Id)),
-                        new("Edit Users", () => Model.EditUsers(@roleModel.Id))
+                new("Edit", () => Model.Edit(@roleModel.Id), default),
+                new("Edit Users", () => Model.EditUsers(@roleModel.Id), default)
                     };
                 }
 

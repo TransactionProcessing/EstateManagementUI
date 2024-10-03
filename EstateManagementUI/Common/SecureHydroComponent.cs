@@ -53,4 +53,10 @@ public class SecureHydroComponent : HydroComponent {
         
         await base.RenderAsync();
     }
+
+    public async Task<Boolean> CanRenderButton(String sectionName, String pageName) {
+        String userName = this.User.Identity.Name;
+        Result permissionsResult = await this.PermissionsService.DoIHavePermissions(userName, sectionName, pageName);
+        return permissionsResult.IsSuccess;
+    }
 }

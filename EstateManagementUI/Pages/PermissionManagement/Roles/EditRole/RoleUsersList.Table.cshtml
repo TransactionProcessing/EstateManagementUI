@@ -21,7 +21,7 @@
                     @{
                         TableDropdownItem[] menuItems = new TableDropdownItem[]
                         {
-                new("Remove", () => Model.Remove(Model.Id, userName))
+                            new("Remove", () => Model.Remove(Model.Id, userName), default)
                         };
                     }
 
