@@ -190,7 +190,7 @@ jobs:
         name: firefoxtracelogs
         path: /home/txnproc/trace/   
 
-codecoverage:
+  codecoverage:
     name: "Nightly Build - Code Coverage"
     env:
         ASPNETCORE_ENVIRONMENT: "Production"
