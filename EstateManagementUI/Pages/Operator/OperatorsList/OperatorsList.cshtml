@@ -1,4 +1,7 @@
-﻿@model OperatorsList
+﻿@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model OperatorsList
 
 
     <div class="card o-hidden border-0 shadow-sm my-5">
@@ -11,10 +14,12 @@
                             <h1 class="h4 text-gray-900 mb-4">Operators</h1>
                         </div>
                         <div>
+                            @if(await Model.CanRenderButton(ApplicationSections.Operator, OperatorFunctions.New)){
+                                <button class="btn btn-primary" type="button" hydro-action="Add" id="newOperatorButton">
+                                    New Operator
+                                </button>
+                            }
 
-                            <button class="btn btn-primary" type="button" hydro-action="Add" id="newOperatorButton">
-                                New Operator
-                            </button>
                         </div>
 
                         @if (Model.Operators.Any() == false)

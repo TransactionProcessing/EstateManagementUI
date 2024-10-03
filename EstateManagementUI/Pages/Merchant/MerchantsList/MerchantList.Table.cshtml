@@ -1,4 +1,5 @@
-﻿@using EstateManagementUI.Pages.Shared
+﻿@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using EstateManagementUI.Pages.Shared
 @using EstateManagementUI.ViewModels
 @model EstateManagementUI.Pages.Merchant.MerchantsList.MerchantsList
 
@@ -61,10 +62,10 @@
             </td>
             <td class="align-middle text-end">
                 @{
-                    var menuItems = new TableDropdownItem[]
+                    TableDropdownItem[] menuItems = new TableDropdownItem[]
                     {
-                        new("Edit", () => Model.Edit(@merchantModel.Id), $@"{merchantModel.Name}Edit"),
-                new("View", () => Model.View(@merchantModel.Id), $@"{merchantModel.Name}View")
+                        new("Edit", () => Model.Edit(@merchantModel.Id), $@"{merchantModel.Name}Edit", ApplicationSections.Merchant, MerchantFunctions.Edit),
+                        new("View", () => Model.View(@merchantModel.Id), $@"{merchantModel.Name}View", ApplicationSections.Merchant, MerchantFunctions.View)
                     };
                 }
 

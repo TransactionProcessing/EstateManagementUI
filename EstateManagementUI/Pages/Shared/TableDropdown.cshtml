@@ -1,19 +1,29 @@
+@using EstateManagementUI.BusinessLogic.PermissionService
+@using global::Shared.Logger
+@using SimpleResults
 @model IEnumerable<TableDropdownItem>
-
-<div class="dropdown">
+@inject IPermissionsService PermissionsService
+    
+    <div class="dropdown">
     <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle='dropdown' aria-haspopup="true" aria-expanded="false">
         <strong>...</strong>
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        @foreach (TableDropdownItem item in Model)
-        {
-            if (@item.Id == null) {
-                <a class="dropdown-item" href="#" hydro-on:click="@item.Action">@item.Text</a>
+        @foreach (TableDropdownItem item in Model) {
+            Result permissionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, item.applicationSection, item.function);
+            if (permissionResult.IsSuccess)
+            {
+                Logger.LogWarning($"Permission granted for userName: {User.Identity.Name} SectionName: {item.applicationSection} Function: {item.function}");
+                if (@item.Id == null) {
+                    <a class="dropdown-item" href="#" hydro-on:click="@item.Action">@item.Text</a>
+                }
+                else {
+                    <a class="dropdown-item" id="@item.Id" href="#" hydro-on:click="@item.Action">@item.Text</a>
+                }
             }
             else {
-                <a class="dropdown-item" id="@item.Id" href="#" hydro-on:click="@item.Action">@item.Text</a>    
+                Logger.LogWarning(permissionResult.Message);
             }
-            
         }
     </div>
 </div>
