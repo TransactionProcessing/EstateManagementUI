@@ -10,10 +10,10 @@
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         @foreach (TableDropdownItem item in Model) {
-            Result permissionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, item.applicationSection, item.function);
+            Result permissionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, item.permission.applicationSection, item.permission.function);
             if (permissionResult.IsSuccess)
             {
-                Logger.LogWarning($"Permission granted for userName: {User.Identity.Name} SectionName: {item.applicationSection} Function: {item.function}");
+                Logger.LogWarning($"Permission granted for userName: {User.Identity.Name} SectionName: {item.permission.applicationSection} Function: {item.permission.function}");
                 if (@item.Id == null) {
                     <a class="dropdown-item" href="#" hydro-on:click="@item.Action">@item.Text</a>
                 }

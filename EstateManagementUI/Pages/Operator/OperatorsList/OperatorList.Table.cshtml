@@ -44,7 +44,7 @@
                 @{
                     TableDropdownItem[] menuItems = new TableDropdownItem[]
                     {
-                        new("Edit", () => Model.Edit(@operatorModel.Id),ApplicationSections.Operator, OperatorFunctions.Edit, $@"{operatorModel.Name}Edit")
+                        new("Edit", () => Model.Edit(@operatorModel.Id),(ApplicationSections.Operator, OperatorFunctions.Edit), $@"{operatorModel.Name}Edit")
                     };
                 }
 

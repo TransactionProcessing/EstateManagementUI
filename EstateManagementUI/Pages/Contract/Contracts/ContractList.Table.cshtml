@@ -46,7 +46,7 @@
                     @{
                         TableDropdownItem[] menuItems = new TableDropdownItem[]
                         {
-                            new("View Products", () => Model.ViewProducts(@contractModel.ContractId), ApplicationSections.Contract, ContractFunctions.ViewProductsList,$@"{contractModel.Description}ViewProducts")
+                            new("View Products", () => Model.ViewProducts(@contractModel.ContractId), (ApplicationSections.Contract, ContractFunctions.ViewProductsList),$@"{contractModel.Description}ViewProducts")
                         };
                     }
 

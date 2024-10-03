@@ -59,7 +59,7 @@
                     @{
                         TableDropdownItem[] menuItems = new TableDropdownItem[]
                         {
-                new("View Details", () => Model.ViewFileDetails(@fileModel.FileId), ApplicationSections.FileProcessing, FileProcessingFunctions.ViewFileDetails,$@"{@fileModel.FileId.ToString().Replace("-", "")}ViewFiles")
+                new("View Details", () => Model.ViewFileDetails(@fileModel.FileId), (ApplicationSections.FileProcessing, FileProcessingFunctions.ViewFileDetails),$@"{@fileModel.FileId.ToString().Replace("-", "")}ViewFiles")
                         };
                     }
 

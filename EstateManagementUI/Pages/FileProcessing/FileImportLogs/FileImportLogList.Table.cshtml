@@ -39,7 +39,7 @@
                     @{
                         TableDropdownItem[] menuItems = new TableDropdownItem[]
                         {
-                            new("View Files", () => Model.ViewFiles(@fileImportLogModel.FileImportLogId), ApplicationSections.FileProcessing, FileProcessingFunctions.ViewImportLog,  $@"{fileImportLogModel.ImportLogDate}ViewFiles")
+                            new("View Files", () => Model.ViewFiles(@fileImportLogModel.FileImportLogId), (ApplicationSections.FileProcessing, FileProcessingFunctions.ViewImportLog),  $@"{fileImportLogModel.ImportLogDate}ViewFiles")
                         };
                     }
 
