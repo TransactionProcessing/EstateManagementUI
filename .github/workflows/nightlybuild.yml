@@ -204,7 +204,7 @@ jobs:
       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
 
     - name: Build Code
-      run: dotnet build EstateManagementUI.sln --configuration ReleaseNoNode
+      run: dotnet build EstateManagementUI.sln --configuration Release
 
     - name: Run Unit Tests
       run: |
