@@ -330,7 +330,7 @@ await this.FeatureBackgroundAsync();
  await testRunner.WhenAsync("I click on the New Operator Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 78
- await testRunner.ThenAsync("the Add New Operator Dialog is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+ await testRunner.ThenAsync("the Add New Operator Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table56 = new global::Reqnroll.Table(new string[] {
                             "OperatorName",
@@ -376,7 +376,7 @@ await this.FeatureBackgroundAsync();
  await testRunner.WhenAsync("I click on the Edit Operator Button for \'Test Operator 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 91
- await testRunner.ThenAsync("the Edit Operator Dialog is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+ await testRunner.ThenAsync("the Edit Operator Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table58 = new global::Reqnroll.Table(new string[] {
                             "OperatorName",

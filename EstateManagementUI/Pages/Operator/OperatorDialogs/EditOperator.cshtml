@@ -1,0 +1,26 @@
+﻿@model EstateManagementUI.Pages.Operator.OperatorDialogs.EditOperator
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <h1 class="h4 text-gray-900 mb-4">Edit Operator</h1>
+        <form hydro-on:submit="@(() => Model.Save())">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Name</label>
+                <input asp-for="Name" placeholder="Enter Operator Name" class="form-control" x-init="$el.focus()" hydro-bind id="operatorName" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RequireCustomMerchantNumber" class="form-label">Custom Merchant</label>
+                <input type="checkbox" asp-for="RequireCustomMerchantNumber" class="form-check-input" hydro-bind id="requireCustomMerchantNumber" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RequireCustomTerminalNumber" class="form-label">Custom Terminal</label>
+                <input type="checkbox" asp-for="RequireCustomTerminalNumber" class="form-check-input" hydro-bind id="requireCustomTerminalNumber" />
+            </div>
+                
+            <button type="submit" class="btn btn-primary" id="saveOperatorButton">Save</button>
+            <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+        </form>
+    </div>
+</div>

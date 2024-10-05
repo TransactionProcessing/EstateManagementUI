@@ -4,9 +4,9 @@ using EstateManagementUI.BusinessLogic.PermissionService;
 
 namespace EstateManagementUI.Pages.Operator.OperatorDialogs
 {
-    public class EditOperatorDialog : OperatorDialog
+    public class EditOperator : Operator
     {
-        public EditOperatorDialog(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, OperatorFunctions.Edit)
+        public EditOperator(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, OperatorFunctions.Edit)
         {
 
         }

@@ -4,8 +4,8 @@ using MediatR;
 
 namespace EstateManagementUI.Pages.Operator.OperatorDialogs
 {
-    public class NewOperatorDialog : OperatorDialog {
-        public NewOperatorDialog(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, OperatorFunctions.New){
+    public class NewOperator : Operator {
+        public NewOperator(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, OperatorFunctions.New){
             
         }
     }

@@ -507,15 +507,15 @@ namespace EstateManagementUI.IntegrationTests.Steps
                 contactEmail, null, settlementSchedule);
         }
 
-        [Then("the Add New Operator Dialog is displayed")]
-        public async Task ThenTheAddNewOperatorDialogIsDisplayed() {
-            await this.UiHelpers.VerifyOnTheOperatorDialog();
+        [Then("the Add New Operator Screen is displayed")]
+        public async Task ThenTheAddNewOperatorScreenIsDisplayed() {
+            await this.UiHelpers.VerifyOnTheNewOperatorScreen();
         }
 
-        [Then("the Edit Operator Dialog is displayed")]
-        public async Task ThenTheEditOperatorDialogIsDisplayed()
+        [Then("the Edit Operator Screen is displayed")]
+        public async Task ThenTheEditOperatorScreenIsDisplayed()
         {
-            await this.UiHelpers.VerifyOnTheOperatorDialog();
+            await this.UiHelpers.VerifyOnTheEditOperatorScreen();
         }
         
         [When("I enter the following details for the new Operator")]

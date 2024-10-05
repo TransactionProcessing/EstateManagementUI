@@ -3,22 +3,40 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Common;
+using EstateManagementUI.Pages.Merchant.MerchantDetails;
 using EstateManagementUI.Pages.Shared.Components;
 using EstateManagmentUI.BusinessLogic.Requests;
 using Hydro;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using SimpleResults;
 
 namespace EstateManagementUI.Pages.Operator.OperatorDialogs;
 
-public class OperatorDialog : SecureHydroComponent {
+public class Operator : SecureHydroComponent {
     private readonly IMediator Mediator;
 
-    public OperatorDialog(IMediator mediator,
+    public Operator(IMediator mediator,
                           IPermissionsService permissionsService,
                           String operatorFunction) : base(ApplicationSections.Operator, operatorFunction,
         permissionsService) {
         this.Mediator = mediator;
+        Subscribe<OperatorPageEvents.OperatorCreatedEvent>(Handle);
+        Subscribe<OperatorPageEvents.OperatorUpdatedEvent>(Handle);
+    }
+
+    private async Task Handle(OperatorPageEvents.OperatorCreatedEvent obj)
+    {
+        this.Dispatch(new ShowMessage("Operator Created Successfully", ToastType.Success), Scope.Global);
+        await Task.Delay(1000); // TODO: might be a better way of handling this
+        this.Close();
+    }
+
+    private async Task Handle(OperatorPageEvents.OperatorUpdatedEvent obj)
+    {
+        this.Dispatch(new ShowMessage("Operator Updated Successfully", ToastType.Success), Scope.Global);
+        await Task.Delay(1000); // TODO: might be a better way of handling this
+        this.Close();
     }
 
     public override async Task MountAsync() {
@@ -51,7 +69,7 @@ public class OperatorDialog : SecureHydroComponent {
 
     public bool RequireCustomTerminalNumber { get; set; }
 
-    public void Close() => this.Dispatch(new OperatorPageEvents.HideNewOperatorDialog(), Scope.Global);
+    public void Close() => this.Location(this.Url.Page("/Operator/Index"));
 
     public async Task Save() {
         if (!this.ModelState.IsValid) {
@@ -86,7 +104,5 @@ public class OperatorDialog : SecureHydroComponent {
 
             this.Dispatch(new OperatorPageEvents.OperatorUpdatedEvent(), Scope.Global);
         }
-
-        this.Close();
     }
 }
