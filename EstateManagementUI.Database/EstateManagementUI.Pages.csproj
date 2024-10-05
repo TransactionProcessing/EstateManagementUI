@@ -1,0 +1,475 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <DebugType>None</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Contract\ContractProducts.cshtml" />
+    <None Remove="Pages\Contract\ContractProductTransactionFees.cshtml" />
+    <None Remove="Pages\Contract\ContractProductTransactionFee\ContractProductTransactionFeeList.cshtml" />
+    <None Remove="Pages\Contract\ContractProductTransactionFee\ContractProductTransactionFeeList.Table.cshtml" />
+    <None Remove="Pages\Contract\ContractProduct\ContractProductList.Table.cshtml" />
+    <None Remove="Pages\Contract\ContractProduct\ContractProductsList.cshtml" />
+    <None Remove="Pages\Contract\Contracts\ContractList.Table.cshtml" />
+    <None Remove="Pages\Contract\Contracts\ContractsList.cshtml" />
+    <None Remove="Pages\Contract\Index.cshtml" />
+    <None Remove="Pages\Dashboard\Dashboard\Dashboard.cshtml" />
+    <None Remove="Pages\Dashboard\Index.cshtml" />
+    <None Remove="Pages\Dashboard\_SubNavigation.cshtml" />
+    <None Remove="Pages\Error.cshtml" />
+    <None Remove="Pages\Estate\Index.cshtml" />
+    <None Remove="Pages\Estate\OperatorList\OperatorList.cshtml" />
+    <None Remove="Pages\Estate\OperatorList\OperatorList.Table.cshtml" />
+    <None Remove="Pages\Estate\Operators.cshtml" />
+    <None Remove="Pages\Estate\Users.cshtml" />
+    <None Remove="Pages\Estate\UsersList\UsersList.cshtml" />
+    <None Remove="Pages\Estate\UsersList\UsersList.Table.cshtml" />
+    <None Remove="Pages\Estate\ViewEstate\ViewEstate.cshtml" />
+    <None Remove="Pages\Estate\_SubNavigation.cshtml" />
+    <None Remove="Pages\FileProcessing\FileDetails.cshtml" />
+    <None Remove="Pages\FileProcessing\FileDetails\FileDetails.cshtml" />
+    <None Remove="Pages\FileProcessing\FileDetails\FileDetails.Table.cshtml" />
+    <None Remove="Pages\FileProcessing\FileImportLog.cshtml" />
+    <None Remove="Pages\FileProcessing\FileImportLogs\FileImportLogList.cshtml" />
+    <None Remove="Pages\FileProcessing\FileImportLogs\FileImportLogList.Table.cshtml" />
+    <None Remove="Pages\FileProcessing\FileImportLog\FileImportLog.cshtml" />
+    <None Remove="Pages\FileProcessing\FileImportLog\FileImportLog.Table.cshtml" />
+    <None Remove="Pages\FileProcessing\Index.cshtml" />
+    <None Remove="Pages\FileProcessing\_SubNavigation.cshtml" />
+    <None Remove="Pages\Index.cshtml" />
+    <None Remove="Pages\Merchant\EditMerchant.cshtml" />
+    <None Remove="Pages\Merchant\Index.cshtml" />
+    <None Remove="Pages\Merchant\MerchantDetails\EditMerchant.cshtml" />
+    <None Remove="Pages\Merchant\MerchantDetails\NewMerchant.cshtml" />
+    <None Remove="Pages\Merchant\MerchantDetails\ViewMerchant.cshtml" />
+    <None Remove="Pages\Merchant\MerchantsList\MerchantList.Table.cshtml" />
+    <None Remove="Pages\Merchant\MerchantsList\MerchantsList.cshtml" />
+    <None Remove="Pages\Merchant\NewMerchant.cshtml" />
+    <None Remove="Pages\Merchant\ViewMerchant.cshtml" />
+    <None Remove="Pages\Merchant\_SubNavigation.cshtml" />
+    <None Remove="Pages\Operator\Index.cshtml" />
+    <None Remove="Pages\Operator\OperatorDialogs\EditOperatorDialog.cshtml" />
+    <None Remove="Pages\Operator\OperatorDialogs\NewOperatorDialog.cshtml" />
+    <None Remove="Pages\Operator\OperatorsList\OperatorList.Table.cshtml" />
+    <None Remove="Pages\Operator\OperatorsList\OperatorsList.cshtml" />
+    <None Remove="Pages\Operator\_SubNavigation.cshtml" />
+    <None Remove="Pages\PermissionManagement\Components\EnterUserCode.cshtml" />
+    <None Remove="Pages\PermissionManagement\Components\OptionSelect.cshtml" />
+    <None Remove="Pages\PermissionManagement\Index.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\Add.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\AddUser.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\Edit.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditRole\AddRole.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditRole\AddRoleUser.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditRole\EditRole.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditRole\EditRoleUsers.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditRole\RoleUsersList.Header.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditRole\RoleUsersList.Table.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\EditUsers.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\Index.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\RoleList\RoleList.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\RoleList\RoleList.Header.cshtml" />
+    <None Remove="Pages\PermissionManagement\Roles\RoleList\RoleList.Table.cshtml" />
+    <None Remove="Pages\Reporting\Index.cshtml" />
+    <None Remove="Pages\Reporting\SettlementAnalysis.cshtml" />
+    <None Remove="Pages\Reporting\SettlementAnalysis\SettlementAnalysis.cshtml" />
+    <None Remove="Pages\Reporting\TransactionAnalysis.cshtml" />
+    <None Remove="Pages\Reporting\TransactionAnalysis\TransactionAnalysis.cshtml" />
+    <None Remove="Pages\Reporting\_SubNavigation.cshtml" />
+    <None Remove="Pages\Shared\Components\LoginButton.cshtml" />
+    <None Remove="Pages\Shared\Components\Toasts.cshtml" />
+    <None Remove="Pages\Shared\Icons\CrossIcon.cshtml" />
+    <None Remove="Pages\Shared\Icons\DownIcon.cshtml" />
+    <None Remove="Pages\Shared\Icons\EditIcon.cshtml" />
+    <None Remove="Pages\Shared\Icons\MoreIcon.cshtml" />
+    <None Remove="Pages\Shared\Loading.cshtml" />
+    <None Remove="Pages\Shared\Profile\ProfileDropdown.cshtml" />
+    <None Remove="Pages\Shared\TableDropdown.cshtml" />
+    <None Remove="Pages\Shared\_BreadCrumb.cshtml" />
+    <None Remove="Pages\Shared\_Layout.cshtml" />
+    <None Remove="Pages\Shared\_LayoutLandingPage.cshtml" />
+    <None Remove="Pages\Shared\_Navigation.cshtml" />
+    <None Remove="Pages\Shared\_SubNavigation.cshtml" />
+    <None Remove="Pages\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Remove="Pages\_ViewImports.cshtml" />
+    <None Remove="Pages\_ViewStart.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\Contract\ContractProducts.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\ContractProductTransactionFees.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\ContractProductTransactionFee\ContractProductTransactionFeeList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\ContractProductTransactionFee\ContractProductTransactionFeeList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\ContractProduct\ContractProductList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\ContractProduct\ContractProductsList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\Contracts\ContractList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\Contracts\ContractsList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Contract\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Dashboard\Dashboard\Dashboard.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Dashboard\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Dashboard\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Error.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\OperatorList\OperatorList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\OperatorList\OperatorList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\Operators.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\Users.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\UsersList\UsersList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\UsersList\UsersList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\ViewEstate\ViewEstate.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Estate\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileDetails.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileDetails\FileDetails.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileDetails\FileDetails.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileImportLog.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileImportLogs\FileImportLogList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileImportLogs\FileImportLogList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileImportLog\FileImportLog.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\FileImportLog\FileImportLog.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\FileProcessing\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\EditMerchant.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\MerchantDetails\EditMerchant.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\MerchantDetails\NewMerchant.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\MerchantDetails\ViewMerchant.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\MerchantsList\MerchantList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\MerchantsList\MerchantsList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\NewMerchant.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\ViewMerchant.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Merchant\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Operator\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Operator\OperatorDialogs\EditOperatorDialog.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Operator\OperatorDialogs\NewOperatorDialog.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Operator\OperatorsList\OperatorList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Operator\OperatorsList\OperatorsList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Operator\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Components\EnterUserCode.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Components\OptionSelect.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\Add.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\AddUser.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\Edit.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditRole\AddRole.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditRole\AddRoleUser.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditRole\EditRole.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditRole\EditRoleUsers.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditRole\RoleUsersList.Header.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditRole\RoleUsersList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\EditUsers.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\RoleList\RoleList.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\RoleList\RoleList.Header.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\PermissionManagement\Roles\RoleList\RoleList.Table.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Reporting\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Reporting\SettlementAnalysis.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Reporting\SettlementAnalysis\SettlementAnalysis.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Reporting\TransactionAnalysis.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Reporting\TransactionAnalysis\TransactionAnalysis.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Reporting\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Components\LoginButton.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Components\Toasts.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Icons\CrossIcon.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Icons\DownIcon.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Icons\EditIcon.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Icons\MoreIcon.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Loading.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\Profile\ProfileDropdown.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\TableDropdown.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\_BreadCrumb.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\_Layout.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\_LayoutLandingPage.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\_Navigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\_SubNavigation.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\Shared\_ValidationScriptsPartial.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\_ViewImports.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Pages\_ViewStart.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\PermissionManagement\Roles\Components\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hydro" Version="0.15.0" />
+    <PackageReference Include="MediatR" Version="12.3.0" />
+    <PackageReference Include="SimpleResults" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
+  </ItemGroup>
+
+</Project>

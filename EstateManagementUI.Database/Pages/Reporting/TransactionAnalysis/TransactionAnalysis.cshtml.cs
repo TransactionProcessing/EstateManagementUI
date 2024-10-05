@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using EstateManagementUI.ViewModels;
 using System.ComponentModel.DataAnnotations;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.Pages.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using SimpleResults;
 using static EstateManagementUI.Common.ChartBuilder;

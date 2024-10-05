@@ -6,6 +6,7 @@ using SimpleResults;
 using System.Security.Claims;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using Hydro.Utils;
+using Shared.Middleware;
 
 namespace EstateManagementUI.Common;
 
@@ -32,8 +33,10 @@ public class SecureHydroComponent : HydroComponent {
         if (this.HttpContext != null)
             this.AccessToken = await this.HttpContext.GetTokenAsync("access_token");
 
-        if (this.User != null)
-            this.EstateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
+        if (this.User != null) {
+            this.EstateId = EstateManagementUI.Pages.Common.Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, 
+                EstateManagementUI.Pages.Common.Helpers.EstateIdClaimType);
+        }
     }
 
     public override async Task RenderAsync()

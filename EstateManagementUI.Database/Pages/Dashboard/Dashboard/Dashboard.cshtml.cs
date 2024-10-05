@@ -13,6 +13,7 @@ using EstateReportingAPI.DataTransferObjects;
 using System.Reflection.Metadata;
 using System;
 using System.Linq.Expressions;
+using EstateManagementUI.Pages.Common;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
 using static EstateManagementUI.Common.ChartBuilder;

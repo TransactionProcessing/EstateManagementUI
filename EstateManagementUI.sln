@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI.Integrat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI.BusinessLogic", "EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj", "{661A3E05-A174-4930-8171-5EDC19D1D267}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.Pages", "EstateManagementUI.Database\EstateManagementUI.Pages.csproj", "{B72C0F06-987F-4449-9ED7-1305D706E0F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{661A3E05-A174-4930-8171-5EDC19D1D267}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{661A3E05-A174-4930-8171-5EDC19D1D267}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{661A3E05-A174-4930-8171-5EDC19D1D267}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B72C0F06-987F-4449-9ED7-1305D706E0F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B72C0F06-987F-4449-9ED7-1305D706E0F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B72C0F06-987F-4449-9ED7-1305D706E0F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B72C0F06-987F-4449-9ED7-1305D706E0F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{6F4573B4-A5CC-48B6-A96A-E692C612275D} = {E7671C23-F30C-471A-A9EF-AC85DC607B55}
 		{4E83EBD1-AC2B-43DA-9EDD-420A213FF635} = {E7671C23-F30C-471A-A9EF-AC85DC607B55}
 		{661A3E05-A174-4930-8171-5EDC19D1D267} = {05420FAB-1C50-4AAD-9E7C-2A86184019B7}
+		{B72C0F06-987F-4449-9ED7-1305D706E0F6} = {05420FAB-1C50-4AAD-9E7C-2A86184019B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5AE6DA4-B167-44E5-9B63-61C7E8D1BC9F}
