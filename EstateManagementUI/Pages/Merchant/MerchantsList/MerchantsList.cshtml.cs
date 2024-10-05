@@ -28,8 +28,6 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
         {
             Mediator = mediator;
             Merchants = new List<ViewModels.Merchant>();
-
-            //Subscribe<MerchantPageEvents.MerchantCreatedEvent>(Handle);
         }
 
         public void Add() => this.Location(this.Url.Page("/Merchant/NewMerchant"));

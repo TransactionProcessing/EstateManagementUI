@@ -75,7 +75,7 @@ Scenario: Operator PR Test
 	| Test Operator 2 | Yes                         | No                          |
 	| Test Operator 3 | No                          | Yes                         |
 	When I click on the New Operator Button
-	Then the Add New Operator Dialog is displayed
+	Then the Add New Operator Screen is displayed
 	When I enter the following details for the new Operator
 	| OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
 	| Test Operator 4 | Yes                         | Yes                         |
@@ -88,7 +88,7 @@ Scenario: Operator PR Test
 	| Test Operator 3 | No                          | Yes                         |
 	| Test Operator 4 | Yes                         | Yes                         |
 	When I click on the Edit Operator Button for 'Test Operator 1'
-	Then the Edit Operator Dialog is displayed
+	Then the Edit Operator Screen is displayed
 	When I enter the following new details for the Operator
 	| OperatorName           | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
 	| Test Operator 1 update | No                          | No                          |

@@ -79,13 +79,16 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.VerifyPageTitle("View Merchant"); });
     }
 
-    public async Task VerifyOnTheOperatorDialog(){
-        await Retry.For(async () => {
-            IWebElement element = this.WebDriver.FindElement(By.Id("OperatorDialog"));
-            element.ShouldNotBeNull();
-        });
+    public async Task VerifyOnTheNewOperatorScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("New Operator"); });
     }
-    
+
+    public async Task VerifyOnTheEditOperatorScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("Edit Operator"); });
+    }
+
     public async Task VerifyOnTheContractsListScreen(){
         await Retry.For(async () => { this.VerifyPageTitle("View Contracts"); });
     }

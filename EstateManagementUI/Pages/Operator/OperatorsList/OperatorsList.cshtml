@@ -32,17 +32,6 @@
                         {
                             <partial name="OperatorList.Table.cshtml"/>
                         }
-                        
-                        @if (Model.ShowDialog)
-                        {
-                            if (Model.OperatorId == Guid.Empty){
-                                <hydro name="NewOperatorDialog" />
-                            }
-                            else {
-                                <hydro name="EditOperatorDialog" params="@(new {OperatorId = Model.OperatorId})" />
-                            }
-                        }
-
                     </div>
                 </div>
                 <div class="col-lg-3" align="center">
