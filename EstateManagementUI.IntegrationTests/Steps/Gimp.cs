@@ -161,7 +161,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
                     null));   
             }
 
-            await this.UiHelpers.VerifyOperatorDetailsAreInTheList("operatorsList", operatorsList);
+            await this.UiHelpers.VerifyOperatorDetailsAreInTheList("operatorList", operatorsList);
         }
 
         [Then("the following operators are displayed in the list")]
