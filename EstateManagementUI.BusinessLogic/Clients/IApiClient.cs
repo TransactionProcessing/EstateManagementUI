@@ -6,6 +6,21 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.Clients
 {
     public interface IApiClient {
+        Task<Result> AssignOperatorToMerchant(String accessToken,
+                                      Guid actionId,
+                                      Guid estateId,
+                                      Guid merchantId,
+                                      AssignOperatorToMerchantModel assignOperatorToMerchantModel,
+                                      CancellationToken cancellationToken);
+
+        Task<Result> RemoveOperatorFromMerchant(String accessToken,
+                                              Guid actionId,
+                                              Guid estateId,
+                                              Guid merchantId,
+                                              Guid operatorId,
+                                              CancellationToken cancellationToken);
+
+
         Task<Result<List<FileImportLogModel>>> GetFileImportLogList(String accessToken,
                                                                     Guid actionId,
                                                                     Guid estateId,

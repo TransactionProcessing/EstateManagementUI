@@ -29,13 +29,43 @@ public class ApiClient : IApiClient {
         this.EstateReportingApiClient = estateReportingApiClient;
     }
 
+    public async Task<Result> AssignOperatorToMerchant(String accessToken, Guid actionId, Guid estateId, Guid merchantId, AssignOperatorToMerchantModel assignOperatorToMerchantModel, CancellationToken cancellationToken)
+    {
+        async Task<Result> ClientMethod()
+        {
+            AssignOperatorRequest apiRequest = ModelFactory.ConvertFrom(assignOperatorToMerchantModel);
+
+            await this.EstateClient.AssignOperatorToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+
+            return Result.Success();
+        };
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> RemoveOperatorFromMerchant(String accessToken,
+                                                         Guid actionId,
+                                                         Guid estateId,
+                                                         Guid merchantId,
+                                                         Guid operatorId,
+                                                         CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            await this.EstateClient.RemoveOperatorFromMerchant(accessToken, estateId, merchantId, operatorId, cancellationToken);
+
+            return Result.Success();
+        };
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     public async Task<Result<List<FileImportLogModel>>> GetFileImportLogList(String accessToken,
-                                                                            Guid actionId,
-                                                                            Guid estateId,
-                                                                            Guid merchantId,
-                                                                            DateTime startDate,
-                                                                            DateTime endDate,
-                                                                            CancellationToken cancellationToken) {
+                                                                             Guid actionId,
+                                                                             Guid estateId,
+                                                                             Guid merchantId,
+                                                                             DateTime startDate,
+                                                                             DateTime endDate,
+                                                                             CancellationToken cancellationToken) {
         async Task<Result<List<FileImportLogModel>>> ClientMethod() {
             FileImportLogList? fileImportLogs = await this.FileProcessorClient.GetFileImportLogs(accessToken, estateId,
                 startDate, endDate, merchantId, cancellationToken);

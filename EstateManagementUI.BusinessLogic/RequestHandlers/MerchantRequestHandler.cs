@@ -12,8 +12,9 @@ public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery,
                                       IRequestHandler<Commands.AddMerchantCommand, Result>,
                                       IRequestHandler<Commands.UpdateMerchantCommand, Result>,
                                       IRequestHandler<Commands.UpdateMerchantAddressCommand, Result>,
-                                      IRequestHandler<Commands.UpdateMerchantContactCommand, Result>
-{
+                                      IRequestHandler<Commands.UpdateMerchantContactCommand, Result>,
+                                      IRequestHandler<Commands.AssignOperatorToMerchantCommand, Result>,
+                                      IRequestHandler<Commands.RemoveOperatorFromMerchantCommand, Result> {
     private readonly IApiClient ApiClient;
 
     public MerchantRequestHandler(IApiClient apiClient) {
@@ -65,6 +66,20 @@ public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery,
                                      CancellationToken cancellationToken) {
         Result result = await this.ApiClient.UpdateMerchantContact(request.AccessToken, Guid.Empty, request.EstateId,
             request.MerchantId, request.UpdatedContactModel, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result> Handle(Commands.AssignOperatorToMerchantCommand request,
+                                     CancellationToken cancellationToken) {
+        Result result = await this.ApiClient.AssignOperatorToMerchant(request.AccessToken, Guid.Empty, request.EstateId,
+            request.MerchantId, request.AssignOperatorRequestModel, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result> Handle(Commands.RemoveOperatorFromMerchantCommand request,
+                                     CancellationToken cancellationToken) {
+        Result result = await this.ApiClient.RemoveOperatorFromMerchant(request.AccessToken, Guid.Empty,
+            request.EstateId, request.MerchantId, request.OperatorId, cancellationToken);
         return result;
     }
 }

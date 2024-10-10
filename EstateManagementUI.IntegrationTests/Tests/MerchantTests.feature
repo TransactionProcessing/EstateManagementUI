@@ -42,11 +42,11 @@ Background:
 	And I have created the following operators
 	| EstateName  | OperatorName  | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
 	| Test Estate | Test Operator | True                        | True                        |
-
+	
 	And I have assigned the following operators to the estates
 	| EstateName  | OperatorName  |
 	| Test Estate | Test Operator |
-
+	
 	And I have created the following security users
 	| EmailAddress                 | Password | GivenName  | FamilyName | EstateName  |
 	| estateuser@testestate1.co.uk | 123456   | TestEstate | User1      | Test Estate |
@@ -125,3 +125,47 @@ Scenario: Merchant PR Test
 	| Test Merchant 4        | Immediate          | Test Contact 4        | Address Line 1        | TestTown |
 	When I click on the View Merchant Button for 'Test Merchant 1 Update'
 	Then the View Merchant Screen is displayed
+
+Scenario: Merchant Operator Management
+	Given I have created the following operators
+	| EstateName  | OperatorName    | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+	| Test Estate | Test Operator1 | True                        | True                        |
+
+	And I have assigned the following operators to the estates
+	| EstateName  | OperatorName    |
+	| Test Estate | Test Operator1 |
+
+	Given I click on the My Merchants sidebar option
+	Then I am presented with the Merchants List Screen
+	And the following merchants details are in the list
+	| MerchantName    | SettlementSchedule |ContactName    | AddressLine1   | Town     | 
+	| Test Merchant 1 | Immediate          |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 2 | Weekly             |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 3 | Monthly            |Test Contact 1 | Address Line 1 | TestTown | 
+
+	When I click on the Edit Merchant Button for 'Test Merchant 1'
+	Then the Edit Merchant Screen is displayed
+
+	When I click on the Operators tab
+	Then I am presented with the Merchants Operator List Screen
+	And the following operators are displayed in the list
+	| OperatorName  | MerchantNumber | TerminalNumber |
+	| Test Operator | 00000001       | 10000001       |
+	When I click on the Add Operator Button
+	Then the Assign Operator Dialog will be displayed
+	When I enter the following details for the Operator
+	| OperatorName    | MerchantNumber | TerminalNumber |
+	| Test Operator1 | 00000111       | 10000111       |
+	And click the Assign Operator button
+	Then I am presented with the Merchants Operator List Screen
+	And the following operators are displayed in the list
+	| OperatorName    | MerchantNumber | TerminalNumber | IsDeleted |
+	| Test Operator   | 00000001       | 10000001       | False     |
+	| Test Operator1 | 00000111       | 10000111       | False     |
+	When I click on the Remove Operator for 'Test Operator1'
+	Then I am presented with the Merchants Operator List Screen
+	And the following operators are displayed in the list
+	| OperatorName    | MerchantNumber | TerminalNumber | IsDeleted |
+	| Test Operator   | 00000001       | 10000001       | False     |
+	| Test Operator1 | 00000111       | 10000111       | True      |
+

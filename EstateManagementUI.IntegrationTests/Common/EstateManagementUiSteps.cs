@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Text;
 using EstateManagementUI.IntegrationTests.Steps;
+using EventStore.Client;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
 using Shared.IntegrationTesting;
@@ -117,6 +118,16 @@ public class EstateManagementUiHelpers{
                             IWebElement loginButton = await this.WebDriver.FindButtonByText("Login", TimeSpan.FromMinutes(2));
                             loginButton.ShouldNotBeNull();
                         });
+    }
+
+    public async Task ClickOnTheMerchantOperatorsTab()
+    {
+        await this.ClickTab("nav-operators-tab");
+    }
+
+    public async Task VerifyOnMerchantOperatorsTab() {
+        IWebElement element = this.WebDriver.FindElement(By.Id("merchantOperatorList"));
+        element.ShouldNotBeNull();
     }
 
     public async Task VerifyOnTheDashboard()
@@ -345,15 +356,15 @@ public class EstateManagementUiHelpers{
                         TimeSpan.FromSeconds(180));
     }
 
-    public async Task VerifyOperatorDetailsAreInTheList(List<(String, String, String)> operatorDetails) {
+    public async Task VerifyOperatorDetailsAreInTheList(String tableId,  List<(String, String, String, String)> operatorDetails) {
         await Retry.For(async () => {
             Int32 foundRowCount = 0;
-            IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
             IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
             rows.Count.ShouldBe(operatorDetails.Count + 1);
             StringBuilder sb = new StringBuilder();
-            foreach ((String, String, String) operatorDetail in operatorDetails) {
+            foreach ((String, String, String, String) operatorDetail in operatorDetails) {
                 IList<IWebElement> rowTD;
                 foreach (IWebElement row in rows) {
                     ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
@@ -370,6 +381,10 @@ public class EstateManagementUiHelpers{
                         rowTD[0].Text.ShouldBe(operatorDetail.Item1);
                         rowTD[1].Text.ShouldBe(operatorDetail.Item2);
                         rowTD[2].Text.ShouldBe(operatorDetail.Item3);
+                        if (String.IsNullOrEmpty(operatorDetail.Item4) == false) {
+                            rowTD[3].Text.ShouldBe(operatorDetail.Item4);
+                        }
+
                         // We have found the row
                         foundRowCount++;
                         sb.AppendLine($"Found {operatorDetail.Item1}");
@@ -465,6 +480,11 @@ public class EstateManagementUiHelpers{
     public async Task ClickTheSaveOperatorButton()
     {
         await this.WebDriver.ClickButtonById("saveOperatorButton");
+    }
+
+    public async Task ClickTheAssignOperatorButton()
+    {
+        await this.WebDriver.ClickButtonById("saveMerchantOperatorButton");
     }
 
     public async Task ClickTheSaveMerchantButton()
@@ -577,7 +597,16 @@ public class EstateManagementUiHelpers{
         }
     }
 
-    
+    public async Task EnterOperatorDetails(String operatorName,
+                                           String merchantNumber,
+                                           String terminalNumber)
+    {
+        await this.WebDriver.SelectDropDownItemByText("operatorName", operatorName);
+        await this.WebDriver.FillInById("merchantNumber", merchantNumber, true);
+        await this.WebDriver.FillInById("terminalNumber", terminalNumber, true);
+    }
+
+
 
     public async Task EnterProductDetails(String productName, String displayText, String productValue, String productType){
         await this.WebDriver.FillIn("productName", productName);
@@ -626,9 +655,8 @@ public class EstateManagementUiHelpers{
 
 
     private async Task ClickElementInTable(String tableId,
-                                               String textToSearchFor,
-                                               String elementToClickId)
-    {
+                                           String textToSearchFor,
+                                           String elementToClickId) {
         Boolean foundRow = false;
         IWebElement itemrow = null;
         await Retry.For(async () => {
@@ -638,20 +666,17 @@ public class EstateManagementUiHelpers{
             rows.ShouldNotBeNull();
             rows.Any().ShouldBeTrue();
             IList<IWebElement> rowTD;
-            foreach (IWebElement row in rows)
-            {
+            foreach (IWebElement row in rows) {
                 ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
-                if (rowTH.Any())
-                {
+                if (rowTH.Any()) {
                     // header row so skip
                     continue;
                 }
 
                 rowTD = row.FindElements(By.TagName("td"));
 
-                if (rowTD[0].Text == textToSearchFor)
-                {
+                if (rowTD[0].Text == textToSearchFor) {
                     itemrow = row;
                     foundRow = true;
                     break;
@@ -661,65 +686,189 @@ public class EstateManagementUiHelpers{
 
             foundRow.ShouldBeTrue();
             itemrow.ShouldNotBeNull();
-        },
-                        TimeSpan.FromSeconds(120)).ConfigureAwait(false);
+        }, TimeSpan.FromSeconds(120)).ConfigureAwait(false);
 
 
         await Retry.For(async () => {
             IWebElement element = itemrow.FindElement(By.Id(elementToClickId));
-            if (element.Displayed)
-            {
+            if (element.Displayed) {
                 element.Click();
             }
-            else
-            {
+            else {
                 this.WebDriver.ExecuteJavaScript($"document.getElementById('{elementToClickId}').click();");
             }
-        },
-                        TimeSpan.FromSeconds(120));
+        }, TimeSpan.FromSeconds(120));
+    }
+
+    private async Task<IWebElement> GetButtonInDropdown(IWebElement dropdownButton,
+                                                        String buttonId) {
+        IWebElement result = null;
+        dropdownButton.Click();
+        IWebElement button = this.WebDriver.FindElement(By.Id(buttonId));
+        if (button.Displayed && button.Enabled) {
+            result = button;
+        }
+        else {
+            dropdownButton.Click();
+        }
+        
+        return result;
     }
 
     public async Task ClickTheEditOperatorButton(String operatorName) {
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
-        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
-        dropdownMenuButton.Click();
-        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{operatorName}Edit"));
-        editButton.Click();
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x) {
+            var gg = await GetButtonInDropdown(webElement, $"{operatorName}Edit");
+            if (gg != null) {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null) {
+            editButton.Click();
+        }
+        else {
+            throw new Exception($"Edit button not found for operator {operatorName}");
+        }
+    }
+
+    public async Task ClickTheRemoveOperatorButton(String operatorName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantOperatorList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x) {
+            var gg = await GetButtonInDropdown(webElement, $"{operatorName}Remove");
+            if (gg != null) {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null) {
+            editButton.Click();
+        }
+        else {
+            throw new Exception($"Remove button not found for operator {operatorName}");
+        }
     }
 
     public async Task ClickTheEditMerchantButton(String merchantName)
     {
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
-        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
-        dropdownMenuButton.Click();
-        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{merchantName}Edit"));
-        editButton.Click();
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
+        {
+            var gg = await GetButtonInDropdown(webElement, $"{merchantName}Edit");
+            if (gg != null)
+            {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null)
+        {
+            editButton.Click();
+        }
+        else
+        {
+            throw new Exception($"Edit button not found for merchant {merchantName}");
+        }
     }
 
     public async Task ClickTheViewMerchantButton(String merchantName)
     {
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
-        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
-        dropdownMenuButton.Click();
-        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{merchantName}View"));
-        editButton.Click();
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
+        {
+            var gg = await GetButtonInDropdown(webElement, $"{merchantName}View");
+            if (gg != null)
+            {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null)
+        {
+            editButton.Click();
+        }
+        else
+        {
+            throw new Exception($"View button not found for merchant {merchantName}");
+        }
     }
 
     public async Task ClickTheViewContractProductsButton(String contractName)
     {
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractList"));
-        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
-        dropdownMenuButton.Click();
-        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{contractName}ViewProducts"));
-        editButton.Click();
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
+        {
+            var gg = await GetButtonInDropdown(webElement, $"{contractName}ViewProducts");
+            if (gg != null)
+            {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null)
+        {
+            editButton.Click();
+        }
+        else
+        {
+            throw new Exception($"View Products button not found for contract {contractName}");
+        }
     }
 
     public async Task ClickTheViewContractProductFeesButton(String productName)
     {
+        //IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+        //var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        //dropdownMenuButton.Click();
+        //IWebElement editButton = this.WebDriver.FindElement(By.Id($"{productName.Replace(" ", "")}ViewFees"));
+        //editButton.Click();
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
-        var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
-        dropdownMenuButton.Click();
-        IWebElement editButton = this.WebDriver.FindElement(By.Id($"{productName.Replace(" ", "")}ViewFees"));
-        editButton.Click();
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
+        {
+            var gg = await GetButtonInDropdown(webElement, $"{productName.Replace(" ", "")}ViewFees");
+            if (gg != null)
+            {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null)
+        {
+            editButton.Click();
+        }
+        else
+        {
+            throw new Exception($"View Fees button not found for product {productName}");
+        }
+    }
+
+    public async Task ClickTheAddOperatorButton() {
+        await this.WebDriver.ClickButtonById("addOperatorButton");
+    }
+
+    public async Task VerifyAssignOperatorDialogIsDisplayed() {
+        await Retry.For(async () => {
+            IWebElement element = this.WebDriver.FindElement(By.Id("AssignOperatorDialog"));
+            element.ShouldNotBeNull();
+        });
     }
 }

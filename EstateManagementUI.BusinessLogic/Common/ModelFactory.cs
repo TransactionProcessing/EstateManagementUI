@@ -624,4 +624,21 @@ public static class ModelFactory
         };
         return model;
     }
+
+    public static AssignOperatorRequest ConvertFrom(AssignOperatorToMerchantModel source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        AssignOperatorRequest assignOperatorRequest = new AssignOperatorRequest
+        {
+            MerchantNumber = source.MerchantNumber,
+            TerminalNumber = source.TerminalNumber,
+            OperatorId = source.OperatorId
+        };
+
+        return assignOperatorRequest;
+    }
 }

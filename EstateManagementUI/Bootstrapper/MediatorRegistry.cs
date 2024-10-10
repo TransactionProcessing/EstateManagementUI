@@ -34,6 +34,8 @@ public class MediatorRegistry : ServiceRegistry {
         this.AddSingleton<IRequestHandler<Commands.UpdateMerchantCommand, Result>, MerchantRequestHandler>();
         this.AddSingleton<IRequestHandler<Commands.UpdateMerchantAddressCommand, Result>, MerchantRequestHandler>();
         this.AddSingleton<IRequestHandler<Commands.UpdateMerchantContactCommand, Result>, MerchantRequestHandler>();
+        this.AddSingleton<IRequestHandler<Commands.AssignOperatorToMerchantCommand, Result>, MerchantRequestHandler>();
+        this.AddSingleton<IRequestHandler<Commands.RemoveOperatorFromMerchantCommand, Result>, MerchantRequestHandler>();
     }
 
     private void RegisterOperatorRequestHandler() {

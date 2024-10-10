@@ -37,7 +37,7 @@ public class Merchant : SecureHydroComponent
         Subscribe<MerchantPageEvents.MerchantCreatedEvent>(Handle);
         Subscribe<MerchantPageEvents.MerchantUpdatedEvent>(Handle);
     }
-
+    
     private async Task Handle(MerchantPageEvents.MerchantCreatedEvent obj)
     {
         this.Dispatch(new ShowMessage("Merchant Created Successfully", ToastType.Success), Scope.Global);
@@ -69,7 +69,7 @@ public class Merchant : SecureHydroComponent
         }
     }
 
-    private async Task LoadMerchant(CancellationToken cancellationToken)
+    protected async Task LoadMerchant(CancellationToken cancellationToken)
     {
         await this.PopulateTokenAndEstateId();
 
@@ -234,6 +234,19 @@ public class Merchant : SecureHydroComponent
         };
 
         await t;
+    }
+
+    public async Task RemoveOperator(Guid merchantId,
+                               Guid operatorId)
+    {
+        await this.PopulateTokenAndEstateId();
+
+        Commands.RemoveOperatorFromMerchantCommand removeOperatorFromMerchantCommand =
+            new(this.AccessToken, this.EstateId, merchantId, operatorId);
+        await this.Mediator.Send(removeOperatorFromMerchantCommand, CancellationToken.None);
+
+        // TODO: handle result
+        this.Dispatch(new MerchantPageEvents.OperatorRemovedFromMerchantEvent(), Scope.Global);
     }
 }
 
