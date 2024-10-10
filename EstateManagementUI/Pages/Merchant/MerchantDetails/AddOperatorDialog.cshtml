@@ -1,0 +1,40 @@
+﻿@model EstateManagementUI.Pages.Merchant.MerchantDetails.AddOperatorDialog
+<div class="modal d-block init" tabindex="-1">
+    <div class="modal-dialog modal-sm" id="AssignOperatorDialog">
+        <div class="modal-content">
+            <form hydro-on:submit="@(() => Model.Save())">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Operator</h5>
+                    <button type="button" class="btn-close" aria-label="Close" hydro-action="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label asp-for="Operator"></label>
+                            <select asp-for="Operator.OperatorId" asp-items="Model.Operator.Operators" class="form-control" hydro-bind id="operatorName"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label asp-for="MerchantNumber" class="control-label">Merchant Number</label>
+                            <input asp-for="MerchantNumber" class="form-control form-control-user" autofocus hydro-bind id="merchantNumber"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label asp-for="TerminalNumber" class="control-label">Terminal Number</label>
+                            <input asp-for="TerminalNumber" class="form-control form-control-user" autofocus hydro-bind id="terminalNumber"/>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal Footer Start-->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="saveMerchantOperatorButton">Assign Operator</button>
+                    <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                </div>
+                <!--Modal Footer End-->
+            </form>
+    </div>
+</div>
+</div>

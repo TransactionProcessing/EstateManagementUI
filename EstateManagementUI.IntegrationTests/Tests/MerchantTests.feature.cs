@@ -579,6 +579,173 @@ await this.FeatureBackgroundAsync();
             }
             await this.ScenarioCleanupAsync();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Merchant Operator Management")]
+        public async System.Threading.Tasks.Task MerchantOperatorManagement()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Merchant Operator Management", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 129
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 4
+await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table45 = new global::Reqnroll.Table(new string[] {
+                            "EstateName",
+                            "OperatorName",
+                            "RequireCustomMerchantNumber",
+                            "RequireCustomTerminalNumber"});
+                table45.AddRow(new string[] {
+                            "Test Estate",
+                            "Test Operator1",
+                            "True",
+                            "True"});
+#line 130
+ await testRunner.GivenAsync("I have created the following operators", ((string)(null)), table45, "Given ");
+#line hidden
+                global::Reqnroll.Table table46 = new global::Reqnroll.Table(new string[] {
+                            "EstateName",
+                            "OperatorName"});
+                table46.AddRow(new string[] {
+                            "Test Estate",
+                            "Test Operator1"});
+#line 134
+ await testRunner.AndAsync("I have assigned the following operators to the estates", ((string)(null)), table46, "And ");
+#line hidden
+#line 138
+ await testRunner.GivenAsync("I click on the My Merchants sidebar option", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 139
+ await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table47 = new global::Reqnroll.Table(new string[] {
+                            "MerchantName",
+                            "SettlementSchedule",
+                            "ContactName",
+                            "AddressLine1",
+                            "Town"});
+                table47.AddRow(new string[] {
+                            "Test Merchant 1",
+                            "Immediate",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table47.AddRow(new string[] {
+                            "Test Merchant 2",
+                            "Weekly",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table47.AddRow(new string[] {
+                            "Test Merchant 3",
+                            "Monthly",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+#line 140
+ await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table47, "And ");
+#line hidden
+#line 146
+ await testRunner.WhenAsync("I click on the Edit Merchant Button for \'Test Merchant 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 147
+ await testRunner.ThenAsync("the Edit Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 149
+ await testRunner.WhenAsync("I click on the Operators tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 150
+ await testRunner.ThenAsync("I am presented with the Merchants Operator List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table48 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "MerchantNumber",
+                            "TerminalNumber"});
+                table48.AddRow(new string[] {
+                            "Test Operator",
+                            "00000001",
+                            "10000001"});
+#line 151
+ await testRunner.AndAsync("the following operators are displayed in the list", ((string)(null)), table48, "And ");
+#line hidden
+#line 154
+ await testRunner.WhenAsync("I click on the Add Operator Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 155
+ await testRunner.ThenAsync("the Assign Operator Dialog will be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table49 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "MerchantNumber",
+                            "TerminalNumber"});
+                table49.AddRow(new string[] {
+                            "Test Operator1",
+                            "00000111",
+                            "10000111"});
+#line 156
+ await testRunner.WhenAsync("I enter the following details for the Operator", ((string)(null)), table49, "When ");
+#line hidden
+#line 159
+ await testRunner.AndAsync("click the Assign Operator button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 160
+ await testRunner.ThenAsync("I am presented with the Merchants Operator List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table50 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "MerchantNumber",
+                            "TerminalNumber",
+                            "IsDeleted"});
+                table50.AddRow(new string[] {
+                            "Test Operator",
+                            "00000001",
+                            "10000001",
+                            "False"});
+                table50.AddRow(new string[] {
+                            "Test Operator1",
+                            "00000111",
+                            "10000111",
+                            "False"});
+#line 161
+ await testRunner.AndAsync("the following operators are displayed in the list", ((string)(null)), table50, "And ");
+#line hidden
+#line 165
+ await testRunner.WhenAsync("I click on the Remove Operator for \'Test Operator1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 166
+ await testRunner.ThenAsync("I am presented with the Merchants Operator List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table51 = new global::Reqnroll.Table(new string[] {
+                            "OperatorName",
+                            "MerchantNumber",
+                            "TerminalNumber",
+                            "IsDeleted"});
+                table51.AddRow(new string[] {
+                            "Test Operator",
+                            "00000001",
+                            "10000001",
+                            "False"});
+                table51.AddRow(new string[] {
+                            "Test Operator1",
+                            "00000111",
+                            "10000111",
+                            "True"});
+#line 167
+ await testRunner.AndAsync("the following operators are displayed in the list", ((string)(null)), table51, "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
     }
 }
 #pragma warning restore
