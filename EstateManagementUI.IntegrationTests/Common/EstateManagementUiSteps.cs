@@ -125,8 +125,19 @@ public class EstateManagementUiHelpers{
         await this.ClickTab("nav-operators-tab");
     }
 
+    public async Task ClickOnTheMerchantContractsTab()
+    {
+        await this.ClickTab("nav-contracts-tab");
+    }
+
     public async Task VerifyOnMerchantOperatorsTab() {
         IWebElement element = this.WebDriver.FindElement(By.Id("merchantOperatorList"));
+        element.ShouldNotBeNull();
+    }
+
+    public async Task VerifyOnMerchantContractsTab()
+    {
+        IWebElement element = this.WebDriver.FindElement(By.Id("merchantContractList"));
         element.ShouldNotBeNull();
     }
 
@@ -400,6 +411,52 @@ public class EstateManagementUiHelpers{
         }, TimeSpan.FromSeconds(120));
     }
 
+    public async Task VerifyContractDetailsAreInTheList(String tableId, List<(String, String)> contractDetails)
+    {
+        await Retry.For(async () => {
+            Int32 foundRowCount = 0;
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
+
+            rows.Count.ShouldBe(contractDetails.Count + 1);
+            StringBuilder sb = new StringBuilder();
+            foreach ((String, String) contractDetail in contractDetails)
+            {
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in rows)
+                {
+                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
+
+                    if (rowTH.Any())
+                    {
+                        // header row so skip
+                        continue;
+                    }
+
+                    rowTD = row.FindElements(By.TagName("td"));
+
+                    if (rowTD[0].Text == contractDetail.Item1)
+                    {
+                        // Compare other fields
+                        rowTD[0].Text.ShouldBe(contractDetail.Item1);
+                        rowTD[1].Text.ShouldBe(contractDetail.Item2);
+                        
+                        // We have found the row
+                        foundRowCount++;
+                        sb.AppendLine($"Found {contractDetail.Item1}");
+                        break;
+                    }
+                    else
+                    {
+                        sb.AppendLine($"Not Found {contractDetail.Item1}");
+                    }
+                }
+            }
+
+            foundRowCount.ShouldBe(contractDetails.Count, sb.ToString());
+        }, TimeSpan.FromSeconds(120));
+    }
+
     public async Task VerifyProductDetailsAreInTheList(List<String> productDetails)
     {
         await Retry.For(async () => {
@@ -485,6 +542,11 @@ public class EstateManagementUiHelpers{
     public async Task ClickTheAssignOperatorButton()
     {
         await this.WebDriver.ClickButtonById("saveMerchantOperatorButton");
+    }
+
+    public async Task ClickTheAssignContractButton()
+    {
+        await this.WebDriver.ClickButtonById("saveMerchantContractButton");
     }
 
     public async Task ClickTheSaveMerchantButton()
@@ -606,7 +668,10 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.FillInById("terminalNumber", terminalNumber, true);
     }
 
-
+    public async Task EnterContractDetails(String contractName)
+    {
+        await this.WebDriver.SelectDropDownItemByText("contractName", contractName);
+    }
 
     public async Task EnterProductDetails(String productName, String displayText, String productValue, String productType){
         await this.WebDriver.FillIn("productName", productName);
@@ -756,6 +821,31 @@ public class EstateManagementUiHelpers{
         }
     }
 
+    public async Task ClickTheRemoveContractButton(String contractName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantContractList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
+        {
+            var gg = await GetButtonInDropdown(webElement, $"{contractName}Remove");
+            if (gg != null)
+            {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null)
+        {
+            editButton.Click();
+        }
+        else
+        {
+            throw new Exception($"Remove button not found for contract {contractName}");
+        }
+    }
+
     public async Task ClickTheEditMerchantButton(String merchantName)
     {
         IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
@@ -865,9 +955,23 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("addOperatorButton");
     }
 
+    public async Task ClickTheAddContractButton()
+    {
+        await this.WebDriver.ClickButtonById("addContractButton");
+    }
+
+
     public async Task VerifyAssignOperatorDialogIsDisplayed() {
         await Retry.For(async () => {
             IWebElement element = this.WebDriver.FindElement(By.Id("AssignOperatorDialog"));
+            element.ShouldNotBeNull();
+        });
+    }
+
+    public async Task VerifyAssignContractDialogIsDisplayed()
+    {
+        await Retry.For(async () => {
+            IWebElement element = this.WebDriver.FindElement(By.Id("AssignContractDialog"));
             element.ShouldNotBeNull();
         });
     }

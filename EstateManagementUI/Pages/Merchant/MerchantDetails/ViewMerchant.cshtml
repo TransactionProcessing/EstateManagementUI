@@ -1,4 +1,7 @@
-﻿@model EstateManagementUI.Pages.Merchant.MerchantDetails.ViewMerchant
+﻿@using EstateManagementUI.BusinessLogic.Models
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.Merchant.MerchantDetails.ViewMerchant
 
 @{
     string IsActiveTab(string tab) {
@@ -57,6 +60,16 @@
                                 class="@IsActiveTab("operators")"
                                 hydro-on:click="@(() => Model.SetActiveTab("operators"))">
                             Operators
+                        </button>
+                        
+                        <button id="nav-contracts-tab"
+                                data-bs-toggle="tab"
+                                data-bs-target="#contracts"
+                                type="button"
+                                role="tab"
+                                class="@IsActiveTab("contracts")"
+                                hydro-on:click="@(() => Model.SetActiveTab("contracts"))">
+                            Contracts
                         </button>
 
                         <button id="nav-devices-tab"
@@ -162,6 +175,29 @@
                                         <td class="col-3">@merchantOperatorModel.MerchantNumber</td>
                                         <td class="col-3">@merchantOperatorModel.TerminalNumber</td>
                                         <td class="col-2">@merchantOperatorModel.IsDeleted</td>
+                                        <td class="align-middle text-end"></td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Contracts Tab -->
+                        <div class="@IsActiveTabPane("contracts")" id="contracts" role="tabpanel" aria-labelledby="nav-contracts-tab">
+                            <table class="table table-sm" id="merchantContractList">
+                                <thead class="thead-light">
+                                <tr class="d-flex">
+                                    <th class="col-4">Name</th>
+                                    <th class="col-4">Is Deleted</th>
+                                    <th class="col-1"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (MerchantContractModel merchantContractModel in Model.Contracts)
+                                {
+                                    <tr class="hover d-flex">
+                                        <td class="col-4">@merchantContractModel.Name</td>
+                                        <td class="col-4">@merchantContractModel.IsDeleted</td>
                                         <td class="align-middle text-end"></td>
                                     </tr>
                                 }

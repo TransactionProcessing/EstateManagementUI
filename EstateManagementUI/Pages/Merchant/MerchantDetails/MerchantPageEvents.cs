@@ -6,9 +6,10 @@ public class MerchantPageEvents
     public record MerchantUpdatedEvent;
     public record ShowAddOperatorDialog;
     public record HideAddOperatorDialog;
-    public record ShowEditOperatorDialog(Guid OperatorId);
-    public record HideEditOperatorDialog;
-
     public record OperatorAssignedToMerchantEvent;
     public record OperatorRemovedFromMerchantEvent;
+    public record ShowAddContractDialog;
+    public record HideAddContractDialog;
+    public record ContractAssignedToMerchantEvent;
+    public record ContractRemovedFromMerchantEvent;
 }

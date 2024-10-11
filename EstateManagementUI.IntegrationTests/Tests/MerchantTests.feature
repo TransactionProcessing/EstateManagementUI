@@ -165,7 +165,54 @@ Scenario: Merchant Operator Management
 	When I click on the Remove Operator for 'Test Operator1'
 	Then I am presented with the Merchants Operator List Screen
 	And the following operators are displayed in the list
-	| OperatorName    | MerchantNumber | TerminalNumber | IsDeleted |
-	| Test Operator   | 00000001       | 10000001       | False     |
+	| OperatorName   | MerchantNumber | TerminalNumber | IsDeleted |
+	| Test Operator  | 00000001       | 10000001       | False     |
 	| Test Operator1 | 00000111       | 10000111       | True      |
 
+
+Scenario: Merchant Contract Management
+	Given I have created the following operators
+	| EstateName  | OperatorName   | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+	| Test Estate | Test Operator1 | True                        | True                        |
+
+	And I have assigned the following operators to the estates
+	| EstateName  | OperatorName    |
+	| Test Estate | Test Operator1 |
+
+	# Does this assignt the contract to the estate automatically ??
+	Given I have created the following contracts
+	| EstateName | OperatorName | ContractDescription |
+	| Test Estate | Test Operator1 | Operator 1 Contract |
+	
+	Given I click on the My Merchants sidebar option
+	Then I am presented with the Merchants List Screen
+	And the following merchants details are in the list
+	| MerchantName    | SettlementSchedule |ContactName    | AddressLine1   | Town     | 
+	| Test Merchant 1 | Immediate          |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 2 | Weekly             |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 3 | Monthly            |Test Contact 1 | Address Line 1 | TestTown | 
+
+	When I click on the Edit Merchant Button for 'Test Merchant 1'
+	Then the Edit Merchant Screen is displayed
+
+	When I click on the Contracts tab
+	Then I am presented with the Merchants Contract List Screen
+	And the following contracts are displayed in the list
+	| ContractName        | IsDeleted |	
+
+	When I click on the Add Contract Button
+	Then the Assign Contract Dialog will be displayed
+	When I enter the following details for the Contract
+	| ContractName        |
+	| Operator 1 Contract |
+	And click the Assign Contract button
+	Then I am presented with the Merchants Contract List Screen
+	And the following contracts are displayed in the list
+	| ContractName        | IsDeleted |
+	| Operator 1 Contract | False     |
+
+	When I click on the Remove Contract for 'Operator 1 Contract'
+	Then I am presented with the Merchants Contract List Screen
+	And the following contracts are displayed in the list
+	| ContractName        | IsDeleted |
+	| Operator 1 Contract | True     |

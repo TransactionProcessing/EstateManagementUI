@@ -1,4 +1,5 @@
-﻿@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+﻿@using EstateManagementUI.BusinessLogic.Models
+@using EstateManagementUI.BusinessLogic.PermissionService.Constants
 @using EstateManagementUI.Pages.Shared
 @using Hydro.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -61,6 +62,16 @@
                                     class="@IsActiveTab("operators")"
                                     hydro-on:click="@(() => Model.SetActiveTab("operators"))">
                                 Operators
+                            </button>
+                            
+                            <button id="nav-contracts-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#contracts"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("contracts")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("contracts"))">
+                                Contracts
                             </button>
 
                             <button id="nav-devices-tab"
@@ -182,6 +193,38 @@
                                     </tbody>
                                 </table>
                             </div>
+                            
+                            <!-- Contracts Tab -->
+                            <div class="@IsActiveTabPane("contracts")" id="contracts" role="tabpanel" aria-labelledby="nav-contracts-tab">
+                                <button class="btn btn-primary btn-sm" id="addContractButton" hydro-on:click="@(() => Model.AddContract())">Add Contract</button>
+                                <table class="table table-sm" id="merchantContractList">
+                                    <thead class="thead-light">
+                                    <tr class="d-flex">
+                                        <th class="col-4">Name</th>
+                                        <th class="col-4">Is Deleted</th>
+                                        <th class="col-1"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (MerchantContractModel merchantContractModel in Model.Contracts) {
+                                        <tr class="hover d-flex">
+                                            <td class="col-4">@merchantContractModel.Name</td>
+                                            <td class="col-4">@merchantContractModel.IsDeleted</td>
+                                                <td class="align-middle text-end">
+                                                    @{
+                                                        TableDropdownItem[] menuItems = new TableDropdownItem[]
+                                                        {
+                                                new("Remove", () => Model.RemoveContract(Model.MerchantId, merchantContractModel.ContractId), (ApplicationSections.Merchant, MerchantFunctions.RemoveContract), $"{merchantContractModel.Name}Remove"),
+                                                        };
+                                                    }
+
+                                                    <partial name="TableDropdown" model="@menuItems" />
+                                                </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <!-- Devices Tab -->
                             <div class="@IsActiveTabPane("devices")" id="devices" role="tabpanel" aria-labelledby="nav-devices-tab">
@@ -210,16 +253,14 @@
                     </form>
                     
                     
-                    @if (Model.ShowOperatorDialog)
-                    {
-                        if (Model.OperatorId == Guid.Empty) {
-                            <hydro name="AddOperatorDialog" params="@(new { MerchantId = Model.MerchantId})"/>
-                        }
-                        else {
-                            <hydro name="OperatorDialog" params="@(new {OperatorId = Model.OperatorId, MerchantId = Model.MerchantId})" />
-                        }
+                    @if (Model.ShowOperatorDialog) {
+                        <hydro name="AddOperatorDialog" params="@(new { MerchantId = Model.MerchantId })"/>
                     }
-                </div>
+
+                    @if (Model.ShowContractDialog) {
+                        <hydro name="AddContractDialog" params="@(new { MerchantId = Model.MerchantId })"/>
+                    }
+                    </div>
             </div>
             <div class="col-lg-5" align="center">
                 <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>

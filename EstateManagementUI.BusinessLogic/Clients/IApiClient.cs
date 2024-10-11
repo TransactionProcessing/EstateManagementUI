@@ -13,12 +13,26 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                       AssignOperatorToMerchantModel assignOperatorToMerchantModel,
                                       CancellationToken cancellationToken);
 
+        Task<Result> AssignContractToMerchant(String accessToken,
+                                              Guid actionId,
+                                              Guid estateId,
+                                              Guid merchantId,
+                                              AssignContractToMerchantModel assignContractToMerchantModel,
+                                              CancellationToken cancellationToken);
+
         Task<Result> RemoveOperatorFromMerchant(String accessToken,
                                               Guid actionId,
                                               Guid estateId,
                                               Guid merchantId,
                                               Guid operatorId,
                                               CancellationToken cancellationToken);
+
+        Task<Result> RemoveContractFromMerchant(String accessToken,
+                                                Guid actionId,
+                                                Guid estateId,
+                                                Guid merchantId,
+                                                Guid contractId,
+                                                CancellationToken cancellationToken);
 
 
         Task<Result<List<FileImportLogModel>>> GetFileImportLogList(String accessToken,

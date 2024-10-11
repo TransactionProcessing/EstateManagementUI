@@ -35,4 +35,11 @@ namespace EstateManagementUI.ViewModels
 
         public Int32 SettlementScheduleId { get; set; }
     }
+
+    public class ContractListModel
+    {
+        public List<SelectListItem> Contracts { get; set; }
+
+        public String ContractId { get; set; }
+    }
 }

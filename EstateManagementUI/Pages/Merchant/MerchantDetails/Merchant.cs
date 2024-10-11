@@ -29,6 +29,7 @@ public class Merchant : SecureHydroComponent
 
     public List<MerchantOperatorViewModel> Operators { get; set; }
     public List<MerchantDeviceViewModel> Devices { get; set; }
+    public List<MerchantContractModel> Contracts { get; set; }
 
     public Merchant(IMediator mediator, IPermissionsService permissionsService, String merchantFunction) : base(ApplicationSections.Merchant, merchantFunction, permissionsService)
     {
@@ -80,6 +81,14 @@ public class Merchant : SecureHydroComponent
             // handle this
         }
         
+        // We need to now get all the contracts here to populate the names on the Merchant Model
+        Queries.GetContractsQuery contractsQuery = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
+        var contractsResult = await this.Mediator.Send(contractsQuery, cancellationToken);
+        if (result.IsFailed) {
+            // TODO: Handle this
+        }
+
+
         this.Name = result.Data.MerchantName;
         this.Reference = result.Data.MerchantReference;
         //this.SettlementSchedule.SettlementScheduleId = result.Data.SettlementSchedule switch {
@@ -111,6 +120,16 @@ public class Merchant : SecureHydroComponent
                 Name = merchantOperatorModel.Name,
                 OperatorId = merchantOperatorModel.OperatorId,
                 TerminalNumber = String.IsNullOrEmpty(merchantOperatorModel.TerminalNumber) ? "None" : merchantOperatorModel.TerminalNumber,
+            });
+        }
+
+        this.Contracts = new List<MerchantContractModel>();
+        foreach (MerchantContractModel merchantContractModel in result.Data.Contracts) {
+            ContractModel contract = contractsResult.SingleOrDefault(c => c.ContractId == merchantContractModel.ContractId);
+            this.Contracts.Add(new MerchantContractModel {
+                ContractId = merchantContractModel.ContractId,
+                IsDeleted = merchantContractModel.IsDeleted,
+                Name = contract == null ? "N/A" : contract.Description
             });
         }
 
@@ -248,6 +267,19 @@ public class Merchant : SecureHydroComponent
         // TODO: handle result
         this.Dispatch(new MerchantPageEvents.OperatorRemovedFromMerchantEvent(), Scope.Global);
     }
+
+    public async Task RemoveContract(Guid merchantId,
+                               Guid contractId)
+    {
+        await this.PopulateTokenAndEstateId();
+
+        Commands.RemoveContractFromMerchantCommand removeContractFromMerchantCommand =
+            new(this.AccessToken, this.EstateId, merchantId, contractId);
+        await this.Mediator.Send(removeContractFromMerchantCommand, CancellationToken.None);
+
+        // TODO: handle result
+        this.Dispatch(new MerchantPageEvents.ContractRemovedFromMerchantEvent(), Scope.Global);
+    }
 }
 
 public class AddressViewModel {
@@ -295,4 +327,11 @@ public class MerchantDeviceViewModel
     public Guid DeviceId { get; set; }
     [Display(Name = "Device Identifier")]
     public string DeviceIdentifier { get; set; }
+}
+
+public class MerchantContractViewModel
+{
+    public Guid ContractId { get; set; }
+    public string Name { get; set; }
+    public bool IsDeleted { get; set; }
 }

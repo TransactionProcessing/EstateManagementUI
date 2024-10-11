@@ -196,7 +196,8 @@ public static class ModelFactory
                 ContactPhoneNumber = source.Contacts.FirstOrDefault().ContactPhoneNumber
             },
             Devices = new Dictionary<Guid, String>(),
-            Operators = new List<MerchantOperatorModel>()
+            Operators = new List<MerchantOperatorModel>(),
+            Contracts = new List<MerchantContractModel>()
         };
 
         if (source.Operators != null) {
@@ -205,9 +206,18 @@ public static class ModelFactory
             }
         }
 
-        if (source.Devices != null){
+        if (source.Devices != null) {
             foreach (KeyValuePair<Guid, String> device in source.Devices) {
                 model.Devices.Add(device.Key, device.Value);
+            }
+        }
+
+        if (source.Contracts != null) {
+            foreach (MerchantContractResponse? contract in source.Contracts) {
+                model.Contracts.Add(new MerchantContractModel {
+                    ContractId = contract.ContractId,
+                    IsDeleted = contract.IsDeleted
+                });
             }
         }
         
@@ -640,5 +650,15 @@ public static class ModelFactory
         };
 
         return assignOperatorRequest;
+    }
+
+    public static AddMerchantContractRequest ConvertFrom(AssignContractToMerchantModel source) {
+        if (source == null)
+        {
+            return null;
+        }
+
+        AddMerchantContractRequest addMerchantContractRequest = new() { ContractId = source.ContractId };
+        return addMerchantContractRequest;
     }
 }

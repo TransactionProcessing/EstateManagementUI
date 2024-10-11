@@ -24,13 +24,16 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
             }
 
             Subscribe<MerchantPageEvents.ShowAddOperatorDialog>(Handle);
-            Subscribe<MerchantPageEvents.ShowEditOperatorDialog>(Handle);
-
             Subscribe<MerchantPageEvents.HideAddOperatorDialog>(Handle);
-            Subscribe<MerchantPageEvents.HideEditOperatorDialog>(Handle);
+
+            Subscribe<MerchantPageEvents.ShowAddContractDialog>(Handle);
+            Subscribe<MerchantPageEvents.HideAddContractDialog>(Handle);
 
             Subscribe<MerchantPageEvents.OperatorAssignedToMerchantEvent>(Handle);
             Subscribe<MerchantPageEvents.OperatorRemovedFromMerchantEvent>(Handle);
+
+            this.Subscribe<MerchantPageEvents.ContractAssignedToMerchantEvent>(Handle);
+            this.Subscribe<MerchantPageEvents.ContractRemovedFromMerchantEvent>(Handle);
         }
 
         public void SetActiveTab(String activeTab) {
@@ -38,11 +41,18 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         }
 
         public Boolean ShowOperatorDialog { get; set; }
-        public Guid OperatorId { get; set; }
+        public Boolean ShowContractDialog { get; set; }
 
         private async Task Handle(MerchantPageEvents.OperatorAssignedToMerchantEvent obj) {
             await Task.Delay(1000);
             this.Dispatch(new ShowMessage("Operator Assigned to Merchant Successfully", ToastType.Success), Scope.Global);
+            await this.LoadMerchant(CancellationToken.None);
+        }
+
+        private async Task Handle(MerchantPageEvents.ContractAssignedToMerchantEvent obj)
+        {
+            await Task.Delay(1000);
+            this.Dispatch(new ShowMessage("Contract Assigned to Merchant Successfully", ToastType.Success), Scope.Global);
             await this.LoadMerchant(CancellationToken.None);
         }
 
@@ -53,27 +63,33 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
             await this.LoadMerchant(CancellationToken.None);
         }
 
-
+        private async Task Handle(MerchantPageEvents.ContractRemovedFromMerchantEvent obj)
+        {
+            await Task.Delay(1000);
+            this.Dispatch(new ShowMessage("Contract Removed from Merchant Successfully", ToastType.Success), Scope.Global);
+            await this.LoadMerchant(CancellationToken.None);
+        }
+        
         private async Task Handle(MerchantPageEvents.ShowAddOperatorDialog obj) {
             this.ShowOperatorDialog = true;
-            this.OperatorId = Guid.Empty;
         }
 
-        private async Task Handle(MerchantPageEvents.ShowEditOperatorDialog obj) {
-            this.ShowOperatorDialog = true;
-            this.OperatorId = obj.OperatorId;
+        private async Task Handle(MerchantPageEvents.ShowAddContractDialog obj)
+        {
+            this.ShowContractDialog = true;
         }
-
+        
         private async Task Handle(MerchantPageEvents.HideAddOperatorDialog obj) {
             this.ShowOperatorDialog = false;
-            this.OperatorId = Guid.Empty;
         }
 
-        private async Task Handle(MerchantPageEvents.HideEditOperatorDialog obj) {
-            this.ShowOperatorDialog = false;
-            this.OperatorId = Guid.Empty;
+        private async Task Handle(MerchantPageEvents.HideAddContractDialog obj)
+        {
+            this.ShowContractDialog= false;
         }
 
-        public async Task AddOperator() => this.Dispatch(new MerchantPageEvents.ShowAddOperatorDialog(), Scope.Global);
+        public void AddOperator() => this.Dispatch(new MerchantPageEvents.ShowAddOperatorDialog(), Scope.Global);
+
+        public void AddContract() => this.Dispatch(new MerchantPageEvents.ShowAddContractDialog(), Scope.Global);
     }
 }

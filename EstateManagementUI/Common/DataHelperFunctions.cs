@@ -80,4 +80,25 @@ public static class DataHelperFunctions {
         ordered.Insert(0, new SelectListItem("- Select a Merchant -", "", true));
         return new MerchantListModel { Merchants = ordered };
     }
+
+    public static async Task<ContractListModel> GetContracts(String accessToken, Guid estateId, IMediator mediator)
+    {
+        Queries.GetContractsQuery query = new(accessToken, estateId);
+
+        List<ContractModel> response = await mediator.Send(query, CancellationToken.None);
+
+        List<SelectListItem> resultList = new();
+        foreach (var contractModel in response)
+        {
+            resultList.Add(new SelectListItem
+            {
+                Value = contractModel.ContractId.ToString(),
+                Text = contractModel.Description
+            });
+        }
+
+        List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();
+        ordered.Insert(0, new SelectListItem("- Select a Contract -", "", true));
+        return new ContractListModel { Contracts = ordered };
+    }
 }

@@ -23,4 +23,5 @@ public record MerchantModel {
     public List<MerchantOperatorModel> Operators { get; set; }
     public Dictionary<Guid, string> Devices { get; set; }
 
+    public List<MerchantContractModel> Contracts { get; set; }
 }
