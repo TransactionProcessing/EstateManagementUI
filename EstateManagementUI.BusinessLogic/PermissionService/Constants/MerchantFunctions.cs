@@ -11,8 +11,9 @@ public class MerchantFunctions
     public const string New = "New Merchant";
     //public const string Remove = "Remove Merchant";
     public const string AddOperator = "Add Operator";
-    public const string EditOperator = "Edit Operator";
     public const string RemoveOperator = "Remove Operator";
+    public const string AddContract = "Add Contract";
+    public const string RemoveContract = "Remove Contract";
     //public const string AddDevice = "Add Device";
     //public const string RemoveDevice = "Remove Device";
     //public const string EditAddress = "Edit Merchant Address";

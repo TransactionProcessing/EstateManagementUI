@@ -11,6 +11,8 @@ using OpenQA.Selenium;
 using Reqnroll.BoDi;
 using SecurityService.IntegrationTesting.Helpers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using EstateManagementUI.Pages.Operator.OperatorsList;
+using EstateManagementUI.Pages.Estate.OperatorList;
 
 namespace EstateManagementUI.IntegrationTests.Steps
 {
@@ -179,10 +181,28 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOperatorDetailsAreInTheList("merchantOperatorList", operatorsList);
         }
 
+        [Then("the following contracts are displayed in the list")]
+        public async Task ThenTheFollowingContractsAreDisplayedInTheList(DataTable dataTable)
+        {
+            List<(String, String)> contractsList = new();
+            foreach (DataTableRow tableRow in dataTable.Rows)
+            {
+                contractsList.Add((ReqnrollTableHelper.GetStringRowValue(tableRow, "ContractName"),
+                    ReqnrollTableHelper.GetStringRowValue(tableRow, "IsDeleted")));
+            }
+
+            await this.UiHelpers.VerifyContractDetailsAreInTheList("merchantContractList", contractsList);
+        }
+
         [When("I click on the Add Operator Button")]
         public async Task WhenIClickOnTheAddOperatorButton()
         {
             await this.UiHelpers.ClickTheAddOperatorButton();
+        }
+
+        [When("I click on the Add Contract Button")]
+        public async Task WhenIClickOnTheAddContractButton() {
+            await this.UiHelpers.ClickTheAddContractButton();
         }
 
         [Then("the Assign Operator Dialog will be displayed")]
@@ -190,6 +210,32 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyAssignOperatorDialogIsDisplayed();
         }
 
+        [Then("the Assign Contract Dialog will be displayed")]
+        public async Task  ThenTheAssignContractDialogWillBeDisplayed() {
+            await this.UiHelpers.VerifyAssignContractDialogIsDisplayed();
+        }
+
+
+        [When("I enter the following details for the Contract")]
+        public async Task WhenIEnterTheFollowingDetailsForTheContract(DataTable dataTable)
+        {
+            List<String> contractsList = new List<String>();
+            foreach (DataTableRow tableRow in dataTable.Rows)
+            {
+                contractsList.Add(ReqnrollTableHelper.GetStringRowValue(tableRow, "ContractName"));
+            }
+
+            foreach (String contract in contractsList)
+            {
+                await this.UiHelpers.EnterContractDetails(contract);
+            }
+        }
+
+        [When("click the Assign Contract button")]
+        public async Task WhenClickTheAssignContractButton() {
+            await this.UiHelpers.ClickTheAssignContractButton();
+        }
+        
         [When("I enter the following details for the Operator")]
         public async Task WhenIEnterTheFollowingDetailsForTheOperator(DataTable dataTable)
         {
@@ -237,9 +283,22 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickOnTheMerchantOperatorsTab();
         }
 
+        [When("I click on the Contracts tab")]
+        public async Task WhenIClickOnTheContractsTab()
+        {
+            await this.UiHelpers.ClickOnTheMerchantContractsTab();
+        }
+
+
         [Then("I am presented with the Merchants Operator List Screen")]
         public async  Task ThenIAmPresentedWithTheMerchantsOperatorListScreen() {
             await this.UiHelpers.VerifyOnMerchantOperatorsTab();
+        }
+
+        [Then("I am presented with the Merchants Contract List Screen")]
+        public async Task ThenIAmPresentedWithTheMerchantsContractListScreen()
+        {
+            await this.UiHelpers.VerifyOnMerchantContractsTab();
         }
 
         [Then("the View Merchant Screen is displayed")]
@@ -276,6 +335,13 @@ namespace EstateManagementUI.IntegrationTests.Steps
         public async Task WhenIClickOnTheRemoveOperatorFor(string operatorName) {
             await this.UiHelpers.ClickTheRemoveOperatorButton(operatorName);
         }
+
+        [When("I click on the Remove Contract for {string}")]
+        public async Task WhenIClickOnTheRemoveContractFor(string contractName)
+        {
+            await this.UiHelpers.ClickTheRemoveContractButton(contractName);
+        }
+
 
 
         [When("I click on the View Merchant Button for {string}")]

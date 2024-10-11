@@ -1,0 +1,28 @@
+﻿@model EstateManagementUI.Pages.Merchant.MerchantDetails.AddContractDialog
+<div class="modal d-block init" tabindex="-1">
+    <div class="modal-dialog modal-sm" id="AssignContractDialog">
+        <div class="modal-content">
+            <form hydro-on:submit="@(() => Model.Save())">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Contract</h5>
+                    <button type="button" class="btn-close" aria-label="Close" hydro-action="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label asp-for="Contract"></label>
+                            <select asp-for="Contract.ContractId" asp-items="Model.Contract.Contracts" class="form-control" hydro-bind id="contractName"></select>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal Footer Start-->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="saveMerchantContractButton">Assign Contract</button>
+                    <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                </div>
+                <!--Modal Footer End-->
+            </form>
+    </div>
+</div>
+</div>

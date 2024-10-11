@@ -134,13 +134,14 @@ namespace EstateManagementUI.IntegrationTests.Common
         }
 
         public static async Task ClickButtonById(this IWebDriver webDriver,
-                                                 String buttonId)
-        {
-            IWebElement webElement = await webDriver.FindButtonById(buttonId);
-            webElement.ShouldNotBeNull();
-            webElement.Displayed.ShouldBe(true);
-            webElement.Enabled.ShouldBe(true);
-            webElement.Click();
+                                                 String buttonId) {
+            await Retry.For(async () => {
+                IWebElement webElement = await webDriver.FindButtonById(buttonId);
+                webElement.ShouldNotBeNull();
+                webElement.Displayed.ShouldBe(true);
+                webElement.Enabled.ShouldBe(true);
+                webElement.Click();
+            });
         }
 
         public static async Task ClickButtonByText(this IWebDriver webDriver,

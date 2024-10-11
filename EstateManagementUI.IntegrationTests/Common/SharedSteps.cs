@@ -312,7 +312,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 this.TestingContext.IdentityResources.Add(createIdentityResourceResponse.IdentityResourceName);
             }
         }
-
+        
         #endregion
     }
 }

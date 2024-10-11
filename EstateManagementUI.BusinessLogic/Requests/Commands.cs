@@ -28,4 +28,14 @@ public record Commands {
                                                       Guid EstateId,
                                                       Guid MerchantId,
                                                       Guid OperatorId) : IRequest<Result>;
+
+    public record AssignContractToMerchantCommand(String AccessToken,
+                                                  Guid EstateId,
+                                                  Guid MerchantId,
+                                                  AssignContractToMerchantModel AssignContractToMerchantModel) : IRequest<Result>;
+
+    public record RemoveContractFromMerchantCommand(String AccessToken,
+                                                    Guid EstateId,
+                                                    Guid MerchantId,
+                                                    Guid ContractId) : IRequest<Result>;
 }

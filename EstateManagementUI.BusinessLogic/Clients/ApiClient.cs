@@ -43,6 +43,26 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
+    public async Task<Result> AssignContractToMerchant(String accessToken,
+                                                       Guid actionId,
+                                                       Guid estateId,
+                                                       Guid merchantId,
+                                                       AssignContractToMerchantModel assignContractToMerchantModel,
+                                                       CancellationToken cancellationToken) {
+
+        async Task<Result> ClientMethod()
+        {
+            AddMerchantContractRequest apiRequest = ModelFactory.ConvertFrom(assignContractToMerchantModel);
+
+            await this.EstateClient.AddContractToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+
+            return Result.Success();
+        };
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+
+    }
+
     public async Task<Result> RemoveOperatorFromMerchant(String accessToken,
                                                          Guid actionId,
                                                          Guid estateId,
@@ -52,6 +72,22 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod()
         {
             await this.EstateClient.RemoveOperatorFromMerchant(accessToken, estateId, merchantId, operatorId, cancellationToken);
+
+            return Result.Success();
+        };
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> RemoveContractFromMerchant(String accessToken,
+                                                         Guid actionId,
+                                                         Guid estateId,
+                                                         Guid merchantId,
+                                                         Guid contractId,
+                                                         CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            await this.EstateClient.RemoveContractFromMerchant(accessToken, estateId, merchantId, contractId, cancellationToken);
 
             return Result.Success();
         };
