@@ -261,11 +261,13 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             List<(EstateDetails, CreateContractRequest)> requests = table.Rows.ToCreateContractRequests(this.TestingContext.Estates);
 
-            List<ContractResponse> results = await this.EstateManagementSteps.GivenICreateAContractWithTheFollowingValues(this.TestingContext.AccessToken, requests);
-
-            foreach (ContractResponse result in results)
+            List<ContractResponse> responses = await this.EstateManagementSteps.GivenICreateAContractWithTheFollowingValues(this.TestingContext.AccessToken, requests);
+            
+            foreach (ContractResponse contractResponse in responses)
             {
-                this.TestingContext.Logger.LogInformation($"Contract {result.Description} created with Id {result.ContractId} for Estate {result.EstateId}");
+                this.TestingContext.Logger.LogInformation($"Contract {contractResponse.Description} created with Id {contractResponse.ContractId} for Estate {contractResponse.EstateId}");
+                EstateDetails estateDetails = this.TestingContext.GetEstateDetails(contractResponse.EstateId);
+                estateDetails.AddContract(contractResponse.ContractId, contractResponse.Description, contractResponse.OperatorId);
             }
         }
 

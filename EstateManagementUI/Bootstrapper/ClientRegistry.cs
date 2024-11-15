@@ -16,9 +16,7 @@ public class ClientRegistry : ServiceRegistry
     {
         //this.AddSingleton<IConfigurationService, ConfigurationService>();
         this.AddSingleton<IApiClient, ApiClient>();
-        this.AddSingleton<IEstateClient, EstateClient>();
         this.AddSingleton<IFileProcessorClient, FileProcessorClient>();
-        //this.AddSingleton<ITransactionProcessorClient, TransactionProcessorClient>();
         this.AddSingleton<IEstateReportingApiClient, EstateReportingApiClient>();
         this.AddSingleton<Func<String, String>>(container => (serviceName) =>
         {
@@ -37,5 +35,8 @@ public class ClientRegistry : ServiceRegistry
             httpClient = new HttpClient(handler);
         }
         this.AddSingleton(httpClient);
+        
+        Func<String, String> resolver1() => serviceName => { return ConfigurationReader.GetBaseServerUri(serviceName).OriginalString; };
+        this.AddSingleton<IEstateClient>(new EstateClient(resolver1(), httpClient, 2));
     }
 }

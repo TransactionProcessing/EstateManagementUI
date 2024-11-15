@@ -145,9 +145,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
 
             this.EstateClient
                 .Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateOperatorRequest>(),
-                    It.IsAny<CancellationToken>())).ReturnsAsync(new CreateOperatorResponse {
-                    OperatorId = TestData.Operator1Id, EstateId = TestData.EstateId
-                });
+                    It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
             CreateOperatorModel createOperatorModel = new CreateOperatorModel {
                 RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber,
@@ -187,7 +185,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         public async Task ApiClient_UpdateOperator_OperatorIsUpdated()
         {
             this.EstateClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(),
-                It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+                It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
 
             UpdateOperatorModel updateOperatorModel = new UpdateOperatorModel
             {
@@ -491,7 +489,7 @@ namespace EstateManagementUI.BusinessLogic.Tests
         [Fact]
         public async Task ApiClient_CreateMerchant_DataIsReturned()
         {
-            this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(TestData.CreateMerchantResponse);
+            this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
             Result result = await this.ApiClient.CreateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
             result.IsSuccess.ShouldBeTrue();
