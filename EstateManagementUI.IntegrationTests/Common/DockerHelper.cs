@@ -158,7 +158,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
                                               };
             HttpClient httpClient = new HttpClient(clientHandler);
-            this.EstateClient = new EstateClient(EstateManagementBaseAddressResolver, httpClient);
+            this.EstateClient = new EstateClient(EstateManagementBaseAddressResolver, httpClient, 2);
             Func<String, String> securityServiceBaseAddressResolver = api => $"https://127.0.0.1:{this.SecurityServicePort}";
             this.SecurityServiceClient = new SecurityServiceClient(securityServiceBaseAddressResolver, httpClient);
         }

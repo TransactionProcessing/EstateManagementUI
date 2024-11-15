@@ -35,9 +35,7 @@ public class ApiClient : IApiClient {
         {
             AssignOperatorRequest apiRequest = ModelFactory.ConvertFrom(assignOperatorToMerchantModel);
 
-            await this.EstateClient.AssignOperatorToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.AssignOperatorToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         };
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -54,9 +52,7 @@ public class ApiClient : IApiClient {
         {
             AddMerchantContractRequest apiRequest = ModelFactory.ConvertFrom(assignContractToMerchantModel);
 
-            await this.EstateClient.AddContractToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.AddContractToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         };
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -71,9 +67,7 @@ public class ApiClient : IApiClient {
                                                          CancellationToken cancellationToken) {
         async Task<Result> ClientMethod()
         {
-            await this.EstateClient.RemoveOperatorFromMerchant(accessToken, estateId, merchantId, operatorId, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.RemoveOperatorFromMerchant(accessToken, estateId, merchantId, operatorId, cancellationToken);
         };
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -87,9 +81,7 @@ public class ApiClient : IApiClient {
                                                          CancellationToken cancellationToken) {
         async Task<Result> ClientMethod()
         {
-            await this.EstateClient.RemoveContractFromMerchant(accessToken, estateId, merchantId, contractId, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.RemoveContractFromMerchant(accessToken, estateId, merchantId, contractId, cancellationToken);
         };
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -103,10 +95,11 @@ public class ApiClient : IApiClient {
                                                                              DateTime endDate,
                                                                              CancellationToken cancellationToken) {
         async Task<Result<List<FileImportLogModel>>> ClientMethod() {
-            FileImportLogList? fileImportLogs = await this.FileProcessorClient.GetFileImportLogs(accessToken, estateId,
+            Result<FileImportLogList>? result = await this.FileProcessorClient.GetFileImportLogs(accessToken, estateId,
                 startDate, endDate, merchantId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(fileImportLogs);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -118,9 +111,10 @@ public class ApiClient : IApiClient {
                                              CancellationToken cancellationToken) {
         async Task<Result<EstateModel>> ClientMethod()
         {
-            EstateResponse? estate = await this.EstateClient.GetEstate(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(estate);
+            var result= await this.EstateClient.GetEstate(accessToken, estateId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -130,9 +124,10 @@ public class ApiClient : IApiClient {
     {
         async Task<Result<List<MerchantModel>>> ClientMethod()
         {
-            List<MerchantResponse> merchants = await this.EstateClient.GetMerchants(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(merchants);
+            var result= await this.EstateClient.GetMerchants(accessToken, estateId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -142,9 +137,10 @@ public class ApiClient : IApiClient {
     {
         async Task<Result<MerchantModel>> ClientMethod()
         {
-            MerchantResponse merchant = await this.EstateClient.GetMerchant(accessToken, estateId, merchantId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(merchant);
+            var result = await this.EstateClient.GetMerchant(accessToken, estateId, merchantId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -156,9 +152,10 @@ public class ApiClient : IApiClient {
                                                   CancellationToken cancellationToken) {
         async Task<Result<List<OperatorModel>>> ClientMethod()
         {
-            List<OperatorResponse>? operators = await this.EstateClient.GetOperators(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(operators);
+            var result = await this.EstateClient.GetOperators(accessToken, estateId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -171,9 +168,10 @@ public class ApiClient : IApiClient {
                                                          CancellationToken cancellationToken) {
         async Task<Result<OperatorModel>> ClientMethod()
         {
-            OperatorResponse @operator = await this.EstateClient.GetOperator(accessToken, estateId, operatorId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(@operator);
+            var result = await this.EstateClient.GetOperator(accessToken, estateId, operatorId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -185,9 +183,10 @@ public class ApiClient : IApiClient {
                                                         CancellationToken cancellationToken) {
         async Task<Result<List<ContractModel>>> ClientMethod()
         {
-            List<ContractResponse>? contracts = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(contracts);
+            var result = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -200,9 +199,10 @@ public class ApiClient : IApiClient {
                                                                 CancellationToken cancellationToken) {
         async Task<Result<ContractModel>> ClientMethod()
         {
-            ContractResponse? contract = await this.EstateClient.GetContract(accessToken, estateId, contractId, cancellationToken);
-            
-            return ModelFactory.ConvertFrom(contract);
+            var result = await this.EstateClient.GetContract(accessToken, estateId, contractId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -222,9 +222,7 @@ public class ApiClient : IApiClient {
                 OperatorId = createOperatorModel.OperatorId
             };
 
-            await this.EstateClient.CreateOperator(accessToken, estateId, request, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.CreateOperator(accessToken, estateId, request, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -244,9 +242,7 @@ public class ApiClient : IApiClient {
                 Name = updateOperatorModel.OperatorName
             };
 
-            await this.EstateClient.UpdateOperator(accessToken, estateId, updateOperatorModel.OperatorId, request, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.UpdateOperator(accessToken, estateId, updateOperatorModel.OperatorId, request, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -260,11 +256,10 @@ public class ApiClient : IApiClient {
                                                                    CancellationToken cancellationToken) {
         async Task<Result<FileImportLogModel>> ClientMethod()
         {
-            FileImportLog? response = await this.FileProcessorClient.GetFileImportLog(accessToken, fileImportLogId, estateId, merchantId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(response);
-
-
+            var result = await this.FileProcessorClient.GetFileImportLog(accessToken, fileImportLogId, estateId, merchantId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -278,9 +273,10 @@ public class ApiClient : IApiClient {
         
         async Task<Result<FileDetailsModel>> ClientMethod()
         {
-            FileDetails? response = await this.FileProcessorClient.GetFile(accessToken, estateId, fileId, cancellationToken);
-
-             return ModelFactory.ConvertFrom(response);
+            var result= await this.FileProcessorClient.GetFile(accessToken, estateId, fileId, cancellationToken);
+            if (result.IsFailed)
+                return ResultHelpers.CreateFailure(result);
+            return ModelFactory.ConvertFrom(result.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -486,9 +482,7 @@ public class ApiClient : IApiClient {
         {
             CreateMerchantRequest apiRequest = ModelFactory.ConvertFrom(createMerchantModel);
 
-            CreateMerchantResponse apiResponse = await this.EstateClient.CreateMerchant(accessToken, estateId, apiRequest, cancellationToken);
-            
-            return Result.Success();
+            return await this.EstateClient.CreateMerchant(accessToken, estateId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -500,9 +494,7 @@ public class ApiClient : IApiClient {
             
             UpdateMerchantRequest apiRequest = ModelFactory.ConvertFrom(updateMerchantModel);
             
-            await this.EstateClient.UpdateMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.UpdateMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -518,9 +510,7 @@ public class ApiClient : IApiClient {
         {
             Address apiRequest = ModelFactory.ConvertFrom(updateAddressModel);
 
-            await this.EstateClient.UpdateMerchantAddress(accessToken, estateId, merchantId, updateAddressModel.AddressId, apiRequest, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.UpdateMerchantAddress(accessToken, estateId, merchantId, updateAddressModel.AddressId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -536,11 +526,95 @@ public class ApiClient : IApiClient {
         {
             Contact apiRequest = ModelFactory.ConvertFrom(updateContactModel);
 
-            await this.EstateClient.UpdateMerchantContact(accessToken, estateId, merchantId, updateContactModel.ContactId, apiRequest, cancellationToken);
-
-            return Result.Success();
+            return await this.EstateClient.UpdateMerchantContact(accessToken, estateId, merchantId, updateContactModel.ContactId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+}
+
+public static class ResultHelpers
+{
+    public static Result CreateFailure(Result result)
+    {
+        if (result.IsFailed)
+        {
+            return BuildResult(result.Status, result.Message, result.Errors);
+        }
+        return Result.Failure("Unknown Failure");
+    }
+
+    public static Result CreateFailure<T>(Result<T> result)
+    {
+        if (result.IsFailed)
+        {
+            return BuildResult(result.Status, result.Message, result.Errors);
+        }
+        return Result.Failure("Unknown Failure");
+    }
+
+    private static Result BuildResult(ResultStatus status, String messageValue, IEnumerable<String> errorList)
+    {
+        return (status, messageValue, errorList) switch
+        {
+            // If the status is NotFound and there are errors, return the errors
+            (ResultStatus.NotFound, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.NotFound(errors),
+
+            // If the status is NotFound and the message is not null or empty, return the message
+            (ResultStatus.NotFound, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.NotFound(message),
+
+            // If the status is Failure and there are errors, return the errors
+            (ResultStatus.Failure, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.Failure(errors),
+
+            // If the status is Failure and the message is not null or empty, return the message
+            (ResultStatus.Failure, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.Failure(message),
+
+            // If the status is Forbidden and there are errors, return the errors
+            (ResultStatus.Forbidden, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.Forbidden(errors),
+
+            // If the status is Forbidden and the message is not null or empty, return the message
+            (ResultStatus.Forbidden, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.NotFound(message),
+            //###
+            // If the status is Invalid and there are errors, return the errors
+            (ResultStatus.Invalid, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.Invalid(errors),
+
+            // If the status is Invalid and the message is not null or empty, return the message
+            (ResultStatus.Invalid, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.Invalid(message),
+
+            // If the status is Unauthorized and there are errors, return the errors
+            (ResultStatus.Unauthorized, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.Unauthorized(errors),
+
+            // If the status is Unauthorized and the message is not null or empty, return the message
+            (ResultStatus.Unauthorized, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.Unauthorized(message),
+
+            // If the status is Conflict and there are errors, return the errors
+            (ResultStatus.Conflict, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.Conflict(errors),
+
+            // If the status is Conflict and the message is not null or empty, return the message
+            (ResultStatus.Conflict, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.Conflict(message),
+
+            // If the status is CriticalError and there are errors, return the errors
+            (ResultStatus.CriticalError, _, List<string> errors) when errors is { Count: > 0 } =>
+                Result.CriticalError(errors),
+
+            // If the status is CriticalError and the message is not null or empty, return the message
+            (ResultStatus.CriticalError, string message, _) when !string.IsNullOrEmpty(message) =>
+                Result.CriticalError(message),
+
+            // Default case, return a generic failure message
+            _ => Result.Failure("An unexpected error occurred.")
+        };
     }
 }
