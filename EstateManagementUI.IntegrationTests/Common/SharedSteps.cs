@@ -16,6 +16,7 @@ using SecurityService.DataTransferObjects.Responses;
 using SecurityService.IntegrationTesting.Helpers;
 using Shared.IntegrationTesting;
 using Shouldly;
+using SimpleResults;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
@@ -288,14 +289,13 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             if (identityResourceList == null || identityResourceList.Any() == false)
             {
-                createIdentityResourceResponse = await this
+                Result result= await this
                                                        .TestingContext.DockerHelper.SecurityServiceClient
                                                        .CreateIdentityResource(createIdentityResourceRequest, cancellationToken)
                                                        .ConfigureAwait(false);
-                createIdentityResourceResponse.ShouldNotBeNull();
-                createIdentityResourceResponse.IdentityResourceName.ShouldNotBeNullOrEmpty();
+                result.IsSuccess.ShouldBeTrue();
 
-                this.TestingContext.IdentityResources.Add(createIdentityResourceResponse.IdentityResourceName);
+                this.TestingContext.IdentityResources.Add(createIdentityResourceRequest.Name);
             }
             else
             {
@@ -304,14 +304,15 @@ namespace EstateManagementUI.IntegrationTests.Common
                     return;
                 }
 
-                createIdentityResourceResponse = await this
-                                                       .TestingContext.DockerHelper.SecurityServiceClient
-                                                       .CreateIdentityResource(createIdentityResourceRequest, cancellationToken)
-                                                       .ConfigureAwait(false);
-                createIdentityResourceResponse.ShouldNotBeNull();
-                createIdentityResourceResponse.IdentityResourceName.ShouldNotBeNullOrEmpty();
+                Result result = await this
+                    .TestingContext.DockerHelper.SecurityServiceClient
+                    .CreateIdentityResource(createIdentityResourceRequest, cancellationToken)
+                    .ConfigureAwait(false);
+                result.IsSuccess.ShouldBeTrue();
 
-                this.TestingContext.IdentityResources.Add(createIdentityResourceResponse.IdentityResourceName);
+                result.IsSuccess.ShouldBeTrue();
+
+                this.TestingContext.IdentityResources.Add(createIdentityResourceRequest.Name);
             }
         }
         
