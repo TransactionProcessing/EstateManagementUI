@@ -432,6 +432,11 @@ public static class ModelFactory
     }
 
     public static FileDetailsModel ConvertFrom(FileDetails source) {
+        if (source == null)
+        {
+            return null;
+        }
+        
         FileDetailsModel model = new FileDetailsModel {
             EstateId = source.EstateId,
             FileId = source.FileId,

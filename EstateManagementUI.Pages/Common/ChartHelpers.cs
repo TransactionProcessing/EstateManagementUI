@@ -1,7 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Html;
 
-/*public static class ChartHelpers {
+public static class ChartHelpers {
     public static string ConvertChartOptionsToHtml(String chartOptions)
     {
         IHtmlContent htmlContent = new HtmlContentBuilder().AppendHtml(chartOptions);
@@ -20,4 +20,4 @@ using Microsoft.AspNetCore.Html;
 
         return sb.ToString();
     }
-}*/
+}

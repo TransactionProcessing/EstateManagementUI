@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EstateManagementUI.BusinessLogic.Common;
+using Shared.Exceptions;
 using Shouldly;
 
 namespace EstateManagementUI.BusinessLogic.Tests

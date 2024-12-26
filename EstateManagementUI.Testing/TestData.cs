@@ -19,6 +19,8 @@ namespace EstateManagementUI.Testing
         public static Guid EstateId = Guid.Parse("BD6F1ED7-6290-4285-A200-E4F8D25F4CBE");
         public static Queries.GetEstateQuery GetEstateQuery => new(AccessToken, EstateId);
         public static Queries.GetMerchantsQuery GetMerchantsQuery => new(AccessToken, EstateId);
+
+        public static Queries.GetMerchantQuery GetMerchantQuery => new(AccessToken, EstateId, Merchant1Id);
         public static Queries.GetOperatorsQuery GetOperatorsQuery => new(AccessToken, EstateId);
         public static Queries.GetOperatorQuery GetOperatorQuery => new(AccessToken, EstateId, Operator1Id);
         public static Queries.GetContractsQuery GetContractsQuery => new(AccessToken, EstateId);
@@ -58,6 +60,46 @@ namespace EstateManagementUI.Testing
 
         public static Commands.AddMerchantCommand AddNewMerchantCommand => new(AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
 
+        public static Commands.UpdateMerchantCommand UpdateMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new UpdateMerchantModel {
+            MerchantName = Merchant1Name,
+            SettlementSchedule = EstateManagementUI.BusinessLogic.Models.SettlementSchedule.Immediate
+        });
+
+        public static Commands.UpdateMerchantAddressCommand UpdateMerchantAddressCommand => new(AccessToken, EstateId, Merchant1Id, new AddressModel
+        {
+            AddressLine1 = Merchant1AddressLine1,
+            AddressLine2 = Merchant1AddressLine2,
+            AddressLine3 = Merchant1AddressLine3,
+            AddressLine4 = Merchant1AddressLine4,
+            Country = Merchant1Country,
+            PostalCode = Merchant1PostalCode,
+            Region = Merchant1Region,
+            Town = Merchant1Town
+        });
+
+        public static Commands.UpdateMerchantContactCommand UpdateMerchantContactCommand => new(AccessToken, EstateId, Merchant1Id, new ContactModel
+        {
+            ContactName = Merchant1ContactName,
+            ContactPhoneNumber = Merchant1ContactPhoneNumber,
+            ContactEmailAddress = Merchant1ContactEmailAddress
+        });
+
+        public static Commands.AssignContractToMerchantCommand AssignContractToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new AssignContractToMerchantModel {
+            ContractId = Contract1Id
+        });
+
+        public static Commands.RemoveContractFromMerchantCommand RemoveContractFromMerchantCommand => new(AccessToken, EstateId, Merchant1Id, Contract1Id);
+
+        public static AssignContractToMerchantModel AssignContractToMerchantModel => new AssignContractToMerchantModel { ContractId = TestData.Contract1Id };
+        public static AssignOperatorToMerchantModel AssignOperatorToMerchantModel => new AssignOperatorToMerchantModel { OperatorId = Operator1Id };
+
+        public static Commands.AssignOperatorToMerchantCommand AssignOperatorToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new AssignOperatorToMerchantModel {
+            OperatorId = Operator1Id
+        });
+
+        public static Commands.RemoveOperatorFromMerchantCommand RemoveOperatorFromMerchantCommand => new(AccessToken, EstateId, Merchant1Id, Operator1Id);
+
+
         public static CreateMerchantResponse CreateMerchantResponse =>
             new() { EstateId = EstateId, MerchantId = Merchant1Id };
 
@@ -85,7 +127,27 @@ namespace EstateManagementUI.Testing
                 }
             };
 
+        public static UpdateMerchantModel UpdateMerchantModel(BusinessLogic.Models.SettlementSchedule settlementSchedule) =>
+            new UpdateMerchantModel
+            {
+                MerchantName = Merchant1Name,
+                SettlementSchedule = settlementSchedule
+            };
 
+        public static AddressModel AddressModel =>
+            new AddressModel
+            {
+                AddressLine1 = Merchant1AddressLine1,
+                AddressLine2 = Merchant1AddressLine2,
+                AddressLine3 = Merchant1AddressLine3,
+                AddressLine4 = Merchant1AddressLine4,
+                Country = Merchant1Country,
+                PostalCode = Merchant1PostalCode,
+                Region = Merchant1Region,
+                Town = Merchant1Town
+            };
+
+        public static ContactModel ContactModel => new ContactModel { ContactEmailAddress = Merchant1ContactEmailAddress, ContactName = Merchant1ContactName, ContactPhoneNumber = Merchant1ContactPhoneNumber };
 
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
             new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
@@ -139,6 +201,20 @@ namespace EstateManagementUI.Testing
 
         public static AddressResponse Merchant1Address = new() {
             AddressLine1 = Merchant1AddressLine1, Town = Merchant1Town
+        };
+
+        public static Dictionary<Guid, String> Merchant1Devices = new Dictionary<Guid, String> {
+            { Guid.Parse("A5B6A7FD-1D45-4781-A9CC-0A09C206737E"), "Device 1" }
+        };
+
+        public static MerchantContractResponse Merchant1Contract = new()
+        {
+            ContractId = Contract1Id
+        };
+
+        public static MerchantOperatorResponse Merchant1Operator = new()
+        {
+            OperatorId = Operator1Id
         };
 
         public static ContactResponse Merchant1Contact = new() { ContactName = "Contact 1" };
@@ -236,6 +312,19 @@ namespace EstateManagementUI.Testing
                     Addresses = [Merchant3Address],
                     Contacts = [Merchant3Contact]
                 }
+            };
+
+        public static MerchantResponse MerchantResponse =>
+            new MerchantResponse {
+                SettlementSchedule = Merchant1SettlementSchedule,
+                MerchantReference = Merchant1Reference,
+                MerchantName = Merchant1Name,
+                MerchantId = Merchant1Id,
+                Addresses = [Merchant1Address],
+                Contacts = [Merchant1Contact],
+                Devices = Merchant1Devices,
+                Contracts = [Merchant1Contract],
+                Operators = [Merchant1Operator]
             };
 
         public static Guid Contract1Id = Guid.Parse("82ED1302-491D-48F4-8FC7-58A22EB1CF4C");
@@ -613,5 +702,80 @@ namespace EstateManagementUI.Testing
                 SalesCount = 100,
                 SalesValue = 1000.00m
             };
+
+        public static FileDetails FileDetails => new FileDetails
+        {
+            FileId = Guid.NewGuid(),
+            FileProfileId = Guid.NewGuid(),
+            FileProfileName = "Test Profile",
+            FileImportLogId = Guid.NewGuid(),
+            FileLocation = "Test Location",
+            ProcessingCompleted = true,
+            EstateId = Guid.NewGuid(),
+            UserId = Guid.NewGuid(),
+            UserEmailAddress = "test@example.com",
+            MerchantId = Guid.NewGuid(),
+            MerchantName = "Test Merchant",
+            ProcessingSummary = new FileProcessingSummary
+            {
+                FailedLines = 1,
+                IgnoredLines = 2,
+                NotProcessedLines = 3,
+                RejectedLines = 4,
+                SuccessfullyProcessedLines = 5,
+                TotalLines = 15
+            },
+            FileLines = new List<FileLine>
+            {
+                new FileLine
+                {
+                    LineData = "Line 1 Data",
+                    LineNumber = 1,
+                    RejectionReason = "Reason 1",
+                    TransactionId = Guid.NewGuid(),
+                    ProcessingResult = FileLineProcessingResult.Successful
+                },
+                new FileLine
+                {
+                    LineData = "Line 2 Data",
+                    LineNumber = 2,
+                    RejectionReason = "Reason 2",
+                    TransactionId = Guid.NewGuid(),
+                    ProcessingResult = FileLineProcessingResult.Failed
+                },
+                new FileLine
+                {
+                    LineData = "Line 3 Data",
+                    LineNumber = 3,
+                    RejectionReason = "Reason 3",
+                    TransactionId = Guid.NewGuid(),
+                    ProcessingResult = FileLineProcessingResult.Ignored
+                },
+                new FileLine
+                {
+                    LineData = "Line 4 Data",
+                    LineNumber = 4,
+                    RejectionReason = "Reason 4",
+                    TransactionId = Guid.NewGuid(),
+                    ProcessingResult = FileLineProcessingResult.NotProcessed
+                },
+                new FileLine
+                {
+                    LineData = "Line 5 Data",
+                    LineNumber = 5,
+                    RejectionReason = "Reason 5",
+                    TransactionId = Guid.NewGuid(),
+                    ProcessingResult = FileLineProcessingResult.Rejected
+                },
+                new FileLine
+                {
+                    LineData = "Line 6 Data",
+                    LineNumber = 6,
+                    RejectionReason = "Reason 6",
+                    TransactionId = Guid.NewGuid(),
+                    ProcessingResult = FileLineProcessingResult.Unknown
+                }
+            }
+        };
     }
 }

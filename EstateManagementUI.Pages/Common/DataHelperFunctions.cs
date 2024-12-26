@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleResults;
 
-/*public static class DataHelperFunctions {
+public static class DataHelperFunctions {
     public static async Task<ComparisonDateListModel> GetComparisonDates(String accessToken, Guid estateId, IMediator mediator)
     {
         Queries.GetComparisonDatesQuery query = new Queries.GetComparisonDatesQuery(accessToken, estateId);
@@ -101,4 +101,4 @@ using SimpleResults;
         ordered.Insert(0, new SelectListItem("- Select a Contract -", "", true));
         return new ContractListModel { Contracts = ordered };
     }
-}*/
+}

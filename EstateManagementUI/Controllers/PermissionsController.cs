@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.BusinessLogic.PermissionService;
+﻿using System.Diagnostics.CodeAnalysis;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ namespace EstateManagementUI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExcludeFromCodeCoverage]
     public class PermissionsController : ControllerBase
     {
         private readonly IPermissionsRepository PermissionsRepository;
@@ -92,23 +94,27 @@ namespace EstateManagementUI.Controllers
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public record RolePermissionsObject {
         public List<Permission> PermissionsList { get; set; }
         public List<ApplicationSection> ApplicationSections { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public record Permission {
         public ApplicationSection ApplicationSection { get; set; }
         public Function Function { get; set; }
         public Boolean HasAccess { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public record AddUserToRole
     {
         public String RoleName { get; set; }
         public String UserName { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public record RolePermissions {
         public String RoleName { get; set; }
         public List<(int, int, bool)> NewPermissions { get; set; }

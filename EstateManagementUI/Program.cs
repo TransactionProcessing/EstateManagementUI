@@ -1,4 +1,5 @@
 using System.ComponentModel.Design;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -27,6 +28,7 @@ using SimpleResults;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Logger = Shared.Logger.Logger;
 
+[ExcludeFromCodeCoverage]
 public class Startup {
     private static IWebHostEnvironment WebHostEnvironment;
     public static Container Container;
@@ -144,6 +146,7 @@ public class Startup {
 }
 
 
+[ExcludeFromCodeCoverage]
 public class Program {
 
     public static async Task Main(String[] args) {
@@ -316,6 +319,7 @@ public class Program {
     }
 }
 
+[ExcludeFromCodeCoverage]
 public static class Extensions {
     public static async Task PreWarm(this IApplicationBuilder applicationBuilder) {
         Boolean isIntegrationTest =

@@ -27,15 +27,9 @@ IRequestHandler<Commands.RemoveContractFromMerchantCommand, Result>
 
     public async Task<Result<List<MerchantModel>>> Handle(Queries.GetMerchantsQuery request,
                                                   CancellationToken cancellationToken) {
-        try {
             Result<List<MerchantModel>> result = await this.ApiClient.GetMerchants(request.AccessToken, Guid.Empty,
                 request.EstateId, cancellationToken);
             return result;
-        }
-        catch (Exception ex) {
-            Logger.LogError(ex);
-            return Result.Failure(ex.Message);
-        }
     }
 
     public async Task<Result> Handle(Commands.AddMerchantCommand request,

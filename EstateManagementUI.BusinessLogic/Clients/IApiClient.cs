@@ -43,7 +43,7 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                                     DateTime endDate,
                                                                     CancellationToken cancellationToken);
 
-        Task<EstateModel> GetEstate(String accessToken,
+        Task<Result<EstateModel>> GetEstate(String accessToken,
                                     Guid actionId,
                                     Guid estateId,
                                     CancellationToken cancellationToken);
@@ -70,7 +70,7 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                        Guid operatorId,
                                                        CancellationToken cancellationToken);
 
-        Task<List<ContractModel>> GetContracts(String accessToken,
+        Task<Result<List<ContractModel>>> GetContracts(String accessToken,
                                                Guid actionId,
                                                Guid estateId,
                                                CancellationToken cancellationToken);

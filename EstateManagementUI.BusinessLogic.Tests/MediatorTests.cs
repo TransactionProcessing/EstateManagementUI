@@ -22,6 +22,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             // Queries
             this.Requests.Add(TestData.GetEstateQuery);
             this.Requests.Add(TestData.GetMerchantsQuery);
+            this.Requests.Add(TestData.GetMerchantQuery);
             this.Requests.Add(TestData.GetOperatorsQuery);
             this.Requests.Add(TestData.GetOperatorQuery);
             this.Requests.Add(TestData.GetContractsQuery);
@@ -47,7 +48,17 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);
             this.Requests.Add(TestData.UpdateOperatorCommand);
+            
             this.Requests.Add(TestData.AddNewMerchantCommand);
+            this.Requests.Add(TestData.UpdateMerchantCommand);
+            this.Requests.Add(TestData.UpdateMerchantAddressCommand);
+            this.Requests.Add(TestData.UpdateMerchantContactCommand);
+            this.Requests.Add(TestData.AssignOperatorToMerchantCommand);
+            this.Requests.Add(TestData.RemoveOperatorFromMerchantCommand);
+            this.Requests.Add(TestData.AssignContractToMerchantCommand);
+            this.Requests.Add(TestData.RemoveContractFromMerchantCommand);
+
+
 
             Mock<IWebHostEnvironment> hostingEnvironment = new Mock<IWebHostEnvironment>();
             hostingEnvironment.Setup(he => he.EnvironmentName).Returns("IntegrationTest");

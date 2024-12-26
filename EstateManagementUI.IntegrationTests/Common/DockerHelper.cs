@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SecurityService.Client;
+using Shared.Exceptions;
 using Shared.IntegrationTesting;
 
 namespace EstateManagementUI.IntegrationTests.Common

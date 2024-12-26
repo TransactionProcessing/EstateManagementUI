@@ -27,15 +27,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
+    <ProjectReference Include="..\EstateManagementUI.Pages\EstateManagementUI.Pages.csproj" />
+    <ProjectReference Include="..\EstateManagementUI.ViewModels\EstateManagementUI.ViewModels.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="Pages\Reporting\_SubNavigation.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 
@@ -55,10 +53,6 @@
     <None Update="Certificates\aspnetapp-web-api.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Pages\PermissionManagement\Roles\Components\" />
   </ItemGroup>
 
 </Project>
