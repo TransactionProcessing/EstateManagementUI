@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace EstateManagementUI.Common
 {
-    [ExcludeFromCodeCoverage]
     public static class Helpers {
         public const String EstateIdClaimType = "estateId";
 

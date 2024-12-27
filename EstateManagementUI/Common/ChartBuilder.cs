@@ -5,7 +5,7 @@ using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace EstateManagementUI.Common;
 
-/*public class ChartBuilder {
+public class ChartBuilder {
 
     public class ChartObjects
     {
@@ -304,4 +304,4 @@ namespace EstateManagementUI.Common;
         public static JavaScriptFunction EmptyFunction =>
             new JavaScriptFunction("function (value) {\r\n      return value;\r\n    }");
     }
-}*/
+}
