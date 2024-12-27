@@ -15,8 +15,10 @@ using EstateReportingAPI.DataTrasferObjects;
 using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
 using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
 using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
+using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
 using LastSettlement = EstateReportingAPI.DataTransferObjects.LastSettlement;
 using MerchantKpi = EstateReportingAPI.DataTransferObjects.MerchantKpi;
+using SettlementSchedule = EstateManagementUI.BusinessLogic.Models.SettlementSchedule;
 using TodaysSales = EstateReportingAPI.DataTransferObjects.TodaysSales;
 using TodaysSalesCountByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesCountByHour;
 using TodaysSalesCountByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesCountByHourModel;
@@ -74,8 +76,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.EstateId.ShouldBe(response.EstateId);
             model.Operators.ShouldBeNull();
             response.SecurityUsers.ForEach(u => {
-                SecurityUserModel securityUserModel =
-                    model.SecurityUsers.SingleOrDefault(su => su.SecurityUserId == u.SecurityUserId);
+                SecurityUserModel securityUserModel = model.SecurityUsers.SingleOrDefault(su => su.SecurityUserId == u.SecurityUserId);
                 securityUserModel.ShouldNotBeNull();
                 securityUserModel.EmailAddress.ShouldBe(u.EmailAddress);
             });
@@ -92,8 +93,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.EstateId.ShouldBe(response.EstateId);
             model.Operators.Count.ShouldBe(response.Operators.Count);
             response.Operators.ForEach(o => {
-                EstateOperatorModel operatorModel =
-                    model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
+                EstateOperatorModel operatorModel = model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
                 operatorModel.ShouldNotBeNull();
                 operatorModel.RequireCustomMerchantNumber.ShouldBe(o.RequireCustomMerchantNumber);
                 operatorModel.RequireCustomTerminalNumber.ShouldBe(o.RequireCustomTerminalNumber);
@@ -112,16 +112,14 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.EstateId.ShouldBe(response.EstateId);
             model.Operators.Count.ShouldBe(response.Operators.Count);
             response.Operators.ForEach(o => {
-                EstateOperatorModel operatorModel =
-                    model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
+                EstateOperatorModel operatorModel = model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
                 operatorModel.ShouldNotBeNull();
                 operatorModel.RequireCustomMerchantNumber.ShouldBe(o.RequireCustomMerchantNumber);
                 operatorModel.RequireCustomTerminalNumber.ShouldBe(o.RequireCustomTerminalNumber);
                 operatorModel.Name.ShouldBe(o.Name);
             });
             response.SecurityUsers.ForEach(u => {
-                SecurityUserModel securityUserModel =
-                    model.SecurityUsers.SingleOrDefault(su => su.SecurityUserId == u.SecurityUserId);
+                SecurityUserModel securityUserModel = model.SecurityUsers.SingleOrDefault(su => su.SecurityUserId == u.SecurityUserId);
                 securityUserModel.ShouldNotBeNull();
                 securityUserModel.EmailAddress.ShouldBe(u.EmailAddress);
             });
@@ -138,8 +136,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.EstateId.ShouldBe(response.EstateId);
             model.Operators.ShouldBeNull();
             response.SecurityUsers.ForEach(u => {
-                SecurityUserModel securityUserModel =
-                    model.SecurityUsers.SingleOrDefault(su => su.SecurityUserId == u.SecurityUserId);
+                SecurityUserModel securityUserModel = model.SecurityUsers.SingleOrDefault(su => su.SecurityUserId == u.SecurityUserId);
                 securityUserModel.ShouldNotBeNull();
                 securityUserModel.EmailAddress.ShouldBe(u.EmailAddress);
             });
@@ -163,8 +160,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.EstateId.ShouldBe(response.EstateId);
             model.Operators.Count.ShouldBe(response.Operators.Count);
             response.Operators.ForEach(o => {
-                EstateOperatorModel operatorModel =
-                    model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
+                EstateOperatorModel operatorModel = model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
                 operatorModel.ShouldNotBeNull();
                 operatorModel.RequireCustomMerchantNumber.ShouldBe(o.RequireCustomMerchantNumber);
                 operatorModel.RequireCustomTerminalNumber.ShouldBe(o.RequireCustomTerminalNumber);
@@ -323,8 +319,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.NumberOfFees.ShouldBe(contractProduct.TransactionFees.Count);
 
             foreach (ContractProductTransactionFee contractProductTransactionFee in contractProduct.TransactionFees) {
-                ContractProductTransactionFeeModel? modelFee = model.ContractProductTransactionFees.SingleOrDefault(p =>
-                    p.ContractProductTransactionFeeId == contractProductTransactionFee.TransactionFeeId);
+                ContractProductTransactionFeeModel? modelFee = model.ContractProductTransactionFees.SingleOrDefault(p => p.ContractProductTransactionFeeId == contractProductTransactionFee.TransactionFeeId);
                 modelFee.ShouldNotBeNull();
                 modelFee.Value.ShouldBe(contractProductTransactionFee.Value);
                 modelFee.CalculationType.ShouldBe(contractProductTransactionFee.CalculationType.ToString());
@@ -343,8 +338,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             model.Count.ShouldBe(fileImportLogList.FileImportLogs.Count);
 
             foreach (FileImportLog fileImportLog in fileImportLogList.FileImportLogs) {
-                FileImportLogModel? fileImportLogModel =
-                    model.SingleOrDefault(m => m.FileImportLogId == fileImportLog.FileImportLogId);
+                FileImportLogModel? fileImportLogModel = model.SingleOrDefault(m => m.FileImportLogId == fileImportLog.FileImportLogId);
                 fileImportLogModel.ShouldNotBeNull();
                 fileImportLogModel.ImportLogDateTime.ShouldBe(fileImportLog.ImportLogDateTime);
                 fileImportLogModel.FileCount.ShouldBe(fileImportLog.FileCount);
@@ -352,8 +346,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
                 fileImportLogModel.ImportLogTime.ShouldBe(fileImportLog.ImportLogTime);
 
                 foreach (FileImportLogFile fileImportLogFile in fileImportLog.Files) {
-                    FileImportLogFileModel? fileModel =
-                        fileImportLogModel.Files.SingleOrDefault(f => f.FileId == fileImportLogFile.FileId);
+                    FileImportLogFileModel? fileModel = fileImportLogModel.Files.SingleOrDefault(f => f.FileId == fileImportLogFile.FileId);
                     fileModel.ShouldNotBeNull();
                     fileModel.MerchantId.ShouldBe(fileImportLogFile.MerchantId);
                     fileModel.FilePath.ShouldBe(fileImportLogFile.FilePath);
@@ -411,8 +404,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             List<TodaysSalesCountByHourModel> model = ModelFactory.ConvertFrom(response);
 
             foreach (TodaysSalesCountByHour todaysSalesCountByHour in response) {
-                TodaysSalesCountByHourModel? hourModel =
-                    model.SingleOrDefault(m => m.Hour == todaysSalesCountByHour.Hour);
+                TodaysSalesCountByHourModel? hourModel = model.SingleOrDefault(m => m.Hour == todaysSalesCountByHour.Hour);
                 hourModel.ShouldNotBeNull();
                 hourModel.TodaysSalesCount.ShouldBe(todaysSalesCountByHour.TodaysSalesCount);
                 hourModel.ComparisonSalesCount.ShouldBe(todaysSalesCountByHour.ComparisonSalesCount);
@@ -447,8 +439,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             List<TodaysSalesValueByHourModel> model = ModelFactory.ConvertFrom(response);
 
             foreach (TodaysSalesValueByHour todaysSalesValueByHour in response) {
-                TodaysSalesValueByHourModel? hourModel =
-                    model.SingleOrDefault(m => m.Hour == todaysSalesValueByHour.Hour);
+                TodaysSalesValueByHourModel? hourModel = model.SingleOrDefault(m => m.Hour == todaysSalesValueByHour.Hour);
                 hourModel.ShouldNotBeNull();
                 hourModel.TodaysSalesValue.ShouldBe(todaysSalesValueByHour.TodaysSalesValue);
                 hourModel.ComparisonSalesValue.ShouldBe(todaysSalesValueByHour.ComparisonSalesValue);
@@ -476,9 +467,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         [Fact]
         public void ModelFactory_ConvertFrom_MerchantKpi_IsConverted() {
 
-            MerchantKpi model = new MerchantKpi() {
-                MerchantsWithNoSaleInLast7Days = 1, MerchantsWithNoSaleToday = 2, MerchantsWithSaleInLastHour = 3
-            };
+            MerchantKpi model = new MerchantKpi() { MerchantsWithNoSaleInLast7Days = 1, MerchantsWithNoSaleToday = 2, MerchantsWithSaleInLastHour = 3 };
             var result = ModelFactory.ConvertFrom(model);
             result.ShouldNotBeNull();
             result.MerchantsWithNoSaleInLast7Days.ShouldBe(model.MerchantsWithNoSaleInLast7Days);
@@ -603,32 +592,22 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Theory]
-        [InlineData(Models.SettlementSchedule.Immediate,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
-        [InlineData(Models.SettlementSchedule.Monthly,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
-        [InlineData(Models.SettlementSchedule.Weekly,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
-        [InlineData((Models.SettlementSchedule)99,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
-        public void ModelFactory_ConvertFrom_SettlementSchedule_IsConverted(
-            Models.SettlementSchedule settlementSchedule,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedResult) {
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule result =
-                ModelFactory.ConvertFrom(settlementSchedule);
+        [InlineData(Models.SettlementSchedule.Immediate, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(Models.SettlementSchedule.Monthly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        [InlineData(Models.SettlementSchedule.Weekly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData((Models.SettlementSchedule)99, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        public void ModelFactory_ConvertFrom_SettlementSchedule_IsConverted(Models.SettlementSchedule settlementSchedule,
+                                                                            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedResult) {
+            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule result = ModelFactory.ConvertFrom(settlementSchedule);
             result.ShouldBe(expectedResult);
         }
 
         [Theory]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
-        public void ModelFactory_ConvertFrom_CreateMerchantModel_ModelIsConverted(
-            BusinessLogic.Models.SettlementSchedule settlementSchedule,
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        public void ModelFactory_ConvertFrom_CreateMerchantModel_ModelIsConverted(BusinessLogic.Models.SettlementSchedule settlementSchedule,
+                                                                                  EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
             CreateMerchantModel model = TestData.CreateMerchantModel(settlementSchedule);
 
             CreateMerchantRequest request = ModelFactory.ConvertFrom(model);
@@ -659,6 +638,221 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             CreateMerchantRequest request = ModelFactory.ConvertFrom(model);
 
             request.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_Address_ModelIsConverted() {
+            CreateMerchantModel model = TestData.CreateMerchantModel(SettlementSchedule.Immediate);
+
+            Address request = ModelFactory.ConvertFrom(model.Address);
+
+            request.ShouldNotBeNull();
+            request.AddressLine1.ShouldBe(model.Address.AddressLine1);
+            request.AddressLine2.ShouldBe(model.Address.AddressLine2);
+            request.AddressLine3.ShouldBe(model.Address.AddressLine3);
+            request.AddressLine4.ShouldBe(model.Address.AddressLine4);
+            request.Town.ShouldBe(model.Address.Town);
+            request.Region.ShouldBe(model.Address.Region);
+            request.Country.ShouldBe(model.Address.Country);
+            request.PostalCode.ShouldBe(model.Address.PostalCode);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_Address_AddressIsNull_ModelIsConverted() {
+            CreateMerchantModel model = TestData.CreateMerchantModel(SettlementSchedule.Immediate);
+            model.Address = null;
+
+            var request = ModelFactory.ConvertFrom(model.Address);
+
+            request.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_Contact_ModelIsConverted() {
+            CreateMerchantModel model = TestData.CreateMerchantModel(SettlementSchedule.Immediate);
+
+            Contact request = ModelFactory.ConvertFrom(model.Contact);
+
+            request.ShouldNotBeNull();
+            request.EmailAddress.ShouldBe(model.Contact.ContactEmailAddress);
+            request.PhoneNumber.ShouldBe(model.Contact.ContactPhoneNumber);
+            request.ContactName.ShouldBe(model.Contact.ContactName);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_Contact_ContactIsNull_ModelIsConverted() {
+            CreateMerchantModel model = TestData.CreateMerchantModel(SettlementSchedule.Immediate);
+            model.Contact = null;
+            Contact request = ModelFactory.ConvertFrom(model.Contact);
+
+            request.ShouldBeNull();
+        }
+
+        [Theory]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        public void ModelFactory_ConvertFrom_UpdateMerchantModel_ModelIsConverted(BusinessLogic.Models.SettlementSchedule settlementSchedule,
+                                                                                  EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
+            UpdateMerchantModel model = TestData.UpdateMerchantModel(settlementSchedule);
+
+            var request = ModelFactory.ConvertFrom(model);
+
+            request.Name.ShouldBe(model.MerchantName);
+            request.SettlementSchedule.ShouldBe(expectedSettlementSchedule);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_UpdateMerchantModel_ModelIsNull_ModelIsConverted() {
+            UpdateMerchantModel model = null;
+
+            var request = ModelFactory.ConvertFrom(model);
+
+            request.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_MerchantResponse_ResponseIsConverted() {
+            MerchantResponse response = TestData.MerchantResponse;
+
+            var model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldNotBeNull();
+            model.MerchantId.ShouldBe(response.MerchantId);
+            model.MerchantName.ShouldBe(response.MerchantName);
+            model.SettlementSchedule.ShouldBe(response.SettlementSchedule.ToString());
+            model.MerchantReference.ShouldBe(response.MerchantReference);
+            model.Address.AddressLine1.ShouldBe(response.Addresses.First().AddressLine1);
+            model.Address.AddressLine2.ShouldBe(response.Addresses.First().AddressLine2);
+            model.Address.AddressLine3.ShouldBe(response.Addresses.First().AddressLine3);
+            model.Address.AddressLine4.ShouldBe(response.Addresses.First().AddressLine4);
+            model.Address.Town.ShouldBe(response.Addresses.First().Town);
+            model.Address.Region.ShouldBe(response.Addresses.First().Region);
+            model.Address.Country.ShouldBe(response.Addresses.First().Country);
+            model.Address.PostalCode.ShouldBe(response.Addresses.First().PostalCode);
+            model.Contact.ContactName.ShouldBe(response.Contacts.First().ContactName);
+            model.Contact.ContactEmailAddress.ShouldBe(response.Contacts.First().ContactEmailAddress);
+            model.Contact.ContactPhoneNumber.ShouldBe(response.Contacts.First().ContactPhoneNumber);
+
+            model.Operators.Count.ShouldBe(response.Operators.Count);
+            response.Operators.ForEach(o => {
+                var operatorModel = model.Operators.SingleOrDefault(mo => mo.OperatorId == o.OperatorId);
+                operatorModel.ShouldNotBeNull();
+                operatorModel.Name.ShouldBe(o.Name);
+                operatorModel.IsDeleted.ShouldBe(o.IsDeleted);
+                operatorModel.MerchantNumber.ShouldBe(o.MerchantNumber);
+                operatorModel.TerminalNumber.ShouldBe(o.TerminalNumber);
+            });
+
+            model.Devices.Count.ShouldBe(response.Devices.Count);
+            foreach (var device in response.Devices) {
+                model.Devices.ShouldContainKeyAndValue(device.Key, device.Value);
+            }
+
+            model.Contracts.Count.ShouldBe(response.Contracts.Count);
+            response.Contracts.ForEach(c => {
+                var contractModel = model.Contracts.SingleOrDefault(mc => mc.ContractId == c.ContractId);
+                contractModel.ShouldNotBeNull();
+                contractModel.IsDeleted.ShouldBe(c.IsDeleted);
+            });
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_MerchantResponse_ResponseIsNull_ResponseIsConverted() {
+            MerchantResponse response = null;
+
+            var model = ModelFactory.ConvertFrom(response);
+
+            model.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_AssignOperatorToMerchantModel_ModelIsConverted()
+        {
+            var model = TestData.AssignOperatorToMerchantModel;
+            var request = ModelFactory.ConvertFrom(model);
+            request.ShouldNotBeNull();
+            request.OperatorId.ShouldBe(model.OperatorId);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_AssignOperatorToMerchantModel_ModelIsNull_ModelIsConverted() {
+            AssignOperatorToMerchantModel model = null;
+            var request = ModelFactory.ConvertFrom(model);
+            request.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_AssignContractToMerchantModel_ModelIsConverted()
+        {
+            var model = TestData.AssignContractToMerchantModel;
+            var request = ModelFactory.ConvertFrom(model);
+            request.ShouldNotBeNull();
+            request.ContractId.ShouldBe(model.ContractId);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_AssignContractToMerchantModel_ModelIsNull_ModelIsConverted()
+        {
+            AssignContractToMerchantModel model = null;
+            var request = ModelFactory.ConvertFrom(model);
+            request.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_FileDetails_SourceIsNull_ReturnsNull()
+        {
+            FileDetails source = null;
+
+            var result = ModelFactory.ConvertFrom(source);
+
+            result.ShouldBeNull();
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_FileDetails_SourceIsConverted()
+        {
+            FileDetails source = TestData.FileDetails;
+
+            var result = ModelFactory.ConvertFrom(source);
+
+            result.ShouldNotBeNull();
+            result.FileId.ShouldBe(source.FileId);
+            result.FileProfileId.ShouldBe(source.FileProfileId);
+            result.FileProfileName.ShouldBe(source.FileProfileName);
+            result.FileImportLogId.ShouldBe(source.FileImportLogId);
+            result.FileLocation.ShouldBe(source.FileLocation);
+            result.ProcessingCompleted.ShouldBe(source.ProcessingCompleted);
+            result.EstateId.ShouldBe(source.EstateId);
+            result.UserId.ShouldBe(source.UserId);
+            result.UserEmailAddress.ShouldBe(source.UserEmailAddress);
+            result.MerchantId.ShouldBe(source.MerchantId);
+            result.MerchantName.ShouldBe(source.MerchantName);
+            result.ProcessingSummary.FailedLines.ShouldBe(source.ProcessingSummary.FailedLines);
+            result.ProcessingSummary.IgnoredLines.ShouldBe(source.ProcessingSummary.IgnoredLines);
+            result.ProcessingSummary.NotProcessedLines.ShouldBe(source.ProcessingSummary.NotProcessedLines);
+            result.ProcessingSummary.RejectedLines.ShouldBe(source.ProcessingSummary.RejectedLines);
+            result.ProcessingSummary.SuccessfullyProcessedLines.ShouldBe(source.ProcessingSummary.SuccessfullyProcessedLines);
+            result.ProcessingSummary.TotalLines.ShouldBe(source.ProcessingSummary.TotalLines);
+
+            result.FileLines.Count.ShouldBe(source.FileLines.Count);
+            foreach (var fileLine in source.FileLines)
+            {
+                FileLineModel? fileLineModel = result.FileLines.SingleOrDefault(fl => fl.LineNumber == fileLine.LineNumber);
+                fileLineModel.ShouldNotBeNull();
+                fileLineModel.LineData.ShouldBe(fileLine.LineData);
+                fileLineModel.RejectionReason.ShouldBe(fileLine.RejectionReason);
+                fileLineModel.TransactionId.ShouldBe(fileLine.TransactionId);
+                fileLineModel.ProcessingResult.ShouldBe(fileLine.ProcessingResult switch
+                {
+                    FileLineProcessingResult.Failed => Models.FileLineProcessingResult.Failed,
+                    FileLineProcessingResult.Ignored => Models.FileLineProcessingResult.Ignored,
+                    FileLineProcessingResult.NotProcessed => Models.FileLineProcessingResult.NotProcessed,
+                    FileLineProcessingResult.Rejected => Models.FileLineProcessingResult.Rejected,
+                    FileLineProcessingResult.Successful => Models.FileLineProcessingResult.Successful,
+                    _ => Models.FileLineProcessingResult.Unknown
+                });
+            }
         }
     }
 }

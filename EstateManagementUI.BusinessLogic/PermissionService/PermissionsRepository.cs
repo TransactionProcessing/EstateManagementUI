@@ -9,6 +9,7 @@ using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Shared.Exceptions;
 using Shared.Logger;
 using SimpleResults;
 using SQLite;

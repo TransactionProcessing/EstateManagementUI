@@ -3,11 +3,13 @@ using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable disable
 
 namespace EstateManagementUI.BusinessLogic.Migrations
 {
+    [ExcludeFromCodeCoverage]
     [DbContext(typeof(PermissionsContext))]
     partial class PermissionsContextModelSnapshot : ModelSnapshot
     {
