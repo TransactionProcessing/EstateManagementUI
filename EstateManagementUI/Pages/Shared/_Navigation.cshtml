@@ -10,13 +10,13 @@
 <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
 <li class="nav-item menu-open">
     @{
-        await NavigationService.RenderItem(User.Identity.Name,"Dashboard", "Dashboard", "dashboardLink");
-        await NavigationService.RenderItem(User.Identity.Name, "My Estate", "Estate", "estateDetailsLink");
-        await NavigationService.RenderItem(User.Identity.Name, "My Merchants", "Merchant", "merchantsLink");
-        await NavigationService.RenderItem(User.Identity.Name, "My Contracts", "Contract", "contractsLink");
-        await NavigationService.RenderItem(User.Identity.Name, "My Operators", "Operator", "operatorsLink");
-        await NavigationService.RenderItem(User.Identity.Name, "Reports", "Reporting", "reportingLink");
-        await NavigationService.RenderItem(User.Identity.Name, "File Processing", "FileProcessing", "fileProcessingLink");
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name,"Dashboard", "Dashboard", "dashboardLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Estate", "Estate", "estateDetailsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Merchants", "Merchant", "merchantsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Contracts", "Contract", "contractsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Operators", "Operator", "operatorsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "Reports", "Reporting", "reportingLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "File Processing", "FileProcessing", "fileProcessingLink"));
     }
 </li>
 </ul>
