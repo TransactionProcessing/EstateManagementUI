@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace EstateManagementUI.Pages.Operator.OperatorDialogs;
 
+[ExcludeFromCodeCoverage]
 public class OperatorPageEvents
 {
     public record ShowNewOperatorDialog;

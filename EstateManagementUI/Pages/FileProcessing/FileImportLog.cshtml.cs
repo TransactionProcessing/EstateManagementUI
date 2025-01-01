@@ -4,9 +4,11 @@ using EstateManagementUI.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.FileProcessing
 {
+    [ExcludeFromCodeCoverage]
     [Authorize]
     public class FileImportLogModel : SecurePageModel
     {

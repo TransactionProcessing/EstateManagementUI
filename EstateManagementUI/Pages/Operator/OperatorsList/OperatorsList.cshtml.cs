@@ -29,49 +29,9 @@ namespace EstateManagementUI.Pages.Operator.OperatorsList
         {
             Mediator = mediator;
             Operators = new List<ViewModels.Operator>();
-
-            //Subscribe<OperatorPageEvents.OperatorCreatedEvent>(Handle);
-            //Subscribe<OperatorPageEvents.OperatorUpdatedEvent>(Handle);
-            //Subscribe<OperatorPageEvents.ShowNewOperatorDialog>(Handle);
-            //Subscribe<OperatorPageEvents.HideNewOperatorDialog>(Handle);
-            //Subscribe<OperatorPageEvents.ShowEditOperatorDialog>(Handle);
-            //Subscribe<OperatorPageEvents.HideEditOperatorDialog>(Handle);
         }
 
-        //public async Task Handle(OperatorPageEvents.OperatorCreatedEvent @event)
-        //{
-        //    // Sleep for a second
-        //    await Task.Delay(1000); // TODO: might be a better way of handling this
-        //    await GetOperators();
-        //}
-
-        //public async Task Handle(OperatorPageEvents.OperatorUpdatedEvent @event)
-        //{
-        //    // Sleep for a second
-        //    await Task.Delay(1000); // TODO: might be a better way of handling this
-        //    await GetOperators();
-        //}
-
-        //public async Task Handle(OperatorPageEvents.ShowNewOperatorDialog @event)
-        //{
-        //    OperatorId = Guid.Empty;
-        //    ShowDialog = true;
-        //}
-        //public async Task Handle(OperatorPageEvents.HideNewOperatorDialog @event)
-        //{
-        //    OperatorId = Guid.Empty;
-        //    ShowDialog = false;
-        //}
-        //public async Task Handle(OperatorPageEvents.ShowEditOperatorDialog @event)
-        //{
-        //    OperatorId = @event.OperatorId;
-        //    ShowDialog = true;
-        //}
-        //public async Task Handle(OperatorPageEvents.HideEditOperatorDialog @event)
-        //{
-        //    OperatorId = Guid.Empty;
-        //    ShowDialog = false;
-        //}
+        
 
         public List<ViewModels.Operator> Operators { get; set; }
 
@@ -80,13 +40,13 @@ namespace EstateManagementUI.Pages.Operator.OperatorsList
             await GetOperators();
         }
 
-        public void Add() => this.Location(this.Url.Page("/Operator/NewOperator"));
+        public void Add() => this.Location("/Operator/NewOperator");
 
         public async Task View(Guid operatorId) =>
-            this.Location(this.Url.Page("/Operator/ViewOperator", new { OperatorId = operatorId }));
+            this.Location("/Operator/ViewOperator", new { OperatorId = operatorId });
 
         public async Task Edit(Guid operatorId) =>
-            this.Location(this.Url.Page("/Operator/EditOperator", new { OperatorId = operatorId }));
+            this.Location("/Operator/EditOperator", new { OperatorId = operatorId });
 
         private async Task GetOperators()
         {

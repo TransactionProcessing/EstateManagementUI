@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.Common;
@@ -7,6 +8,7 @@ using Shared.Logger;
 
 namespace EstateManagementUI.Pages.Estate
 {
+    [ExcludeFromCodeCoverage]
     [Authorize]
     public class IndexModel : SecurePageModel
     {

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
@@ -10,6 +11,7 @@ using static Hydro.Scope;
 
 namespace EstateManagementUI.Pages.PermissionManagement.Roles.EditRole;
 
+[ExcludeFromCodeCoverage]
 public class EditRoleUsers : HydroComponent
 {
     private readonly IPermissionsRepository PermissionsRepository;

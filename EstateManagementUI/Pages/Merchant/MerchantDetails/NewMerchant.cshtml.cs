@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails
 {
+    [ExcludeFromCodeCoverage]
     public class NewMerchant : Merchant
     {
         public NewMerchant(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, MerchantFunctions.New)

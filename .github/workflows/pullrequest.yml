@@ -27,6 +27,7 @@ jobs:
     - name: Run Unit Tests
       run: |        
         dotnet test "EstateManagementUI.BusinessLogic.Tests\EstateManagementUI.BusinessLogic.Tests.csproj"  
+        dotnet test "EstateManagementUI.UITests\EstateManagementUI.UITests.csproj"  
 
   chrometests:
     name: "Build and Test UI - Chrome"

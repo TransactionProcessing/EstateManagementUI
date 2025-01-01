@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
 using Hydro.Utils;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails
 {
+    [ExcludeFromCodeCoverage]
     public class ViewMerchant : Merchant {
         
         public ViewMerchant(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, MerchantFunctions.View)

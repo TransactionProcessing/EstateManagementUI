@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI.Business
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.ViewModels", "EstateManagementUI.ViewModels\EstateManagementUI.ViewModels.csproj", "{245519C4-A8C6-40A4-AE09-9431DC1845EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.UITests", "EstateManagementUI.UITests\EstateManagementUI.UITests.csproj", "{CC0964BD-CDF0-4976-AF28-B28800FDC286}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{245519C4-A8C6-40A4-AE09-9431DC1845EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{245519C4-A8C6-40A4-AE09-9431DC1845EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{245519C4-A8C6-40A4-AE09-9431DC1845EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC0964BD-CDF0-4976-AF28-B28800FDC286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC0964BD-CDF0-4976-AF28-B28800FDC286}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC0964BD-CDF0-4976-AF28-B28800FDC286}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC0964BD-CDF0-4976-AF28-B28800FDC286}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{4E83EBD1-AC2B-43DA-9EDD-420A213FF635} = {E7671C23-F30C-471A-A9EF-AC85DC607B55}
 		{661A3E05-A174-4930-8171-5EDC19D1D267} = {05420FAB-1C50-4AAD-9E7C-2A86184019B7}
 		{245519C4-A8C6-40A4-AE09-9431DC1845EF} = {05420FAB-1C50-4AAD-9E7C-2A86184019B7}
+		{CC0964BD-CDF0-4976-AF28-B28800FDC286} = {E7671C23-F30C-471A-A9EF-AC85DC607B55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C5AE6DA4-B167-44E5-9B63-61C7E8D1BC9F}

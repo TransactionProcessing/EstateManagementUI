@@ -1,10 +1,13 @@
 using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 using static EstateManagementUI.Common.ChartBuilder.ChartObjects;
 using JsonConverter = Newtonsoft.Json.JsonConverter;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace EstateManagementUI.Common;
 
+
+[ExcludeFromCodeCoverage]
 public class ChartBuilder {
 
     public class ChartObjects

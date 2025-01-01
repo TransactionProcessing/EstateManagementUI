@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace EstateManagementUI.Common
@@ -16,6 +17,7 @@ namespace EstateManagementUI.Common
             return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(claim.Value);
         }
 
+        [ExcludeFromCodeCoverage]
         public static (String authorityAddress, String issuerAddress) GetSecurityServiceAddresses(String authority, String securityServiceLocalPort, String securityServicePort)
         {
             Console.WriteLine($"authority is {authority}");

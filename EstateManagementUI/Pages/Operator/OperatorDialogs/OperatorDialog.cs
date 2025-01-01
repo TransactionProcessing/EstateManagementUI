@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
@@ -25,6 +26,7 @@ public class Operator : SecureHydroComponent {
         Subscribe<OperatorPageEvents.OperatorUpdatedEvent>(Handle);
     }
 
+    [ExcludeFromCodeCoverage]
     private async Task Handle(OperatorPageEvents.OperatorCreatedEvent obj)
     {
         this.Dispatch(new ShowMessage("Operator Created Successfully", ToastType.Success), Scope.Global);
@@ -32,6 +34,7 @@ public class Operator : SecureHydroComponent {
         this.Close();
     }
 
+    [ExcludeFromCodeCoverage]
     private async Task Handle(OperatorPageEvents.OperatorUpdatedEvent obj)
     {
         this.Dispatch(new ShowMessage("Operator Updated Successfully", ToastType.Success), Scope.Global);
@@ -51,9 +54,9 @@ public class Operator : SecureHydroComponent {
 
         Queries.GetOperatorQuery query = new Queries.GetOperatorQuery(this.AccessToken, this.EstateId, this.OperatorId);
         Result<OperatorModel> result = await this.Mediator.Send(query, cancellationToken);
-        if (result.IsFailed) {
-            // handle this
-        }
+        //if (result.IsFailed) {
+        //    // handle this
+        //}
 
         this.Name = result.Data.Name;
         this.RequireCustomTerminalNumber = result.Data.RequireCustomTerminalNumber;
@@ -69,12 +72,12 @@ public class Operator : SecureHydroComponent {
 
     public bool RequireCustomTerminalNumber { get; set; }
 
-    public void Close() => this.Location(this.Url.Page("/Operator/Index"));
+    public void Close() => this.Location("/Operator/Index");
 
     public async Task Save() {
-        if (!this.ModelState.IsValid) {
-            return;
-        }
+        //if (!this.ModelState.IsValid) {
+        //    return;
+        //}
 
         await this.PopulateTokenAndEstateId();
 

@@ -71,14 +71,9 @@ namespace EstateManagementUI.Pages.Contract.Contracts
 
         public (ContractSorting Column, bool Ascending) Sorting { get; set; }
 
-        public async Task Edit(Guid contractId)
-        {
-
-        }
-
         public async Task ViewProducts(Guid contractId)
         {
-            this.Location(this.Url.Page("/Contract/ContractProducts", new { ContractId = contractId }));
+            this.Location("/Contract/ContractProducts", new { ContractId = contractId });
         }
     }
 
