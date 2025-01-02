@@ -1,66 +1,22 @@
 ﻿@using EstateManagementUI.BusinessLogic.Clients
 @using EstateManagementUI.BusinessLogic.PermissionService
+@using EstateManagementUI.Pages.Services
 @using global::Shared.Logger
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using SimpleResults
 @inject IPermissionsService PermissionsService
-@{
-    string GetCurrentPageClass(string prefix) {
-        String page = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
-        return page.StartsWith($"/{prefix}") ? "btn btn-sm btn-neutral btn-active" : "btn btn-sm btn-ghost";
-    }
+@inject NavigationService NavigationService
 
-    async Task RenderItem(string title, string name, String id, String pageName="Index") {
-        Result permisionResult = await PermissionsService.DoIHavePermissions(User.Identity.Name, name);
-        if (permisionResult.IsFailed) {
-            Logger.LogWarning(permisionResult.Message);
-            return;
-        }
-        else
-        {
-            Logger.LogWarning($"Permission granted for userName: {User.Identity.Name} SectionName: {name}");
-        }
-
-        var link = $"/{name}/{pageName}";
-        <a class='nav-link' asp-page="@link" id="@id">
-            @switch (name)
-            {
-                case "Estate":
-                    <i class="fa-solid fa-network-wired"></i>
-                    break;
-                case "Merchant":
-                    <i class="fa-solid fa-store"></i>
-                    break;
-                case "Contract":
-                    <i class="fa-solid fa-file-contract"></i>
-                    break;
-                case "Operator":
-                    <i class="fa-solid fa-building-columns"></i>
-                    break;
-                case "Reporting":
-                    <i class="fa-solid fa-chart-simple"></i>
-                    break;
-                case "File Processing":
-                    <i class="fa-solid fa-file-csv"></i>
-                    break;
-                    default:
-                    <i class="fa-solid fa-gauge-high"></i>
-                    break;
-            }
-            <partial name="Loading"/>
-            <p>@title</p>
-        </a>
-    }
-}
 <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
 <li class="nav-item menu-open">
     @{
-        await RenderItem("Dashboard", "Dashboard","dashboardLink");
-        await RenderItem("My Estate", "Estate", "estateDetailsLink");
-        await RenderItem("My Merchants", "Merchant", "merchantsLink");
-        await RenderItem("My Contracts", "Contract", "contractsLink");
-        await RenderItem("My Operators", "Operator", "operatorsLink");
-        await RenderItem("Reports", "Reporting","reportingLink");
-        await RenderItem("File Processing", "FileProcessing", "fileProcessingLink");
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name,"Dashboard", "Dashboard", "dashboardLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Estate", "Estate", "estateDetailsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Merchants", "Merchant", "merchantsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Contracts", "Contract", "contractsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "My Operators", "Operator", "operatorsLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "Reports", "Reporting", "reportingLink"));
+        @Html.Raw(await NavigationService.RenderItem(User.Identity.Name, "File Processing", "FileProcessing", "fileProcessingLink"));
     }
 </li>
 </ul>

@@ -79,7 +79,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             if (FdOs.IsWindows())
             {
-                using (StreamWriter w = File.AppendText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts")))
+                var hostsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
+                using (StreamWriter w = File.AppendText(hostsPath))
                 {
                     w.WriteLine($"{ipaddress} {hostname}");
                 }

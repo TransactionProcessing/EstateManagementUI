@@ -103,7 +103,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
 
         public async Task ViewFileDetails(Guid fileId)
         {
-            this.Location(this.Url.Page("/FileProcessing/FileDetails", new { FileId = fileId}));
+            this.Location("/FileProcessing/FileDetails", new { FileId = fileId});
         }
     }
 

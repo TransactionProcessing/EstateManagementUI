@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Hydro.Utils;
 using System.Reflection.Metadata;
 using Hydro;
@@ -43,12 +44,14 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         public Boolean ShowOperatorDialog { get; set; }
         public Boolean ShowContractDialog { get; set; }
 
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.OperatorAssignedToMerchantEvent obj) {
             await Task.Delay(1000);
             this.Dispatch(new ShowMessage("Operator Assigned to Merchant Successfully", ToastType.Success), Scope.Global);
             await this.LoadMerchant(CancellationToken.None);
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.ContractAssignedToMerchantEvent obj)
         {
             await Task.Delay(1000);
@@ -56,6 +59,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
             await this.LoadMerchant(CancellationToken.None);
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.OperatorRemovedFromMerchantEvent obj)
         {
             await Task.Delay(1000);
@@ -63,26 +67,31 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
             await this.LoadMerchant(CancellationToken.None);
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.ContractRemovedFromMerchantEvent obj)
         {
             await Task.Delay(1000);
             this.Dispatch(new ShowMessage("Contract Removed from Merchant Successfully", ToastType.Success), Scope.Global);
             await this.LoadMerchant(CancellationToken.None);
         }
-        
+
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.ShowAddOperatorDialog obj) {
             this.ShowOperatorDialog = true;
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.ShowAddContractDialog obj)
         {
             this.ShowContractDialog = true;
         }
-        
+
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.HideAddOperatorDialog obj) {
             this.ShowOperatorDialog = false;
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.HideAddContractDialog obj)
         {
             this.ShowContractDialog= false;

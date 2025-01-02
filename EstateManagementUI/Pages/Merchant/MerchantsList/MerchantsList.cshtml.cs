@@ -30,13 +30,13 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
             Merchants = new List<ViewModels.Merchant>();
         }
 
-        public void Add() => this.Location(this.Url.Page("/Merchant/NewMerchant"));
+        public void Add() => this.Location("/Merchant/NewMerchant");
 
         public async Task View(Guid merchantId) =>
-            this.Location(this.Url.Page("/Merchant/ViewMerchant", new { MerchantId = merchantId }));
+            this.Location("/Merchant/ViewMerchant", new { MerchantId = merchantId });
 
         public async Task Edit(Guid merchantId) =>
-            this.Location(this.Url.Page("/Merchant/EditMerchant", new { MerchantId = merchantId }));
+            this.Location("/Merchant/EditMerchant", new { MerchantId = merchantId });
         
         public List<ViewModels.Merchant> Merchants { get; set; }
 

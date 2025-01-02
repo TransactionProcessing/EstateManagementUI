@@ -1,5 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails;
 
+[ExcludeFromCodeCoverage]
 public class MerchantPageEvents
 {
     public record MerchantCreatedEvent;

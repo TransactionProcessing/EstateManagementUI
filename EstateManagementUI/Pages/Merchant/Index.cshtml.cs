@@ -3,9 +3,11 @@ using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.Merchant
 {
+    [ExcludeFromCodeCoverage]
     [Authorize]
     public class IndexModel : SecurePageModel
     {

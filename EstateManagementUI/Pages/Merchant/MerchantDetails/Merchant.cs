@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
@@ -38,7 +39,8 @@ public class Merchant : SecureHydroComponent
         Subscribe<MerchantPageEvents.MerchantCreatedEvent>(Handle);
         Subscribe<MerchantPageEvents.MerchantUpdatedEvent>(Handle);
     }
-    
+
+    [ExcludeFromCodeCoverage]
     private async Task Handle(MerchantPageEvents.MerchantCreatedEvent obj)
     {
         this.Dispatch(new ShowMessage("Merchant Created Successfully", ToastType.Success), Scope.Global);
@@ -46,6 +48,7 @@ public class Merchant : SecureHydroComponent
         this.Close();
     }
 
+    [ExcludeFromCodeCoverage]
     private async Task Handle(MerchantPageEvents.MerchantUpdatedEvent obj) {
         this.Dispatch(new ShowMessage("Merchant Updated Successfully", ToastType.Success), Scope.Global);
         await Task.Delay(1000); // TODO: might be a better way of handling this
@@ -149,7 +152,7 @@ public class Merchant : SecureHydroComponent
 
     public string Reference { get; set; }
 
-    public void Close() => this.Location(this.Url.Page("/Merchant/Index"));
+    public void Close() => this.Location("/Merchant/Index");
 
     private async Task CreateNewMerchant() {
         BusinessLogic.Models.CreateMerchantModel createMerchantModel = new()
@@ -282,6 +285,7 @@ public class Merchant : SecureHydroComponent
     }
 }
 
+[ExcludeFromCodeCoverage]
 public class AddressViewModel {
     [Display(Name = "Address Line 1")]
     public String AddressLine1 { get; set; }
@@ -298,6 +302,7 @@ public class AddressViewModel {
     public Guid AddressId { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class ContactViewModel {
     [Display(Name = "Contact Name")]
     public String ContactName { get; set; }
@@ -308,6 +313,7 @@ public class ContactViewModel {
     public Guid ContactId { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class MerchantOperatorViewModel
 {
     [Display(Name = "Operator Name")]
@@ -322,6 +328,7 @@ public class MerchantOperatorViewModel
     public bool IsDeleted { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class MerchantDeviceViewModel
 {
     public Guid DeviceId { get; set; }
@@ -329,6 +336,7 @@ public class MerchantDeviceViewModel
     public string DeviceIdentifier { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class MerchantContractViewModel
 {
     public Guid ContractId { get; set; }

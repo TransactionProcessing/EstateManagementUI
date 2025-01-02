@@ -1,7 +1,6 @@
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
-using EstateManagementUI.Common;
 using EstateManagementUI.ViewModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -59,17 +58,5 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         }
 
         public async Task Close() => this.Dispatch(new MerchantPageEvents.HideAddOperatorDialog(), Scope.Global);
-    }
-
-    public class OperatorDialog : SecureHydroComponent {
-        protected readonly IMediator Mediator;
-
-        public Guid MerchantId { get; set; }
-
-        public OperatorDialog(IMediator mediator,
-                              IPermissionsService permissionsService,
-                              String merchantFunction) : base(ApplicationSections.Merchant, merchantFunction, permissionsService) {
-            this.Mediator = mediator;
-        }
     }
 }

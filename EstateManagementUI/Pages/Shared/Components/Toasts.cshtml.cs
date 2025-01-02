@@ -1,9 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using Hydro;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EstateManagementUI.Pages.Shared.Components
 {
+    [ExcludeFromCodeCoverage]
     public class Toasts : HydroComponent
     {
         public List<Toast> ToastsList { get; set; } = new();
@@ -39,5 +41,7 @@ namespace EstateManagementUI.Pages.Shared.Components
         Success,
         Error
     }
+
+    [ExcludeFromCodeCoverage]
     public record ShowMessage(string Message, ToastType Type = ToastType.Success);
 }

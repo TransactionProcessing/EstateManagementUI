@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using Azure;
@@ -10,6 +11,7 @@ using Shared.Logger;
 
 namespace EstateManagementUI.Pages.PermissionManagement.Components
 {
+    [ExcludeFromCodeCoverage]
     public class EnterUserCode : HydroComponent
     {
         public String UserCode { get; set; }

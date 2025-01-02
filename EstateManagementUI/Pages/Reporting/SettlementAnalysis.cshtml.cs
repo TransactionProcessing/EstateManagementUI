@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.Common;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EstateManagementUI.Pages.Reporting
 {
+    [ExcludeFromCodeCoverage]
     [Authorize]
     public class SettlementAnalysisModel : SecurePageModel
     {

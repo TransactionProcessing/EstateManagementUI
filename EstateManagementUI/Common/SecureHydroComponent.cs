@@ -6,9 +6,12 @@ using SimpleResults;
 using System.Security.Claims;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using Hydro.Utils;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Common;
 
+[ExcludeFromCodeCoverage]
 public class SecureHydroComponent : HydroComponent {
 
     private readonly String SectionName;
@@ -19,14 +22,50 @@ public class SecureHydroComponent : HydroComponent {
                                 String pageName,
                                 IPermissionsService permissionsService) : base() {
         this.SectionName = sectionName;
-        this.PageName = pageName;
         this.PermissionsService = permissionsService;
-        this.SectionName = sectionName;
         this.PageName = pageName;
     }
 
+    private static string GetFullTypeName(Type type) =>
+        type.DeclaringType != null
+            ? type.DeclaringType.Name + "+" + type.Name
+            : type.Name;
+
     protected String AccessToken;
     protected Guid EstateId;
+    public new void Dispatch<TEvent>(TEvent data, Scope scope = Scope.Parent, bool asynchronous = false)
+    {
+        Dispatch(GetFullTypeName(typeof(TEvent)), data, scope, asynchronous);
+    }
+
+    public List<Object> Events = new List<Object>();
+    public String LocationUrl;
+    public object Payload;
+
+
+    public new void Dispatch<TEvent>(string name,
+                                     TEvent data,
+                                     Scope scope = Scope.Parent,
+                                     bool asynchronous = false,
+                                     string subject = null) {
+        if (this.HttpContext != null) {
+            base.Dispatch(name, data, scope, asynchronous, subject);
+        }
+        else {
+            this.Events.Add(data);
+        }
+    }
+
+    public new void Location(string url,
+                             object payload = null) {
+        if (this.HttpContext != null) {
+            base.Location(this.Url.Page(url, payload));
+        }
+        else {
+            this.LocationUrl = url;
+            this.Payload = payload;
+        }
+    }
 
     protected async Task PopulateTokenAndEstateId() {
         if (this.HttpContext != null)

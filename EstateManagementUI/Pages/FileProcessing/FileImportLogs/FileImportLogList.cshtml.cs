@@ -113,14 +113,9 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
 
         public (FileImportLogListSorting Column, bool Ascending) Sorting { get; set; }
 
-        //public async Task Edit(Guid contractId)
-        //{
-
-        //}
-
         public async Task ViewFiles(Guid fileImportLogId)
         {
-          this.Location(this.Url.Page("/FileProcessing/FileImportLog", new { FileImportLogId = fileImportLogId, MerchantId = Guid.Parse(this.Merchant.MerchantId)}));
+          this.Location("/FileProcessing/FileImportLog", new { FileImportLogId = fileImportLogId, MerchantId = Guid.Parse(this.Merchant.MerchantId)});
         }
     }
 

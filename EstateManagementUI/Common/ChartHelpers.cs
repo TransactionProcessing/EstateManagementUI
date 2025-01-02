@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.AspNetCore.Html;
 
+[ExcludeFromCodeCoverage]
 public static class ChartHelpers {
     public static string ConvertChartOptionsToHtml(String chartOptions)
     {

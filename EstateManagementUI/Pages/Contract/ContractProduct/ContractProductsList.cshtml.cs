@@ -84,15 +84,10 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
         }
 
         public (ContractProductSorting Column, bool Ascending) Sorting { get; set; }
-
-        public async Task Edit(Guid contractProductId)
-        {
-
-        }
-
+        
         public async Task ViewProductFees(Guid contractProductId)
         {
-            this.Location(this.Url.Page("/Contract/ContractProductTransactionFees", new { ContractId = this.ContractId, ContractProductId = contractProductId }));
+            this.Location("/Contract/ContractProductTransactionFees", new { ContractId = this.ContractId, ContractProductId = contractProductId });
         }
     }
 

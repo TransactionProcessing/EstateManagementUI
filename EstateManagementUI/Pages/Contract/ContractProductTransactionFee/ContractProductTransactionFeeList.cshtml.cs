@@ -81,11 +81,6 @@ namespace EstateManagementUI.Pages.Contract.ContractProductTransactionFee
         }
 
         public (ContractProductTransactionFeeSorting Column, bool Ascending) Sorting { get; set; }
-
-        public async Task Edit(Guid contractProductId)
-        {
-
-        }
     }
 
     public enum ContractProductTransactionFeeSorting

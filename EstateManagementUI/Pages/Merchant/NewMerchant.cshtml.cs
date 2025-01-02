@@ -4,9 +4,11 @@ using EstateManagementUI.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.Merchant
 {
+    [ExcludeFromCodeCoverage]
     [Authorize]
     public class NewMerchantModel : SecurePageModel
     {

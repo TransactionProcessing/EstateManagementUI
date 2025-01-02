@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Shared.General;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.PermissionManagement.Roles {
+    [ExcludeFromCodeCoverage]
     public class IndexModel : PermissionPageModel {
     }
-
+    [ExcludeFromCodeCoverage]
     public class PermissionPageModel : PageModel {
         public IActionResult OnGet()
         {

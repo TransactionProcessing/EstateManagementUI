@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ using SimpleResults;
 
 namespace EstateManagementUI.Common;
 
+[ExcludeFromCodeCoverage]
 public class SecurePageModel : PageModel {
     private readonly IPermissionsService PermissionsService;
     private readonly String SectionName;

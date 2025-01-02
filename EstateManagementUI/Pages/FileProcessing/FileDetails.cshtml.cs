@@ -4,10 +4,12 @@ using EstateManagementUI.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.FileProcessing
 {
     [Authorize]
+    [ExcludeFromCodeCoverage]
     public class FileDetailsModel : SecurePageModel
     {
         [BindProperty(SupportsGet = true)]

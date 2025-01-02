@@ -3,12 +3,27 @@ using EstateManagement.DataTransferObjects.Responses.Estate;
 using EstateManagement.DataTransferObjects.Responses.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using EstateReportingAPI.DataTransferObjects;
 using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SimpleResults;
+using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
+using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
+using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
+using FileLine = FileProcessor.DataTransferObjects.Responses.FileLine;
 using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
+using LastSettlement = EstateReportingAPI.DataTransferObjects.LastSettlement;
+using MerchantKpi = EstateReportingAPI.DataTransferObjects.MerchantKpi;
 using SettlementSchedule = EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule;
+using TodaysSales = EstateReportingAPI.DataTransferObjects.TodaysSales;
+using TodaysSalesCountByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesCountByHour;
+using TodaysSalesCountByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesCountByHourModel;
+using TodaysSalesValueByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesValueByHour;
+using TodaysSalesValueByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesValueByHourModel;
+using TodaysSettlement = EstateReportingAPI.DataTransferObjects.TodaysSettlement;
 
 namespace EstateManagementUI.Testing
 {
@@ -777,5 +792,583 @@ namespace EstateManagementUI.Testing
                 }
             }
         };
+
+        public static List<ComparisonDateModel> ComparisonDates1 => new List<ComparisonDateModel>
+        {
+            new ComparisonDateModel { Date = DateTime.Parse("2023-01-01"), Description = "2023-01-01", OrderValue = 1 }
+        };
+
+        public static TodaysSalesModel TodaysSales1 => new TodaysSalesModel
+        {
+            TodaysSalesValue = 100,
+            ComparisonSalesValue = 80
+        };
+
+        public static MerchantKpiModel MerchantKpi1 => new MerchantKpiModel
+        {
+            MerchantsWithNoSaleInLast7Days = 5,
+            MerchantsWithNoSaleToday = 3,
+            MerchantsWithSaleInLastHour = 2
+        };
+
+        public static List<TopBottomMerchantDataModel> BottomMerchants1 => new List<TopBottomMerchantDataModel>
+        {
+            new TopBottomMerchantDataModel { MerchantName = "Merchant1", SalesValue = 50 },
+            new TopBottomMerchantDataModel { MerchantName = "Merchant2", SalesValue = 30 }
+        };
+
+        public static List<TopBottomOperatorDataModel> BottomOperators1 => new List<TopBottomOperatorDataModel>
+        {
+            new TopBottomOperatorDataModel { OperatorName = "Operator1", SalesValue = 40 },
+            new TopBottomOperatorDataModel { OperatorName = "Operator2", SalesValue = 20 }
+        };
+
+        public static List<TopBottomProductDataModel> BottomProducts1 => new List<TopBottomProductDataModel>
+        {
+            new TopBottomProductDataModel { ProductName = "Product1", SalesValue = 60 },
+            new TopBottomProductDataModel { ProductName = "Product2", SalesValue = 25 }
+        };
+
+        public static TodaysSalesModel TodaysFailedSales1 => new TodaysSalesModel
+        {
+            TodaysSalesValue = 70,
+            ComparisonSalesValue = 50
+        };
+
+        public static TodaysSettlementModel TodaysSettlement1 => new TodaysSettlementModel
+        {
+            TodaysSettlementValue = 1000,
+            ComparisonSettlementValue = 800
+        };
+
+        public static LastSettlementModel LastSettlement1 => new LastSettlementModel
+        {
+            SettlementDate = DateTime.Parse("2023-01-01"),
+            SalesValue = 1500,
+            FeesValue = 100
+        };
+
+        public static OperatorModel Operator => new OperatorModel
+        {
+            Name = "Test Operator",
+            RequireCustomMerchantNumber = true,
+            RequireCustomTerminalNumber = false
+        };
+
+        public static Result<OperatorModel> OperatorResult => Result.Success(Operator);
+
+        public static List<OperatorModel> Operators => new List<OperatorModel>
+        {
+            new OperatorModel { OperatorId = Guid.NewGuid(), Name = "Operator1", RequireCustomMerchantNumber = true, RequireCustomTerminalNumber = false },
+            new OperatorModel { OperatorId = Guid.NewGuid(), Name = "Operator2", RequireCustomMerchantNumber = false, RequireCustomTerminalNumber = true }
+        };
+
+        public static Result<List<OperatorModel>> OperatorsResult => Result.Success(Operators);
+
+        public static List<MerchantModel> Merchants => new List<MerchantModel>
+        {
+            new MerchantModel { MerchantId = Guid.NewGuid(), MerchantName = "Merchant1", MerchantReference  = "Reference1",Address = new AddressModel{AddressLine1 = "AddressLine1", Town = "Town1"}, Contact = new ContactModel{ContactName = "Contact1"}, SettlementSchedule = "Immediate"},
+            new MerchantModel { MerchantId = Guid.NewGuid(), MerchantName = "Merchant2", MerchantReference  = "Reference2",Address = new AddressModel{AddressLine1 = "AddressLine2", Town = "Town2"}, Contact = new ContactModel{ContactName = "Contact2"}, SettlementSchedule = "Monthly"}
+        };
+
+        public static Result<List<MerchantModel>> MerchantsResult => Result.Success(Merchants);
+
+        public static MerchantModel Merchant => new MerchantModel
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = "Test Merchant",
+            MerchantReference = "Ref123",
+            SettlementSchedule = "Immediate",
+            Address = new AddressModel
+            {
+                AddressLine1 = "123 Main St",
+                AddressLine2 = "Suite 100",
+                Town = "Anytown",
+                Region = "Anystate",
+                Country = "USA",
+                PostalCode = "12345",
+                AddressId = Guid.NewGuid()
+            },
+            Contact = new ContactModel
+            {
+                ContactName = "John Doe",
+                ContactEmailAddress = "john.doe@example.com",
+                ContactPhoneNumber = "555-1234",
+                ContactId = Guid.NewGuid()
+            },
+            Operators = new List<MerchantOperatorModel>
+            {
+                new MerchantOperatorModel
+                {
+                    OperatorId = Guid.NewGuid(),
+                    Name = "Operator1",
+                    MerchantNumber = "123456",
+                    TerminalNumber = "7890",
+                    IsDeleted = false
+                }
+            },
+            Contracts = new List<MerchantContractModel>
+            {
+                new MerchantContractModel
+                {
+                    ContractId = Guid.NewGuid(),
+                    Name = "Contract1",
+                    IsDeleted = false
+                }
+            },
+            Devices = new Dictionary<Guid, string>
+            {
+                { Guid.NewGuid(), "Device1" }
+            }
+        };
+
+        public static Result<MerchantModel> MerchantResult => Result.Success(Merchant);
+
+
+        public static List<ContractModel> Contracts => new List<ContractModel>
+        {
+            new ContractModel { ContractId = Guid.NewGuid(), Description = "Contract1" },
+            new ContractModel { ContractId = Guid.NewGuid(), Description = "Contract2" }
+        };
+
+        public static Result<List<ContractModel>> ContractsResult => Result.Success(Contracts);
+
+        public static List<FileImportLogModel> FileImportLogs => new List<FileImportLogModel>
+        {
+            new FileImportLogModel
+            {
+                FileImportLogId = Guid.NewGuid(),
+                ImportLogDateTime = DateTime.Now,
+                ImportLogDate = DateTime.Now.Date,
+                ImportLogTime = DateTime.Now.TimeOfDay,
+                FileCount = 5
+            },
+            new FileImportLogModel
+            {
+                FileImportLogId = Guid.NewGuid(),
+                ImportLogDateTime = DateTime.Now.AddDays(-1),
+                ImportLogDate = DateTime.Now.AddDays(-1).Date,
+                ImportLogTime = DateTime.Now.AddDays(-1).TimeOfDay,
+                FileCount = 3
+            }
+        };
+
+        public static Result<List<FileImportLogModel>> FileImportLogsResult => Result.Success(FileImportLogs);
+
+        public static FileImportLogModel FileImportLog => new FileImportLogModel
+        {
+            FileImportLogId = Guid.Parse("C9EDAF44-63A7-4037-8E0F-4EC0707474EE"),
+            ImportLogDateTime = DateTime.Now,
+            ImportLogDate = DateTime.Now.Date,
+            ImportLogTime = DateTime.Now.TimeOfDay,
+            FileCount = 5,
+            Files = new List<FileImportLogFileModel> {
+                new FileImportLogFileModel {
+                    OriginalFileName = "File1.txt",
+                    FileUploadedDateTime = new DateTime(2024,12,25),
+                    FileProfileId = Guid.Parse("B2A59ABF-293D-4A6B-B81B-7007503C3476"),
+                    UserId = Guid.Parse("01A5BD19-0A11-4814-B27B-75A53E237CE6"),
+                },
+                new FileImportLogFileModel {
+                    OriginalFileName = "File2.txt",
+                    FileUploadedDateTime = new DateTime(2024,12,26),
+                    FileProfileId = Guid.Parse("B2A59ABF-293D-4A6B-B81B-7007503C3476"),
+                    UserId = Guid.Parse("01A5BD19-0A11-4814-B27B-75A53E237CE6"),
+                },
+                new FileImportLogFileModel {
+                    OriginalFileName = "File3.txt",
+                    FileUploadedDateTime = new DateTime(2024,12,27),
+                    FileProfileId = Guid.Parse("B2A59ABF-293D-4A6B-B81B-7007503C3476"),
+                    UserId = Guid.Parse("01A5BD19-0A11-4814-B27B-75A53E237CE6"),
+                },
+                new FileImportLogFileModel {
+                    OriginalFileName = "File4.txt",
+                    FileUploadedDateTime = new DateTime(2024,12,28),
+                    FileProfileId = Guid.Parse("B2A59ABF-293D-4A6B-B81B-7007503C3476"),
+                    UserId = Guid.Parse("01A5BD19-0A11-4814-B27B-75A53E237CE6"),
+                },
+                new FileImportLogFileModel {
+                    OriginalFileName = "File5.txt",
+                    FileUploadedDateTime = new DateTime(2024,12,29),
+                    FileProfileId = Guid.Parse("B2A59ABF-293D-4A6B-B81B-7007503C3476"),
+                    UserId = Guid.Parse("01A5BD19-0A11-4814-B27B-75A53E237CE6"),
+                }
+            }
+        };
+
+        public static Result<FileImportLogModel> FileImportLogResult => Result.Success(FileImportLog);
+
+        public static EstateModel Estate => new EstateModel
+        {
+            EstateId = Guid.NewGuid(),
+            EstateName = "Test Estate",
+            Reference = "Ref123",
+            SecurityUsers = new List<SecurityUserModel>
+            {
+                new SecurityUserModel
+                {
+                    SecurityUserId = Guid.NewGuid(),
+                    EmailAddress = "user1@example.com"
+                },
+                new SecurityUserModel
+                {
+                    SecurityUserId = Guid.NewGuid(),
+                    EmailAddress = "user2@example.com"
+                }
+            },
+            Operators = new List<EstateOperatorModel> {
+                new EstateOperatorModel {
+                    Name = "Operator1"
+                },
+                new EstateOperatorModel {
+                    Name = "Operator2"
+                }
+            }
+        };
+
+        public static Result<EstateModel> EstateResult => Result.Success(Estate);
+
+        public static FileDetailsModel FileDetailsWith2Lines => new FileDetailsModel
+        {
+            FileId = Guid.NewGuid(),
+            FileLocation = "path/to/file",
+            MerchantName = "Test Merchant",
+            FileProfileName = "Test Profile",
+            UserEmailAddress = "user@example.com",
+            FileLines = new List<FileLineModel>
+            {
+                new FileLineModel
+                {
+                    LineNumber = 1,
+                    LineData = "data1",
+                    ProcessingResult = BusinessLogic.Models.FileLineProcessingResult.Successful,
+                    TransactionId = Guid.NewGuid(),
+                    RejectionReason = "None"
+                },
+                new FileLineModel
+                {
+                    LineNumber = 2,
+                    LineData = "data2",
+                    ProcessingResult = BusinessLogic.Models.FileLineProcessingResult.Failed,
+                    TransactionId = Guid.NewGuid(),
+                    RejectionReason = "Error"
+                }
+            }
+        };
+
+        public static Result<FileDetailsModel> FileDetailsResult => Result.Success(FileDetailsWith2Lines);
+
+
+        public static EstateModel ViewEstate => new EstateModel
+        {
+            EstateId = Guid.Parse("D2ED8F42-BA29-47A6-B781-FE115CD145D0"),
+            EstateName = "Test Estate",
+            Reference = "Ref123"
+        };
+
+        public static Result<EstateModel> ViewEstateResult => Result.Success(ViewEstate);
+
+
+        public static List<ContractProductModel> ContractProducts => new List<ContractProductModel>
+        {
+            new ContractProductModel {
+                ContractProductId = Guid.NewGuid(), ProductName = "Product1", ProductType = "Type1",
+                NumberOfFees = 2, DisplayText = "Product 1", Value = "100 KES"
+            },
+            new ContractProductModel {
+                ContractProductId = Guid.NewGuid(), ProductName = "Product2", ProductType = "Type2", NumberOfFees = 3
+                , DisplayText = "Product 2", Value = "200 KES"
+            }
+        };
+
+        public static ContractModel ContractsResultWithProducts => new ContractModel() {
+            ContractId = Guid.NewGuid(), Description = "Contract1",
+            ContractProducts = ContractProducts
+        };
+
+        public static ContractListModel ContractList => new ContractListModel
+        {
+            Contracts = new List<SelectListItem>
+            {
+                new SelectListItem { Text = "Contract1", Value = Guid.NewGuid().ToString() },
+                new SelectListItem { Text = "Contract2", Value = Guid.NewGuid().ToString() }
+            },
+            ContractId = Guid.NewGuid().ToString()
+        };
+
+        public static Guid ContractId => Guid.Parse("BA93C499-9921-468E-960E-03D1063E7FF8");
+        public static Guid ContractProductId => Guid.Parse("55B77A81-A218-4874-88A4-EA86B3C8181D");
+
+        public static ContractModel GetContractModel()
+        {
+            return new ContractModel
+            {
+                ContractId = ContractId,
+                ContractProducts = new List<ContractProductModel>
+                {
+                    new ContractProductModel
+                    {
+                        ContractProductId = ContractProductId,
+                        ProductName = "Product1",
+                        ContractProductTransactionFees = new List<ContractProductTransactionFeeModel>
+                        {
+                            new ContractProductTransactionFeeModel
+                            {
+                                ContractProductTransactionFeeId = Guid.NewGuid(),
+                                CalculationType = "Type1",
+                                Description = "Description1",
+                                Value = 10.0m,
+                                FeeType = "FeeType1"
+                            },
+                            new ContractProductTransactionFeeModel
+                            {
+                                ContractProductTransactionFeeId = Guid.NewGuid(),
+                                CalculationType = "Type2",
+                                Description = "Description2",
+                                Value = 20.0m,
+                                FeeType = "FeeType2"
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
+        public static List<ContractModel> GetContracts()
+        {
+            return new List<ContractModel>
+            {
+                new ContractModel
+                {
+                    ContractId = Guid.NewGuid(),
+                    OperatorName = "Operator1",
+                    Description = "Description1",
+                    NumberOfProducts = 2
+                },
+                new ContractModel
+                {
+                    ContractId = Guid.NewGuid(),
+                    OperatorName = "Operator2",
+                    Description = "Description2",
+                    NumberOfProducts = 3
+                }
+            };
+        }
+
+        public static List<OperatorModel> GetOperatorModels()
+        {
+            return new List<OperatorModel>
+            {
+                new OperatorModel
+                {
+                    OperatorId = Guid.NewGuid(),
+                    Name = "Operator1"
+                },
+                new OperatorModel
+                {
+                    OperatorId = Guid.NewGuid(),
+                    Name = "Operator2"
+                }
+            };
+        }
+
+        public static AssignOperatorToMerchantModel GetAssignOperatorToMerchantModel()
+        {
+            return new AssignOperatorToMerchantModel
+            {
+                OperatorId = Guid.NewGuid(),
+                MerchantNumber = "123456",
+                TerminalNumber = "7890"
+            };
+        }
+
+        public static List<OperatorListModel> GetOperatorListModels()
+        {
+            return new List<OperatorListModel>
+            {
+                new OperatorListModel
+                {
+                    OperatorId = "64BA00F0-2DB1-4706-BB96-6A925BA25910",
+                    Operators = new List<SelectListItem>
+                    {
+                        new SelectListItem { Value = "64BA00F0-2DB1-4706-BB96-6A925BA25910", Text = "Operator1" },
+                        new SelectListItem { Value = "1136657A-16A1-4416-A9A0-C8939A79E3FE", Text = "Operator2" }
+                    }
+                }
+            };
+        }
+
+        public static List<MerchantModel> GetMerchants()
+        {
+            return new List<MerchantModel>
+            {
+                new MerchantModel
+                {
+                    MerchantId = Guid.NewGuid(),
+                    MerchantName = "Merchant1",
+                    MerchantReference = "Reference1",
+                    Address = new AddressModel
+                    {
+                        AddressLine1 = "Address Line 1",
+                        Town = "Town1",
+                        Region = "Region1",
+                        Country = "Country1",
+                        PostalCode = "PostalCode1"
+                    },
+                    Contact = new ContactModel
+                    {
+                        ContactName = "Contact1",
+                        ContactPhoneNumber = "1234567890",
+                        ContactEmailAddress = "contact1@example.com"
+                    },
+                    SettlementSchedule = "Immediate",
+                    Operators = new List<MerchantOperatorModel>
+                    {
+                        new MerchantOperatorModel
+                        {
+                            OperatorId = Guid.NewGuid(),
+                            Name = "Operator1",
+                            MerchantNumber = "123456",
+                            TerminalNumber = "7890",
+                            IsDeleted = false
+                        }
+                    },
+                    Contracts = new List<MerchantContractModel>
+                    {
+                        new MerchantContractModel
+                        {
+                            ContractId = Guid.NewGuid(),
+                            Name = "Contract1",
+                            IsDeleted = false
+                        }
+                    },
+                    Devices = new Dictionary<Guid, string>
+                    {
+                        { Guid.NewGuid(), "Device1" }
+                    }
+                },
+                new MerchantModel
+                {
+                    MerchantId = Guid.NewGuid(),
+                    MerchantName = "Merchant2",
+                    MerchantReference = "Reference2",
+                    Address = new AddressModel
+                    {
+                        AddressLine1 = "Address Line 2",
+                        Town = "Town2",
+                        Region = "Region2",
+                        Country = "Country2",
+                        PostalCode = "PostalCode2"
+                    },
+                    Contact = new ContactModel
+                    {
+                        ContactName = "Contact2",
+                        ContactPhoneNumber = "0987654321",
+                        ContactEmailAddress = "contact2@example.com"
+                    },
+                    SettlementSchedule = "Monthly",
+                    Operators = new List<MerchantOperatorModel>
+                    {
+                        new MerchantOperatorModel
+                        {
+                            OperatorId = Guid.NewGuid(),
+                            Name = "Operator2",
+                            MerchantNumber = "654321",
+                            TerminalNumber = "0987",
+                            IsDeleted = false
+                        }
+                    },
+                    Contracts = new List<MerchantContractModel>
+                    {
+                        new MerchantContractModel
+                        {
+                            ContractId = Guid.NewGuid(),
+                            Name = "Contract2",
+                            IsDeleted = false
+                        }
+                    },
+                    Devices = new Dictionary<Guid, string>
+                    {
+                        { Guid.NewGuid(), "Device2" }
+                    }
+                }
+            };
+        }
+
+        public static List<OperatorModel> GetOperators()
+        {
+            return new List<OperatorModel>
+            {
+                new OperatorModel
+                {
+                    OperatorId = Guid.NewGuid(),
+                    Name = "Operator1",
+                    RequireCustomMerchantNumber = true,
+                    RequireCustomTerminalNumber = false
+                },
+                new OperatorModel
+                {
+                    OperatorId = Guid.NewGuid(),
+                    Name = "Operator2",
+                    RequireCustomMerchantNumber = false,
+                    RequireCustomTerminalNumber = true
+                }
+            };
+        }
+
+        public static List<ComparisonDateModel> GetComparisonDates()
+        {
+            return new List<ComparisonDateModel>
+            {
+                new ComparisonDateModel
+                {
+                    Date = new DateTime(2024, 1, 1),
+                    Description = "2024-01-01",
+                    OrderValue = 1
+                },
+                new ComparisonDateModel
+                {
+                    Date = new DateTime(2024, 1, 2),
+                    Description = "2024-01-02",
+                    OrderValue = 2
+                }
+            };
+        }
+
+        public static TodaysSalesModel GetTodaysSalesModel()
+        {
+            return new TodaysSalesModel
+            {
+                TodaysSalesValue = 1000m,
+                ComparisonSalesValue = 800m
+            };
+        }
+
+        public static TodaysSettlementModel GetTodaysSettlementModel()
+        {
+            return new TodaysSettlementModel
+            {
+                TodaysSettlementValue = 500m,
+                ComparisonSettlementValue = 400m
+            };
+        }
+
+        public static List<TodaysSalesCountByHourModel> GetTodaysSalesCountByHourModels()
+        {
+            return new List<TodaysSalesCountByHourModel>
+        {
+            new TodaysSalesCountByHourModel { Hour = 1, TodaysSalesCount = 10, ComparisonSalesCount = 8 },
+            new TodaysSalesCountByHourModel { Hour = 2, TodaysSalesCount = 20, ComparisonSalesCount = 15 }
+        };
+        }
+
+        public static List<TodaysSalesValueByHourModel> GetTodaysSalesValueByHourModels()
+        {
+            return new List<TodaysSalesValueByHourModel>
+        {
+            new TodaysSalesValueByHourModel { Hour = 1, TodaysSalesValue = 100m, ComparisonSalesValue = 80m },
+            new TodaysSalesValueByHourModel { Hour = 2, TodaysSalesValue = 200m, ComparisonSalesValue = 150m }
+        };
+        }
     }
 }
