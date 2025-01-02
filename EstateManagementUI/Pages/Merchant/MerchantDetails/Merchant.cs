@@ -152,7 +152,7 @@ public class Merchant : SecureHydroComponent
 
     public string Reference { get; set; }
 
-    public void Close() => this.Location(this.Url.Page("/Merchant/Index"));
+    public void Close() => this.Location("/Merchant/Index");
 
     private async Task CreateNewMerchant() {
         BusinessLogic.Models.CreateMerchantModel createMerchantModel = new()
