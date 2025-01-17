@@ -1,31 +1,73 @@
-﻿@model ContractsList
+﻿@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ContractsList
 
-
-
-    <div class="card o-hidden border-0 shadow-sm my-5">
-        <div class="card-body p-0">
-            <!-- Nested Row within Card Body -->
-            <div class="row">
-                <div class="col-lg-9">
-                    <div class="p-5">
-                        <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">Contracts</h1>
-                        </div>
-                        @if (Model.Contracts.Any() == false)
-                        {
-                            <div class="bg-base-200 rounded text-center p-4">
-                                <h6>No contracts to show</h6>
-                            </div>
-                        }
-                        else
-                        {
-                            <partial name="ContractList.Table.cshtml"/>
-                        }
+@* <div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Contracts</h1>
                     </div>
                 </div>
-                <div class="col-lg-3" align="center">
-                    <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+                    @if(await Model.CanRenderButton(ApplicationSections.Contract, ContractFunctions.New)){
+                        <button class="btn btn-primary" type="button" hydro-action="NewContract" id="newContractButton">
+                            New Contract
+                        </button>
+                    }
+            
                 </div>
+                @if (Model.Contracts.Any() == false)
+                {
+                    <div class="bg-base-200 rounded text-center p-4">
+                        <h6>No contracts to show</h6>
+                    </div>
+                }
+                else
+                {
+                    <partial name="ContractList.Table.cshtml"/>
+                }
+            </div>
+        </div>
+        <div class="col-lg-3" align="center">
+            <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+        </div>
+    </div> *@
+    
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-9">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Contracts</h1>
+                    </div>
+                    <div>
+                        @if(await Model.CanRenderButton(ApplicationSections.Contract, ContractFunctions.New)){
+                            <button class="btn btn-primary" type="button" hydro-action="NewContract" id="newContractButton">
+                                New Contract
+                            </button>
+                        }
+                    </div>
+                    @if (Model.Contracts.Any() == false)
+                    {
+                        <div class="bg-base-200 rounded text-center p-4">
+                            <h6>No contracts to show</h6>
+                        </div>
+                    }
+                    else
+                    {
+                        <partial name="ContractList.Table.cshtml"/>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-3" align="center">
+                <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
             </div>
         </div>
     </div>
+</div>

@@ -38,4 +38,8 @@ public record Commands {
                                                     Guid EstateId,
                                                     Guid MerchantId,
                                                     Guid ContractId) : IRequest<Result>;
+
+    public record CreateContractCommand(String AccessToken,
+                                        Guid EstateId,
+                                        CreateContractModel CreateContractModel) : IRequest<Result>;
 }

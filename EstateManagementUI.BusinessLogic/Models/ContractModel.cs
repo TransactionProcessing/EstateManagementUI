@@ -7,7 +7,7 @@ public record ContractModel {
     public Guid ContractId { get; set; }
 
     public String Description { get; set; }
-
+    public Guid OperatorId { get; set; }
     public String OperatorName { get; set; }
     public Int32 NumberOfProducts { get; set; }
 

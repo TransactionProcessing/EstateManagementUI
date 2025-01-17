@@ -9,6 +9,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\_Contract\**" />
+    <Content Remove="Pages\_Contract\**" />
+    <EmbeddedResource Remove="Pages\_Contract\**" />
+    <None Remove="Pages\_Contract\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pages\Contract\EditMerchant.cshtml.cs" />
+    <Compile Remove="Pages\Contract\ContractDetails\AddContractDialog.cshtml.cs" />
+    <Compile Remove="Pages\Contract\ContractDetails\AddOperatorDialog.cshtml.cs" />
+    <Compile Remove="Pages\Contract\ContractDetails\EditMerchant.cshtml.cs" />
+    <Compile Remove="Pages\Contract\ContractDetails\MerchantPageEvents.cs" />
+    <Compile Remove="Pages\Contract\ContractDetails\OperatorDialog.cs" />
+    <Compile Remove="Pages\Contract\ContractDetails\ViewMerchant.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Contract\EditMerchant.cshtml" />
+    <Content Remove="Pages\Contract\ContractDetails\AddContractDialog.cshtml" />
+    <Content Remove="Pages\Contract\ContractDetails\AddOperatorDialog.cshtml" />
+    <Content Remove="Pages\Contract\ContractDetails\EditMerchant.cshtml" />
+    <Content Remove="Pages\Contract\ContractDetails\ViewMerchant.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hydro" Version="0.15.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="Lamar" Version="13.0.3" />

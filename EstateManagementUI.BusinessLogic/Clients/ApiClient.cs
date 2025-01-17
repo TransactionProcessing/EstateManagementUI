@@ -1,4 +1,5 @@
 ﻿using EstateManagement.Client;
+using EstateManagement.DataTransferObjects.Requests.Contract;
 using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagement.DataTransferObjects.Requests.Operator;
 using EstateManagement.DataTransferObjects.Responses.Contract;
@@ -208,7 +209,7 @@ public class ApiClient : IApiClient {
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
         }
-
+        
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
@@ -460,7 +461,20 @@ public class ApiClient : IApiClient {
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
-
+    
+    public async Task<Result> CreateContract(String accessToken,
+                                             Guid actionId,
+                                             Guid estateId,
+                                             CreateContractModel createContractModel,
+                                             CancellationToken cancellationToken)
+    {
+        async Task<Result> ClientMethod()
+        {
+            CreateContractRequest apiRequest = ModelFactory.ConvertFrom(createContractModel);
+            return await this.EstateClient.CreateContract(accessToken, estateId, apiRequest, cancellationToken);
+        }
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
     public async Task<Result> CreateMerchant(String accessToken,
                                              Guid actionId,
                                              Guid estateId,

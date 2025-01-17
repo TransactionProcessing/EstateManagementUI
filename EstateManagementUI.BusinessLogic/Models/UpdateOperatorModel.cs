@@ -1,4 +1,5 @@
 ﻿using EstateManagement.DataTransferObjects.Responses.Merchant;
+using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BusinessLogic.Models;
@@ -83,6 +84,13 @@ public String Region { get; set; }
     public String Town { get; set; }
 
     #endregion
+}
+
+public class CreateContractModel
+{
+    public Guid OperatorId { get; set; }
+
+    public string Description { get; set; }
 }
 
 public enum SettlementSchedule

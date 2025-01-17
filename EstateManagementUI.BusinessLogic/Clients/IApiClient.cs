@@ -6,6 +6,13 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.Clients
 {
     public interface IApiClient {
+
+        Task<Result> CreateContract(String accessToken,
+                                    Guid actionId,
+                                    Guid estateId,
+                                    CreateContractModel createContractModel,
+                                    CancellationToken cancellationToken);
+
         Task<Result> AssignOperatorToMerchant(String accessToken,
                                       Guid actionId,
                                       Guid estateId,

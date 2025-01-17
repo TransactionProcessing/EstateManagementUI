@@ -1,0 +1,28 @@
+﻿@model EstateManagementUI.Pages.Contract.Contract.NewContract
+
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <h1 class="h4 text-gray-900 mb-4">New Contract</h1>
+        <form hydro-on:submit="@(() => Model.Save())">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" placeholder="Enter Contract Name" class="form-control" x-init="$el.focus()" hydro-bind name="Name" id="contractDescription" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="Operator"></label>
+                        <select asp-for="Operator" asp-items="Model.Operator.Operators" class="form-control" hydro-bind name="Operator.OperatorId" id="operatorList"></select>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary" id="saveContractButton">Save</button>
+                    <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

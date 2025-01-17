@@ -8,7 +8,8 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class ContractRequestHandler : IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>,
-                                      IRequestHandler<Queries.GetContractQuery, Result<ContractModel>> {
+                                      IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>,
+IRequestHandler<Commands.CreateContractCommand, Result> {
     private readonly IApiClient ApiClient;
 
     public ContractRequestHandler(IApiClient apiClient)
@@ -26,5 +27,10 @@ public class ContractRequestHandler : IRequestHandler<Queries.GetContractsQuery,
                                                     CancellationToken cancellationToken) {
         ContractModel model = await this.ApiClient.GetContract(request.AccessToken, Guid.Empty, request.EstateId, request.ContractId, cancellationToken);
         return model;
+    }
+
+    public async Task<Result> Handle(Commands.CreateContractCommand request,
+                                     CancellationToken cancellationToken) {
+        return await this.ApiClient.CreateContract(request.AccessToken, Guid.Empty, request.EstateId, request.CreateContractModel, cancellationToken);
     }
 }

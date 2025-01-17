@@ -4,6 +4,7 @@ using EstateManagementUI.IntegrationTests.Steps;
 using EventStore.Client;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
+using Reqnroll;
 using Shared.IntegrationTesting;
 using Shouldly;
 
@@ -63,7 +64,7 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task VerifyOnTheNewContractScreen(){
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Contract Details"); });
+        await Retry.For(async () => { this.VerifyPageTitle("New Contract"); });
     }
 
     public async Task VerifyOnTheNewMerchantScreen(){
@@ -554,11 +555,21 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("saveMerchantButton");
     }
 
+    public async Task ClickTheSaveContractButton()
+    {
+        await this.WebDriver.ClickButtonById("saveContractButton");
+    }
+
+    public async Task ClickTheNewContractButton()
+    {
+        await this.WebDriver.ClickButtonById("newContractButton");
+    }
+
     public async Task ClickTheCreateProductButton()
     {
         await this.WebDriver.ClickButtonById("createContractProductButton");
     }
-
+    
     public async Task ClickTheCreateTransactionFeeButton()
     {
         await this.WebDriver.ClickButtonById("createTransactionFeeButton");
@@ -579,7 +590,7 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task EnterContractDetails(String contractDescription, String operatorName){
-        await this.WebDriver.FillIn("contractDescription", contractDescription);
+        await this.WebDriver.FillIn("Name", contractDescription);
         await this.WebDriver.SelectDropDownItemByText("operatorList", operatorName);
     }
 
