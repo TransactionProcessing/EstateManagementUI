@@ -58,7 +58,6 @@ Background:
 	| EstateName | OperatorName | ContractDescription |
 	| Test Estate | Test Operator 1 | Operator 1 Contract |
 	| Test Estate | Test Operator 2 | Operator 2 Contract |
-	| Test Estate | Test Operator 3 | Operator 3 Contract |
 
 	Given I have created the following contract products
 	| EstateName  | OperatorName    | ContractDescription | ProductName      | DisplayText | Value  | ProductType |
@@ -67,7 +66,6 @@ Background:
 	| Test Estate | Test Operator 2 | Operator 2 Contract | 200 KES Topup    | 200 KES     | 500.00 | MobileTopup |
 	| Test Estate | Test Operator 2 | Operator 2 Contract | 500 KES Topup    | 500 KES     | 500.00 | MobileTopup |
 	| Test Estate | Test Operator 2 | Operator 2 Contract | Variable Topup 1 | Custom      |        | MobileTopup |
-	| Test Estate | Test Operator 3 | Operator 3 Contract | 50 KES Topup     | 50 KES      | 50.00  | MobileTopup |
 	
 	Given I am on the application home page
 
@@ -88,7 +86,18 @@ Scenario: Contract PR Test
 	| Description         | OperatorName    | Products |
 	| Operator 1 Contract | Test Operator 1 | 2        |
 	| Operator 2 Contract | Test Operator 2 | 3        |
-	| Operator 3 Contract | Test Operator 3 | 1        |
+	When I click on the New Contract Button
+	Then the New Contract Screen is displayed
+	When I enter the following details for the new Contract
+	| Description | OperatorName |
+	| Operator 3 Contract | Test Operator 3 |
+	When I click the Save Contract Button
+	Then I am presented with the Contracts List Screen
+	And the following contract details are in the list
+	| Description         | OperatorName    | Products |
+	| Operator 1 Contract | Test Operator 1 | 2        |
+	| Operator 2 Contract | Test Operator 2 | 3        |
+	| Operator 3 Contract | Test Operator 3 | 0        |
 	When I click on the View Products Button for 'Operator 1 Contract'
 	Then the Contract Products List Screen is displayed
 	And the following contract product details are in the list

@@ -432,13 +432,41 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickTheViewContractProductsButton(contractName);
         }
 
+        [Then("the New Contract Screen is displayed")]
+        public async Task ThenTheNewContractScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheNewContractScreen();
+        }
+
+
+        [When("I click on the New Contract Button")]
+        public async Task WhenIClickOnTheNewContractButton()
+        {
+            await this.UiHelpers.ClickAddNewContractButton();
+        }
+
+        [When("I enter the following details for the new Contract")]
+        public async Task  WhenIEnterTheFollowingDetailsForTheNewContract(DataTable dataTable)
+        {
+            var tableRow = dataTable.Rows.Single();
+            var contractDescription = ReqnrollTableHelper.GetStringRowValue(tableRow, "Description");
+            var operatorName = ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName");
+
+            await this.UiHelpers.EnterContractDetails(contractDescription, operatorName);
+        }
+        
         [When("I click on the View Fees Button for {string}")]
         public async Task WhenIClickOnTheViewFeesButtonFor(string productName)
         {
             await this.UiHelpers.ClickTheViewContractProductFeesButton(productName);
         }
 
-
+        [When("I click the Save Contract Button")]
+        public async Task WhenIClickTheSaveContractButton()
+        {
+            await this.UiHelpers.ClickTheSaveContractButton();
+        }
+        
         [Then("the following contract product details are in the list")]
         public async Task ThenTheFollowingContractProductDetailsAreInTheList(DataTable dataTable)
         {

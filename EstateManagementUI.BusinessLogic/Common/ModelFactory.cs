@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Azure;
+using EstateManagement.DataTransferObjects.Requests.Contract;
 using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagement.DataTransferObjects.Responses.Estate;
@@ -296,6 +297,7 @@ public static class ModelFactory
         ContractModel model = new ContractModel {
             Description = contract.Description,
             OperatorName = contract.OperatorName,
+            OperatorId = contract.OperatorId,
             ContractId = contract.ContractId,
         };
 
@@ -665,5 +667,18 @@ public static class ModelFactory
 
         AddMerchantContractRequest addMerchantContractRequest = new() { ContractId = source.ContractId };
         return addMerchantContractRequest;
+    }
+
+    public static CreateContractRequest ConvertFrom(CreateContractModel source) {
+        if (source == null)
+        {
+            return null;
+        }
+
+        CreateContractRequest createContractRequest = new() {
+            Description= source.Description,
+            OperatorId = source.OperatorId
+        };
+        return createContractRequest;
     }
 }

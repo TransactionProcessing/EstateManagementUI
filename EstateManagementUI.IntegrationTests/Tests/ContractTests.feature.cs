@@ -274,10 +274,6 @@ namespace EstateManagementUI.IntegrationTests.Tests
                         "Test Estate",
                         "Test Operator 2",
                         "Operator 2 Contract"});
-            table11.AddRow(new string[] {
-                        "Test Estate",
-                        "Test Operator 3",
-                        "Operator 3 Contract"});
 #line 57
  await testRunner.GivenAsync("I have created the following contracts", ((string)(null)), table11, "Given ");
 #line hidden
@@ -329,30 +325,22 @@ namespace EstateManagementUI.IntegrationTests.Tests
                         "Custom",
                         "",
                         "MobileTopup"});
-            table12.AddRow(new string[] {
-                        "Test Estate",
-                        "Test Operator 3",
-                        "Operator 3 Contract",
-                        "50 KES Topup",
-                        "50 KES",
-                        "50.00",
-                        "MobileTopup"});
-#line 63
+#line 62
  await testRunner.GivenAsync("I have created the following contract products", ((string)(null)), table12, "Given ");
 #line hidden
-#line 72
+#line 70
  await testRunner.GivenAsync("I am on the application home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 74
+#line 72
  await testRunner.AndAsync("I click on the Sign In Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 76
+#line 74
  await testRunner.ThenAsync("I am presented with a login screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 78
+#line 76
  await testRunner.WhenAsync("I login with the username \'estateuser@testestate1.co.uk\' and password \'123456\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 80
+#line 78
  await testRunner.ThenAsync("I am presented with the Estate Administrator Dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
         }
@@ -366,7 +354,7 @@ namespace EstateManagementUI.IntegrationTests.Tests
                     "PRTest"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Contract PR Test", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 83
+#line 81
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -379,10 +367,10 @@ this.ScenarioInitialize(scenarioInfo);
 #line 4
 await this.FeatureBackgroundAsync();
 #line hidden
-#line 85
+#line 83
  await testRunner.GivenAsync("I click on the My Contracts sidebar option", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 86
+#line 84
  await testRunner.ThenAsync("I am presented with the Contracts List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
@@ -397,41 +385,77 @@ await this.FeatureBackgroundAsync();
                             "Operator 2 Contract",
                             "Test Operator 2",
                             "3"});
-                table13.AddRow(new string[] {
-                            "Operator 3 Contract",
-                            "Test Operator 3",
-                            "1"});
-#line 87
+#line 85
  await testRunner.AndAsync("the following contract details are in the list", ((string)(null)), table13, "And ");
 #line hidden
-#line 92
- await testRunner.WhenAsync("I click on the View Products Button for \'Operator 1 Contract\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 89
+ await testRunner.WhenAsync("I click on the New Contract Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 93
- await testRunner.ThenAsync("the Contract Products List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 90
+ await testRunner.ThenAsync("the New Contract Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
+                            "Description",
+                            "OperatorName"});
+                table14.AddRow(new string[] {
+                            "Operator 3 Contract",
+                            "Test Operator 3"});
+#line 91
+ await testRunner.WhenAsync("I enter the following details for the new Contract", ((string)(null)), table14, "When ");
+#line hidden
+#line 94
+ await testRunner.WhenAsync("I click the Save Contract Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 95
+ await testRunner.ThenAsync("I am presented with the Contracts List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
+                            "Description",
+                            "OperatorName",
+                            "Products"});
+                table15.AddRow(new string[] {
+                            "Operator 1 Contract",
+                            "Test Operator 1",
+                            "2"});
+                table15.AddRow(new string[] {
+                            "Operator 2 Contract",
+                            "Test Operator 2",
+                            "3"});
+                table15.AddRow(new string[] {
+                            "Operator 3 Contract",
+                            "Test Operator 3",
+                            "0"});
+#line 96
+ await testRunner.AndAsync("the following contract details are in the list", ((string)(null)), table15, "And ");
+#line hidden
+#line 101
+ await testRunner.WhenAsync("I click on the View Products Button for \'Operator 1 Contract\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 102
+ await testRunner.ThenAsync("the Contract Products List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table16 = new global::Reqnroll.Table(new string[] {
                             "ProductName",
                             "DisplayText",
                             "Value",
                             "ProductType"});
-                table14.AddRow(new string[] {
+                table16.AddRow(new string[] {
                             "100 KES Topup",
                             "100 KES",
                             "100.00",
                             "MobileTopup"});
-                table14.AddRow(new string[] {
+                table16.AddRow(new string[] {
                             "Variable Topup 1",
                             "Custom",
                             "Variable",
                             "MobileTopup"});
-#line 94
- await testRunner.AndAsync("the following contract product details are in the list", ((string)(null)), table14, "And ");
+#line 103
+ await testRunner.AndAsync("the following contract product details are in the list", ((string)(null)), table16, "And ");
 #line hidden
-#line 98
+#line 107
  await testRunner.WhenAsync("I click on the View Fees Button for \'100 KES Topup\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 99
+#line 108
  await testRunner.ThenAsync("the Contract Products Transaction Fees List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
