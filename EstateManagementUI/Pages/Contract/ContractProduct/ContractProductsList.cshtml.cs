@@ -89,6 +89,11 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
         {
             this.Location("/Contract/ContractProductTransactionFees", new { ContractId = this.ContractId, ContractProductId = contractProductId });
         }
+
+        public async Task NewContractProduct()
+        {
+            this.Location("/Contract/NewContractProduct", new { ContractId = this.ContractId });
+        }
     }
 
     public enum ContractProductSorting

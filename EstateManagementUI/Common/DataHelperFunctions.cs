@@ -1,4 +1,5 @@
 using System.Globalization;
+using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
@@ -100,5 +101,18 @@ public static class DataHelperFunctions {
         List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();
         ordered.Insert(0, new SelectListItem("- Select a Contract -", "", true));
         return new ContractListModel { Contracts = ordered };
+    }
+
+    public static async Task<ProductTypeListModel> GetProductTypes(String accessToken, Guid estateId)
+    {
+        // TODO: this will need to make a query to the Estate Management API to product types pertaining
+        // to the contact operator
+
+        var result = new ProductTypeListModel { ProductTypes = new List<SelectListItem>() };
+        result.ProductTypes.Add(new SelectListItem("- Select a Product Type -","0", true));
+        result.ProductTypes.Add(new SelectListItem("Bill Payment", ((Int32)ProductType.BillPayment).ToString()));
+        result.ProductTypes.Add(new SelectListItem("Mobile Topup", ((Int32)ProductType.MobileTopup).ToString()));
+        result.ProductTypes.Add(new SelectListItem("Voucher", ((Int32)ProductType.Voucher).ToString()));
+        return result;
     }
 }

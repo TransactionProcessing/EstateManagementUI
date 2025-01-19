@@ -42,4 +42,6 @@ public record Commands {
     public record CreateContractCommand(String AccessToken,
                                         Guid EstateId,
                                         CreateContractModel CreateContractModel) : IRequest<Result>;
+
+    public record CreateContractProductCommand(String AccessToken, Guid EstateId, Guid ContractId, CreateContractProductModel CreateContractProductModel) : IRequest<Result>;
 }

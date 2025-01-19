@@ -10,10 +10,13 @@ namespace EstateManagementUI.Pages.Contract
 {
     [ExcludeFromCodeCoverage]
     [Authorize]
-    public class NewContractModel : SecurePageModel
+    public class NewContractProductModel : SecurePageModel
     {
-        public NewContractModel(IPermissionsService permissionsService) : base(permissionsService,
-            ApplicationSections.Contract, ContractFunctions.New)
+        [BindProperty(SupportsGet = true)]
+        public Guid ContractId { get; set; }
+
+        public NewContractProductModel(IPermissionsService permissionsService) : base(permissionsService,
+            ApplicationSections.Contract, ContractFunctions.AddProduct)
         {
         }
     }

@@ -28,7 +28,6 @@ namespace EstateManagementUI.Pages.Contract.Contract
             this.Mediator = mediator;
             
             Subscribe<ContractPageEvents.ContractCreatedEvent>(Handle);
-            Subscribe<ContractPageEvents.ContractUpdatedEvent>(Handle);
         }
 
         [ExcludeFromCodeCoverage]
@@ -41,14 +40,6 @@ namespace EstateManagementUI.Pages.Contract.Contract
 
         public void Close() => this.Location("/Contract/Index");
 
-        [ExcludeFromCodeCoverage]
-        private async Task Handle(ContractPageEvents.ContractUpdatedEvent obj)
-        {
-            this.Dispatch(new ShowMessage("Contract Updated Successfully", ToastType.Success), Scope.Global);
-            await Task.Delay(1000); // TODO: might be a better way of handling this
-            this.Close();
-        }
-
         public OperatorListModel Operator { get; set; }
         public String Name { get; set; }
         public override async Task MountAsync() {
@@ -56,11 +47,6 @@ namespace EstateManagementUI.Pages.Contract.Contract
             await this.PopulateTokenAndEstateId();
 
             this.Operator = await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
-
-            if (this.ContractId != Guid.Empty)
-            {
-                //await this.LoadContract(CancellationToken.None);
-            }
         }
 
         public async Task Save()
@@ -71,17 +57,7 @@ namespace EstateManagementUI.Pages.Contract.Contract
             }
             await this.PopulateTokenAndEstateId();
 
-            Task t = this.ContractId switch
-            {
-                _ when this.ContractId == Guid.Empty => this.CreateNeContract(),
-                _ => this.UpdateExitingContract(),
-
-            };
-
-            await t;
-        }
-
-        private async Task UpdateExitingContract() {
+            await this.CreateNeContract();
         }
 
         private async Task CreateNeContract() {
@@ -107,4 +83,6 @@ namespace EstateManagementUI.Pages.Contract.Contract
 public class ContractPageEvents {
     public record ContractCreatedEvent;
     public record ContractUpdatedEvent;
+    public record ContractProductCreatedEvent;
+    public record ContractProductUpdatedEvent;
 }
