@@ -1,11 +1,11 @@
-﻿using EstateManagement.Client;
-using EstateManagementUI.BusinessLogic.Clients;
+﻿using EstateManagementUI.BusinessLogic.Clients;
 using Lamar;
 using Shared.General;
 using System.Net.Http;
 using FileProcessor.Client;
 using System.Diagnostics.CodeAnalysis;
 using EstateReportingAPI.Client;
+using TransactionProcessor.Client;
 
 namespace EstateManagementUI.Bootstrapper;
 
@@ -17,6 +17,7 @@ public class ClientRegistry : ServiceRegistry
         //this.AddSingleton<IConfigurationService, ConfigurationService>();
         this.AddSingleton<IApiClient, ApiClient>();
         this.AddSingleton<IFileProcessorClient, FileProcessorClient>();
+        this.AddSingleton<ITransactionProcessorClient, TransactionProcessorClient>();
         this.AddSingleton<IEstateReportingApiClient, EstateReportingApiClient>();
         this.AddSingleton<Func<String, String>>(container => (serviceName) =>
         {
@@ -36,7 +37,6 @@ public class ClientRegistry : ServiceRegistry
         }
         this.AddSingleton(httpClient);
         
-        Func<String, String> resolver1() => serviceName => { return ConfigurationReader.GetBaseServerUri(serviceName).OriginalString; };
-        this.AddSingleton<IEstateClient>(new EstateClient(resolver1(), httpClient, 2));
+        
     }
 }

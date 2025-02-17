@@ -1,4 +1,5 @@
-﻿using Ductus.FluentDocker.Services;
+﻿using System;
+using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
 using Reqnroll;
 using Shouldly;

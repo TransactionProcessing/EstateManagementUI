@@ -1,5 +1,4 @@
-﻿using EstateManagement.DataTransferObjects.Requests.Operator;
-using EstateManagementUI.BusinessLogic.Clients;
+﻿using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;

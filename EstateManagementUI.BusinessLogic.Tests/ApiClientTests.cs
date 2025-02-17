@@ -1,10 +1,4 @@
-﻿using EstateManagement.Client;
-using EstateManagement.DataTransferObjects.Requests.Merchant;
-using EstateManagement.DataTransferObjects.Requests.Operator;
-using EstateManagement.DataTransferObjects.Responses.Contract;
-using EstateManagement.DataTransferObjects.Responses.Merchant;
-using EstateManagement.DataTransferObjects.Responses.Operator;
-using EstateManagementUI.BusinessLogic.Clients;
+﻿using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Testing;
@@ -15,6 +9,12 @@ using Moq;
 using Shared.Logger;
 using Shouldly;
 using SimpleResults;
+using TransactionProcessor.Client;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
+using TransactionProcessor.DataTransferObjects.Requests.Operator;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Operator;
 using CreateMerchantModel = EstateManagementUI.BusinessLogic.Models.CreateMerchantModel;
 using SettlementSchedule = EstateManagementUI.BusinessLogic.Models.SettlementSchedule;
 
@@ -22,24 +22,24 @@ namespace EstateManagementUI.BusinessLogic.Tests;
 
 public class ApiClientTests {
     private readonly IApiClient ApiClient;
-    private readonly Mock<IEstateClient> EstateClient;
+    private readonly Mock<ITransactionProcessorClient> TransactionProcessorClient;
     private readonly Mock<IFileProcessorClient> FileProcessorClient;
     private readonly Mock<IEstateReportingApiClient> EstateReportingApiClient;
 
     public ApiClientTests() {
         Logger.Initialise(NullLogger.Instance);
 
-        this.EstateClient = new Mock<IEstateClient>();
+        this.TransactionProcessorClient = new Mock<ITransactionProcessorClient>();
         this.FileProcessorClient = new Mock<IFileProcessorClient>();
         this.EstateReportingApiClient = new Mock<IEstateReportingApiClient>();
 
-        this.ApiClient = new ApiClient(this.EstateClient.Object, this.FileProcessorClient.Object, this.EstateReportingApiClient.Object);
+        this.ApiClient = new ApiClient(this.TransactionProcessorClient.Object, this.FileProcessorClient.Object, this.EstateReportingApiClient.Object);
     }
 
 
     [Fact]
     public async Task ApiClient_GetEstate_EstateReturned() {
-        this.EstateClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+        this.TransactionProcessorClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success(TestData.EstateResponse));
 
         var result= await this.ApiClient.GetEstate(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
@@ -51,7 +51,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_GetEstate_ClientCallFailed_ResultFailed()
     {
-        this.EstateClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
         var result = await this.ApiClient.GetEstate(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -60,7 +60,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_GetEstate_ClientCallThrewException_ResultFailed()
     {
-        this.EstateClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+        this.TransactionProcessorClient.Setup(e => e.GetEstate(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
         var result = await this.ApiClient.GetEstate(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -68,7 +68,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetMerchants_MerchantsReturned() {
-        this.EstateClient.Setup(e => e.GetMerchants(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.MerchantResponses));
+        this.TransactionProcessorClient.Setup(e => e.GetMerchants(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.MerchantResponses));
 
         var result = await this.ApiClient.GetMerchants(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -85,7 +85,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_GetMerchants_ClientCallFailed_ResultFailed()
     {
-        this.EstateClient.Setup(e => e.GetMerchants(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetMerchants(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
         Result<List<MerchantModel>> result = await this.ApiClient.GetMerchants(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -93,7 +93,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetMerchant_ClientCallFailed_ResultFailed() {
-        this.EstateClient.Setup(e => e.GetMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
         Result<MerchantModel> result = await this.ApiClient.GetMerchant(TestData.AccessToken, Guid.NewGuid(), Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -101,7 +101,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetMerchant_MerchantReturned() {
-        this.EstateClient.Setup(e => e.GetMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.MerchantResponse));
+        this.TransactionProcessorClient.Setup(e => e.GetMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.MerchantResponse));
 
         var result= await this.ApiClient.GetMerchant(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Merchant1Id, CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -110,7 +110,7 @@ public class ApiClientTests {
     
     [Fact]
     public async Task ApiClient_GetOperators_OperatorsReturned() {
-        this.EstateClient.Setup(e => e.GetOperators(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.OperatorResponses));
+        this.TransactionProcessorClient.Setup(e => e.GetOperators(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.OperatorResponses));
         
         var result = await this.ApiClient.GetOperators(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -126,7 +126,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetOperators_ClientCallFailed_ResultFailed() {
-        this.EstateClient.Setup(e => e.GetOperators(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetOperators(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
 
         Result<List<OperatorModel>> result = await this.ApiClient.GetOperators(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
@@ -135,7 +135,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetOperator_OperatorIsReturned() {
-        this.EstateClient.Setup(e => e.GetOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.OperatorResponse));
+        this.TransactionProcessorClient.Setup(e => e.GetOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.OperatorResponse));
         
         OperatorModel @operator = await this.ApiClient.GetOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Operator1Id, CancellationToken.None);
 
@@ -144,7 +144,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetOperator_ClientCallFailed_ResultFailed() {
-        this.EstateClient.Setup(e => e.GetOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
         
         Result<OperatorModel> result = await this.ApiClient.GetOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Operator1Id, CancellationToken.None);
 
@@ -153,7 +153,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetContracts_ContractsReturned() {
-        this.EstateClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.ContractResponses));
+        this.TransactionProcessorClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.ContractResponses));
 
 
         var result = await this.ApiClient.GetContracts(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
@@ -172,7 +172,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_GetContracts_ClientCallFailed_ResultFailed()
     {
-        this.EstateClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetContracts(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
         var result = await this.ApiClient.GetContracts(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -180,7 +180,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_GetContract_ContractIsReturned() {
-        this.EstateClient.Setup(e => e.GetContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.ContractResponse1));
+        this.TransactionProcessorClient.Setup(e => e.GetContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.ContractResponse1));
         
         var result = await this.ApiClient.GetContract(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Contract1Id, CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -198,7 +198,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_GetContract_ClientCallFailed_ResultFailed()
     {
-        this.EstateClient.Setup(e => e.GetContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.GetContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
 
         var result= await this.ApiClient.GetContract(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Contract1Id, CancellationToken.None);
@@ -208,7 +208,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_CreateOperator_OperatorIsCreated() {
-        this.EstateClient.Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         CreateOperatorModel createOperatorModel = new() { RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber, RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber, OperatorName = TestData.Operator1Name, OperatorId = TestData.Operator1Id };
 
@@ -220,7 +220,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_CreateOperator_ErrorAtServer_OperatorIsNotCreated() {
         Logger.Initialise(NullLogger.Instance);
-        this.EstateClient.Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.CreateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         CreateOperatorModel createOperatorModel = new() { RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber, RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber, OperatorName = TestData.Operator1Name, OperatorId = TestData.Operator1Id };
 
@@ -231,7 +231,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_UpdateOperator_OperatorIsUpdated() {
-        this.EstateClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
+        this.TransactionProcessorClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success());
 
         UpdateOperatorModel updateOperatorModel = new() { RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber, RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber, OperatorName = TestData.Operator1Name, OperatorId = TestData.Operator1Id };
 
@@ -242,7 +242,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_UpdateOperator_ErrorAtServer_OperatorIsNotUpdated() {
-        this.EstateClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.UpdateOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         UpdateOperatorModel updateOperatorModel = new() { RequireCustomMerchantNumber = TestData.RequireCustomMerchantNumber, RequireCustomTerminalNumber = TestData.RequireCustomTerminalNumber, OperatorName = TestData.Operator1Name, OperatorId = TestData.Operator1Id };
 
@@ -486,7 +486,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_CreateMerchant_DataIsReturned() {
-        this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.CreateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -494,7 +494,7 @@ public class ApiClientTests {
 
     [Fact]
     public async Task ApiClient_CreateMerchant_ErrorAtServer_NoDataIsReturned() {
-        this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+        this.TransactionProcessorClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
 
         Result result = await this.ApiClient.CreateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -503,7 +503,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_CreateMerchant_ClientThrowsException_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+        this.TransactionProcessorClient.Setup(e => e.CreateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateMerchantRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
 
         Result result = await this.ApiClient.CreateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -512,7 +512,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_UpdateMerchant_MerchantIsUpdated()
     {
-        this.EstateClient.Setup(e => e.UpdateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.UpdateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.UpdateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.UpdateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -521,7 +521,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_UpdateMerchant_ErrorAtServer_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.UpdateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.UpdateMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<UpdateMerchantRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.UpdateMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.UpdateMerchantModel(SettlementSchedule.Immediate), CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -530,7 +530,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_UpdateMerchantAddress_MerchantAddressIsUpdated()
     {
-        this.EstateClient.Setup(e => e.UpdateMerchantAddress(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Address>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.UpdateMerchantAddress(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Address>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.UpdateMerchantAddress(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.AddressModel, CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -539,7 +539,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_UpdateMerchantAddress_ErrorAtServer_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.UpdateMerchantAddress(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Address>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.UpdateMerchantAddress(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Address>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.UpdateMerchantAddress(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.AddressModel, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -548,7 +548,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_UpdateMerchantContact_MerchantContactIsUpdated()
     {
-        this.EstateClient.Setup(e => e.UpdateMerchantContact(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Contact>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.UpdateMerchantContact(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Contact>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.UpdateMerchantContact(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.ContactModel, CancellationToken.None);
         result.IsSuccess.ShouldBeTrue();
@@ -557,7 +557,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_UpdateMerchantContact_ErrorAtServer_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.UpdateMerchantContact(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Contact>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.UpdateMerchantContact(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Contact>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.UpdateMerchantContact(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.ContactModel, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
@@ -566,7 +566,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_AssignContractToMerchant_ContractAssigned()
     {
-        this.EstateClient.Setup(e => e.AddContractToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddMerchantContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.AddContractToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddMerchantContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.AssignContractToMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.AssignContractToMerchantModel, CancellationToken.None);
@@ -576,7 +576,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_AssignContractToMerchant_ClientCallFailed_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.AddContractToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddMerchantContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.AddContractToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddMerchantContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.AssignContractToMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.AssignContractToMerchantModel, CancellationToken.None);
@@ -586,7 +586,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_RemoveContractFromMerchant_ContractRemoved()
     {
-        this.EstateClient.Setup(e => e.RemoveContractFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.RemoveContractFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.RemoveContractFromMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.Contract1Id, CancellationToken.None);
@@ -596,7 +596,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_RemoveContractFromMerchant_ClientCallFailed_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.RemoveContractFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.RemoveContractFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.RemoveContractFromMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.Contract1Id, CancellationToken.None);
@@ -606,7 +606,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_AssignOperatorToMerchant_OperatorAssigned()
     {
-        this.EstateClient.Setup(e => e.AssignOperatorToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AssignOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.AssignOperatorToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AssignOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.AssignOperatorToMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.AssignOperatorToMerchantModel, CancellationToken.None);
@@ -616,7 +616,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_AssignOperatorToMerchant_ClientCallFailed_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.AssignOperatorToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AssignOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.AssignOperatorToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AssignOperatorRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.AssignOperatorToMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.AssignOperatorToMerchantModel, CancellationToken.None);
@@ -626,7 +626,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_RemoveOperatorFromMerchant_OperatorRemoved()
     {
-        this.EstateClient.Setup(e => e.RemoveOperatorFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+        this.TransactionProcessorClient.Setup(e => e.RemoveOperatorFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
 
         Result result = await this.ApiClient.RemoveOperatorFromMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.Operator1Id, CancellationToken.None);
@@ -636,7 +636,7 @@ public class ApiClientTests {
     [Fact]
     public async Task ApiClient_RemoveOperatorFromMerchant_ClientCallFailed_ResultIsFailed()
     {
-        this.EstateClient.Setup(e => e.RemoveOperatorFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+        this.TransactionProcessorClient.Setup(e => e.RemoveOperatorFromMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
 
         Result result = await this.ApiClient.RemoveOperatorFromMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.Operator1Id, CancellationToken.None);

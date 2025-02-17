@@ -1,19 +1,15 @@
-﻿using EstateManagement.DataTransferObjects.Requests.Merchant;
-using EstateManagement.DataTransferObjects.Responses.Estate;
-using EstateManagement.DataTransferObjects.Responses.Merchant;
-using EstateManagementUI.Testing;
+﻿using EstateManagementUI.Testing;
 using EstateManagementUI.BusinessLogic.Models;
 using Shouldly;
 using EstateManagementUI.BusinessLogic.Common;
-using EstateManagement.DataTransferObjects.Responses.Operator;
-using SimpleResults;
-using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateReportingAPI.DataTransferObjects;
 using FileProcessor.DataTransferObjects.Responses;
-using EstateManagementUI.ViewModels;
 using EstateReportingAPI.DataTrasferObjects;
-using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
-using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using TransactionProcessor.DataTransferObjects.Responses.Estate;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Operator;
 using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
 using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
 using LastSettlement = EstateReportingAPI.DataTransferObjects.LastSettlement;
@@ -592,22 +588,22 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Theory]
-        [InlineData(Models.SettlementSchedule.Immediate, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
-        [InlineData(Models.SettlementSchedule.Monthly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
-        [InlineData(Models.SettlementSchedule.Weekly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
-        [InlineData((Models.SettlementSchedule)99, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(Models.SettlementSchedule.Immediate, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(Models.SettlementSchedule.Monthly, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        [InlineData(Models.SettlementSchedule.Weekly, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData((Models.SettlementSchedule)99, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
         public void ModelFactory_ConvertFrom_SettlementSchedule_IsConverted(Models.SettlementSchedule settlementSchedule,
-                                                                            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedResult) {
-            EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule result = ModelFactory.ConvertFrom(settlementSchedule);
+                                                                            TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedResult) {
+            TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule result = ModelFactory.ConvertFrom(settlementSchedule);
             result.ShouldBe(expectedResult);
         }
 
         [Theory]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
         public void ModelFactory_ConvertFrom_CreateMerchantModel_ModelIsConverted(BusinessLogic.Models.SettlementSchedule settlementSchedule,
-                                                                                  EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
+                                                                                  TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
             CreateMerchantModel model = TestData.CreateMerchantModel(settlementSchedule);
 
             CreateMerchantRequest request = ModelFactory.ConvertFrom(model);
@@ -689,11 +685,11 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Theory]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
-        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly, EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Immediate, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Weekly, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly)]
+        [InlineData(BusinessLogic.Models.SettlementSchedule.Monthly, TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly)]
         public void ModelFactory_ConvertFrom_UpdateMerchantModel_ModelIsConverted(BusinessLogic.Models.SettlementSchedule settlementSchedule,
-                                                                                  EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
+                                                                                  TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule expectedSettlementSchedule) {
             UpdateMerchantModel model = TestData.UpdateMerchantModel(settlementSchedule);
 
             var request = ModelFactory.ConvertFrom(model);

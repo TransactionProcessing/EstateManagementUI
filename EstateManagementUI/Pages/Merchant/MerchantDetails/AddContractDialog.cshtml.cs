@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagementUI.Pages.Shared.Components;
 using EstateManagmentUI.BusinessLogic.Requests;
 using Hydro;
