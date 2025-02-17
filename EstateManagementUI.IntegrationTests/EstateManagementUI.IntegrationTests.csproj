@@ -26,8 +26,6 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
-	  <PackageReference Include="EstateManagement.Client" Version="2024.8.2-build128" />
-	  <PackageReference Include="EstateManagement.Database" Version="2024.8.2-build128" />
 	  <PackageReference Include="SecurityService.Client" Version="2024.88.2-build73" />
 	  <PackageReference Include="SecurityService.IntegrationTesting.Helpers" Version="2024.88.2-build73" />
 	  <PackageReference Include="Shouldly" Version="4.2.1" />
@@ -37,15 +35,17 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Reqnroll" Version="2.0.3" />
     <PackageReference Include="Reqnroll.NUnit" Version="2.0.3" />
-    <PackageReference Include="Shared.IntegrationTesting" Version="2024.11.4" />
+    <PackageReference Include="Shared.IntegrationTesting" Version="2025.1.2" />
 	  <PackageReference Include="Selenium.Support" Version="4.23.0" />
 	  <PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
 
 	  <PackageReference Include="MessagingService.IntegrationTesting.Helpers" Version="2024.8.2-build65" />
 
-	  <PackageReference Include="EstateManagement.IntegrationTesting.Helpers" Version="2024.8.2-build128" />
+	  <PackageReference Include="TransactionProcessor.Client" Version="2025.1.5-build147" />
 
-	  <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2024.8.2-build119" />
+	  <PackageReference Include="TransactionProcessor.Database" Version="2025.1.5-build147" />
+
+	  <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2025.1.5-build147" />
   </ItemGroup>
 
   <ItemGroup>

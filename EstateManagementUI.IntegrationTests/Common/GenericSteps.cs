@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using System;
+using System.Threading.Tasks;
+using NLog;
 using Reqnroll;
 using Shared.IntegrationTesting;
 using Shared.Logger;
@@ -29,7 +31,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             logger.Initialise(LogManager.GetLogger(scenarioName), scenarioName);
             LogManager.AddHiddenAssembly(typeof(NlogLogger).Assembly);
 
-            DockerServices dockerServices = DockerServices.CallbackHandler | DockerServices.EstateManagement | DockerServices.EventStore |
+            DockerServices dockerServices = DockerServices.CallbackHandler | DockerServices.EventStore |
                                             DockerServices.FileProcessor | DockerServices.MessagingService | DockerServices.SecurityService |
                                             DockerServices.TestHost | DockerServices.SqlServer | DockerServices.TransactionProcessor |
                                             DockerServices.TransactionProcessorAcl;

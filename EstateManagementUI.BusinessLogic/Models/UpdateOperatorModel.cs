@@ -1,5 +1,4 @@
-﻿using EstateManagement.DataTransferObjects.Responses.Merchant;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BusinessLogic.Models;

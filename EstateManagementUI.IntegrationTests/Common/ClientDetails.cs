@@ -1,4 +1,7 @@
-﻿namespace EstateManagementUI.IntegrationTests.Common
+﻿using System;
+using System.Collections.Generic;
+
+namespace EstateManagementUI.IntegrationTests.Common
 {
     public class ClientDetails
     {

@@ -1,9 +1,12 @@
-﻿using EstateManagement.IntegrationTesting.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Reqnroll;
 using SecurityService.DataTransferObjects.Responses;
-using Shared.IntegrationTesting;
 using Shared.Logger;
 using Shouldly;
+using TransactionProcessor.IntegrationTesting.Helpers;
+using ReqnrollTableHelper = Shared.IntegrationTesting.ReqnrollTableHelper;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {

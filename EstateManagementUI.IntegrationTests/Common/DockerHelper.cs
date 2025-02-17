@@ -1,21 +1,17 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System;
+using System.Collections.Generic;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Common;
 using Ductus.FluentDocker.Executors;
 using Ductus.FluentDocker.Extensions;
-using Ductus.FluentDocker.Model.Common;
 using Ductus.FluentDocker.Services;
 using Ductus.FluentDocker.Services.Extensions;
-using EstateManagement.Client;
-using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.PermissionService;
-using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 using EstateManagementUI.Controllers;
+using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,6 +19,14 @@ using Newtonsoft.Json;
 using SecurityService.Client;
 using Shared.Exceptions;
 using Shared.IntegrationTesting;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using TransactionProcessor.Client;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
@@ -30,21 +34,16 @@ namespace EstateManagementUI.IntegrationTests.Common
     {
         #region Fields
 
-        /// <summary>
-        /// The estate client
-        /// </summary>
-        public IEstateClient EstateClient;
+        public ITransactionProcessorClient TransactionProcessorClient;
 
-        /// <summary>
-        /// The HTTP client
-        /// </summary>
         public HttpClient HttpClient;
 
-        /// <summary>
-        /// The security service client
-        /// </summary>
         public ISecurityServiceClient SecurityServiceClient;
-        
+
+        public EventStoreProjectionManagementClient ProjectionManagementClient;
+
+        public HttpClient TestHostHttpClient;
+
         #endregion
 
         #region Constructors
@@ -122,7 +121,6 @@ namespace EstateManagementUI.IntegrationTests.Common
         public override async Task CreateSubscriptions(){
             List<(String streamName, String groupName, Int32 maxRetries)> subscriptions = new();
             subscriptions.AddRange(MessagingService.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
-            subscriptions.AddRange(EstateManagement.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
             subscriptions.AddRange(TransactionProcessor.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
 
             // TODO: Add File Processor Subscriptions
@@ -146,7 +144,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             await this.StartEstateManagementUiContainer(this.TestNetworks, this.SecurityServicePort, DockerPorts.SecurityServiceDockerPort);
             
             // Setup the base address resolvers
-            String EstateManagementBaseAddressResolver(String api) => $"http://127.0.0.1:{this.EstateManagementPort}";
+            String TransactionProcessorBaseAddressResolver(String api) => $"http://127.0.0.1:{this.TransactionProcessorPort}";
 
             HttpClientHandler clientHandler = new HttpClientHandler
                                               {
@@ -160,9 +158,12 @@ namespace EstateManagementUI.IntegrationTests.Common
 
                                               };
             HttpClient httpClient = new HttpClient(clientHandler);
-            this.EstateClient = new EstateClient(EstateManagementBaseAddressResolver, httpClient, 2);
+            this.TransactionProcessorClient = new TransactionProcessorClient(TransactionProcessorBaseAddressResolver, httpClient);
             Func<String, String> securityServiceBaseAddressResolver = api => $"https://127.0.0.1:{this.SecurityServicePort}";
             this.SecurityServiceClient = new SecurityServiceClient(securityServiceBaseAddressResolver, httpClient);
+            this.TestHostHttpClient = new HttpClient(clientHandler);
+            this.TestHostHttpClient.BaseAddress = new Uri($"http://127.0.0.1:{this.TestHostServicePort}");
+            this.ProjectionManagementClient = new EventStoreProjectionManagementClient(ConfigureEventStoreSettings());
         }
         
         private async Task<IContainerService> StartEstateManagementUiContainer(List<INetworkService> networkServices,
