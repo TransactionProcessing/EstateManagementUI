@@ -26,6 +26,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
+	  <PackageReference Include="EventStoreProjections" Version="2023.12.3" />
 	  <PackageReference Include="SecurityService.Client" Version="2024.88.2-build73" />
 	  <PackageReference Include="SecurityService.IntegrationTesting.Helpers" Version="2024.88.2-build73" />
 	  <PackageReference Include="Shouldly" Version="4.2.1" />
