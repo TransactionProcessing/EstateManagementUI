@@ -17,7 +17,7 @@
     <PackageReference Include="Shared" Version="2024.11.4" />
     <PackageReference Include="SimpleResults" Version="3.0.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="EstateReportingAPI.Client" Version="2024.7.1" />
+    <PackageReference Include="EstateReportingAPI.Client" Version="2025.2.2-build62" />
     <PackageReference Include="TransactionProcessor.Client" Version="2025.1.5-build147" />
   </ItemGroup>
 
