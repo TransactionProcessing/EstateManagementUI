@@ -276,13 +276,18 @@ public class ApiClient : IApiClient {
                                                                             Guid actionId,
                                                                             Guid estateId,
                                                                             CancellationToken cancellationToken) {
-        async Task<Result<List<ComparisonDateModel>>> ClientMethod() {
+        async Task<Result<List<ComparisonDateModel>>> ClientMethod()
+        {
+
             List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
 
-            return Result.Success(ModelFactory.ConvertFrom(apiResponse));
+            return ModelFactory.ConvertFrom(apiResponse);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
+        //List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
+
+        //return Result.Success(ModelFactory.ConvertFrom(apiResponse));
     }
 
     public async Task<Result<TodaysSalesModel>> GetTodaysSales(String accessToken,
