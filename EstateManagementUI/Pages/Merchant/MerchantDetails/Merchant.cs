@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
@@ -11,10 +9,15 @@ using EstateManagmentUI.BusinessLogic.Requests;
 using Hydro;
 using Hydro.Utils;
 using MediatR;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NLog.LayoutRenderers.Wrappers;
 using SimpleResults;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using EstateManagementUI.Pages.Components;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails;
 
@@ -22,8 +25,13 @@ public class Merchant : SecureHydroComponent
 {
     private readonly IMediator Mediator;
     public String ActiveTab { get; set; }
+
+
+    public Int32 SettlementScheduleId { get; set; } = -1;
+
     [Display(Name = "Settlement Schedule")]
-    public SettlementScheduleListModel SettlementSchedule { get; set; }
+    
+    public String SettlementScheduleName { get; set; }
 
     public AddressViewModel Address { get; set; }
     public ContactViewModel Contact { get; set; }
@@ -54,16 +62,8 @@ public class Merchant : SecureHydroComponent
         await Task.Delay(1000); // TODO: might be a better way of handling this
         this.Close();
     }
-
+    
     public override async Task MountAsync() {
-        this.SettlementSchedule ??= new SettlementScheduleListModel {
-            SettlementSchedule = new List<SelectListItem> {
-                new SelectListItem { Text = "Immediate", Value = "0" },
-                new SelectListItem { Text = "Weekly", Value = "1" },
-                new SelectListItem { Text = "Monthly", Value = "2" }
-            }
-        };
-
         this.Address ??= new AddressViewModel();
         this.Contact??= new ContactViewModel();
 
@@ -94,12 +94,11 @@ public class Merchant : SecureHydroComponent
 
         this.Name = result.Data.MerchantName;
         this.Reference = result.Data.MerchantReference;
-        //this.SettlementSchedule.SettlementScheduleId = result.Data.SettlementSchedule switch {
-            
-        //}
+        this.SettlementScheduleName = result.Data.SettlementSchedule;
+        
         BusinessLogic.Models.SettlementSchedule settlementSchedule =
             Enum.Parse<SettlementSchedule>(result.Data.SettlementSchedule);
-        this.SettlementSchedule.SettlementScheduleId = (Int32)settlementSchedule;
+        this.SettlementScheduleId = (Int32)settlementSchedule;
         this.Address = new AddressViewModel {
             AddressLine1 = result.Data.Address.AddressLine1,
             AddressLine2 = result.Data.Address.AddressLine2,
@@ -174,13 +173,7 @@ public class Merchant : SecureHydroComponent
                 ContactEmailAddress = this.Contact.EmailAddress,
                 ContactPhoneNumber = this.Contact.PhoneNumber,
                 ContactId = Guid.NewGuid()
-            },
-            SettlementSchedule = this.SettlementSchedule.SettlementScheduleId switch
-            {
-                1 => BusinessLogic.Models.SettlementSchedule.Weekly,
-                2 => BusinessLogic.Models.SettlementSchedule.Monthly,
-                _ => BusinessLogic.Models.SettlementSchedule.Immediate
-            },
+            }
         };
 
         Commands.AddMerchantCommand command = new(this.AccessToken, this.EstateId, createMerchantModel);
@@ -200,7 +193,7 @@ public class Merchant : SecureHydroComponent
         List<IRequest<Result>> commands = new();
         
         UpdateMerchantModel updateMerchantModel = new() {
-            SettlementSchedule = this.SettlementSchedule.SettlementScheduleId switch
+            SettlementSchedule = this.SettlementScheduleId switch
             {
                 1 => BusinessLogic.Models.SettlementSchedule.Weekly,
                 2 => BusinessLogic.Models.SettlementSchedule.Monthly,

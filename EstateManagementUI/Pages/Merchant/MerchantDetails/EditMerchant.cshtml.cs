@@ -12,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Hydro.Utils;
 using System.Reflection.Metadata;
+using EstateManagementUI.Pages.Components;
 using Hydro;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails
@@ -100,5 +101,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         public void AddOperator() => this.Dispatch(new MerchantPageEvents.ShowAddOperatorDialog(), Scope.Global);
 
         public void AddContract() => this.Dispatch(new MerchantPageEvents.ShowAddContractDialog(), Scope.Global);
+
+        public List<OptionItem> GetSettlementSchedules() => DataHelperFunctions.GetSettlementSchedules();
     }
 }

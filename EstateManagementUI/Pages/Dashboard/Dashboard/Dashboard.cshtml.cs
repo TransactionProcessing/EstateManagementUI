@@ -48,7 +48,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
             await this.PopulateTokenAndEstateId();
 
             this.Merchant = await DataHelperFunctions.GetMerchants(this.AccessToken, this.EstateId, this.Mediator);
-            this.Operator =  await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
+            this.Operator =  await DataHelperFunctions.GetOperatorsOld(this.AccessToken, this.EstateId, this.Mediator);
             this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.AccessToken, this.EstateId, this.Mediator );
 
             await this.Query();

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using EstateManagementUI.Pages.Components;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails
 {
@@ -20,5 +21,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         {
 
         }
+
+        public List<OptionItem> GetSettlementSchedules() => DataHelperFunctions.GetSettlementSchedules();
     }
 }

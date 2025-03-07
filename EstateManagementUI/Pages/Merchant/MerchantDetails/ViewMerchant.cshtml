@@ -100,8 +100,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label asp-for="SettlementSchedule"></label>
-                                        <select asp-for="SettlementSchedule" tabindex="-1" readonly asp-items="Model.SettlementSchedule.SettlementSchedule" class="form-control" hydro-bind name="SettlementSchedule.SettlementScheduleId" id="settlementSchedule"></select>
+                                        <label asp-for="SettlementScheduleName"></label>
+                                        <input asp-for="SettlementScheduleName" class="form-control" readonly x-init="$el.focus()" hydro-bind name="SettlementScheduleName" id="settlementScheduleName" />
                                     </div>
                                 </div>
                         </div>

@@ -1,4 +1,5 @@
-﻿@model EstateManagementUI.Pages.Merchant.MerchantDetails.NewMerchant
+﻿@using EstateManagementUI.Pages.Components
+@model EstateManagementUI.Pages.Merchant.MerchantDetails.NewMerchant
 
 <div class="card o-hidden border-0 shadow-sm my-5">
     <div class="card-body p-0">
@@ -14,8 +15,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label asp-for="SettlementSchedule"></label>
-                        <select asp-for="SettlementSchedule" asp-items="Model.SettlementSchedule.SettlementSchedule" class="form-control" hydro-bind name="SettlementSchedule.SettlementScheduleId" id="settlementSchedule"></select>
+                        <label asp-for="SettlementScheduleId" class="form-label">Settlement Schedule</label>
+                        <field-select field="SettlementScheduleId" label="SettlementSchedule" options="@Model.GetSettlementSchedules()"/>
                     </div>
                 </div>
                 <div class="row">

@@ -1,5 +1,6 @@
 ﻿@using EstateManagementUI.BusinessLogic.Models
 @using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using EstateManagementUI.Pages.Components
 @using EstateManagementUI.Pages.Shared
 @using Hydro.TagHelpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
@@ -102,8 +103,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label asp-for="SettlementSchedule"></label>
-                                        <select asp-for="SettlementSchedule" asp-items="Model.SettlementSchedule.SettlementSchedule" class="form-control" hydro-bind name="SettlementSchedule.SettlementScheduleId" id="settlementSchedule"></select>
+                                        <label asp-for="SettlementScheduleId" class="form-label">Settlement Schedule</label>
+                                        <field-select field="SettlementScheduleId" label="SettlementSchedule" options="@Model.GetSettlementSchedules()"/>
                                     </div>
                                 </div>
                             </div>

@@ -15,6 +15,7 @@ using EstateManagementUI.Pages.Estate.OperatorList;
 using EstateManagementUI.ViewModels;
 using EstateManagementUI.Pages.Merchant.MerchantDetails;
 using System.Reflection.Metadata;
+using EstateManagementUI.Pages.Components;
 using Hydro;
 
 namespace EstateManagementUI.Pages.Contract.Contract
@@ -49,13 +50,13 @@ namespace EstateManagementUI.Pages.Contract.Contract
             this.Close();
         }
 
-        public OperatorListModel Operator { get; set; }
+        public String OperatorId { get; set; } = "";
+
+        
         public String Name { get; set; }
         public override async Task MountAsync() {
 
             await this.PopulateTokenAndEstateId();
-
-            this.Operator = await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
 
             if (this.ContractId != Guid.Empty)
             {
@@ -84,11 +85,17 @@ namespace EstateManagementUI.Pages.Contract.Contract
         private async Task UpdateExitingContract() {
         }
 
+        public List<OptionItem> GetOperators() {
+            // Might have async issues :|
+            this.PopulateTokenAndEstateId().Wait();
+            return DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator).Result;
+        }
+
         private async Task CreateNeContract() {
 
             Commands.CreateContractCommand createContractCommand = new(this.AccessToken, this.EstateId, new CreateContractModel
             {
-                OperatorId = Guid.Parse(this.Operator.OperatorId),
+                OperatorId = Guid.Parse(this.OperatorId),
                 Description = this.Name
             });
 
