@@ -16,7 +16,7 @@
                     <div class="col-md-4">
                         <label asp-for="OperatorId">Operator</label>
                         @* <select asp-for="Operator" asp-items="Model.Operator.Operators" class="form-control" hydro-bind name="Operator.OperatorId" id="operatorList"></select> *@
-                        <field-select field="OperatorId" label="SettlementSchedule" options="@Model.GetOperators()" />
+                        <field-select field="OperatorId" label="SettlementSchedule" options="@Model.GetOperators()" id="operatorList" />
                     </div>
                 </div>
                 <div class="text-end">

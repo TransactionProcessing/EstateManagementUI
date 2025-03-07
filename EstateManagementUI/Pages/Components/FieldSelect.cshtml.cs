@@ -5,6 +5,7 @@ namespace EstateManagementUI.Pages.Components;
 
 public class FieldSelect : HydroView
 {
+    public string Id { get; set; }
     public string Label { get; set; }
     public ModelExpression Field { get; set; }
     public IEnumerable<OptionItem> Options { get; set; } = [];
