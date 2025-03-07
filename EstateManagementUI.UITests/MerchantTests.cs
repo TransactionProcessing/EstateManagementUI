@@ -73,13 +73,7 @@ public class MerchantTests
             EmailAddress = "john.doe@example.com",
             PhoneNumber = "555-1234"
         };
-        this._merchant.SettlementSchedule = new SettlementScheduleListModel
-        {
-            SettlementSchedule = [
-                new SelectListItem("Immediate", "1")
-            ],
-            SettlementScheduleId = 1
-        };
+        this._merchant.SettlementScheduleId = 1;
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.AddMerchantCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
@@ -112,12 +106,7 @@ public class MerchantTests
             EmailAddress = "john.doe@example.com",
             PhoneNumber = "555-1234"
         };
-        this._merchant.SettlementSchedule = new SettlementScheduleListModel {
-            SettlementSchedule = [
-                new SelectListItem("Immediate", "1")
-            ],
-            SettlementScheduleId = 1
-        };
+        this._merchant.SettlementScheduleId = 1;
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()))

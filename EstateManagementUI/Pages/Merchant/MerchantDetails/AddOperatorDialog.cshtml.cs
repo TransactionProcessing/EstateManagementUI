@@ -31,7 +31,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         {
             await this.PopulateTokenAndEstateId();
 
-            this.Operator = await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
+            this.Operator = await DataHelperFunctions.GetOperatorsOld(this.AccessToken, this.EstateId, this.Mediator);
         }
 
         public async Task Save() {

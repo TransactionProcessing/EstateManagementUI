@@ -43,11 +43,9 @@ namespace EstateManagementUI.Pages.Contract.Contract
             {
                 // handle this
             }
-            OperatorListModel operatorList = await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
-
             this.Name = result.Data.Description;
-            SelectListItem @operator = operatorList.Operators.Single(x => x.Value == result.Data.OperatorId.ToString());
-            this.OperatorName = @operator.Text;
+            //SelectListItem @operator = operatorList.Operators.Single(x => x.Value == result.Data.OperatorId.ToString());
+            //this.OperatorName = @operator.Text;
         }
 
         public Guid ContractId { get; set; }
