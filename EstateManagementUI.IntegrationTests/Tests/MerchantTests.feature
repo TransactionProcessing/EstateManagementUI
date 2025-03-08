@@ -123,8 +123,16 @@ Scenario: Merchant PR Test
 	| Test Merchant 2        | Weekly             | Test Contact 1        | Address Line 1        | TestTown |
 	| Test Merchant 3        | Monthly            | Test Contact 1        | Address Line 1        | TestTown |
 	| Test Merchant 4        | Immediate          | Test Contact 4        | Address Line 1        | TestTown |
+	When I click on the Make Deposit Button for 'Test Merchant 1 Update'
+	Then the Make Deposit Screen is displayed
+	When I enter the following details for the deposit
+	| Amount  | Date  | Reference      |
+	| 1000.00 | Today | Test Deposit 1 |
+	And click the Make Deposit button
+	Then I am presented with the Merchants List Screen
 	When I click on the View Merchant Button for 'Test Merchant 1 Update'
 	Then the View Merchant Screen is displayed
+
 
 Scenario: Merchant Operator Management
 	Given I have created the following operators
@@ -168,7 +176,6 @@ Scenario: Merchant Operator Management
 	| OperatorName   | MerchantNumber | TerminalNumber | IsDeleted |
 	| Test Operator  | 00000001       | 10000001       | False     |
 	| Test Operator1 | 00000111       | 10000111       | True      |
-
 
 Scenario: Merchant Contract Management
 	Given I have created the following operators

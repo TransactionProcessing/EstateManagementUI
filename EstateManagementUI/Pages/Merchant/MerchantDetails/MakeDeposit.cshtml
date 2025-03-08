@@ -1,0 +1,296 @@
+﻿@using EstateManagementUI.BusinessLogic.Models
+@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using EstateManagementUI.Pages.Components
+@using EstateManagementUI.Pages.Shared
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.Merchant.MerchantDetails.MakeDeposit
+
+@* @{
+    string IsActiveTab(string tab) {
+        return Model.ActiveTab == tab ? "nav-link active" : "nav-link";
+    }
+
+    string IsActiveTabPane(string tab) {
+        return Model.ActiveTab == tab ? "tab-pane fade show active" : "tab-pane fade";
+    }
+} *@
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+            <h1 class="h4 text-gray-900 mb-4">Make Deposit for Merchant: @Model.Name</h1>
+            <form hydro-on:submit="@(() => Model.Save())">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="Amount" class="form-label">Amount (KES)</label>
+                            <input asp-for="Amount" placeholder="Enter Deposit Amount" class="form-control" x-init="$el.focus()" hydro-bind name="Amount" id="depositAmount" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label asp-for="Date" class="form-label">Date</label>
+                        <input asp-for="Date" type="date" class="form-control" x-init="$el.focus()" hydro-bind name="Date" id="depositDate" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label asp-for="Reference" class="form-label">Reference</label>
+                            <input asp-for="Reference" class="form-control" x-init="$el.focus()" hydro-bind name="Reference" id="depositReference" />
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary" id="makeDepositButton">Make Deposit</button>
+                        <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                    </div>
+                </div>
+            </form>
+        <!-- Nested Row within Card Body -->
+        @* <div class="row">
+            <div class="col-lg-7">
+                <div class="p-5">
+                    <form hydro-on:submit="@(() => Model.Save())">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <button id="nav-merchantdetails-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#merchantdetails"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("merchantdetails")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("merchantdetails"))">
+                                Details
+                            </button>
+
+                            <button id="nav-address-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#address"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("address")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("address"))">
+                                Addresses
+                            </button>
+
+                            <button id="nav-contacts-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#contacts"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("contacts")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("contacts"))">
+                                Contacts
+                            </button>
+
+                            <button id="nav-operators-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#operators"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("operators")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("operators"))">
+                                Operators
+                            </button>
+                            
+                            <button id="nav-contracts-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#contracts"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("contracts")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("contracts"))">
+                                Contracts
+                            </button>
+
+                            <button id="nav-devices-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#devices"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("devices")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("devices"))">
+                                Devices
+                            </button>
+                        </ul>
+
+                        <div class="tab-content" id="myTabContent">
+                            <!-- Details Tab -->
+                            <div class="@IsActiveTabPane("merchantdetails")" id="merchantdetails" role="tabpanel" aria-labelledby="nav-merchantdetails-tab">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label asp-for="Name" class="form-label">Name</label>
+                                        <input asp-for="Name" placeholder="Enter Merchant Name" class="form-control" hydro-bind name="Name" id="merchantName"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label asp-for="Reference" class="form-label">Reference</label>
+                                        <input asp-for="Reference" readonly class="form-control" hydro-bind name="Reference" id="merchantReference"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label asp-for="SettlementScheduleId" class="form-label">Settlement Schedule</label>
+                                        <field-select field="SettlementScheduleId" label="SettlementSchedule" options="@Model.GetSettlementSchedules()" id="settlementSchedule"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Addresses Tab -->
+                            <div class="@IsActiveTabPane("address")" id="address" role="tabpanel" aria-labelledby="nav-address-tab">
+                                <div class="col-md-8">
+                                    <label asp-for="Address.AddressLine1" class="control-label">Address Line 1</label>
+                                    <input asp-for="Address.AddressLine1" class="form-control form-control-user" hydro-bind name="Address.AddressLine1" id="addressLine1"/>
+                                </div>
+                                <div class="col-md-8">
+                                    <label asp-for="Address.AddressLine2" class="control-label">Address Line 2</label>
+                                    <input asp-for="Address.AddressLine2" class="form-control form-control-user" hydro-bind name="Address.AddressLine2" id="addressLine2"/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label asp-for="Address.Town" class="control-label">Town</label>
+                                        <input asp-for="Address.Town" class="form-control form-control-user" hydro-bind name="Address.Town" id="town"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label asp-for="Address.Region" class="control-label">Region</label>
+                                        <input asp-for="Address.Region" class="form-control form-control-user" hydro-bind name="Address.Region" id="region"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label asp-for="Address.PostCode" class="control-label">Post Code</label>
+                                        <input asp-for="Address.PostCode" class="form-control form-control-user" hydro-bind name="Address.PostCode" id="postalCode"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Address.Country" class="control-label">Country</label>
+                                        <input asp-for="Address.Country" class="form-control form-control-user" hydro-bind name="Address.Country" id="country"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contacts Tab -->
+                            <div class="@IsActiveTabPane("contacts")" id="contacts" role="tabpanel" aria-labelledby="nav-contacts-tab">
+                                <div class="form-row">
+                                    <label asp-for="Contact.ContactName" class="control-label">Name</label>
+                                    <input asp-for="Contact.ContactName" class="form-control form-control-user" hydro-bind name="Contact.ContactName" id="contactName"/>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-md-6">
+                                        <label asp-for="Contact.EmailAddress" class="control-label">Email Address</label>
+                                        <input asp-for="Contact.EmailAddress" class="form-control form-control-user" hydro-bind name="Contact.EmailAddress" id="contactEmailAddress"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label asp-for="Contact.PhoneNumber" class="control-label">Phone Number</label>
+                                        <input asp-for="Contact.PhoneNumber" class="form-control form-control-user" hydro-bind name="Contact.PhoneNumber" id="contactPhoneNumber"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Operators Tab -->
+                            <div class="@IsActiveTabPane("operators")" id="operators" role="tabpanel" aria-labelledby="nav-operators-tab">
+                                <button class="btn btn-primary btn-sm" id="addOperatorButton" hydro-on:click="@(() => Model.AddOperator())">Add Operator</button>
+                                <table class="table table-sm" id="merchantOperatorList">
+                                    <thead class="thead-light">
+                                    <tr class="d-flex">
+                                        <th class="col-2">Name</th>
+                                        <th class="col-3">Merchant Number</th>
+                                        <th class="col-3">Terminal Number</th>
+                                        <th class="col-2">Is Deleted</th>
+                                        <th class="col-1"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (MerchantOperatorViewModel merchantOperatorModel in Model.Operators) {
+                                        <tr class="hover d-flex">
+                                            <td class="col-2">@merchantOperatorModel.Name</td>
+                                            <td class="col-3">@merchantOperatorModel.MerchantNumber</td>
+                                            <td class="col-3">@merchantOperatorModel.TerminalNumber</td>
+                                            <td class="col-2">@merchantOperatorModel.IsDeleted</td>
+                                            <td class="align-middle text-end">
+                                                @{
+                                                    TableDropdownItem[] menuItems = new TableDropdownItem[]
+                                                    {
+                                                        new("Remove", () => Model.RemoveOperator(Model.MerchantId, merchantOperatorModel.OperatorId), (ApplicationSections.Merchant, MerchantFunctions.RemoveOperator), $"{merchantOperatorModel.Name}Remove"),
+                                                    };
+                                                }
+
+                                                <partial name="TableDropdown" model="@menuItems" />
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <!-- Contracts Tab -->
+                            <div class="@IsActiveTabPane("contracts")" id="contracts" role="tabpanel" aria-labelledby="nav-contracts-tab">
+                                <button class="btn btn-primary btn-sm" id="addContractButton" hydro-on:click="@(() => Model.AddContract())">Add Contract</button>
+                                <table class="table table-sm" id="merchantContractList">
+                                    <thead class="thead-light">
+                                    <tr class="d-flex">
+                                        <th class="col-4">Name</th>
+                                        <th class="col-4">Is Deleted</th>
+                                        <th class="col-1"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (MerchantContractModel merchantContractModel in Model.Contracts) {
+                                        <tr class="hover d-flex">
+                                            <td class="col-4">@merchantContractModel.Name</td>
+                                            <td class="col-4">@merchantContractModel.IsDeleted</td>
+                                                <td class="align-middle text-end">
+                                                    @{
+                                                        TableDropdownItem[] menuItems = new TableDropdownItem[]
+                                                        {
+                                                new("Remove", () => Model.RemoveContract(Model.MerchantId, merchantContractModel.ContractId), (ApplicationSections.Merchant, MerchantFunctions.RemoveContract), $"{merchantContractModel.Name}Remove"),
+                                                        };
+                                                    }
+
+                                                    <partial name="TableDropdown" model="@menuItems" />
+                                                </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Devices Tab -->
+                            <div class="@IsActiveTabPane("devices")" id="devices" role="tabpanel" aria-labelledby="nav-devices-tab">
+                                <table class="table table-sm" id="merchantDeviceList">
+                                    <thead class="thead-light">
+                                    <tr class="d-flex">
+                                        <th class="col-4">Device</th>
+                                        <th class="col-1"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (MerchantDeviceViewModel merchantDeviceModel in Model.Devices) {
+                                        <tr class="hover d-flex">
+                                            <td class="col-4">@merchantDeviceModel.DeviceIdentifier</td>
+                                            <td class="align-middle text-end"></td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary" id="saveMerchantButton">Save</button>
+                            <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                        </div>
+                    </form>
+                    
+                    
+                    @if (Model.ShowOperatorDialog) {
+                        <hydro name="AddOperatorDialog" params="@(new { MerchantId = Model.MerchantId })"/>
+                    }
+
+                    @if (Model.ShowContractDialog) {
+                        <hydro name="AddContractDialog" params="@(new { MerchantId = Model.MerchantId })"/>
+                    }
+                    </div>
+            </div>
+            <div class="col-lg-5" align="center">
+                <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+            </div>
+        </div> *@
+    </div>
+</div>

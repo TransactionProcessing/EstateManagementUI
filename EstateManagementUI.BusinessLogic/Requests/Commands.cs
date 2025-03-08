@@ -41,4 +41,9 @@ public record Commands {
     public record CreateContractCommand(String AccessToken,
                                         Guid EstateId,
                                         CreateContractModel CreateContractModel) : IRequest<Result>;
+
+    public record MakeDepositCommand(String AccessToken,
+                                     Guid EstateId,
+                                     Guid MerchantId,
+                                     MakeDepositModel MakeDepositModel) : IRequest<Result>;
 }

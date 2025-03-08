@@ -80,6 +80,11 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.VerifyPageTitle("Edit Merchant"); });
     }
 
+    public async Task VerifyOnTheMakeDepositScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("Make Deposit"); });
+    }
+
     public async Task VerifyOnTheViewMerchantScreen()
     {
         await Retry.For(async () => { this.VerifyPageTitle("View Merchant"); });
@@ -559,6 +564,11 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("saveMerchantButton");
     }
 
+    public async Task ClickTheMakeDepositButton()
+    {
+        await this.WebDriver.ClickButtonById("makeDepositButton");
+    }
+
     public async Task ClickTheSaveContractButton()
     {
         await this.WebDriver.ClickButtonById("saveContractButton");
@@ -629,6 +639,14 @@ public class EstateManagementUiHelpers{
                     break;
             }
         }
+    }
+
+    public async Task EnterDepositDetails(String amount,
+                                          String date,
+                                          String reference) {
+        await this.WebDriver.FillInNumeric("Amount", amount);
+        await this.WebDriver.FillIn("Date", date);
+        await this.WebDriver.FillIn("Reference", reference);
     }
 
     public async Task EnterMerchantDetails(String merchantName, String addressLine1, String town, String region, String postCode, String country, String contactName, String contactEmail, String contactPhoneNumber, String settlementSchedule){
@@ -883,6 +901,31 @@ public class EstateManagementUiHelpers{
         else
         {
             throw new Exception($"Edit button not found for merchant {merchantName}");
+        }
+    }
+
+    public async Task ClickTheMakeDepositButton(String merchantName)
+    {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
+        {
+            var gg = await GetButtonInDropdown(webElement, $"{merchantName}MakeDeposit");
+            if (gg != null)
+            {
+                editButton = gg;
+                break;
+            }
+        }
+
+        if (editButton != null)
+        {
+            editButton.Click();
+        }
+        else
+        {
+            throw new Exception($"Make Deposit button not found for merchant {merchantName}");
         }
     }
 
