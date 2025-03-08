@@ -12,6 +12,7 @@ using SecurityService.IntegrationTesting.Helpers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using EstateManagementUI.Pages.Operator.OperatorsList;
 using EstateManagementUI.Pages.Estate.OperatorList;
+using SQLite;
 
 namespace EstateManagementUI.IntegrationTests.Steps
 {
@@ -277,6 +278,11 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheEditMerchantScreen();
         }
 
+        [Then("the Make Deposit Screen is displayed")]
+        public async Task ThenTheMakeDepositScreenIsDisplayed() {
+            await this.UiHelpers.VerifyOnTheMakeDepositScreen();
+        }
+
         [When("I click on the Operators tab")]
         public async Task WhenIClickOnTheOperatorsTab() {
             await this.UiHelpers.ClickOnTheMerchantOperatorsTab();
@@ -330,6 +336,13 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickTheEditMerchantButton(merchantName);
         }
 
+        [When("I click on the Make Deposit Button for {string}")]
+        public async Task WhenIClickOnTheMakeDepositButtonFor(string merchantName)
+        {
+            await this.UiHelpers.ClickTheMakeDepositButton(merchantName);
+        }
+
+
         [When("I click on the Remove Operator for {string}")]
         public async Task WhenIClickOnTheRemoveOperatorFor(string operatorName) {
             await this.UiHelpers.ClickTheRemoveOperatorButton(operatorName);
@@ -358,6 +371,19 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
             await this.UiHelpers.EnterMerchantUpdateDetails(updates);
         }
+
+        [When("I enter the following details for the deposit")]
+        public async Task WhenIEnterTheFollowingDetailsForTheDeposit(DataTable dataTable)
+        {
+            DataTableRow merchantDetails = dataTable.Rows.Single();
+            String depositAmount = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "Amount");
+            String dateString = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "Date");
+            String depositDate = ReqnrollTableHelper.GetDateForDateString(dateString, DateTime.Now).ToString("dd/MM/yyyy");
+            String reference = ReqnrollTableHelper.GetStringRowValue(merchantDetails, "Reference");
+
+            await this.UiHelpers.EnterDepositDetails(depositAmount, depositDate, reference);
+        }
+
 
         public record MerchantUpdate(String tab, String field, String value);
 
@@ -425,6 +451,13 @@ namespace EstateManagementUI.IntegrationTests.Steps
         {
             await this.UiHelpers.ClickTheSaveMerchantButton();
         }
+
+        [When("click the Make Deposit button")]
+        public async Task WhenClickTheMakeDepositButton()
+        {
+            await this.UiHelpers.ClickTheMakeDepositButton();
+        }
+
 
         [When("I click on the View Products Button for {string}")]
         public async Task WhenIClickOnTheViewProductsButtonFor(string contractName) {

@@ -65,7 +65,8 @@
                     TableDropdownItem[] menuItems = new TableDropdownItem[]
                     {
                 new("Edit", () => Model.Edit(@merchantModel.Id), (ApplicationSections.Merchant, MerchantFunctions.Edit), $@"{merchantModel.Name}Edit"),
-                new("View", () => Model.View(@merchantModel.Id), (ApplicationSections.Merchant, MerchantFunctions.View), $@"{merchantModel.Name}View")
+                new("View", () => Model.View(@merchantModel.Id), (ApplicationSections.Merchant, MerchantFunctions.View), $@"{merchantModel.Name}View"),
+                new("Make Deposit", () => Model.MakeDeposit(@merchantModel.Id), (ApplicationSections.Merchant, MerchantFunctions.MakeDeposit), $@"{merchantModel.Name}MakeDeposit")
                     };
                 }
 
