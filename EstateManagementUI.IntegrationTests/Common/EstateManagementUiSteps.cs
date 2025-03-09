@@ -71,6 +71,11 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () => { this.VerifyPageTitle("New Contract"); });
     }
 
+    public async Task VerifyOnTheNewContractProductScreen()
+    {
+        await Retry.For(async () => { this.VerifyPageTitle("New Contract Product" ); });
+    }
+
     public async Task VerifyOnTheNewMerchantScreen(){
         await Retry.For(async () => { this.VerifyPageTitle("New Merchant"); });
     }
@@ -574,9 +579,19 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("saveContractButton");
     }
 
+    public async Task ClickTheSaveProductButton()
+    {
+        await this.WebDriver.ClickButtonById("saveContractProductButton");
+    }
+
     public async Task ClickTheNewContractButton()
     {
         await this.WebDriver.ClickButtonById("newContractButton");
+    }
+
+    public async Task ClickTheNewContractProductButton()
+    {
+        await this.WebDriver.ClickButtonById("newContractProductButton");
     }
 
     public async Task ClickTheCreateProductButton()
@@ -606,6 +621,19 @@ public class EstateManagementUiHelpers{
     public async Task EnterContractDetails(String contractDescription, String operatorName){
         await this.WebDriver.FillIn("Name", contractDescription);
         await this.WebDriver.SelectDropDownItemByText("operatorList", operatorName);
+    }
+
+    public async Task EnterContractProductDetails(String productName, String productType, String displayText, String value, Boolean isVariableValue=false)
+    {
+        await this.WebDriver.FillIn("Name", productName);
+        await this.WebDriver.FillIn("DisplayText", displayText);
+        await this.WebDriver.SelectDropDownItemByText("productTypeList", productType);
+        if (isVariableValue) {
+            await this.WebDriver.ClickCheckBoxById("isVariableValue");
+        }
+        else {
+            await this.WebDriver.FillIn("Value", value);
+        }
     }
 
     public async Task ClickTab(String tabName) {

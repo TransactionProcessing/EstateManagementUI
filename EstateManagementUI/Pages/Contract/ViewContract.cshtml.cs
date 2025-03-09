@@ -16,7 +16,7 @@ namespace EstateManagementUI.Pages.Contract
         public Guid ContractId { get; set; }
 
         public ViewContractModel(IPermissionsService permissionsService) : base(permissionsService,
-            ApplicationSections.Contract, MerchantFunctions.View)
+            ApplicationSections.Contract, ContractFunctions.View)
         {
         }
     }

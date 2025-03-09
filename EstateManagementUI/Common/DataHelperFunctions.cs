@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleResults;
 using System.Globalization;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 public static class DataHelperFunctions {
     public static async Task<ComparisonDateListModel> GetComparisonDates(String accessToken, Guid estateId, IMediator mediator)
@@ -132,5 +133,18 @@ public static class DataHelperFunctions {
         List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();
         ordered.Insert(0, new SelectListItem("- Select a Contract -", "", true));
         return new ContractListModel { Contracts = ordered };
+    }
+
+    public static async Task<List<OptionItem>> GetProductTypes(String accessToken, Guid estateId)
+    {
+        // TODO: this will need to make a query to the Estate Management API to product types pertaining
+        // to the contact operator
+
+        List<OptionItem> productTypes = new List<OptionItem>();
+        productTypes.Add(new OptionItem("-1","- Select a Product Type -"));
+        productTypes.Add(new OptionItem(((Int32)ProductType.BillPayment).ToString(),"Bill Payment"));
+        productTypes.Add(new OptionItem(((Int32)ProductType.MobileTopup).ToString(),"Mobile Topup"));
+        productTypes.Add(new OptionItem(((Int32)ProductType.Voucher).ToString(),"Voucher"));
+        return productTypes;
     }
 }

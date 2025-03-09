@@ -682,6 +682,22 @@ public static class ModelFactory
         return createContractRequest;
     }
 
+    public static AddProductToContractRequest ConvertFrom(CreateContractProductModel source) {
+        if (source == null)
+        {
+            return null;
+        }
+
+        AddProductToContractRequest addProductToContractRequest =new()
+        {
+            ProductName = source.Name,
+            DisplayText = source.DisplayText,
+            Value = source.Value,
+            ProductType = (ProductType)source.Type
+        };
+        return addProductToContractRequest;
+    }
+
     public static MakeMerchantDepositRequest ConvertFrom(MakeDepositModel source) {
         if (source == null)
         {

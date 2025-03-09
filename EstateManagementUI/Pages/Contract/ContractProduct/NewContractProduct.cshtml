@@ -1,0 +1,46 @@
+﻿@model EstateManagementUI.Pages.Contract.ContractProduct.NewContractProduct
+
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <h1 class="h4 text-gray-900 mb-4">New Contract Product</h1>
+        <form hydro-on:submit="@(() => Model.Save())">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" placeholder="Enter Product Name" class="form-control" x-init="$el.focus()" hydro-bind name="Name" id="productName" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="DisplayText" class="form-label">Display Text</label>
+                        <input asp-for="DisplayText" placeholder="Enter Display Text" class="form-control" x-init="$el.focus()" hydro-bind name="DisplayText" id="productDisplayText" />
+                        <span asp-validation-for="DisplayText" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="ProductTypeId">Product Type</label>
+                        <field-select field="ProductTypeId" label="SettlementSchedule" options="@Model.GetProductTypes()" id="productTypeList" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="Value" class="form-label">Value</label>
+                        <input asp-for="Value" placeholder="Enter Value" class="form-control" x-init="$el.focus()" hydro-bind name="Value" id="productValue" />
+                        <span asp-validation-for="Value" class="text-danger"></span>
+                        
+                        <label asp-for="IsVariableValue" class="form-label">Is Variable Value</label>
+                        <input asp-for="IsVariableValue" x-init="$el.focus()"  type="checkbox" hydro-bind name="IsVariableValue" id="isVariableValue" />
+                        <span asp-validation-for="IsVariableValue" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary" id="saveContractProductButton">Save</button>
+                    <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

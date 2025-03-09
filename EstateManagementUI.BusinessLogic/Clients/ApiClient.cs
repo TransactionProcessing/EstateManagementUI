@@ -554,4 +554,20 @@ public class ApiClient : IApiClient {
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
+
+    public async Task<Result> CreateContractProduct(String accessToken,
+                                                    Guid actionId,
+                                                    Guid estateId,
+                                                    Guid contractId,
+                                                    CreateContractProductModel createContractProductModel,
+                                                    CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            AddProductToContractRequest apiRequest = ModelFactory.ConvertFrom(createContractProductModel);
+
+            return await this.TransactionProcessorClient.AddProductToContract(accessToken, estateId, contractId, apiRequest, cancellationToken);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
 }

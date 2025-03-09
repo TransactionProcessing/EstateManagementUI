@@ -96,7 +96,12 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheDashboard();
         }
 
-
+        [When("I click the Save Product Button")]
+        public async Task WhenIClickTheSaveProductButton()
+        {
+            await this.UiHelpers.ClickTheSaveProductButton();
+        }
+        
         [Then(@"I am presented with the View Estate Page")]
         public async Task ThenIamPresentedWithTheViewEstatePage()
         {
@@ -470,6 +475,18 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyOnTheNewContractScreen();
         }
 
+        [Then("the New Product Screen is displayed")]
+        public async Task ThenTheNewProductScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheNewContractProductScreen();
+        }
+        
+        [When("I click on the New Contract Product Button")]
+        public async Task WhenIClickOnTheNewContractProductButton()
+        {
+            await this.UiHelpers.ClickTheNewContractProductButton();
+        }
+
 
         [When("I click on the New Contract Button")]
         public async Task WhenIClickOnTheNewContractButton()
@@ -485,6 +502,18 @@ namespace EstateManagementUI.IntegrationTests.Steps
             var operatorName = ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName");
 
             await this.UiHelpers.EnterContractDetails(contractDescription, operatorName);
+        }
+
+        [When("I enter the following details for the new Product")]
+        public async Task WhenIEnterTheFollowingDetailsForTheNewProduct(DataTable dataTable)
+        {
+            var tableRow = dataTable.Rows.Single();
+            var productName = ReqnrollTableHelper.GetStringRowValue(tableRow, "ProductName");
+            var productType = ReqnrollTableHelper.GetStringRowValue(tableRow, "ProductType");
+            var displayText = ReqnrollTableHelper.GetStringRowValue(tableRow, "DisplayText");
+            var value = ReqnrollTableHelper.GetStringRowValue(tableRow, "Value");
+
+            await this.UiHelpers.EnterContractProductDetails(productName, productType, displayText, value);
         }
         
         [When("I click on the View Fees Button for {string}")]
@@ -513,8 +542,6 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
             await this.UiHelpers.VerifyTheContractProductDetailsAreInTheList(contractProductsDescriptions);
         }
-
-
     }
     public record MerchantDetails(String MerchantName, String SettlementSchedule,String ContactName, String AddressLine1, String Town);
 }

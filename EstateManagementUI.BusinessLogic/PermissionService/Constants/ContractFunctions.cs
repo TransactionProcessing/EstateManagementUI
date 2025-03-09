@@ -12,7 +12,7 @@ public record ContractFunctions
     public const string Edit = "Edit Contract";
     public const string New = "New Contract";
     //public const string Remove = "Remove Contract";
-    //public const string AddProduct = "Add Product";
+    public const string AddProduct = "Add Product";
     //public const string RemoveProduct = "Remove Product";
     //public const string AddTransactionFee = "Add Transaction Fee";
     //public const string RemoveTransactionFee = "Remove Transaction Fee";

@@ -25,9 +25,10 @@ namespace EstateManagementUI.Pages.Contract.Contract
     {
         private readonly IMediator Mediator;
 
-        public NewContract(IMediator mediator, IPermissionsService permissionsService) : base( ApplicationSections.Contract, ContractFunctions.New, permissionsService) {
+        public NewContract(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Contract, ContractFunctions.New, permissionsService)
+        {
             this.Mediator = mediator;
-            
+
             Subscribe<ContractPageEvents.ContractCreatedEvent>(Handle);
             Subscribe<ContractPageEvents.ContractUpdatedEvent>(Handle);
         }
@@ -52,9 +53,10 @@ namespace EstateManagementUI.Pages.Contract.Contract
 
         public String OperatorId { get; set; } = "";
 
-        
+
         public String Name { get; set; }
-        public override async Task MountAsync() {
+        public override async Task MountAsync()
+        {
 
             await this.PopulateTokenAndEstateId();
 
@@ -82,16 +84,19 @@ namespace EstateManagementUI.Pages.Contract.Contract
             await t;
         }
 
-        private async Task UpdateExitingContract() {
+        private async Task UpdateExitingContract()
+        {
         }
 
-        public List<OptionItem> GetOperators() {
+        public List<OptionItem> GetOperators()
+        {
             // Might have async issues :|
             this.PopulateTokenAndEstateId().Wait();
             return DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator).Result;
         }
 
-        private async Task CreateNeContract() {
+        private async Task CreateNeContract()
+        {
 
             Commands.CreateContractCommand createContractCommand = new(this.AccessToken, this.EstateId, new CreateContractModel
             {
@@ -100,7 +105,8 @@ namespace EstateManagementUI.Pages.Contract.Contract
             });
 
             Result result = await this.Mediator.Send(createContractCommand, CancellationToken.None);
-            if (result.IsSuccess) {
+            if (result.IsSuccess)
+            {
                 this.Dispatch(new ContractPageEvents.ContractCreatedEvent(), Scope.Global);
             }
             // TODO: handle the failure case
@@ -114,4 +120,6 @@ namespace EstateManagementUI.Pages.Contract.Contract
 public class ContractPageEvents {
     public record ContractCreatedEvent;
     public record ContractUpdatedEvent;
+    public record ContractProductCreatedEvent;
+    public record ContractProductUpdatedEvent;
 }
