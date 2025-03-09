@@ -214,6 +214,13 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                            ContactModel updateContactModel,
                                            CancellationToken cancellationToken);
 
+        Task<Result> MakeDeposit(String accessToken,
+                                     Guid actionId,
+                                     Guid estateId,
+                                     Guid merchantId,
+                                     MakeDepositModel makeDepositModel,
+                                     CancellationToken cancellationToken);
+
         Task<Result> CreateContractProduct(String accessToken,
                                            Guid actionId,
                                            Guid estateId,

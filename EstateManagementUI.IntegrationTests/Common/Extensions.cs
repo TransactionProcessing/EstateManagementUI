@@ -1,12 +1,13 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
+using Shared.IntegrationTesting;
+using Shouldly;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using Shared.IntegrationTesting;
-using Shouldly;
+using System.Xml.Linq;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
@@ -33,6 +34,26 @@ namespace EstateManagementUI.IntegrationTests.Common
                                     webElement.SendKeys(value);
                                 }
                             }, timeout);
+        }
+
+        public static async Task FillInNumeric(this IWebDriver webDriver,
+                                        String elementName,
+                                        String value,
+                                        TimeSpan? timeout = null)
+        {
+            await Retry.For(async () =>
+            {
+                IWebElement webElement = webDriver.FindElement(By.Name(elementName));
+                webElement.ShouldNotBeNull();
+                webElement.Displayed.ShouldBe(true);
+                webElement.Enabled.ShouldBe(true);
+
+                webElement.Click(); // Ensure it's focused
+                webElement.SendKeys(Keys.Control + "a"); // Select existing text
+                webElement.SendKeys(Keys.Delete); // Delete it
+                webElement.SendKeys(value);
+                
+            }, timeout);
         }
 
         public static async Task FillInById(this IWebDriver webDriver,

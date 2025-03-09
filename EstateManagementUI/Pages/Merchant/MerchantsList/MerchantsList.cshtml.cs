@@ -37,7 +37,10 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
 
         public async Task Edit(Guid merchantId) =>
             this.Location("/Merchant/EditMerchant", new { MerchantId = merchantId });
-        
+
+        public async Task MakeDeposit(Guid merchantId) =>
+            this.Location("/Merchant/MakeDeposit", new { MerchantId = merchantId });
+
         public List<ViewModels.Merchant> Merchants { get; set; }
 
         public override async Task MountAsync()

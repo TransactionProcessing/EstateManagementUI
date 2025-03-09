@@ -15,4 +15,5 @@ public class MerchantPageEvents
     public record HideAddContractDialog;
     public record ContractAssignedToMerchantEvent;
     public record ContractRemovedFromMerchantEvent;
+    public record DepositMadeEvent;
 }

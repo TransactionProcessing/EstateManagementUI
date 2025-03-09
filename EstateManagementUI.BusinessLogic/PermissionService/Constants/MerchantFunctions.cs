@@ -18,5 +18,5 @@ public class MerchantFunctions
     //public const string RemoveDevice = "Remove Device";
     //public const string EditAddress = "Edit Merchant Address";
     //public const string EditContact = "Edit Merchant Contact";
-    //public const string MakeDeposit = "Make Deposit";
+    public const string MakeDeposit = "Make Deposit";
 }

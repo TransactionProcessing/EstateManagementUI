@@ -539,6 +539,22 @@ public class ApiClient : IApiClient {
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
 
+    public async Task<Result> MakeDeposit(String accessToken,
+                                          Guid actionId,
+                                          Guid estateId,
+                                          Guid merchantId,
+                                          MakeDepositModel makeDepositModel,
+                                          CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            MakeMerchantDepositRequest apiRequest = ModelFactory.ConvertFrom(makeDepositModel);
+            
+            return await this.TransactionProcessorClient.MakeMerchantDeposit(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
     public async Task<Result> CreateContractProduct(String accessToken,
                                                     Guid actionId,
                                                     Guid estateId,

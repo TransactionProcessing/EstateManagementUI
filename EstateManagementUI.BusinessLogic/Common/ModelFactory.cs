@@ -697,4 +697,19 @@ public static class ModelFactory
         };
         return addProductToContractRequest;
     }
+
+    public static MakeMerchantDepositRequest ConvertFrom(MakeDepositModel source) {
+        if (source == null)
+        {
+            return null;
+        }
+
+        MakeMerchantDepositRequest makeMerchantDepositRequest = new()
+        {
+            Amount = source.Amount,
+            DepositDateTime = source.Date,
+            Reference = source.Reference
+        };
+        return makeMerchantDepositRequest;
+    }
 }

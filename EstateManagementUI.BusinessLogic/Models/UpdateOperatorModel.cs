@@ -107,3 +107,9 @@ public enum SettlementSchedule
     Weekly,
     Monthly
 }
+
+public class MakeDepositModel {
+    public Decimal Amount { get; set; }
+    public String Reference { get; set; }
+    public DateTime Date { get; set; }
+}
