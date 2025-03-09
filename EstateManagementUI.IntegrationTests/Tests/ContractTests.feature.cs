@@ -453,9 +453,57 @@ await this.FeatureBackgroundAsync();
  await testRunner.AndAsync("the following contract product details are in the list", ((string)(null)), table16, "And ");
 #line hidden
 #line 107
- await testRunner.WhenAsync("I click on the View Fees Button for \'100 KES Topup\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+ await testRunner.WhenAsync("I click on the New Contract Product Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 108
+ await testRunner.ThenAsync("the New Product Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
+                            "ProductName",
+                            "DisplayText",
+                            "Value",
+                            "ProductType"});
+                table17.AddRow(new string[] {
+                            "200 KES Topup",
+                            "200 KES",
+                            "200.00",
+                            "Mobile Topup"});
+#line 109
+ await testRunner.WhenAsync("I enter the following details for the new Product", ((string)(null)), table17, "When ");
+#line hidden
+#line 112
+ await testRunner.WhenAsync("I click the Save Product Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 113
+ await testRunner.ThenAsync("the Contract Products List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table18 = new global::Reqnroll.Table(new string[] {
+                            "ProductName",
+                            "DisplayText",
+                            "Value",
+                            "ProductType"});
+                table18.AddRow(new string[] {
+                            "100 KES Topup",
+                            "100 KES",
+                            "100.00",
+                            "MobileTopup"});
+                table18.AddRow(new string[] {
+                            "200 KES Topup",
+                            "200 KES",
+                            "200.00",
+                            "MobileTopup"});
+                table18.AddRow(new string[] {
+                            "Variable Topup 1",
+                            "Custom",
+                            "Variable",
+                            "MobileTopup"});
+#line 114
+ await testRunner.AndAsync("the following contract product details are in the list", ((string)(null)), table18, "And ");
+#line hidden
+#line 119
+ await testRunner.WhenAsync("I click on the View Fees Button for \'100 KES Topup\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 120
  await testRunner.ThenAsync("the Contract Products Transaction Fees List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }

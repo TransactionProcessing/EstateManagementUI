@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleResults;
 using System.Globalization;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 public static class DataHelperFunctions {
     public static async Task<ComparisonDateListModel> GetComparisonDates(String accessToken, Guid estateId, IMediator mediator)
@@ -134,16 +135,16 @@ public static class DataHelperFunctions {
         return new ContractListModel { Contracts = ordered };
     }
 
-    public static async Task<ProductTypeListModel> GetProductTypes(String accessToken, Guid estateId)
+    public static async Task<List<OptionItem>> GetProductTypes(String accessToken, Guid estateId)
     {
         // TODO: this will need to make a query to the Estate Management API to product types pertaining
         // to the contact operator
 
-        var result = new ProductTypeListModel { ProductTypes = new List<SelectListItem>() };
-        result.ProductTypes.Add(new SelectListItem("- Select a Product Type -","0", true));
-        result.ProductTypes.Add(new SelectListItem("Bill Payment", ((Int32)ProductType.BillPayment).ToString()));
-        result.ProductTypes.Add(new SelectListItem("Mobile Topup", ((Int32)ProductType.MobileTopup).ToString()));
-        result.ProductTypes.Add(new SelectListItem("Voucher", ((Int32)ProductType.Voucher).ToString()));
-        return result;
+        List<OptionItem> productTypes = new List<OptionItem>();
+        productTypes.Add(new OptionItem("-1","- Select a Product Type -"));
+        productTypes.Add(new OptionItem(((Int32)ProductType.BillPayment).ToString(),"Bill Payment"));
+        productTypes.Add(new OptionItem(((Int32)ProductType.MobileTopup).ToString(),"Mobile Topup"));
+        productTypes.Add(new OptionItem(((Int32)ProductType.Voucher).ToString(),"Voucher"));
+        return productTypes;
     }
 }

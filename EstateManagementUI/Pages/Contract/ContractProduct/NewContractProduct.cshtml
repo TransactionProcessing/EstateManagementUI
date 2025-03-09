@@ -21,8 +21,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label asp-for="ProductType"></label>
-                        <select asp-for="ProductType" asp-items="Model.ProductType.ProductTypes" class="form-control" hydro-bind name="ProductType.ProductTypeId" id="productTypeList"></select>
+                        <label asp-for="ProductTypeId">Product Type</label>
+                        <field-select field="ProductTypeId" label="SettlementSchedule" options="@Model.GetProductTypes()" id="productTypeList" />
                     </div>
                 </div>
                 <div class="row">
@@ -30,8 +30,9 @@
                         <label asp-for="Value" class="form-label">Value</label>
                         <input asp-for="Value" placeholder="Enter Value" class="form-control" x-init="$el.focus()" hydro-bind name="Value" id="productValue" />
                         <span asp-validation-for="Value" class="text-danger"></span>
-                        <label asp-for="IsVariableValue" class="form-label">Value</label>
-                        <input asp-for="IsVariableValue" class="form-control" x-init="$el.focus()" hydro-bind name="IsVariableValue" id="isVariableValue" />
+                        
+                        <label asp-for="IsVariableValue" class="form-label">Is Variable Value</label>
+                        <input asp-for="IsVariableValue" x-init="$el.focus()"  type="checkbox" hydro-bind name="IsVariableValue" id="isVariableValue" />
                         <span asp-validation-for="IsVariableValue" class="text-danger"></span>
                     </div>
                 </div>

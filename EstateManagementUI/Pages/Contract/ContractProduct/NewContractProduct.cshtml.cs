@@ -15,6 +15,7 @@ using EstateManagementUI.Pages.Estate.OperatorList;
 using EstateManagementUI.ViewModels;
 using EstateManagementUI.Pages.Merchant.MerchantDetails;
 using System.Reflection.Metadata;
+using EstateManagementUI.Pages.Components;
 using Hydro;
 
 namespace EstateManagementUI.Pages.Contract.ContractProduct
@@ -40,7 +41,9 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
 
         public void Close() => this.Location("/Contract/ContractProducts",new { ContractId = this.ContractId });
 
-        public ProductTypeListModel ProductType { get; set; }
+        public String ProductTypeId { get; set; }
+        public List<OptionItem> ProductTypes { get; set; }
+
         public String Name { get; set; }
         public String DisplayText { get; set; }
         public String Value { get; set; }
@@ -48,8 +51,6 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
         public override async Task MountAsync() {
 
             await this.PopulateTokenAndEstateId();
-
-            this.ProductType = await DataHelperFunctions.GetProductTypes(this.AccessToken, this.EstateId);
         }
 
         public async Task Save()
@@ -63,13 +64,19 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
             await this.CreateNeContractProduct();
         }
 
+        public List<OptionItem> GetProductTypes()
+        {
+            // Might have async issues :|
+            this.PopulateTokenAndEstateId().Wait();
+            return DataHelperFunctions.GetProductTypes(this.AccessToken, this.EstateId).Result;
+        }
 
         private async Task CreateNeContractProduct() {
             Commands.CreateContractProductCommand command = new(this.AccessToken, this.EstateId, this.ContractId, new CreateContractProductModel
             {
                 DisplayText = this.DisplayText,
                 IsVariable= this.IsVariableValue,
-                Type = Int32.Parse(this.ProductType.ProductTypeId),
+                Type = Int32.Parse(this.ProductTypeId),
                 Name = this.Name,
                 Value = this.IsVariableValue switch {
                     false => decimal.Parse(this.Value),

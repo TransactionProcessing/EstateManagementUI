@@ -25,10 +25,12 @@ namespace EstateManagementUI.Pages.Contract.Contract
     {
         private readonly IMediator Mediator;
 
-        public NewContract(IMediator mediator, IPermissionsService permissionsService) : base( ApplicationSections.Contract, ContractFunctions.New, permissionsService) {
+        public NewContract(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Contract, ContractFunctions.New, permissionsService)
+        {
             this.Mediator = mediator;
-            
+
             Subscribe<ContractPageEvents.ContractCreatedEvent>(Handle);
+            Subscribe<ContractPageEvents.ContractUpdatedEvent>(Handle);
         }
 
         [ExcludeFromCodeCoverage]
@@ -51,10 +53,10 @@ namespace EstateManagementUI.Pages.Contract.Contract
 
         public String OperatorId { get; set; } = "";
 
-        
-        public OperatorListModel Operator { get; set; }
+
         public String Name { get; set; }
-        public override async Task MountAsync() {
+        public override async Task MountAsync()
+        {
 
             await this.PopulateTokenAndEstateId();
 
@@ -62,7 +64,6 @@ namespace EstateManagementUI.Pages.Contract.Contract
             {
                 //await this.LoadContract(CancellationToken.None);
             }
-            this.Operator = await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
         }
 
         public async Task Save()
@@ -73,16 +74,29 @@ namespace EstateManagementUI.Pages.Contract.Contract
             }
             await this.PopulateTokenAndEstateId();
 
-            await this.CreateNeContract();
+            Task t = this.ContractId switch
+            {
+                _ when this.ContractId == Guid.Empty => this.CreateNeContract(),
+                _ => this.UpdateExitingContract(),
+
+            };
+
+            await t;
         }
 
-        public List<OptionItem> GetOperators() {
+        private async Task UpdateExitingContract()
+        {
+        }
+
+        public List<OptionItem> GetOperators()
+        {
             // Might have async issues :|
             this.PopulateTokenAndEstateId().Wait();
             return DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator).Result;
         }
 
-        private async Task CreateNeContract() {
+        private async Task CreateNeContract()
+        {
 
             Commands.CreateContractCommand createContractCommand = new(this.AccessToken, this.EstateId, new CreateContractModel
             {
@@ -91,7 +105,8 @@ namespace EstateManagementUI.Pages.Contract.Contract
             });
 
             Result result = await this.Mediator.Send(createContractCommand, CancellationToken.None);
-            if (result.IsSuccess) {
+            if (result.IsSuccess)
+            {
                 this.Dispatch(new ContractPageEvents.ContractCreatedEvent(), Scope.Global);
             }
             // TODO: handle the failure case

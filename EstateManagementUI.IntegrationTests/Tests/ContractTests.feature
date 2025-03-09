@@ -104,6 +104,18 @@ Scenario: Contract PR Test
 	| ProductName      | DisplayText | Value    | ProductType |
 	| 100 KES Topup    | 100 KES     | 100.00   | MobileTopup |
 	| Variable Topup 1 | Custom      | Variable | MobileTopup |
+	When I click on the New Contract Product Button
+	Then the New Product Screen is displayed
+	When I enter the following details for the new Product
+	| ProductName      | DisplayText | Value    | ProductType |
+	| 200 KES Topup    | 200 KES     | 200.00   | Mobile Topup |
+	When I click the Save Product Button
+	Then the Contract Products List Screen is displayed
+	And the following contract product details are in the list
+	| ProductName      | DisplayText | Value    | ProductType |
+	| 100 KES Topup    | 100 KES     | 100.00   | MobileTopup |
+	| 200 KES Topup    | 200 KES     | 200.00   | MobileTopup |
+	| Variable Topup 1 | Custom      | Variable | MobileTopup |
 	When I click on the View Fees Button for '100 KES Topup'
 	Then the Contract Products Transaction Fees List Screen is displayed
 	#And the following contract product transaction fee details are in the list

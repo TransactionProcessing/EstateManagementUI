@@ -549,7 +549,7 @@ public class ApiClient : IApiClient {
         {
             AddProductToContractRequest apiRequest = ModelFactory.ConvertFrom(createContractProductModel);
 
-            return await this.EstateClient.AddProductToContract(accessToken, estateId, contractId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.AddProductToContract(accessToken, estateId, contractId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
