@@ -51,7 +51,7 @@ public class DataHelperFunctionsTests
             .ReturnsAsync(result);
 
         // Act
-        var response = await DataHelperFunctions.GetOperators(accessToken, estateId, this._mediatorMock.Object);
+        var response = await DataHelperFunctions.GetOperatorsOld(accessToken, estateId, this._mediatorMock.Object);
 
         // Assert
         response.ShouldNotBeNull();

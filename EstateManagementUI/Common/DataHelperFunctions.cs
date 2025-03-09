@@ -1,11 +1,11 @@
-using System.Globalization;
-using EstateManagement.DataTransferObjects.Responses.Contract;
 using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.Pages.Components;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleResults;
+using System.Globalization;
 
 public static class DataHelperFunctions {
     public static async Task<ComparisonDateListModel> GetComparisonDates(String accessToken, Guid estateId, IMediator mediator)
@@ -40,7 +40,19 @@ public static class DataHelperFunctions {
         return new ComparisonDateListModel { SelectedDate = orderedData.First().Date, Dates = resultList };
     }
 
-    public static async Task<OperatorListModel> GetOperators(String accessToken, Guid estateId, IMediator mediator)
+    public static List<OptionItem> GetSettlementSchedules()
+    {
+        List<OptionItem> schedules = new List<OptionItem>();
+
+        schedules.Add(new OptionItem(-1, "- Select a Settlement Schedule - "));
+        schedules.Add(new OptionItem(0, "Immediate"));
+        schedules.Add(new OptionItem(1, "Weekly"));
+        schedules.Add(new OptionItem(2, "Monthly"));
+
+        return schedules;
+    }
+
+    public static async Task<OperatorListModel> GetOperatorsOld(String accessToken, Guid estateId, IMediator mediator)
     {
         Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(accessToken, estateId);
 
@@ -59,6 +71,25 @@ public static class DataHelperFunctions {
         List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();
         ordered.Insert(0, new SelectListItem("- Select an Operator -", "", true));
         return new OperatorListModel() { Operators = ordered };
+    }
+
+
+    public static async Task<List<OptionItem>> GetOperators(String accessToken, Guid estateId, IMediator mediator)
+    {
+        Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(accessToken, estateId);
+
+        Result<List<OperatorModel>> response = await mediator.Send(query, CancellationToken.None);
+
+        List<OptionItem> resultList = new();
+        foreach (OperatorModel operatorModel in response.Data)
+        {
+            resultList.Add(new OptionItem(operatorModel.OperatorId.ToString(),operatorModel.Name));
+        }
+
+        List<OptionItem> ordered = resultList.OrderBy(m => m.Text).ToList();
+        ordered.Insert(0, new OptionItem("-1","- Select an Operator -"));
+
+        return ordered;
     }
 
     public static async Task<MerchantListModel> GetMerchants(String accessToken, Guid estateId, IMediator mediator)

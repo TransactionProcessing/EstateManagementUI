@@ -1,7 +1,5 @@
-﻿using EstateManagement.DataTransferObjects.Responses.Contract;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
-using EstateManagement.DataTransferObjects.Requests.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.Models;
 

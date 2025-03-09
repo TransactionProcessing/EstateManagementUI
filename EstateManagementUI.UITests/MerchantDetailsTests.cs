@@ -74,16 +74,7 @@ public class MerchantDetailsTests
             EmailAddress = "john.doe@example.com",
             PhoneNumber = "555-1234"
         };
-        this._merchant.SettlementSchedule = new SettlementScheduleListModel
-        {
-            SettlementSchedule = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Immediate", Value = "0" },
-                new SelectListItem { Text = "Weekly", Value = "1" },
-                new SelectListItem { Text = "Monthly", Value = "2" }
-            },
-            SettlementScheduleId = 0
-        };
+        this._merchant.SettlementScheduleId = 0;
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.AddMerchantCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
 
@@ -116,16 +107,7 @@ public class MerchantDetailsTests
             EmailAddress = "john.doe@example.com",
             PhoneNumber = "555-1234"
         };
-        this._merchant.SettlementSchedule = new SettlementScheduleListModel
-        {
-            SettlementSchedule = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Immediate", Value = "0" },
-                new SelectListItem { Text = "Weekly", Value = "1" },
-                new SelectListItem { Text = "Monthly", Value = "2" }
-            },
-            SettlementScheduleId = 0
-        };
+        this._merchant.SettlementScheduleId = 0;
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.AddMerchantCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure(new List<String>() {"Error"}));
 
@@ -160,16 +142,8 @@ public class MerchantDetailsTests
             EmailAddress = "john.doe@example.com",
             PhoneNumber = "555-1234"
         };
-        this._merchant.SettlementSchedule = new SettlementScheduleListModel
-        {
-            SettlementSchedule = new List<SelectListItem>
-            {
-                new SelectListItem { Text = "Immediate", Value = "0" },
-                new SelectListItem { Text = "Weekly", Value = "1" },
-                new SelectListItem { Text = "Monthly", Value = "2" }
-            },
-            SettlementScheduleId = 0
-        };
+        this._merchant.SettlementScheduleId = 0;
+
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
         this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()))

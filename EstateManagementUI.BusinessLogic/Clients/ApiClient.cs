@@ -1,12 +1,4 @@
-﻿using EstateManagement.Client;
-using EstateManagement.DataTransferObjects.Requests.Contract;
-using EstateManagement.DataTransferObjects.Requests.Merchant;
-using EstateManagement.DataTransferObjects.Requests.Operator;
-using EstateManagement.DataTransferObjects.Responses.Contract;
-using EstateManagement.DataTransferObjects.Responses.Estate;
-using EstateManagement.DataTransferObjects.Responses.Merchant;
-using EstateManagement.DataTransferObjects.Responses.Operator;
-using EstateManagementUI.BusinessLogic.Common;
+﻿using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateReportingAPI.Client;
 using EstateReportingAPI.DataTransferObjects;
@@ -15,18 +7,26 @@ using FileProcessor.Client;
 using FileProcessor.DataTransferObjects.Responses;
 using Shared.Logger;
 using SimpleResults;
+using TransactionProcessor.Client;
+using TransactionProcessor.DataTransferObjects.Requests.Contract;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
+using TransactionProcessor.DataTransferObjects.Requests.Operator;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using TransactionProcessor.DataTransferObjects.Responses.Estate;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Operator;
 
 namespace EstateManagementUI.BusinessLogic.Clients;
 
 public class ApiClient : IApiClient {
-    private readonly IEstateClient EstateClient;
+    private readonly ITransactionProcessorClient TransactionProcessorClient;
     private readonly IFileProcessorClient FileProcessorClient;
     private readonly IEstateReportingApiClient EstateReportingApiClient;
 
-    public ApiClient(IEstateClient estateClient,
+    public ApiClient(ITransactionProcessorClient transactionProcessorClient,
                      IFileProcessorClient fileProcessorClient,
                      IEstateReportingApiClient estateReportingApiClient) {
-        this.EstateClient = estateClient;
+        this.TransactionProcessorClient = transactionProcessorClient;
         this.FileProcessorClient = fileProcessorClient;
         this.EstateReportingApiClient = estateReportingApiClient;
     }
@@ -40,7 +40,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             AssignOperatorRequest apiRequest = ModelFactory.ConvertFrom(assignOperatorToMerchantModel);
 
-            return await this.EstateClient.AssignOperatorToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.AssignOperatorToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         }
 
         ;
@@ -57,7 +57,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             AddMerchantContractRequest apiRequest = ModelFactory.ConvertFrom(assignContractToMerchantModel);
 
-            return await this.EstateClient.AddContractToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.AddContractToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         }
 
         ;
@@ -72,7 +72,7 @@ public class ApiClient : IApiClient {
                                                          Guid operatorId,
                                                          CancellationToken cancellationToken) {
         async Task<Result> ClientMethod() {
-            return await this.EstateClient.RemoveOperatorFromMerchant(accessToken, estateId, merchantId, operatorId, cancellationToken);
+            return await this.TransactionProcessorClient.RemoveOperatorFromMerchant(accessToken, estateId, merchantId, operatorId, cancellationToken);
         }
 
         ;
@@ -87,7 +87,7 @@ public class ApiClient : IApiClient {
                                                          Guid contractId,
                                                          CancellationToken cancellationToken) {
         async Task<Result> ClientMethod() {
-            return await this.EstateClient.RemoveContractFromMerchant(accessToken, estateId, merchantId, contractId, cancellationToken);
+            return await this.TransactionProcessorClient.RemoveContractFromMerchant(accessToken, estateId, merchantId, contractId, cancellationToken);
         }
 
         ;
@@ -117,7 +117,7 @@ public class ApiClient : IApiClient {
                                              Guid estateId,
                                              CancellationToken cancellationToken) {
         async Task<Result<EstateModel>> ClientMethod() {
-            Result<EstateResponse>? result = await this.EstateClient.GetEstate(accessToken, estateId, cancellationToken);
+            Result<EstateResponse>? result = await this.TransactionProcessorClient.GetEstate(accessToken, estateId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -131,7 +131,7 @@ public class ApiClient : IApiClient {
                                                                 Guid estateId,
                                                                 CancellationToken cancellationToken) {
         async Task<Result<List<MerchantModel>>> ClientMethod() {
-            Result<List<MerchantResponse>>? result = await this.EstateClient.GetMerchants(accessToken, estateId, cancellationToken);
+            Result<List<MerchantResponse>>? result = await this.TransactionProcessorClient.GetMerchants(accessToken, estateId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -146,7 +146,7 @@ public class ApiClient : IApiClient {
                                                          Guid merchantId,
                                                          CancellationToken cancellationToken) {
         async Task<Result<MerchantModel>> ClientMethod() {
-            Result<MerchantResponse>? result = await this.EstateClient.GetMerchant(accessToken, estateId, merchantId, cancellationToken);
+            Result<MerchantResponse>? result = await this.TransactionProcessorClient.GetMerchant(accessToken, estateId, merchantId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -160,7 +160,7 @@ public class ApiClient : IApiClient {
                                                                 Guid estateId,
                                                                 CancellationToken cancellationToken) {
         async Task<Result<List<OperatorModel>>> ClientMethod() {
-            Result<List<OperatorResponse>>? result = await this.EstateClient.GetOperators(accessToken, estateId, cancellationToken);
+            Result<List<OperatorResponse>>? result = await this.TransactionProcessorClient.GetOperators(accessToken, estateId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -175,7 +175,7 @@ public class ApiClient : IApiClient {
                                                          Guid operatorId,
                                                          CancellationToken cancellationToken) {
         async Task<Result<OperatorModel>> ClientMethod() {
-            Result<OperatorResponse>? result = await this.EstateClient.GetOperator(accessToken, estateId, operatorId, cancellationToken);
+            Result<OperatorResponse>? result = await this.TransactionProcessorClient.GetOperator(accessToken, estateId, operatorId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -189,7 +189,7 @@ public class ApiClient : IApiClient {
                                                                 Guid estateId,
                                                                 CancellationToken cancellationToken) {
         async Task<Result<List<ContractModel>>> ClientMethod() {
-            Result<List<ContractResponse>>? result = await this.EstateClient.GetContracts(accessToken, estateId, cancellationToken);
+            Result<List<ContractResponse>>? result = await this.TransactionProcessorClient.GetContracts(accessToken, estateId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -204,7 +204,7 @@ public class ApiClient : IApiClient {
                                                          Guid contractId,
                                                          CancellationToken cancellationToken) {
         async Task<Result<ContractModel>> ClientMethod() {
-            Result<ContractResponse>? result = await this.EstateClient.GetContract(accessToken, estateId, contractId, cancellationToken);
+            Result<ContractResponse>? result = await this.TransactionProcessorClient.GetContract(accessToken, estateId, contractId, cancellationToken);
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
             return ModelFactory.ConvertFrom(result.Data);
@@ -221,7 +221,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             CreateOperatorRequest request = new() { RequireCustomMerchantNumber = createOperatorModel.RequireCustomMerchantNumber, RequireCustomTerminalNumber = createOperatorModel.RequireCustomTerminalNumber, Name = createOperatorModel.OperatorName, OperatorId = createOperatorModel.OperatorId };
 
-            return await this.EstateClient.CreateOperator(accessToken, estateId, request, cancellationToken);
+            return await this.TransactionProcessorClient.CreateOperator(accessToken, estateId, request, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -235,7 +235,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             UpdateOperatorRequest request = new() { RequireCustomMerchantNumber = updateOperatorModel.RequireCustomMerchantNumber, RequireCustomTerminalNumber = updateOperatorModel.RequireCustomTerminalNumber, Name = updateOperatorModel.OperatorName };
 
-            return await this.EstateClient.UpdateOperator(accessToken, estateId, updateOperatorModel.OperatorId, request, cancellationToken);
+            return await this.TransactionProcessorClient.UpdateOperator(accessToken, estateId, updateOperatorModel.OperatorId, request, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -276,13 +276,18 @@ public class ApiClient : IApiClient {
                                                                             Guid actionId,
                                                                             Guid estateId,
                                                                             CancellationToken cancellationToken) {
-        async Task<Result<List<ComparisonDateModel>>> ClientMethod() {
+        async Task<Result<List<ComparisonDateModel>>> ClientMethod()
+        {
+
             List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
 
-            return Result.Success(ModelFactory.ConvertFrom(apiResponse));
+            return ModelFactory.ConvertFrom(apiResponse);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
+        //List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
+
+        //return Result.Success(ModelFactory.ConvertFrom(apiResponse));
     }
 
     public async Task<Result<TodaysSalesModel>> GetTodaysSales(String accessToken,
@@ -471,7 +476,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod()
         {
             CreateContractRequest apiRequest = ModelFactory.ConvertFrom(createContractModel);
-            return await this.EstateClient.CreateContract(accessToken, estateId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.CreateContract(accessToken, estateId, apiRequest, cancellationToken);
         }
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }
@@ -483,7 +488,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             CreateMerchantRequest apiRequest = ModelFactory.ConvertFrom(createMerchantModel);
 
-            return await this.EstateClient.CreateMerchant(accessToken, estateId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.CreateMerchant(accessToken, estateId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -498,7 +503,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             UpdateMerchantRequest apiRequest = ModelFactory.ConvertFrom(updateMerchantModel);
 
-            return await this.EstateClient.UpdateMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.UpdateMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -513,7 +518,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             Address apiRequest = ModelFactory.ConvertFrom(updateAddressModel);
 
-            return await this.EstateClient.UpdateMerchantAddress(accessToken, estateId, merchantId, updateAddressModel.AddressId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.UpdateMerchantAddress(accessToken, estateId, merchantId, updateAddressModel.AddressId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -528,7 +533,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod() {
             Contact apiRequest = ModelFactory.ConvertFrom(updateContactModel);
 
-            return await this.EstateClient.UpdateMerchantContact(accessToken, estateId, merchantId, updateContactModel.ContactId, apiRequest, cancellationToken);
+            return await this.TransactionProcessorClient.UpdateMerchantContact(accessToken, estateId, merchantId, updateContactModel.ContactId, apiRequest, cancellationToken);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);

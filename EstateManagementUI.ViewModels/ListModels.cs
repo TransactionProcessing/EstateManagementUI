@@ -29,13 +29,6 @@ namespace EstateManagementUI.ViewModels
         public List<SelectListItem> Dates { get; set; }
     }
 
-    public class SettlementScheduleListModel
-    {
-        public List<SelectListItem> SettlementSchedule { get; set; }
-
-        public Int32 SettlementScheduleId { get; set; }
-    }
-
     public class ContractListModel
     {
         public List<SelectListItem> Contracts { get; set; }

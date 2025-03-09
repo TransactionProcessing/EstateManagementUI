@@ -1,0 +1,25 @@
+﻿@model FieldSelect
+
+<field-layout name="@Model.Field.Name" label="@Model.Label">
+    <div class="relative">
+        <select
+            hydro-bind
+            name="@Model.Field.Name"
+            id="@Model.Id"
+            autocomplete="off"
+            class="peer inline-flex h-full w-full p-2 appearance-none items-center rounded-lg border border-input bg-main pe-8 ps-3 mt-1 text-sm text-main-foreground ring-offset-background transition-shadow hover:bg-accent shadow-sm focus-visible:border-ring focus-visible:text-main-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50">
+
+            @if (Model.UseBlank)
+            {
+                <option value="" selected="@(Model.Field.Model is null or "" ? string.Empty : null)"></option>
+            }
+
+            @foreach (var option in Model.Options)
+            {
+                <option value="@option.Value" selected="@(Equals(option.Value, Model.Field.Model) ? string.Empty : null)">
+                    @option.Text
+                </option>
+            }
+        </select>
+    </div>
+</field-layout>

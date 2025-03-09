@@ -1,19 +1,19 @@
 ﻿using System.Runtime.CompilerServices;
 using Azure;
-using EstateManagement.DataTransferObjects.Requests.Contract;
-using EstateManagement.DataTransferObjects.Requests.Merchant;
-using EstateManagement.DataTransferObjects.Responses.Contract;
-using EstateManagement.DataTransferObjects.Responses.Estate;
-using EstateManagement.DataTransferObjects.Responses.Merchant;
-using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using EstateReportingAPI.DataTransferObjects;
 using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
 using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Requests.Contract;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using TransactionProcessor.DataTransferObjects.Responses.Estate;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Operator;
 using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
-using SettlementSchedule = EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule;
+using SettlementSchedule = TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule;
 
 namespace EstateManagementUI.BusinessLogic.Common;
 

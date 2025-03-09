@@ -1,7 +1,3 @@
-using EstateManagement.DataTransferObjects.Responses.Contract;
-using EstateManagement.DataTransferObjects.Responses.Estate;
-using EstateManagement.DataTransferObjects.Responses.Merchant;
-using EstateManagement.DataTransferObjects.Responses.Operator;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
@@ -10,14 +6,16 @@ using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.DataTransferObjects.Responses;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SimpleResults;
-using ContractProduct = EstateManagement.DataTransferObjects.Responses.Contract.ContractProduct;
-using ContractProductTransactionFee = EstateManagement.DataTransferObjects.Responses.Contract.ContractProductTransactionFee;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using TransactionProcessor.DataTransferObjects.Responses.Estate;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Operator;
 using FileImportLogList = FileProcessor.DataTransferObjects.Responses.FileImportLogList;
 using FileLine = FileProcessor.DataTransferObjects.Responses.FileLine;
 using FileLineProcessingResult = FileProcessor.DataTransferObjects.Responses.FileLineProcessingResult;
 using LastSettlement = EstateReportingAPI.DataTransferObjects.LastSettlement;
 using MerchantKpi = EstateReportingAPI.DataTransferObjects.MerchantKpi;
-using SettlementSchedule = EstateManagement.DataTransferObjects.Responses.Merchant.SettlementSchedule;
+using SettlementSchedule = EstateManagementUI.BusinessLogic.Models.SettlementSchedule;
 using TodaysSales = EstateReportingAPI.DataTransferObjects.TodaysSales;
 using TodaysSalesCountByHour = EstateReportingAPI.DataTransferObjects.TodaysSalesCountByHour;
 using TodaysSalesCountByHourModel = EstateManagementUI.BusinessLogic.Models.TodaysSalesCountByHourModel;
@@ -190,7 +188,7 @@ namespace EstateManagementUI.Testing
         public static String Merchant1Reference = "Reference1";
         public static String Merchant1Name = "Test Merchant 1";
         public static Guid Merchant1Id = Guid.Parse("2F8431D9-8D04-4AE5-B66C-DB40DFADE581");
-        public static SettlementSchedule Merchant1SettlementSchedule = SettlementSchedule.Immediate;
+        public static TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule Merchant1SettlementSchedule = TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Immediate;
 
         public static String Merchant1AddressLine1 = "Address Line 1";
 
@@ -237,7 +235,7 @@ namespace EstateManagementUI.Testing
         public static String Merchant2Reference = "Reference2";
         public static String Merchant2Name = "Test Merchant 2";
         public static Guid Merchant2Id = Guid.Parse("8959608C-2448-48EA-AFB4-9D10FFFB6140");
-        public static SettlementSchedule Merchant2SettlementSchedule = SettlementSchedule.Weekly;
+        public static TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule Merchant2SettlementSchedule = TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Weekly;
 
         public static AddressResponse
             Merchant2Address = new() { AddressLine1 = "Address Line 2", Town = "Test Town 2" };
@@ -247,7 +245,7 @@ namespace EstateManagementUI.Testing
         public static String Merchant3Reference = "Reference3";
         public static String Merchant3Name = "Test Merchant 3";
         public static Guid Merchant3Id = Guid.Parse("877D7384-9A72-4A73-A275-9DB62BF32EDB");
-        public static SettlementSchedule Merchant3SettlementSchedule = SettlementSchedule.Monthly;
+        public static TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule Merchant3SettlementSchedule = TransactionProcessor.DataTransferObjects.Responses.Merchant.SettlementSchedule.Monthly;
 
         public static AddressResponse
             Merchant3Address = new() { AddressLine1 = "Address Line 3", Town = "Test Town 3" };
@@ -375,8 +373,8 @@ namespace EstateManagementUI.Testing
         public static CalculationType TransactionFee1CalculationType = CalculationType.Fixed;
         public static Guid TransactionFee1Id = Guid.Parse("61D0AF6D-1303-459F-87E2-4B686BB0585E");
 
-        public static ContractProductTransactionFee ContractProductTransactionFee1 =>
-            new ContractProductTransactionFee {
+        public static TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProductTransactionFee ContractProductTransactionFee1 =>
+            new TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProductTransactionFee {
                 Value = TransactionFee1Value,
                 Description = TransactionFee1Description,
                 FeeType = TransactionFee1Type,
@@ -384,20 +382,20 @@ namespace EstateManagementUI.Testing
                 TransactionFeeId = TransactionFee1Id,
             };
 
-        public static ContractProduct ContractProduct1 =>
-            new ContractProduct {
+        public static TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct ContractProduct1 =>
+            new TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct {
                 Name = Contract1Product1Name,
                 DisplayText = Contract1Product1DisplayText,
                 ProductId = Contract1Product1Id,
                 ProductType = Contract1Product1ProductType,
                 Value = Contract1Product1Value,
-                TransactionFees = new List<ContractProductTransactionFee> {
+                TransactionFees = new List<TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProductTransactionFee> {
                     ContractProductTransactionFee1
                 }
             };
 
-        public static ContractProduct ContractProduct2 =>
-            new ContractProduct
+        public static TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct ContractProduct2 =>
+            new TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct
             {
                 Name = Contract1Product2Name,
                 DisplayText = Contract1Product2DisplayText,
@@ -406,8 +404,8 @@ namespace EstateManagementUI.Testing
                 Value = Contract1Product2Value
             };
 
-        public static ContractProduct ContractProduct3 =>
-            new ContractProduct
+        public static TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct ContractProduct3 =>
+            new TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct
             {
                 Name = Contract1Product3Name,
                 DisplayText = Contract1Product3DisplayText,
@@ -423,7 +421,7 @@ namespace EstateManagementUI.Testing
                 OperatorName = Operator1Name,
                 ContractId = Contract1Id,
                 Description = Contract1Description,
-                Products = new List<ContractProduct> { ContractProduct1, ContractProduct2, ContractProduct3 }
+                Products = new List<TransactionProcessor.DataTransferObjects.Responses.Contract.ContractProduct> { ContractProduct1, ContractProduct2, ContractProduct3 }
             };
 
         public static List<ContractResponse> ContractResponses =>

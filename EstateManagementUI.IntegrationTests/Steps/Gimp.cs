@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Shared.IntegrationTesting;
-using EstateManagement.IntegrationTesting.Helpers;
 using EstateManagementUI.IntegrationTests.Common;
 using OpenQA.Selenium;
 using Reqnroll.BoDi;

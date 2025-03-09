@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using SimpleResults;
 using System.Diagnostics.CodeAnalysis;
-using EstateManagement.DataTransferObjects.Requests.Merchant;
 using EstateManagementUI.BusinessLogic.Models;
 
 namespace EstateManagmentUI.BusinessLogic.Requests;

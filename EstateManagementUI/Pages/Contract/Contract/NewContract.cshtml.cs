@@ -15,6 +15,7 @@ using EstateManagementUI.Pages.Estate.OperatorList;
 using EstateManagementUI.ViewModels;
 using EstateManagementUI.Pages.Merchant.MerchantDetails;
 using System.Reflection.Metadata;
+using EstateManagementUI.Pages.Components;
 using Hydro;
 
 namespace EstateManagementUI.Pages.Contract.Contract
@@ -40,12 +41,27 @@ namespace EstateManagementUI.Pages.Contract.Contract
 
         public void Close() => this.Location("/Contract/Index");
 
+        [ExcludeFromCodeCoverage]
+        private async Task Handle(ContractPageEvents.ContractUpdatedEvent obj)
+        {
+            this.Dispatch(new ShowMessage("Contract Updated Successfully", ToastType.Success), Scope.Global);
+            await Task.Delay(1000); // TODO: might be a better way of handling this
+            this.Close();
+        }
+
+        public String OperatorId { get; set; } = "";
+
+        
         public OperatorListModel Operator { get; set; }
         public String Name { get; set; }
         public override async Task MountAsync() {
 
             await this.PopulateTokenAndEstateId();
 
+            if (this.ContractId != Guid.Empty)
+            {
+                //await this.LoadContract(CancellationToken.None);
+            }
             this.Operator = await DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator);
         }
 
@@ -60,11 +76,17 @@ namespace EstateManagementUI.Pages.Contract.Contract
             await this.CreateNeContract();
         }
 
+        public List<OptionItem> GetOperators() {
+            // Might have async issues :|
+            this.PopulateTokenAndEstateId().Wait();
+            return DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator).Result;
+        }
+
         private async Task CreateNeContract() {
 
             Commands.CreateContractCommand createContractCommand = new(this.AccessToken, this.EstateId, new CreateContractModel
             {
-                OperatorId = Guid.Parse(this.Operator.OperatorId),
+                OperatorId = Guid.Parse(this.OperatorId),
                 Description = this.Name
             });
 
