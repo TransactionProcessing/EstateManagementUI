@@ -227,5 +227,14 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                            Guid contractId,
                                            CreateContractProductModel createContractProductModel,
                                            CancellationToken cancellationToken);
+
+        Task<Result> CreateContractProductTransactionFee(String accessToken,
+                                                         Guid actionId,
+                                                         Guid estateId,
+                                                         Guid contractId,
+                                                         Guid productId,
+                                                         CreateContractProductTransactionFeeModel createContractProductTransactionFeeModel,
+                                                         CancellationToken cancellationToken);
+
     }
 }

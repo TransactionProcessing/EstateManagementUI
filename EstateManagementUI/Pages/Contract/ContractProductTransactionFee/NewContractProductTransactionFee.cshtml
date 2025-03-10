@@ -1,0 +1,42 @@
+﻿@model EstateManagementUI.Pages.Contract.ContractProductTransactionFee.NewContractProductTransactionFee
+
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <h1 class="h4 text-gray-900 mb-4">New Transaction Fee Details</h1>
+        <form hydro-on:submit="@(() => Model.Save())">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <input asp-for="Description" placeholder="Enter Fee Description" class="form-control" x-init="$el.focus()" hydro-bind name="Description" id="feeDescription" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="CalculationTypeId">Calculation Type</label>
+                        <field-select field="CalculationTypeId" label="CalculationType" options="@Model.GetFeeCalculationTypes()" id="calculationTypeList" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label asp-for="FeeTypeId">Fee Type</label>
+                        <field-select field="FeeTypeId" label="SettlementSchedule" options="@Model.GetFeeTypes()" id="feeTypeList" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label asp-for="Value" class="form-label">Value</label>
+                        <input asp-for="Value" placeholder="Enter Value" class="form-control" x-init="$el.focus()" hydro-bind name="Value" id="productValue" />
+                        <span asp-validation-for="Value" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary" id="saveContractProductFeeButton">Save</button>
+                    <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

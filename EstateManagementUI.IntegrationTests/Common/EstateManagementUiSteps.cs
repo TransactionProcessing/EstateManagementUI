@@ -117,15 +117,10 @@ public class EstateManagementUiHelpers{
     public async Task VerifyOnTheContractProductsFeesListScreen() {
         await Retry.For(async () => { this.VerifyPageTitle("View Contract Product Fees"); });
     }
-
-    public async Task VerifyOnTheNewProductScreen()
-    {
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Contract Product Details"); });
-    }
-
+    
     public async Task VerifyOnTheNewTransactionFeeScreen()
     {
-        await Retry.For(async () => { this.WebDriver.Title.ShouldBe("New Transaction Fee Details"); });
+        await Retry.For(async () => { this.VerifyPageTitle("New Transaction Fee"); });
     }
 
     public async Task VerifyOnTheLoginScreen(){
@@ -756,22 +751,13 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.FillIn("Input.Password", password);
         await this.WebDriver.ClickButtonByText("Login");
     }
-
-    public async Task MakeMerchantDeposit(DateTime depositDate, Decimal depositAmount, String depositReference){
-        await this.WebDriver.FillIn("amount", depositAmount.ToString());
-        await this.WebDriver.FillIn("depositdate", depositDate.Date.ToString("dd/MM/yyyy"));
-        await this.WebDriver.FillIn("reference", depositReference);
-
-        await this.WebDriver.ClickButtonById("makeMerchantDepositButton");
-    }
-
-
+    
     public async Task EnterTransactionFeeDetails(String description, String calculationType, String feeType, String feeValue)
     {
-        await this.WebDriver.FillIn("feeDescription", description);
+        await this.WebDriver.FillIn("Description", description);
         await this.WebDriver.SelectDropDownItemByText("calculationTypeList", calculationType);
         await this.WebDriver.SelectDropDownItemByText("feeTypeList", feeType);
-        await this.WebDriver.FillIn("value", feeValue, true);
+        await this.WebDriver.FillInNumeric("Value", feeValue);
     }
 
     public async Task ClickTheMerchantLinkForMerchant(String merchantName)
@@ -1060,5 +1046,10 @@ public class EstateManagementUiHelpers{
             IWebElement element = this.WebDriver.FindElement(By.Id("AssignContractDialog"));
             element.ShouldNotBeNull();
         });
+    }
+
+    public async Task ClickTheSaveTransactionFeeButton()
+    {
+        await this.WebDriver.ClickButtonById("saveContractProductFeeButton");
     }
 }

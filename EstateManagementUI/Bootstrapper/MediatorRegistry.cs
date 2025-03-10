@@ -55,6 +55,7 @@ public class MediatorRegistry : ServiceRegistry {
 
         this.AddSingleton<IRequestHandler<Commands.CreateContractCommand, Result>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Commands.CreateContractProductCommand, Result>, ContractRequestHandler>();
+        this.AddSingleton<IRequestHandler<Commands.CreateContractProductTransactionFeeCommand, Result>, ContractRequestHandler>();
     }
 
     private void RegisterFileRequestHandler() {

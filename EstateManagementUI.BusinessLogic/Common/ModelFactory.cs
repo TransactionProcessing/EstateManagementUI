@@ -712,4 +712,20 @@ public static class ModelFactory
         };
         return makeMerchantDepositRequest;
     }
+
+    public static AddTransactionFeeForProductToContractRequest ConvertFrom(CreateContractProductTransactionFeeModel source) {
+        if (source == null)
+        {
+            return null;
+        }
+
+        AddTransactionFeeForProductToContractRequest addTransactionFeeForProductToContractRequest = new()
+        {
+            Description = source.Description,
+            Value = source.Value,
+            CalculationType = (CalculationType)source.CalculationType,
+            FeeType = (FeeType)source.FeeType
+        };
+        return addTransactionFeeForProductToContractRequest;
+    }
 }

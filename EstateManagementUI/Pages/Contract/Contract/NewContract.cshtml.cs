@@ -122,4 +122,6 @@ public class ContractPageEvents {
     public record ContractUpdatedEvent;
     public record ContractProductCreatedEvent;
     public record ContractProductUpdatedEvent;
+    public record ContractProductTransactionFeeCreatedEvent;
+
 }
