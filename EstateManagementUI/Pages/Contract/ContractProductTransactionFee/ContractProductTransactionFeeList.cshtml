@@ -1,4 +1,7 @@
-﻿@model ContractProductTransactionFeeList
+﻿@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ContractProductTransactionFeeList
 
     <div class="card o-hidden border-0 shadow-sm my-5">
         <div class="card-body p-0">
@@ -9,6 +12,14 @@
                         <div class="text-center">
                             <h1 class="h4 text-gray-900 mb-4">Transaction Fees for Product @Model.ContractProductName</h1>
                         </div>
+                    <div>
+                        @if (await Model.CanRenderButton(ApplicationSections.Contract, ContractFunctions.AddTransactionFee))
+                        {
+                            <button class="btn btn-primary" type="button" hydro-action="NewContractProductTransactionFee" id="newContractProductTransactionFeeButton">
+                                New Transaction Fee
+                            </button>
+                        }
+                    </div>
                         @if (Model.ContractProductTransactionFees.Any() == false)
                         {
                             <div class="bg-base-200 rounded text-center p-4">

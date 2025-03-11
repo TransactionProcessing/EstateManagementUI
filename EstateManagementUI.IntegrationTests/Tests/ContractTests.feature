@@ -118,4 +118,11 @@ Scenario: Contract PR Test
 	| Variable Topup 1 | Custom      | Variable | MobileTopup |
 	When I click on the View Fees Button for '100 KES Topup'
 	Then the Contract Products Transaction Fees List Screen is displayed
+	When I click on the New Contract Product Transaction Button
+	Then the New Contract Product Transaction Screen is displayed
+	When I enter the following details for the new Transaction Fee
+	| Description    | CalculationType | FeeType  | Value |
+	| Test Fixed Fee | Fixed Value     | Merchant | 0.25  |
+	When I click the Save Transaction Fee Button
+	Then the Contract Products Transaction Fees List Screen is displayed
 	#And the following contract product transaction fee details are in the list

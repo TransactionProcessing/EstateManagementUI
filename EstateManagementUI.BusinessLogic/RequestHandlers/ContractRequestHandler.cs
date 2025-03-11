@@ -9,8 +9,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 public class ContractRequestHandler : IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>,
                                       IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>,
 IRequestHandler<Commands.CreateContractCommand, Result>,
-IRequestHandler<Commands.CreateContractProductCommand, Result>
-{
+IRequestHandler<Commands.CreateContractProductCommand, Result>,
+                                      IRequestHandler<Commands.CreateContractProductTransactionFeeCommand, Result> {
     private readonly IApiClient ApiClient;
 
     public ContractRequestHandler(IApiClient apiClient)
@@ -38,5 +38,10 @@ IRequestHandler<Commands.CreateContractProductCommand, Result>
     public async Task<Result> Handle(Commands.CreateContractProductCommand request,
                                      CancellationToken cancellationToken) {
         return await this.ApiClient.CreateContractProduct(request.AccessToken, Guid.Empty, request.EstateId, request.ContractId, request.CreateContractProductModel, cancellationToken);
+    }
+
+    public async Task<Result> Handle(Commands.CreateContractProductTransactionFeeCommand request,
+                                     CancellationToken cancellationToken) {
+        return await this.ApiClient.CreateContractProductTransactionFee(request.AccessToken, Guid.Empty, request.EstateId, request.ContractId, request.ProductId, request.CreateContractProductTransactionFeeModel, cancellationToken);
     }
 }

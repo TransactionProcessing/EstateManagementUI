@@ -147,4 +147,21 @@ public static class DataHelperFunctions {
         productTypes.Add(new OptionItem(((Int32)ProductType.Voucher).ToString(),"Voucher"));
         return productTypes;
     }
+
+    public static List<OptionItem> GetCalculationTypes() {
+        List<OptionItem> calculationTypes = new List<OptionItem>();
+        calculationTypes.Add(new OptionItem("-1", "- Select a Calculation Type -"));
+        calculationTypes.Add(new OptionItem(((Int32)CalculationType.Fixed).ToString(), "Fixed Value"));
+        calculationTypes.Add(new OptionItem(((Int32)CalculationType.Percentage).ToString(), "Percentage"));
+        return calculationTypes;
+    }
+
+    public static List<OptionItem> GetFeeTypes()
+    {
+        List<OptionItem> feeTypes = new List<OptionItem>();
+        feeTypes.Add(new OptionItem("-1", "- Select a Fee Type -"));
+        feeTypes.Add(new OptionItem(((Int32)FeeType.Merchant).ToString(), "Merchant"));
+        feeTypes.Add(new OptionItem(((Int32)FeeType.ServiceProvider).ToString(), "Service Provider"));
+        return feeTypes;
+    }
 }

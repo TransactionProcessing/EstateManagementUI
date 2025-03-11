@@ -542,6 +542,36 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
             await this.UiHelpers.VerifyTheContractProductDetailsAreInTheList(contractProductsDescriptions);
         }
+
+        [When("I click on the New Contract Product Transaction Button")]
+        public async Task WhenIClickOnTheNewContractProductTransactionButton()
+        {
+            await this.UiHelpers.ClickAddNewTransactionFeeButton();
+        }
+
+        [Then("the New Contract Product Transaction Screen is displayed")]
+        public async Task ThenTheNewContractProductTransactionScreenIsDisplayed()
+        {
+            await this.UiHelpers.VerifyOnTheNewTransactionFeeScreen();
+        }
+
+        [When("I enter the following details for the new Transaction Fee")]
+        public async Task WhenIEnterTheFollowingDetailsForTheNewTransactionFee(DataTable dataTable) {
+            String description = ReqnrollTableHelper.GetStringRowValue(dataTable.Rows.First(), "Description");
+            String calculationType = ReqnrollTableHelper.GetStringRowValue(dataTable.Rows.First(), "CalculationType");
+            String feeType = ReqnrollTableHelper.GetStringRowValue(dataTable.Rows.First(), "FeeType");
+            String feeValue = ReqnrollTableHelper.GetStringRowValue(dataTable.Rows.First(), "Value");
+            await this.UiHelpers.EnterTransactionFeeDetails(description, calculationType, feeType, feeValue);
+        }
+
+        [When("I click the Save Transaction Fee Button")]
+        public async Task WhenIClickTheSaveTransactionFeeButton()
+        {
+            await this.UiHelpers.ClickTheSaveTransactionFeeButton();
+        }
+
+
+
     }
     public record MerchantDetails(String MerchantName, String SettlementSchedule,String ContactName, String AddressLine1, String Town);
 }

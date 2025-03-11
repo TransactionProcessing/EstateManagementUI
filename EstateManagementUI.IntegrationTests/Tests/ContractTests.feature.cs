@@ -506,6 +506,31 @@ await this.FeatureBackgroundAsync();
 #line 120
  await testRunner.ThenAsync("the Contract Products Transaction Fees List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
+#line 121
+ await testRunner.WhenAsync("I click on the New Contract Product Transaction Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 122
+ await testRunner.ThenAsync("the New Contract Product Transaction Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table19 = new global::Reqnroll.Table(new string[] {
+                            "Description",
+                            "CalculationType",
+                            "FeeType",
+                            "Value"});
+                table19.AddRow(new string[] {
+                            "Test Fixed Fee",
+                            "Fixed Value",
+                            "Merchant",
+                            "0.25"});
+#line 123
+ await testRunner.WhenAsync("I enter the following details for the new Transaction Fee", ((string)(null)), table19, "When ");
+#line hidden
+#line 126
+ await testRunner.WhenAsync("I click the Save Transaction Fee Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 127
+ await testRunner.ThenAsync("the Contract Products Transaction Fees List Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
             }
             await this.ScenarioCleanupAsync();
         }

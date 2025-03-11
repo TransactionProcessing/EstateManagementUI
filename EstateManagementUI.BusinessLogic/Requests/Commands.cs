@@ -48,4 +48,6 @@ public record Commands {
                                      MakeDepositModel MakeDepositModel) : IRequest<Result>;
 
     public record CreateContractProductCommand(String AccessToken, Guid EstateId, Guid ContractId, CreateContractProductModel CreateContractProductModel) : IRequest<Result>;
+
+    public record CreateContractProductTransactionFeeCommand(String AccessToken, Guid EstateId, Guid ContractId, Guid ProductId, CreateContractProductTransactionFeeModel CreateContractProductTransactionFeeModel) : IRequest<Result>;
 }

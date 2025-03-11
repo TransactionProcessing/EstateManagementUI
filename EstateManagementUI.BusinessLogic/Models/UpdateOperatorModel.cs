@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics.CodeAnalysis;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BusinessLogic.Models;
 
@@ -99,6 +100,18 @@ public class CreateContractProductModel
     public String DisplayText { get; set; }
     public String Name { get; set; }
     public Int32 Type { get; set; }
+}
+
+public class CreateContractProductTransactionFeeModel
+{
+    public CalculationType CalculationType { get; set; }
+
+    public string Description { get; set; }
+
+    public FeeType FeeType { get; set; }
+
+    public Decimal Value { get; set; }
+
 }
 
 public enum SettlementSchedule
