@@ -70,14 +70,14 @@ public class SecureHydroComponent : HydroComponent {
     protected async Task PopulateTokenAndEstateId() {
         if (this.HttpContext != null)
             this.AccessToken = await this.HttpContext.GetTokenAsync("access_token");
-
-        if (this.User != null)
-            this.EstateId = Helpers.GetClaimValue<Guid>(this.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
+        
+        if (this.HttpContext.User != null)
+            this.EstateId = Helpers.GetClaimValue<Guid>(this.HttpContext.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
     }
 
     public override async Task RenderAsync()
     {
-        String userName = this.User.Identity.Name;
+        String userName = this.HttpContext.User.Identity.Name;
         Result permissionsResult = await this.PermissionsService.DoIHavePermissions(userName, this.SectionName, this.PageName);
         if (permissionsResult.IsFailed)
         {
@@ -94,7 +94,7 @@ public class SecureHydroComponent : HydroComponent {
     }
 
     public async Task<Boolean> CanRenderButton(String sectionName, String pageName) {
-        String userName = this.User.Identity.Name;
+        String userName = this.HttpContext.User.Identity.Name;
         Result permissionsResult = await this.PermissionsService.DoIHavePermissions(userName, sectionName, pageName);
         return permissionsResult.IsSuccess;
     }
