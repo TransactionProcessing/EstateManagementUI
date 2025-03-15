@@ -3,8 +3,10 @@ using EstateManagementUI.Pages.FileProcessing.FileImportLog;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -18,7 +20,9 @@ public class FileImportLogTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._fileImportLog = new FileImportLog(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._fileImportLog.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Theory]
@@ -54,6 +58,8 @@ public class FileImportLogTests
     public async Task ViewFileDetails_UrlSet()
     {
         Guid fileId = Guid.Parse("D726ED3C-93DE-4FC3-81F9-30CF330079BB");
+        this._fileImportLog.Url = TestHelper.GetTestUrlHelper();
+
         // Act
         await this._fileImportLog.ViewFileDetails(fileId);
 

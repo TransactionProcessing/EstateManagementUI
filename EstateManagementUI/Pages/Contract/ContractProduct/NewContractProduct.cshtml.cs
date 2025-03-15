@@ -25,7 +25,7 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
     {
         private readonly IMediator Mediator;
 
-        public NewContractProduct(IMediator mediator, IPermissionsService permissionsService) : base( ApplicationSections.Contract, ContractFunctions.AddProduct, permissionsService) {
+        public NewContractProduct(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Contract, ContractFunctions.AddProduct, permissionsService) {
             this.Mediator = mediator;
             
             Subscribe<ContractPageEvents.ContractProductCreatedEvent>(Handle);

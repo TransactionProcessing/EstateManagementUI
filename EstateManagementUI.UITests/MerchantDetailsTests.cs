@@ -4,11 +4,14 @@ using EstateManagementUI.Pages.Shared.Components;
 using EstateManagementUI.Testing;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
+using Hydro;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using System.Reflection;
 using Merchant = EstateManagementUI.Pages.Merchant.MerchantDetails.Merchant;
 
 namespace EstateManagementUI.UITests;
@@ -23,7 +26,9 @@ public class MerchantDetailsTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+        
         this._merchant = new Merchant(this._mediatorMock.Object, this._permissionsServiceMock.Object, "MerchantFunction");
+        this._merchant.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

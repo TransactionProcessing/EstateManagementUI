@@ -1,13 +1,15 @@
 using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.Pages.Operator;
 using Hydro;
-using Microsoft.AspNetCore.Authentication;
-using SimpleResults;
-using System.Security.Claims;
-using EstateManagementUI.BusinessLogic.PermissionService;
 using Hydro.Utils;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using SimpleResults;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EstateManagementUI.Common;
 
@@ -48,36 +50,28 @@ public class SecureHydroComponent : HydroComponent {
                                      Scope scope = Scope.Parent,
                                      bool asynchronous = false,
                                      string subject = null) {
-        if (this.HttpContext != null) {
-            base.Dispatch(name, data, scope, asynchronous, subject);
-        }
-        else {
-            this.Events.Add(data);
-        }
+        base.Dispatch(name, data, scope, asynchronous, subject);
+        this.Events.Add(data);
     }
 
     public new void Location(string url,
                              object payload = null) {
-        if (this.HttpContext != null) {
-            base.Location(this.Url.Page(url, payload));
-        }
-        else {
-            this.LocationUrl = url;
-            this.Payload = payload;
-        }
+        base.Location(this.Url.Page(url, payload));
+        this.LocationUrl = url;
+        this.Payload = payload;
     }
 
     protected async Task PopulateTokenAndEstateId() {
-        if (this.HttpContext != null)
-            this.AccessToken = await this.HttpContext.GetTokenAsync("access_token");
-        
-        if (this.HttpContext.User != null)
-            this.EstateId = Helpers.GetClaimValue<Guid>(this.HttpContext.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
+        if (HttpContext != null)
+            this.AccessToken = await HttpContext.GetTokenAsync("access_token");
+
+        if (HttpContext.User != null)
+            this.EstateId = Helpers.GetClaimValue<Guid>(HttpContext.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
     }
 
     public override async Task RenderAsync()
     {
-        String userName = this.HttpContext.User.Identity.Name;
+        String userName = HttpContext.User.Identity.Name;
         Result permissionsResult = await this.PermissionsService.DoIHavePermissions(userName, this.SectionName, this.PageName);
         if (permissionsResult.IsFailed)
         {
@@ -94,7 +88,7 @@ public class SecureHydroComponent : HydroComponent {
     }
 
     public async Task<Boolean> CanRenderButton(String sectionName, String pageName) {
-        String userName = this.HttpContext.User.Identity.Name;
+        String userName = HttpContext.User.Identity.Name;
         Result permissionsResult = await this.PermissionsService.DoIHavePermissions(userName, sectionName, pageName);
         return permissionsResult.IsSuccess;
     }

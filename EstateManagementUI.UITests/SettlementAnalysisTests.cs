@@ -4,9 +4,11 @@ using EstateManagementUI.Testing;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -20,7 +22,9 @@ public class SettlementAnalysisTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._settlementAnalysis = new SettlementAnalysis(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._settlementAnalysis.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

@@ -3,8 +3,10 @@ using EstateManagementUI.Pages.Estate.OperatorList;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -13,12 +15,14 @@ public class OperatorListTests
     private readonly Mock<IMediator> _mediatorMock;
     private readonly Mock<IPermissionsService> _permissionsServiceMock;
     private readonly OperatorList _operatorList;
-
+    
     public OperatorListTests()
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._operatorList = new OperatorList(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._operatorList.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
