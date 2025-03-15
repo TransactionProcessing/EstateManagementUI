@@ -24,6 +24,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails;
 public class Merchant : SecureHydroComponent
 {
     private readonly IMediator Mediator;
+    private readonly IHttpContextAccessor HttpContextAccessor;
     public String ActiveTab { get; set; }
 
 
@@ -73,8 +74,8 @@ public class Merchant : SecureHydroComponent
         }
     }
 
-    protected async Task LoadMerchant(CancellationToken cancellationToken)
-    {
+    protected async Task LoadMerchant(CancellationToken cancellationToken) {
+        
         await this.PopulateTokenAndEstateId();
 
         Queries.GetMerchantQuery query = new(this.AccessToken, this.EstateId, this.MerchantId);

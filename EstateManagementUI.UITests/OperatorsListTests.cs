@@ -3,8 +3,10 @@ using EstateManagementUI.Pages.Operator.OperatorsList;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -18,7 +20,9 @@ public class OperatorsListTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._operatorsList = new OperatorsList(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._operatorsList.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -41,6 +45,8 @@ public class OperatorsListTests
     [Fact]
     public void Add_NavigatesToNewOperatorPage()
     {
+        this._operatorsList.Url = TestHelper.GetTestUrlHelper();
+
         // Act
         this._operatorsList.Add();
 
@@ -54,6 +60,7 @@ public class OperatorsListTests
     {
         // Arrange
         var operatorId = Guid.NewGuid();
+        this._operatorsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
         await this._operatorsList.View(operatorId);
@@ -70,6 +77,7 @@ public class OperatorsListTests
     {
         // Arrange
         var operatorId = Guid.NewGuid();
+        this._operatorsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
         await this._operatorsList.Edit(operatorId);

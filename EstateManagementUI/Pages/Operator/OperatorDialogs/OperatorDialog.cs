@@ -19,8 +19,7 @@ public class Operator : SecureHydroComponent {
 
     public Operator(IMediator mediator,
                           IPermissionsService permissionsService,
-                          String operatorFunction) : base(ApplicationSections.Operator, operatorFunction,
-        permissionsService) {
+                          String operatorFunction) : base(ApplicationSections.Operator, operatorFunction, permissionsService) {
         this.Mediator = mediator;
         Subscribe<OperatorPageEvents.OperatorCreatedEvent>(Handle);
         Subscribe<OperatorPageEvents.OperatorUpdatedEvent>(Handle);

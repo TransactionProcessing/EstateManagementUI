@@ -4,9 +4,11 @@ using EstateManagementUI.Pages.Shared.Components;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -20,7 +22,9 @@ public class AddContractDialogTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._addContractDialog = new AddContractDialog(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._addContractDialog.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

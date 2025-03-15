@@ -21,6 +21,7 @@ namespace EstateManagementUI.IntegrationTests.Tests
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Merchant Tests")]
+    [NUnit.Framework.FixtureLifeCycleAttribute(NUnit.Framework.LifeCycle.InstancePerTestCase)]
     [NUnit.Framework.CategoryAttribute("base")]
     [NUnit.Framework.CategoryAttribute("shared")]
     [NUnit.Framework.CategoryAttribute("uigeneral")]
@@ -34,33 +35,41 @@ namespace EstateManagementUI.IntegrationTests.Tests
                 "shared",
                 "uigeneral"};
         
+        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tests", "Merchant Tests", null, global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
+        
 #line 1 "MerchantTests.feature"
 #line hidden
         
         [NUnit.Framework.OneTimeSetUpAttribute()]
-        public virtual async System.Threading.Tasks.Task FeatureSetupAsync()
+        public static async System.Threading.Tasks.Task FeatureSetupAsync()
         {
-            testRunner = global::Reqnroll.TestRunnerManager.GetTestRunnerForAssembly(null, NUnit.Framework.TestContext.CurrentContext.WorkerId);
-            global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Tests", "Merchant Tests", null, global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
-            await testRunner.OnFeatureStartAsync(featureInfo);
         }
         
         [NUnit.Framework.OneTimeTearDownAttribute()]
-        public virtual async System.Threading.Tasks.Task FeatureTearDownAsync()
+        public static async System.Threading.Tasks.Task FeatureTearDownAsync()
         {
-            await testRunner.OnFeatureEndAsync();
-            testRunner = null;
         }
         
         [NUnit.Framework.SetUpAttribute()]
         public async System.Threading.Tasks.Task TestInitializeAsync()
         {
+            testRunner = global::Reqnroll.TestRunnerManager.GetTestRunnerForAssembly(featureHint: featureInfo);
+            if (((testRunner.FeatureContext != null) 
+                        && (testRunner.FeatureContext.FeatureInfo.Equals(featureInfo) == false)))
+            {
+                await testRunner.OnFeatureEndAsync();
+            }
+            if ((testRunner.FeatureContext == null))
+            {
+                await testRunner.OnFeatureStartAsync(featureInfo);
+            }
         }
         
         [NUnit.Framework.TearDownAttribute()]
         public async System.Threading.Tasks.Task TestTearDownAsync()
         {
             await testRunner.OnScenarioEndAsync();
+            global::Reqnroll.TestRunnerManager.ReleaseTestRunner(testRunner);
         }
         
         public void ScenarioInitialize(global::Reqnroll.ScenarioInfo scenarioInfo)

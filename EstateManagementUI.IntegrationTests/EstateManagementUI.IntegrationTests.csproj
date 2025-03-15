@@ -22,31 +22,34 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="coverlet.collector" Version="6.0.2">
+	  <PackageReference Include="coverlet.collector" Version="6.0.4">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	  </PackageReference>
 	  <PackageReference Include="EventStoreProjections" Version="2023.12.3" />
-	  <PackageReference Include="SecurityService.Client" Version="2024.88.2-build73" />
-	  <PackageReference Include="SecurityService.IntegrationTesting.Helpers" Version="2024.88.2-build73" />
-	  <PackageReference Include="Shouldly" Version="4.2.1" />
-	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
-	  <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="2.0.3" />
-		<PackageReference Include="NUnit" Version="4.1.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageReference Include="Reqnroll" Version="2.0.3" />
-    <PackageReference Include="Reqnroll.NUnit" Version="2.0.3" />
-    <PackageReference Include="Shared.IntegrationTesting" Version="2025.1.2" />
-	  <PackageReference Include="Selenium.Support" Version="4.23.0" />
-	  <PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.14" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.14" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
+	  <PackageReference Include="SecurityService.Client" Version="2025.1.1" />
+	  <PackageReference Include="SecurityService.IntegrationTesting.Helpers" Version="2025.1.1" />
+	  <PackageReference Include="Shouldly" Version="4.3.0" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+	  <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="2.4.0" />
+		<PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="Reqnroll" Version="2.4.0" />
+    <PackageReference Include="Reqnroll.NUnit" Version="2.4.0" />
+    <PackageReference Include="Shared.IntegrationTesting" Version="2025.3.1" />
+	  <PackageReference Include="Selenium.Support" Version="4.29.0" />
+	  <PackageReference Include="Selenium.WebDriver" Version="4.29.0" />
 
-	  <PackageReference Include="MessagingService.IntegrationTesting.Helpers" Version="2024.8.2-build65" />
+	  <PackageReference Include="MessagingService.IntegrationTesting.Helpers" Version="2025.1.4" />
 
-	  <PackageReference Include="TransactionProcessor.Client" Version="2025.1.5-build147" />
+	  <PackageReference Include="TransactionProcessor.Client" Version="2025.2.10" />
 
-	  <PackageReference Include="TransactionProcessor.Database" Version="2025.1.5-build147" />
+	  <PackageReference Include="TransactionProcessor.Database" Version="2025.2.10" />
 
-	  <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2025.1.5-build147" />
+	  <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2025.2.10" />
   </ItemGroup>
 
   <ItemGroup>

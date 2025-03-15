@@ -3,8 +3,10 @@ using EstateManagementUI.Pages.Estate.ViewEstate;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -18,7 +20,9 @@ public class ViewEstateTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+        
         this._viewEstate = new ViewEstate(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._viewEstate.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

@@ -3,8 +3,10 @@ using EstateManagementUI.Pages.Merchant.MerchantsList;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -18,7 +20,9 @@ public class MerchantsListTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._merchantsList = new MerchantsList(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._merchantsList.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -41,6 +45,8 @@ public class MerchantsListTests
     [Fact]
     public void Add_NavigatesToNewMerchantPage()
     {
+        this._merchantsList.Url = TestHelper.GetTestUrlHelper();
+
         // Act
         this._merchantsList.Add();
 
@@ -54,6 +60,7 @@ public class MerchantsListTests
     {
         // Arrange
         var merchantId = Guid.NewGuid();
+        this._merchantsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
         await this._merchantsList.View(merchantId);
@@ -70,6 +77,7 @@ public class MerchantsListTests
     {
         // Arrange
         var merchantId = Guid.NewGuid();
+        this._merchantsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
         await this._merchantsList.Edit(merchantId);

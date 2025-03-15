@@ -5,8 +5,10 @@ using EstateManagementUI.Testing;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -20,7 +22,9 @@ public class ContractProductsListTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._contractProductsList = new ContractProductsList(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._contractProductsList.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -168,6 +172,7 @@ public class ContractProductsListTests
         // Arrange
         var contractProductId = Guid.NewGuid();
         this._contractProductsList.ContractId = Guid.NewGuid();
+        this._contractProductsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
         await this._contractProductsList.ViewProductFees(contractProductId);
@@ -191,6 +196,7 @@ public class ContractProductTransactionFeeListTests
         _mediatorMock = new Mock<IMediator>();
         _permissionsServiceMock = new Mock<IPermissionsService>();
         _component = new ContractProductTransactionFeeList(_mediatorMock.Object, _permissionsServiceMock.Object);
+        this._component.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

@@ -6,6 +6,7 @@ using EstateReportingAPI.DataTrasferObjects;
 using FileProcessor.Client;
 using FileProcessor.DataTransferObjects.Responses;
 using Shared.Logger;
+using Shared.Results;
 using SimpleResults;
 using TransactionProcessor.Client;
 using TransactionProcessor.DataTransferObjects.Requests.Contract;

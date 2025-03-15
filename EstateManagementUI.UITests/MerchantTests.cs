@@ -4,13 +4,81 @@ using EstateManagementUI.Testing;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Routing;
 using Merchant = EstateManagementUI.Pages.Merchant.MerchantDetails.Merchant;
 
 namespace EstateManagementUI.UITests;
+
+public static class TestHelper {
+    public static IUrlHelper GetTestUrlHelper() {
+        Mock<IUrlHelper> urlHelperMock = new Mock<IUrlHelper>();
+
+        // Example: Mock Url.Action() to return some URL
+        urlHelperMock
+            .Setup(u => u.RouteUrl(It.IsAny<UrlRouteContext>()))
+            .Returns("/");
+        urlHelperMock.Setup(u => u.ActionContext).Returns(new ActionContext
+        {
+            RouteData = new RouteData()
+        });
+
+        return urlHelperMock.Object;
+    }
+    public static ViewContext GetTestViewContext() {
+        var httpContext = GetTestHttpContext();
+        var viewData = new ViewDataDictionary(new Microsoft.AspNetCore.Mvc.ModelBinding.EmptyModelMetadataProvider(), new ModelStateDictionary());
+        var writer = new System.IO.StringWriter();
+
+        return new ViewContext
+        {
+            HttpContext = httpContext,
+            ViewData = viewData,
+            Writer = writer
+        };
+    }
+    public static HttpContext GetTestHttpContext() {
+        // Arrange
+        var httpContext = new DefaultHttpContext();
+
+        // Mock the authentication service
+        var authenticationServiceMock = new Mock<IAuthenticationService>();
+
+        // Return an authentication ticket with the access token
+        var authTicket = new AuthenticationTicket(
+            new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim("access_token", "mock-access-token")
+            }, "Bearer")),
+            "Bearer"
+        );
+
+        authenticationServiceMock
+            .Setup(a => a.AuthenticateAsync(httpContext, It.IsAny<string>()))
+            .ReturnsAsync(AuthenticateResult.Success(authTicket));
+
+        httpContext.RequestServices = new ServiceCollection()
+            .AddSingleton(authenticationServiceMock.Object)
+            .BuildServiceProvider();
+
+        var claims = new[] { new Claim("estateId", "45DD2B9C-C9B1-4CCA-89AC-CE0480FBC804") };
+        var identity = new ClaimsIdentity(claims, "Bearer");
+        var principal = new ClaimsPrincipal(identity);
+        httpContext.User = principal;
+        return httpContext;
+    }
+}
 
 public class MerchantTests
 {
@@ -22,7 +90,9 @@ public class MerchantTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._merchant = new Merchant(this._mediatorMock.Object, this._permissionsServiceMock.Object, "MerchantFunction");
+        this._merchant.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

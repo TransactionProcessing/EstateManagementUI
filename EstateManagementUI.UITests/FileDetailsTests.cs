@@ -3,8 +3,10 @@ using EstateManagementUI.Pages.FileProcessing.FileDetails;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EstateManagementUI.UITests;
 
@@ -13,12 +15,15 @@ public class FileDetailsTests
     private readonly Mock<IMediator> _mediatorMock;
     private readonly Mock<IPermissionsService> _permissionsServiceMock;
     private readonly FileDetails _fileDetails;
+    private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
 
     public FileDetailsTests()
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._fileDetails = new FileDetails(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._fileDetails.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]

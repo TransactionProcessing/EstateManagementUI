@@ -3,9 +3,11 @@ using EstateManagementUI.Pages.Operator.OperatorDialogs;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using System.Security.Claims;
 using Operator = EstateManagementUI.Pages.Operator.OperatorDialogs.Operator;
 using ShowMessage = EstateManagementUI.Pages.Shared.Components.ShowMessage;
 
@@ -21,7 +23,9 @@ public class OperatorTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._operator = new Operator(this._mediatorMock.Object, this._permissionsServiceMock.Object, "OperatorFunction");
+        this._operator.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -44,9 +48,11 @@ public class OperatorTests
     [Fact]
     public async Task Close_SetsLocationUrl()
     {
+        this._operator.Url = TestHelper.GetTestUrlHelper();
+
         // Act
         this._operator.Close();
-
+        
         // Assert
         this._operator.LocationUrl.ShouldBe("/Operator/Index");
         this._operator.Payload.ShouldBeNull();

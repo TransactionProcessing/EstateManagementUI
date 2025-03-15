@@ -15,7 +15,7 @@
                     <div>
                         @if (await Model.CanRenderButton(ApplicationSections.Contract, ContractFunctions.AddTransactionFee))
                         {
-                            <button class="btn btn-primary" type="button" hydro-action="NewContractProductTransactionFee" id="newContractProductTransactionFeeButton">
+                            <button class="btn btn-primary" type="button" on:click="@(() => Model.NewContractProductTransactionFee())" id="newContractProductTransactionFeeButton">
                                 New Transaction Fee
                             </button>
                         }

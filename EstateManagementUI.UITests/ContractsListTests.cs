@@ -7,9 +7,11 @@ using EstateManagementUI.Testing;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using System.Security.Claims;
 using static EstateManagementUI.Pages.Merchant.MerchantDetails.MerchantPageEvents;
 
 namespace EstateManagementUI.UITests;
@@ -24,7 +26,9 @@ public class ContractsListTests
     {
         this._mediatorMock = new Mock<IMediator>();
         this._permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._contractsList = new ContractsList(this._mediatorMock.Object, this._permissionsServiceMock.Object);
+        this._contractsList.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -118,6 +122,7 @@ public class ContractsListTests
     {
         // Arrange
         var contractId = Guid.NewGuid();
+        this._contractsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
         await _contractsList.ViewProducts(contractId);
@@ -140,7 +145,9 @@ public class AddOperatorDialogTests
     {
         _mediatorMock = new Mock<IMediator>();
         _permissionsServiceMock = new Mock<IPermissionsService>();
+
         this._addOperatorDialog = new AddOperatorDialog(_mediatorMock.Object, _permissionsServiceMock.Object);
+        this._addOperatorDialog.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -223,6 +230,7 @@ public class EditMerchantTests
         _mediatorMock = new Mock<IMediator>();
         _permissionsServiceMock = new Mock<IPermissionsService>();
         _editMerchant = new EditMerchant(_mediatorMock.Object, _permissionsServiceMock.Object);
+        this._editMerchant.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
@@ -261,12 +269,14 @@ public class DashboardTests
     private readonly Mock<IMediator> _mediatorMock;
     private readonly Mock<IPermissionsService> _permissionsServiceMock;
     private readonly Dashboard _dashboard;
-
+    
     public DashboardTests()
     {
         _mediatorMock = new Mock<IMediator>();
         _permissionsServiceMock = new Mock<IPermissionsService>();
+
         _dashboard = new Dashboard(_mediatorMock.Object, _permissionsServiceMock.Object);
+        this._dashboard.ViewContext = TestHelper.GetTestViewContext();
     }
 
     [Fact]
