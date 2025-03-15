@@ -20,7 +20,7 @@
             </div>
                 
             <button type="submit" class="btn btn-primary" id="saveOperatorButton">Save</button>
-            <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+            <button type="button" class="btn btn-outline-secondary" on:click="@(() => Model.Close())" id="closeButton">Close</button>
         </form>
     </div>
 </div>

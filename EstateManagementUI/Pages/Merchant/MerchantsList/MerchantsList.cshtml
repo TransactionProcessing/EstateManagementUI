@@ -12,7 +12,8 @@
                         </div>
                     <div>
                         @if(await Model.CanRenderButton(ApplicationSections.Merchant, MerchantFunctions.New)){
-                            <button class="btn btn-primary" type="button" hydro-action="Add" id="newMerchantButton">
+                        {
+                            <button class="btn btn-primary" type="button" on:click="@(() => Model.Add())" id="newMerchantButton">
                                 New Merchant
                             </button>
                         }

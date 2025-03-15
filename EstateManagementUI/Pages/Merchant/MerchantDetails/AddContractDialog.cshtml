@@ -19,7 +19,7 @@
                 <!--Modal Footer Start-->
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary" id="saveMerchantContractButton">Assign Contract</button>
-                    <button type="button" class="btn btn-outline-secondary" hydro-action="Close" id="closeButton">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" on:click="@(() => Model.Close())" id="closeButton">Close</button>
                 </div>
                 <!--Modal Footer End-->
             </form>
