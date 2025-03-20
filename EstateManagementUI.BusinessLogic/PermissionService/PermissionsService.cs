@@ -1,25 +1,31 @@
-﻿using Shared.General;
-using SimpleResults;
+﻿using SimpleResults;
 using System.Diagnostics.CodeAnalysis;
+using EstateManagementUI.BusinessLogic.Common;
 using Microsoft.Identity.Client;
 
 namespace EstateManagementUI.BusinessLogic.PermissionService;
 
-[ExcludeFromCodeCoverage]
 public class PermissionsService : IPermissionsService {
     private readonly IPermissionsRepository PermissionsRepository;
+    private readonly IConfigurationService ConfigurationService;
 
     public async Task<Result> DoIHavePermissions(String userName,
                                                  String sectionName,
                                                  String function) {
-        Boolean permissionsBypass = ConfigurationReader.GetValueOrDefault<Boolean>("AppSettings", "PermissionsBypass", false);
-
+        Boolean permissionsBypass = this.ConfigurationService.GetPermissionsBypass();
         if (permissionsBypass)
             return Result.Success();
 
+        if (String.IsNullOrEmpty(userName))
+            return Result.Forbidden("User name is required");
 
-        if (this.RoleFunctions.Any() == false && this.UserRoles.Any() == false)
-            await this.LoadPermissionsData();
+        if (String.IsNullOrEmpty(sectionName))
+            return Result.Forbidden("Section name is required");
+
+        if (String.IsNullOrEmpty(function))
+            return Result.Forbidden("Function is required");
+        
+        await this.LoadPermissionsData();
 
         (String userName, String role) userRole = this.UserRoles.SingleOrDefault(u => u.userName == userName);
 
@@ -31,11 +37,10 @@ public class PermissionsService : IPermissionsService {
         if (roleFunctions.Any() == false)
             return Result.Forbidden($"Users role {userRole.role} has no functions assigned");
 
-        (String role, String section, String function) permissionCheck = roleFunctions.SingleOrDefault(r => r.section == sectionName && r.function == function);
+        List<(String role, String section, String function)>? permissionCheck = roleFunctions.Where(r => r.section == sectionName && r.function == function).ToList();
 
-        if (permissionCheck == default)
-            return Result.Forbidden(
-                $"User {userName} in role {userRole} does not have access to {sectionName}-{function}");
+        if (permissionCheck.Any() == false)
+            return Result.Forbidden($"User {userName} in role {userRole} does not have access to {sectionName}-{function}");
 
         return Result.Success($"User {userName} in role {userRole} has access to {sectionName}-{function}");
     }
@@ -43,13 +48,18 @@ public class PermissionsService : IPermissionsService {
     public async Task<Result> DoIHavePermissions(String userName,
                                                  String sectionName) {
 
-        Boolean permissionsBypass = ConfigurationReader.GetValueOrDefault<Boolean>("AppSettings", "PermissionsBypass", false);
+        Boolean permissionsBypass = this.ConfigurationService.GetPermissionsBypass();
 
         if (permissionsBypass)
             return Result.Success();
 
-        if (this.RoleFunctions.Any() == false && this.UserRoles.Any() == false)
-            await this.LoadPermissionsData();
+        if (String.IsNullOrEmpty(userName))
+            return Result.Forbidden("User name is required");
+
+        if (String.IsNullOrEmpty(sectionName))
+            return Result.Forbidden("Section name is required");
+        
+        await this.LoadPermissionsData();
 
         (String userName, String role) userRole = this.UserRoles.SingleOrDefault(u => u.userName == userName);
 
@@ -64,22 +74,20 @@ public class PermissionsService : IPermissionsService {
         List<(String role, String section, String function)>? permissionCheck = roleFunctions.Where(r => r.section == sectionName).ToList();
 
         if (permissionCheck.Any() == false)
-            return Result.Forbidden(
-                $"User {userName} in role {userRole} does not have access to {sectionName}");
+            return Result.Forbidden($"User {userName} in role {userRole} does not have access to {sectionName}");
 
         return Result.Success($"User {userName} in role {userRole} has access to {sectionName}");
     }
 
-    public PermissionsService(IPermissionsRepository permissionsRepository) {
+    public PermissionsService(IPermissionsRepository permissionsRepository, IConfigurationService configurationService) {
         this.PermissionsRepository = permissionsRepository;
+        this.ConfigurationService = configurationService;
     }
 
-    public async Task<Result> LoadPermissionsData() {
-        // TODO: this will be cached and probably refershed periodically
+    private async Task LoadPermissionsData() {
+        // TODO: this will be cached and probably refreshed periodically
         this.RoleFunctions = await this.PermissionsRepository.GetRolesFunctions();
         this.UserRoles= await this.PermissionsRepository.GetUsers(CancellationToken.None);
-
-        return Result.Success();
     }
 
     private List<(String role, String section, String function)> RoleFunctions = new();

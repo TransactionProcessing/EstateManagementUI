@@ -9,8 +9,5 @@ namespace EstateManagementUI.BusinessLogic.PermissionService
 
         Task<Result> DoIHavePermissions(String userName,
                                         String sectionName);
-
-        Task<Result> LoadPermissionsData();
-
     }
 }
