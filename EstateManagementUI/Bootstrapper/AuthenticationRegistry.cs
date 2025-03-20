@@ -3,6 +3,7 @@ using System.Net.Mime;
 using System.Reflection;
 using EstateAdministrationUI.TokenManagement;
 using EstateManagementUI.BusinessLogic.Clients;
+using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.Common;
@@ -104,6 +105,7 @@ public class AuthenticationRegistry : ServiceRegistry {
         });
             
         this.AddAuthorization();
+        this.AddSingleton<IConfigurationService, ConfigurationService>();
         this.AddSingleton<IPermissionsService, PermissionsService>();
         this.AddSingleton<IPermissionsRepository, PermissionsRepository>();
         String dbFileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "permissions.db");
