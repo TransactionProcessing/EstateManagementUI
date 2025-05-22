@@ -370,26 +370,22 @@ namespace EstateManagementUI.IntegrationTests.Tests
                         "TestDevice2",
                         "Test Merchant 2",
                         "Test Estate"});
-            table44.AddRow(new string[] {
-                        "TestDevice3",
-                        "Test Merchant 3",
-                        "Test Estate"});
 #line 72
  await testRunner.WhenAsync("I add the following devices to the merchant", ((string)(null)), table44, "When ");
 #line hidden
-#line 78
+#line 77
  await testRunner.GivenAsync("I am on the application home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 80
+#line 79
  await testRunner.AndAsync("I click on the Sign In Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 82
+#line 81
  await testRunner.ThenAsync("I am presented with a login screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 84
+#line 83
  await testRunner.WhenAsync("I login with the username \'estateuser@testestate1.co.uk\' and password \'123456\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 86
+#line 85
  await testRunner.ThenAsync("I am presented with the Estate Administrator Dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
         }
@@ -403,7 +399,7 @@ namespace EstateManagementUI.IntegrationTests.Tests
                     "PRTest"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Merchant PR Test", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 89
+#line 88
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -416,10 +412,10 @@ this.ScenarioInitialize(scenarioInfo);
 #line 4
 await this.FeatureBackgroundAsync();
 #line hidden
-#line 91
+#line 90
  await testRunner.GivenAsync("I click on the My Merchants sidebar option", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 92
+#line 91
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table45 = new global::Reqnroll.Table(new string[] {
@@ -446,13 +442,13 @@ await this.FeatureBackgroundAsync();
                             "Test Contact 1",
                             "Address Line 1",
                             "TestTown"});
-#line 93
+#line 92
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table45, "And ");
 #line hidden
-#line 98
+#line 97
  await testRunner.WhenAsync("I click on the New Merchant Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 99
+#line 98
  await testRunner.ThenAsync("the Add New Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table46 = new global::Reqnroll.Table(new string[] {
@@ -473,13 +469,13 @@ await this.FeatureBackgroundAsync();
                             "Country",
                             "Test Contact 4",
                             "1@2.com"});
-#line 100
+#line 99
  await testRunner.WhenAsync("I enter the following details for the new Merchant", ((string)(null)), table46, "When ");
 #line hidden
-#line 103
+#line 102
  await testRunner.AndAsync("click the Save Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 104
+#line 103
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table47 = new global::Reqnroll.Table(new string[] {
@@ -512,13 +508,13 @@ await this.FeatureBackgroundAsync();
                             "Test Contact 4",
                             "Address Line 1",
                             "TestTown"});
-#line 105
+#line 104
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table47, "And ");
 #line hidden
-#line 111
+#line 110
  await testRunner.WhenAsync("I click on the Edit Merchant Button for \'Test Merchant 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 112
+#line 111
  await testRunner.ThenAsync("the Edit Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table48 = new global::Reqnroll.Table(new string[] {
@@ -537,13 +533,13 @@ await this.FeatureBackgroundAsync();
                             "Contact",
                             "ContactName",
                             "Test Contact 1 Update"});
-#line 113
+#line 112
  await testRunner.WhenAsync("I enter the following details for the updated Merchant", ((string)(null)), table48, "When ");
 #line hidden
-#line 118
+#line 117
  await testRunner.AndAsync("click the Save Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 119
+#line 118
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table49 = new global::Reqnroll.Table(new string[] {
@@ -576,13 +572,13 @@ await this.FeatureBackgroundAsync();
                             "Test Contact 4",
                             "Address Line 1",
                             "TestTown"});
-#line 120
+#line 119
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table49, "And ");
 #line hidden
-#line 126
+#line 125
  await testRunner.WhenAsync("I click on the Make Deposit Button for \'Test Merchant 1 Update\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 127
+#line 126
  await testRunner.ThenAsync("the Make Deposit Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table50 = new global::Reqnroll.Table(new string[] {
@@ -593,19 +589,19 @@ await this.FeatureBackgroundAsync();
                             "1000.00",
                             "Today",
                             "Test Deposit 1"});
-#line 128
+#line 127
  await testRunner.WhenAsync("I enter the following details for the deposit", ((string)(null)), table50, "When ");
 #line hidden
-#line 131
+#line 130
  await testRunner.AndAsync("click the Make Deposit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 132
+#line 131
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 133
+#line 132
  await testRunner.WhenAsync("I click on the View Merchant Button for \'Test Merchant 1 Update\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 134
+#line 133
  await testRunner.ThenAsync("the View Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -619,7 +615,7 @@ await this.FeatureBackgroundAsync();
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Merchant Operator Management", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 137
+#line 136
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -642,7 +638,7 @@ await this.FeatureBackgroundAsync();
                             "Test Operator1",
                             "True",
                             "True"});
-#line 138
+#line 137
  await testRunner.GivenAsync("I have created the following operators", ((string)(null)), table51, "Given ");
 #line hidden
                 global::Reqnroll.Table table52 = new global::Reqnroll.Table(new string[] {
@@ -651,13 +647,13 @@ await this.FeatureBackgroundAsync();
                 table52.AddRow(new string[] {
                             "Test Estate",
                             "Test Operator1"});
-#line 142
+#line 141
  await testRunner.AndAsync("I have assigned the following operators to the estates", ((string)(null)), table52, "And ");
 #line hidden
-#line 146
+#line 145
  await testRunner.GivenAsync("I click on the My Merchants sidebar option", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 147
+#line 146
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table53 = new global::Reqnroll.Table(new string[] {
@@ -684,19 +680,19 @@ await this.FeatureBackgroundAsync();
                             "Test Contact 1",
                             "Address Line 1",
                             "TestTown"});
-#line 148
+#line 147
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table53, "And ");
 #line hidden
-#line 154
+#line 153
  await testRunner.WhenAsync("I click on the Edit Merchant Button for \'Test Merchant 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 155
+#line 154
  await testRunner.ThenAsync("the Edit Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 157
+#line 156
  await testRunner.WhenAsync("I click on the Operators tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 158
+#line 157
  await testRunner.ThenAsync("I am presented with the Merchants Operator List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table54 = new global::Reqnroll.Table(new string[] {
@@ -707,13 +703,13 @@ await this.FeatureBackgroundAsync();
                             "Test Operator",
                             "00000001",
                             "10000001"});
-#line 159
+#line 158
  await testRunner.AndAsync("the following operators are displayed in the list", ((string)(null)), table54, "And ");
 #line hidden
-#line 162
+#line 161
  await testRunner.WhenAsync("I click on the Add Operator Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 163
+#line 162
  await testRunner.ThenAsync("the Assign Operator Dialog will be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table55 = new global::Reqnroll.Table(new string[] {
@@ -724,13 +720,13 @@ await this.FeatureBackgroundAsync();
                             "Test Operator1",
                             "00000111",
                             "10000111"});
-#line 164
+#line 163
  await testRunner.WhenAsync("I enter the following details for the Operator", ((string)(null)), table55, "When ");
 #line hidden
-#line 167
+#line 166
  await testRunner.AndAsync("click the Assign Operator button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 168
+#line 167
  await testRunner.ThenAsync("I am presented with the Merchants Operator List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table56 = new global::Reqnroll.Table(new string[] {
@@ -748,13 +744,13 @@ await this.FeatureBackgroundAsync();
                             "00000111",
                             "10000111",
                             "False"});
-#line 169
+#line 168
  await testRunner.AndAsync("the following operators are displayed in the list", ((string)(null)), table56, "And ");
 #line hidden
-#line 173
+#line 172
  await testRunner.WhenAsync("I click on the Remove Operator for \'Test Operator1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 174
+#line 173
  await testRunner.ThenAsync("I am presented with the Merchants Operator List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table57 = new global::Reqnroll.Table(new string[] {
@@ -772,7 +768,7 @@ await this.FeatureBackgroundAsync();
                             "00000111",
                             "10000111",
                             "True"});
-#line 175
+#line 174
  await testRunner.AndAsync("the following operators are displayed in the list", ((string)(null)), table57, "And ");
 #line hidden
             }
@@ -786,7 +782,7 @@ await this.FeatureBackgroundAsync();
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Merchant Contract Management", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 180
+#line 179
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -809,7 +805,7 @@ await this.FeatureBackgroundAsync();
                             "Test Operator1",
                             "True",
                             "True"});
-#line 181
+#line 180
  await testRunner.GivenAsync("I have created the following operators", ((string)(null)), table58, "Given ");
 #line hidden
                 global::Reqnroll.Table table59 = new global::Reqnroll.Table(new string[] {
@@ -818,7 +814,7 @@ await this.FeatureBackgroundAsync();
                 table59.AddRow(new string[] {
                             "Test Estate",
                             "Test Operator1"});
-#line 185
+#line 184
  await testRunner.AndAsync("I have assigned the following operators to the estates", ((string)(null)), table59, "And ");
 #line hidden
                 global::Reqnroll.Table table60 = new global::Reqnroll.Table(new string[] {
@@ -829,13 +825,13 @@ await this.FeatureBackgroundAsync();
                             "Test Estate",
                             "Test Operator1",
                             "Operator 1 Contract"});
-#line 190
+#line 189
  await testRunner.GivenAsync("I have created the following contracts", ((string)(null)), table60, "Given ");
 #line hidden
-#line 194
+#line 193
  await testRunner.GivenAsync("I click on the My Merchants sidebar option", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 195
+#line 194
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table61 = new global::Reqnroll.Table(new string[] {
@@ -862,44 +858,44 @@ await this.FeatureBackgroundAsync();
                             "Test Contact 1",
                             "Address Line 1",
                             "TestTown"});
-#line 196
+#line 195
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table61, "And ");
 #line hidden
-#line 202
+#line 201
  await testRunner.WhenAsync("I click on the Edit Merchant Button for \'Test Merchant 1\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 203
+#line 202
  await testRunner.ThenAsync("the Edit Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 205
+#line 204
  await testRunner.WhenAsync("I click on the Contracts tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 206
+#line 205
  await testRunner.ThenAsync("I am presented with the Merchants Contract List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table62 = new global::Reqnroll.Table(new string[] {
                             "ContractName",
                             "IsDeleted"});
-#line 207
+#line 206
  await testRunner.AndAsync("the following contracts are displayed in the list", ((string)(null)), table62, "And ");
 #line hidden
-#line 210
+#line 209
  await testRunner.WhenAsync("I click on the Add Contract Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 211
+#line 210
  await testRunner.ThenAsync("the Assign Contract Dialog will be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table63 = new global::Reqnroll.Table(new string[] {
                             "ContractName"});
                 table63.AddRow(new string[] {
                             "Operator 1 Contract"});
-#line 212
+#line 211
  await testRunner.WhenAsync("I enter the following details for the Contract", ((string)(null)), table63, "When ");
 #line hidden
-#line 215
+#line 214
  await testRunner.AndAsync("click the Assign Contract button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 216
+#line 215
  await testRunner.ThenAsync("I am presented with the Merchants Contract List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table64 = new global::Reqnroll.Table(new string[] {
@@ -908,13 +904,13 @@ await this.FeatureBackgroundAsync();
                 table64.AddRow(new string[] {
                             "Operator 1 Contract",
                             "False"});
-#line 217
+#line 216
  await testRunner.AndAsync("the following contracts are displayed in the list", ((string)(null)), table64, "And ");
 #line hidden
-#line 221
+#line 220
  await testRunner.WhenAsync("I click on the Remove Contract for \'Operator 1 Contract\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 222
+#line 221
  await testRunner.ThenAsync("I am presented with the Merchants Contract List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table65 = new global::Reqnroll.Table(new string[] {
@@ -923,8 +919,108 @@ await this.FeatureBackgroundAsync();
                 table65.AddRow(new string[] {
                             "Operator 1 Contract",
                             "True"});
-#line 223
+#line 222
  await testRunner.AndAsync("the following contracts are displayed in the list", ((string)(null)), table65, "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("Merchant Device Management")]
+        public async System.Threading.Tasks.Task MerchantDeviceManagement()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Merchant Device Management", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 227
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 4
+await this.FeatureBackgroundAsync();
+#line hidden
+#line 229
+ await testRunner.GivenAsync("I click on the My Merchants sidebar option", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 230
+ await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table66 = new global::Reqnroll.Table(new string[] {
+                            "MerchantName",
+                            "SettlementSchedule",
+                            "ContactName",
+                            "AddressLine1",
+                            "Town"});
+                table66.AddRow(new string[] {
+                            "Test Merchant 1",
+                            "Immediate",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table66.AddRow(new string[] {
+                            "Test Merchant 2",
+                            "Weekly",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table66.AddRow(new string[] {
+                            "Test Merchant 3",
+                            "Monthly",
+                            "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+#line 231
+ await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table66, "And ");
+#line hidden
+#line 237
+ await testRunner.WhenAsync("I click on the Edit Merchant Button for \'Test Merchant 3\'", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 238
+ await testRunner.ThenAsync("the Edit Merchant Screen is displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 240
+ await testRunner.WhenAsync("I click on the Devices tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 241
+ await testRunner.ThenAsync("I am presented with the Merchants Device List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table67 = new global::Reqnroll.Table(new string[] {
+                            "DeviceIdentifier"});
+#line 242
+ await testRunner.AndAsync("the following devices are displayed in the list", ((string)(null)), table67, "And ");
+#line hidden
+#line 245
+ await testRunner.WhenAsync("I click on the Add Device Button", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 246
+ await testRunner.ThenAsync("the Add Device Dialog will be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table68 = new global::Reqnroll.Table(new string[] {
+                            "MerchantDevice"});
+                table68.AddRow(new string[] {
+                            "123456ABCDEF"});
+#line 247
+ await testRunner.WhenAsync("I enter the following details for the Device", ((string)(null)), table68, "When ");
+#line hidden
+#line 250
+ await testRunner.AndAsync("click the Add Device button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 251
+ await testRunner.ThenAsync("I am presented with the Merchants Device List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table69 = new global::Reqnroll.Table(new string[] {
+                            "DeviceIdentifier"});
+                table69.AddRow(new string[] {
+                            "123456ABCDEF"});
+#line 252
+ await testRunner.AndAsync("the following devices are displayed in the list", ((string)(null)), table69, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

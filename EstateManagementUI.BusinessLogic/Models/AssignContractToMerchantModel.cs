@@ -11,3 +11,13 @@ public class AssignContractToMerchantModel
 
     #endregion
 }
+
+[ExcludeFromCodeCoverage]
+public class AssignDeviceToMerchantModel
+{
+    #region Properties
+
+    public String DeviceIdentifier { get; set; }
+
+    #endregion
+}

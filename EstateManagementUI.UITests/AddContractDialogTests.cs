@@ -1,4 +1,5 @@
 using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.Pages.Merchant;
 using EstateManagementUI.Pages.Merchant.MerchantDetails;
 using EstateManagementUI.Pages.Shared.Components;
 using EstateManagementUI.Testing;

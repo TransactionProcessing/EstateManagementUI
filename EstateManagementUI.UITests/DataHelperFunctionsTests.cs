@@ -36,7 +36,7 @@ public class DataHelperFunctionsTests
     }
 
     [Fact]
-    public async Task GetOperators_ValidInputs_ReturnsOperatorListModel()
+    public async Task GetOperatorsOld_ValidInputs_ReturnsOperatorListModel()
     {
         // Arrange
         string accessToken = "testAccessToken";
@@ -104,5 +104,82 @@ public class DataHelperFunctionsTests
         response.ShouldNotBeNull();
         response.Contracts.ShouldNotBeEmpty();
         response.Contracts.First().Text.ShouldBe("- Select a Contract -");
+    }
+
+    [Fact]
+    public async Task GetOperators_ValidInputs_ReturnsOperatorListModel()
+    {
+        // Arrange
+        string accessToken = "testAccessToken";
+        Guid estateId = Guid.NewGuid();
+        var operators = new List<OperatorModel>
+        {
+            new OperatorModel() { OperatorId = Guid.NewGuid(), Name = "Operator 1" },
+            new OperatorModel() { OperatorId = Guid.NewGuid(), Name = "Operator 2" },
+        };
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Queries.GetOperatorsQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(operators);
+
+        // Act
+        var response = await DataHelperFunctions.GetOperators(accessToken, estateId, this._mediatorMock.Object);
+
+        // Assert
+        response.ShouldNotBeNull();
+        response.ShouldNotBeEmpty();
+        response.First().Text.ShouldBe("- Select an Operator -");
+    }
+
+    [Fact]
+    public async Task GetProductTypes_ValidInputs_ReturnsProductTypes()
+    {
+        // Arrange
+        string accessToken = "testAccessToken";
+        Guid estateId = Guid.NewGuid();
+        
+        // Act
+        var response = await DataHelperFunctions.GetProductTypes(accessToken, estateId);
+
+        // Assert
+        response.ShouldNotBeNull();
+        response.Count.ShouldBe(4);
+    }
+
+    [Fact]
+    public async Task GetCalculationTypes_ReturnsCalculationTypes()
+    {
+        // Arrange
+
+        // Act
+        var response = DataHelperFunctions.GetCalculationTypes();
+
+        // Assert
+        response.ShouldNotBeNull();
+        response.Count.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GetFeeTypes_ReturnsFeeTypes()
+    {
+        // Arrange
+
+        // Act
+        var response = DataHelperFunctions.GetFeeTypes();
+
+        // Assert
+        response.ShouldNotBeNull();
+        response.Count.ShouldBe(3);
+    }
+
+    [Fact]
+    public async Task GetSettlementSchedules_ReturnsSettlementSchedules()
+    {
+        // Arrange
+
+        // Act
+        var response = DataHelperFunctions.GetSettlementSchedules();
+
+        // Assert
+        response.ShouldNotBeNull();
+        response.Count.ShouldBe(4);
     }
 }

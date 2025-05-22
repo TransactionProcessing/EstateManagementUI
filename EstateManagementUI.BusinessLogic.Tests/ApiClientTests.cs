@@ -10,6 +10,7 @@ using Shared.Logger;
 using Shouldly;
 using SimpleResults;
 using TransactionProcessor.Client;
+using TransactionProcessor.DataTransferObjects.Requests.Contract;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 using TransactionProcessor.DataTransferObjects.Requests.Operator;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
@@ -640,6 +641,134 @@ public class ApiClientTests {
 
         Result result = await this.ApiClient.RemoveOperatorFromMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
             TestData.Operator1Id, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_AssignDeviceToMerchant_DeviceAssigned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddDeviceToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddMerchantDeviceRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+
+        Result result = await this.ApiClient.AssignDeviceToMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
+            TestData.AssignDeviceToMerchantModel, CancellationToken.None);
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_AssignDeviceToMerchant_ClientCallFailed_ResultIsFailed()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddDeviceToMerchant(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddMerchantDeviceRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure);
+
+        Result result = await this.ApiClient.AssignDeviceToMerchant(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id,
+            TestData.AssignDeviceToMerchantModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContract_DataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.CreateContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+
+        Result result = await this.ApiClient.CreateContract(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateContractModel, CancellationToken.None);
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContract_ErrorAtServer_NoDataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.CreateContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+
+        Result result = await this.ApiClient.CreateContract(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateContractModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContract_ClientThrowsException_ResultIsFailed()
+    {
+        this.TransactionProcessorClient.Setup(e => e.CreateContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<CreateContractRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+        Result result = await this.ApiClient.CreateContract(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.CreateContractModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_MakeDeposit_DataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.MakeMerchantDeposit(It.IsAny<String>(), It.IsAny<Guid>(),It.IsAny<Guid>(), It.IsAny<MakeMerchantDepositRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+
+        Result result = await this.ApiClient.MakeDeposit(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.MakeDepositModel, CancellationToken.None);
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_MakeDeposit_ErrorAtServer_NoDataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.MakeMerchantDeposit(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<MakeMerchantDepositRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+
+        Result result = await this.ApiClient.MakeDeposit(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.MakeDepositModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_MakeDeposit_ClientThrowsException_ResultIsFailed()
+    {
+        this.TransactionProcessorClient.Setup(e => e.MakeMerchantDeposit(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<MakeMerchantDepositRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+        Result result = await this.ApiClient.MakeDeposit(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Merchant1Id, TestData.MakeDepositModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContractProduct_DataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddProductToContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddProductToContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+
+        Result result = await this.ApiClient.CreateContractProduct(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Contract1Id, TestData.CreateContractProductModel, CancellationToken.None);
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContractProduct_ErrorAtServer_NoDataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddProductToContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddProductToContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+
+        Result result = await this.ApiClient.CreateContractProduct(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Contract1Id, TestData.CreateContractProductModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContractProduct_ClientThrowsException_ResultIsFailed()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddProductToContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddProductToContractRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+        Result result = await this.ApiClient.CreateContractProduct(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Contract1Id, TestData.CreateContractProductModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContractProductTransactionFee_DataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddTransactionFeeForProductToContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddTransactionFeeForProductToContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success);
+
+        Result result = await this.ApiClient.CreateContractProductTransactionFee(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Contract1Id, TestData.Contract1Product1Id, TestData.CreateContractProductTransactionFeeModel, CancellationToken.None);
+        result.IsSuccess.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContractProductTransactionFee_ErrorAtServer_NoDataIsReturned()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddTransactionFeeForProductToContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddTransactionFeeForProductToContractRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Failure());
+
+        Result result = await this.ApiClient.CreateContractProductTransactionFee(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Contract1Id, TestData.Contract1Product1Id, TestData.CreateContractProductTransactionFeeModel, CancellationToken.None);
+        result.IsFailed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ApiClient_CreateContractProductTransactionFee_ClientThrowsException_ResultIsFailed()
+    {
+        this.TransactionProcessorClient.Setup(e => e.AddTransactionFeeForProductToContract(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<AddTransactionFeeForProductToContractRequest>(), It.IsAny<CancellationToken>())).ThrowsAsync(new Exception());
+
+        Result result = await this.ApiClient.CreateContractProductTransactionFee(TestData.AccessToken, Guid.Empty, TestData.EstateId, TestData.Contract1Id, TestData.Contract1Product1Id, TestData.CreateContractProductTransactionFeeModel, CancellationToken.None);
         result.IsFailed.ShouldBeTrue();
     }
 }

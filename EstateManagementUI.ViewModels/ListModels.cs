@@ -35,7 +35,7 @@ namespace EstateManagementUI.ViewModels
 
         public String ContractId { get; set; }
     }
-
+    
     public class ProductTypeListModel
     {
         public List<SelectListItem> ProductTypes { get; set; }

@@ -21,8 +21,8 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
     {
         private readonly IMediator Mediator;
 
-        public Guid MerchantId { get; set; }
-        public bool ShowDialog { get; set; }
+        //public Guid MerchantId { get; set; }
+        //public bool ShowDialog { get; set; }
 
         public MerchantsList(IMediator mediator, IPermissionsService permissionsService) : base(ApplicationSections.Merchant, MerchantFunctions.ViewList, permissionsService)
         {

@@ -68,7 +68,7 @@ public class AuthenticationRegistry : ServiceRegistry {
             options.Scope.Add("email");
             options.Scope.Add("offline_access");
 
-            options.Scope.Add("estateManagement");
+            //options.Scope.Add("estateReporting");
             options.Scope.Add("fileProcessor");
             options.Scope.Add("transactionProcessor");
 

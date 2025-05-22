@@ -86,6 +86,7 @@ public String Region { get; set; }
     #endregion
 }
 
+[ExcludeFromCodeCoverage]
 public class CreateContractModel
 {
     public Guid OperatorId { get; set; }
@@ -93,6 +94,7 @@ public class CreateContractModel
     public string Description { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class CreateContractProductModel
 {
     public Decimal? Value { get; set; }
@@ -102,6 +104,7 @@ public class CreateContractProductModel
     public Int32 Type { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public class CreateContractProductTransactionFeeModel
 {
     public CalculationType CalculationType { get; set; }
@@ -121,6 +124,7 @@ public enum SettlementSchedule
     Monthly
 }
 
+[ExcludeFromCodeCoverage]
 public class MakeDepositModel {
     public Decimal Amount { get; set; }
     public String Reference { get; set; }

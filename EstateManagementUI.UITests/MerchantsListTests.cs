@@ -88,6 +88,23 @@ public class MerchantsListTests
         Guid payloadMerchantId = TestHelpers.GetPropertyValue<Guid>(this._merchantsList.Payload, "MerchantId");
         payloadMerchantId.ShouldBe(merchantId);
     }
+    
+    [Fact]
+    public async Task MakeDeposit_NavigatesToMakeMerchantDepositPage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        this._merchantsList.Url = TestHelper.GetTestUrlHelper();
+
+        // Act
+        await this._merchantsList.MakeDeposit(merchantId);
+
+        // Assert
+        this._merchantsList.LocationUrl.ShouldNotBeNull();
+        this._merchantsList.LocationUrl.ShouldBe("/Merchant/MakeDeposit");
+        Guid payloadMerchantId = TestHelpers.GetPropertyValue<Guid>(this._merchantsList.Payload, "MerchantId");
+        payloadMerchantId.ShouldBe(merchantId);
+    }
 
     [Fact]
     public async Task Sort_SortsMerchantsByName()

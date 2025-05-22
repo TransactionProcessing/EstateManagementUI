@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace EstateManagementUI.Pages.Merchant.MerchantDetails;
+namespace EstateManagementUI.Pages.Merchant;
 
 [ExcludeFromCodeCoverage]
 public class MerchantPageEvents
@@ -16,4 +16,7 @@ public class MerchantPageEvents
     public record ContractAssignedToMerchantEvent;
     public record ContractRemovedFromMerchantEvent;
     public record DepositMadeEvent;
+    public record DeviceAssignedToMerchantEvent;
+    public record ShowAddDeviceDialog;
+    public record HideAddDeviceDialog;
 }

@@ -199,6 +199,19 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyContractDetailsAreInTheList("merchantContractList", contractsList);
         }
 
+        [Then("the following devices are displayed in the list")]
+        public async Task ThenTheFollowingDevicesAreDisplayedInTheList(DataTable dataTable)
+        {
+            List<String> devicesList = new();
+            foreach (DataTableRow tableRow in dataTable.Rows)
+            {
+                devicesList.Add((ReqnrollTableHelper.GetStringRowValue(tableRow, "DeviceIdentifier")));
+            }
+
+            await this.UiHelpers.VerifyDeviceDetailsAreInTheList("merchantDeviceList", devicesList);
+        }
+
+
         [When("I click on the Add Operator Button")]
         public async Task WhenIClickOnTheAddOperatorButton()
         {
@@ -220,6 +233,12 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.VerifyAssignContractDialogIsDisplayed();
         }
 
+        [Then("the Add Device Dialog will be displayed")]
+        public async Task ThenTheAddDeviceDialogWillBeDisplayed()
+        {
+            await this.UiHelpers.VerifyAddDeviceDialogIsDisplayed();
+        }
+
 
         [When("I enter the following details for the Contract")]
         public async Task WhenIEnterTheFollowingDetailsForTheContract(DataTable dataTable)
@@ -236,11 +255,33 @@ namespace EstateManagementUI.IntegrationTests.Steps
             }
         }
 
+        [When("I enter the following details for the Device")]
+        public async Task WhenIEnterTheFollowingDetailsForTheDevice(DataTable dataTable)
+        {
+            List<String> deviceList = new List<String>();
+            foreach (DataTableRow tableRow in dataTable.Rows)
+            {
+                deviceList.Add(ReqnrollTableHelper.GetStringRowValue(tableRow, "MerchantDevice"));
+            }
+
+            foreach (String device in deviceList)
+            {
+                await this.UiHelpers.EnterDeviceDetails(device);
+            }
+        }
+
+
         [When("click the Assign Contract button")]
         public async Task WhenClickTheAssignContractButton() {
             await this.UiHelpers.ClickTheAssignContractButton();
         }
-        
+
+        [When("click the Add Device button")]
+        public async Task WhenClickTheAddDeviceButton() {
+            await this.UiHelpers.ClickTheAssignDeviceButton();
+        }
+
+
         [When("I enter the following details for the Operator")]
         public async Task WhenIEnterTheFollowingDetailsForTheOperator(DataTable dataTable)
         {
@@ -299,7 +340,16 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickOnTheMerchantContractsTab();
         }
 
+        [When("I click on the Devices tab")]
+        public async Task WhenIClickOnTheDevicesTab() {
+            await this.UiHelpers.ClickOnTheMerchantDevicesTab();
+        }
 
+        [When("I click on the Add Device Button")]
+        public async Task WhenIClickOnTheAddDeviceButton() {
+            await this.UiHelpers.ClickTheAddDeviceButton();
+        }
+        
         [Then("I am presented with the Merchants Operator List Screen")]
         public async  Task ThenIAmPresentedWithTheMerchantsOperatorListScreen() {
             await this.UiHelpers.VerifyOnMerchantOperatorsTab();
@@ -309,6 +359,11 @@ namespace EstateManagementUI.IntegrationTests.Steps
         public async Task ThenIAmPresentedWithTheMerchantsContractListScreen()
         {
             await this.UiHelpers.VerifyOnMerchantContractsTab();
+        }
+
+        [Then("I am presented with the Merchants Device List Screen")]
+        public async Task ThenIAmPresentedWithTheMerchantsDeviceListScreen() {
+            await this.UiHelpers.VerifyOnMerchantDevicesTab();
         }
 
         [Then("the View Merchant Screen is displayed")]

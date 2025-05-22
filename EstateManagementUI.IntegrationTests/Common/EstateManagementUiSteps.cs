@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EstateManagementUI.IntegrationTests.Steps;
+﻿using EstateManagementUI.IntegrationTests.Steps;
 using EventStore.Client;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
 using Reqnroll;
 using Shared.IntegrationTesting;
 using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EstateManagementUI.IntegrationTests.Common;
 
@@ -140,6 +141,11 @@ public class EstateManagementUiHelpers{
         await this.ClickTab("nav-contracts-tab");
     }
 
+    public async Task ClickOnTheMerchantDevicesTab()
+    {
+        await this.ClickTab("nav-devices-tab");
+    }
+
     public async Task VerifyOnMerchantOperatorsTab() {
         IWebElement element = this.WebDriver.FindElement(By.Id("merchantOperatorList"));
         element.ShouldNotBeNull();
@@ -148,6 +154,12 @@ public class EstateManagementUiHelpers{
     public async Task VerifyOnMerchantContractsTab()
     {
         IWebElement element = this.WebDriver.FindElement(By.Id("merchantContractList"));
+        element.ShouldNotBeNull();
+    }
+
+    public async Task VerifyOnMerchantDevicesTab()
+    {
+        IWebElement element = this.WebDriver.FindElement(By.Id("merchantDeviceList"));
         element.ShouldNotBeNull();
     }
 
@@ -544,6 +556,11 @@ public class EstateManagementUiHelpers{
         await this.WebDriver.ClickButtonById("newOperatorButton");
     }
 
+    public async Task ClickTheAddDeviceButton()
+    {
+        await this.WebDriver.ClickButtonById("addDeviceButton");
+    }
+
     public async Task ClickTheSaveOperatorButton()
     {
         await this.WebDriver.ClickButtonById("saveOperatorButton");
@@ -557,6 +574,11 @@ public class EstateManagementUiHelpers{
     public async Task ClickTheAssignContractButton()
     {
         await this.WebDriver.ClickButtonById("saveMerchantContractButton");
+    }
+
+    public async Task ClickTheAssignDeviceButton()
+    {
+        await this.WebDriver.ClickButtonById("saveMerchantDeviceButton");
     }
 
     public async Task ClickTheSaveMerchantButton()
@@ -727,6 +749,11 @@ public class EstateManagementUiHelpers{
     public async Task EnterContractDetails(String contractName)
     {
         await this.WebDriver.SelectDropDownItemByText("contractName", contractName);
+    }
+
+    public async Task EnterDeviceDetails(String deviceIdentifier)
+    {
+        await this.WebDriver.FillInById("deviceIdentifier", deviceIdentifier, true);
     }
 
     public async Task EnterProductDetails(String productName, String displayText, String productValue, String productType){
@@ -1048,8 +1075,57 @@ public class EstateManagementUiHelpers{
         });
     }
 
+    public async Task VerifyAddDeviceDialogIsDisplayed() {
+        await Retry.For(async () => {
+            IWebElement element = this.WebDriver.FindElement(By.Id("AddDeviceDialog"));
+            element.ShouldNotBeNull();
+        });
+    }
+
     public async Task ClickTheSaveTransactionFeeButton()
     {
         await this.WebDriver.ClickButtonById("saveContractProductFeeButton");
+    }
+
+    public async Task VerifyDeviceDetailsAreInTheList(String tableId,
+                                                      List<String> devicesList) {
+        await Retry.For(async () => {
+            Int32 foundRowCount = 0;
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
+
+            rows.Count.ShouldBe(devicesList.Count + 1);
+            StringBuilder sb = new StringBuilder();
+            foreach (String deviceDetail in devicesList)
+            {
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in rows)
+                {
+                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
+
+                    if (rowTH.Any())
+                    {
+                        // header row so skip
+                        continue;
+                    }
+
+                    rowTD = row.FindElements(By.TagName("td"));
+
+                    if (rowTD[0].Text == deviceDetail)
+                    {
+                        // We have found the row
+                        foundRowCount++;
+                        sb.AppendLine($"Found {deviceDetail}");
+                        break;
+                    }
+                    else
+                    {
+                        sb.AppendLine($"Not Found {deviceDetail}");
+                    }
+                }
+            }
+
+            foundRowCount.ShouldBe(devicesList.Count, sb.ToString());
+        }, TimeSpan.FromSeconds(120));
     }
 }

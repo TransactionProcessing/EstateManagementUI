@@ -10,7 +10,7 @@ using EstateManagementUI.Pages.Shared.Components;
 using EstateManagmentUI.BusinessLogic.Requests;
 using Hydro;
 using SimpleResults;
-using static EstateManagementUI.Pages.Merchant.MerchantDetails.MerchantPageEvents;
+using static EstateManagementUI.Pages.Merchant.MerchantPageEvents;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantDetails
 {

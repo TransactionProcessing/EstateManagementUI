@@ -27,6 +27,13 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                               AssignContractToMerchantModel assignContractToMerchantModel,
                                               CancellationToken cancellationToken);
 
+        Task<Result> AssignDeviceToMerchant(String accessToken,
+                                            Guid actionId,
+                                            Guid estateId,
+                                            Guid merchantId,
+                                            AssignDeviceToMerchantModel assignDeviceToMerchantModel,
+                                            CancellationToken cancellationToken);
+
         Task<Result> RemoveOperatorFromMerchant(String accessToken,
                                               Guid actionId,
                                               Guid estateId,

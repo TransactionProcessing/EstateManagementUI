@@ -18,8 +18,8 @@ public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery,
                                       IRequestHandler<Commands.RemoveOperatorFromMerchantCommand, Result>,
                                       IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
                                       IRequestHandler<Commands.RemoveContractFromMerchantCommand, Result>,
-                                      IRequestHandler<Commands.MakeDepositCommand, Result>
-{
+                                      IRequestHandler<Commands.MakeDepositCommand, Result>,
+                                      IRequestHandler<Commands.AssignDeviceToMerchantCommand, Result> {
     private readonly IApiClient ApiClient;
 
     public MerchantRequestHandler(IApiClient apiClient) {
@@ -100,6 +100,13 @@ public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery,
                                      CancellationToken cancellationToken) {
         Result result = await this.ApiClient.MakeDeposit(request.AccessToken, Guid.Empty, request.EstateId,
             request.MerchantId, request.MakeDepositModel, cancellationToken);
+        return result;
+    }
+
+    public async Task<Result> Handle(Commands.AssignDeviceToMerchantCommand request,
+                                     CancellationToken cancellationToken) {
+        Result result = await this.ApiClient.AssignDeviceToMerchant(request.AccessToken, Guid.Empty, request.EstateId,
+            request.MerchantId, request.AssignDeviceToMerchantModel, cancellationToken);
         return result;
     }
 }

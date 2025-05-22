@@ -57,6 +57,11 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.RemoveOperatorFromMerchantCommand);
             this.Requests.Add(TestData.AssignContractToMerchantCommand);
             this.Requests.Add(TestData.RemoveContractFromMerchantCommand);
+            this.Requests.Add(TestData.AssignDeviceToMerchantCommand);
+            this.Requests.Add(TestData.CreateContractCommand);
+            this.Requests.Add(TestData.CreateContractProductCommand);
+            this.Requests.Add(TestData.CreateContractProductTransactionFeeCommand);
+            this.Requests.Add(TestData.MakeDepositCommand);
 
 
 

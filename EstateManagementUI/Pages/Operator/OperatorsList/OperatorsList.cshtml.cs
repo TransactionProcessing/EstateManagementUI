@@ -11,10 +11,9 @@ using EstateManagementUI.Pages.Merchant;
 using System.Collections.Generic;
 using System.Reflection.Metadata;
 using EstateManagementUI.BusinessLogic.PermissionService;
-using EstateManagementUI.Pages.Operator.OperatorDialogs;
 using EstateManagementUI.Pages.Shared.Components;
 using SimpleResults;
-using static EstateManagementUI.Pages.Operator.OperatorDialogs.OperatorPageEvents;
+using static EstateManagementUI.Pages.Operator.OperatorPageEvents;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EstateManagementUI.Pages.Operator.OperatorsList

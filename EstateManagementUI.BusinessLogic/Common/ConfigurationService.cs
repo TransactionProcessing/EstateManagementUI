@@ -1,7 +1,9 @@
-﻿using Shared.General;
+﻿using System.Diagnostics.CodeAnalysis;
+using Shared.General;
 
 namespace EstateManagementUI.BusinessLogic.Common;
 
+[ExcludeFromCodeCoverage]
 public class ConfigurationService : IConfigurationService
 {
     public Boolean GetPermissionsBypass()
