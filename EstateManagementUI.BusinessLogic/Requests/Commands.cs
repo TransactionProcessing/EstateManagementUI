@@ -50,4 +50,9 @@ public record Commands {
     public record CreateContractProductCommand(String AccessToken, Guid EstateId, Guid ContractId, CreateContractProductModel CreateContractProductModel) : IRequest<Result>;
 
     public record CreateContractProductTransactionFeeCommand(String AccessToken, Guid EstateId, Guid ContractId, Guid ProductId, CreateContractProductTransactionFeeModel CreateContractProductTransactionFeeModel) : IRequest<Result>;
+
+    public record AssignDeviceToMerchantCommand(String AccessToken,
+                                                  Guid EstateId,
+                                                  Guid MerchantId,
+                                                  AssignDeviceToMerchantModel AssignDeviceToMerchantModel) : IRequest<Result>;
 }

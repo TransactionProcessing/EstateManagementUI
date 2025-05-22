@@ -61,7 +61,21 @@ public class ApiClient : IApiClient {
             return await this.TransactionProcessorClient.AddContractToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         }
 
-        ;
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> AssignDeviceToMerchant(String accessToken,
+                                                     Guid actionId,
+                                                     Guid estateId,
+                                                     Guid merchantId,
+                                                     AssignDeviceToMerchantModel assignDeviceToMerchantModel,
+                                                     CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod()
+        {
+            AddMerchantDeviceRequest apiRequest = ModelFactory.ConvertFrom(assignDeviceToMerchantModel);
+
+            return await this.TransactionProcessorClient.AddDeviceToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
+        }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
     }

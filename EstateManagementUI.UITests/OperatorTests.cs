@@ -1,5 +1,5 @@
 using EstateManagementUI.BusinessLogic.PermissionService;
-using EstateManagementUI.Pages.Operator.OperatorDialogs;
+using EstateManagementUI.Pages.Operator;
 using EstateManagementUI.Testing;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;

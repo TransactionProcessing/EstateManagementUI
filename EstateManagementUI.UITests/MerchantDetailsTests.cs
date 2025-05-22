@@ -32,6 +32,21 @@ public class MerchantDetailsTests
     }
 
     [Fact]
+    public async Task Clone_NavigatesToMerchantIndexPage()
+    {
+        // Arrange
+        //var merchantId = Guid.NewGuid();
+        this._merchant.Url = TestHelper.GetTestUrlHelper();
+
+        // Act
+        this._merchant.Close();
+
+        // Assert
+        this._merchant.LocationUrl.ShouldNotBeNull();
+        this._merchant.LocationUrl.ShouldBe("/Merchant/Index");
+    }
+
+    [Fact]
     public async Task MountAsync_LoadsMerchant_WhenMerchantIdIsNotEmpty()
     {
         // Arrange
@@ -163,6 +178,132 @@ public class MerchantDetailsTests
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Save_UpdateMerchantFails()
+    {
+        // Arrange
+        this._merchant.MerchantId = Guid.NewGuid();
+        this._merchant.Name = "Updated Merchant";
+        this._merchant.Reference = "Ref123";
+        this._merchant.Address = new AddressViewModel
+        {
+            AddressLine1 = "123 Main St",
+            AddressLine2 = "Suite 100",
+            Town = "Anytown",
+            Region = "Anystate",
+            Country = "USA",
+            PostCode = "12345"
+        };
+        this._merchant.Contact = new ContactViewModel
+        {
+            ContactName = "John Doe",
+            EmailAddress = "john.doe@example.com",
+            PhoneNumber = "555-1234"
+        };
+        this._merchant.SettlementScheduleId = 0;
+
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(new List<String>() {"Error"}));
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        // Act
+        await this._merchant.Save();
+
+        // Assert
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        this._merchant.Events.Count.ShouldBe(1);
+        this._merchant.Events[0].ShouldBeOfType<ShowMessage>();
+    }
+
+    [Fact]
+    public async Task Save_UpdateMerchantAddressFails()
+    {
+        // Arrange
+        this._merchant.MerchantId = Guid.NewGuid();
+        this._merchant.Name = "Updated Merchant";
+        this._merchant.Reference = "Ref123";
+        this._merchant.Address = new AddressViewModel
+        {
+            AddressLine1 = "123 Main St",
+            AddressLine2 = "Suite 100",
+            Town = "Anytown",
+            Region = "Anystate",
+            Country = "USA",
+            PostCode = "12345"
+        };
+        this._merchant.Contact = new ContactViewModel
+        {
+            ContactName = "John Doe",
+            EmailAddress = "john.doe@example.com",
+            PhoneNumber = "555-1234"
+        };
+        this._merchant.SettlementScheduleId = 0;
+
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(new List<String>() { "Error" }));
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        // Act
+        await this._merchant.Save();
+
+        // Assert
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Never);
+        this._merchant.Events.Count.ShouldBe(1);
+        this._merchant.Events[0].ShouldBeOfType<ShowMessage>();
+    }
+
+    [Fact]
+    public async Task Save_UpdateMerchantContactFails()
+    {
+        // Arrange
+        this._merchant.MerchantId = Guid.NewGuid();
+        this._merchant.Name = "Updated Merchant";
+        this._merchant.Reference = "Ref123";
+        this._merchant.Address = new AddressViewModel
+        {
+            AddressLine1 = "123 Main St",
+            AddressLine2 = "Suite 100",
+            Town = "Anytown",
+            Region = "Anystate",
+            Country = "USA",
+            PostCode = "12345"
+        };
+        this._merchant.Contact = new ContactViewModel
+        {
+            ContactName = "John Doe",
+            EmailAddress = "john.doe@example.com",
+            PhoneNumber = "555-1234"
+        };
+        this._merchant.SettlementScheduleId = 0;
+
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+        this._mediatorMock.Setup(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure(new List<String>() { "Error" }));
+
+        // Act
+        await this._merchant.Save();
+
+        // Assert
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        this._merchant.Events.Count.ShouldBe(1);
+        this._merchant.Events[0].ShouldBeOfType<ShowMessage>();
     }
 
     [Fact]

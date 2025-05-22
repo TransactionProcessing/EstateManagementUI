@@ -728,4 +728,13 @@ public static class ModelFactory
         };
         return addTransactionFeeForProductToContractRequest;
     }
+
+    public static AddMerchantDeviceRequest ConvertFrom(AssignDeviceToMerchantModel source) {
+        if (source == null)
+        {
+            return null;
+        }
+        AddMerchantDeviceRequest addMerchantDeviceRequest = new() { DeviceIdentifier = source.DeviceIdentifier };
+        return addMerchantDeviceRequest;
+    }
 }

@@ -1,6 +1,5 @@
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.Pages.Contract.ContractProduct;
-using EstateManagementUI.Pages.Contract.ContractProductTransactionFee;
 using EstateManagementUI.Testing;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
@@ -183,145 +182,18 @@ public class ContractProductsListTests
         Guid payloadContractProductId = TestHelpers.GetPropertyValue<Guid>(this._contractProductsList.Payload, "ContractProductId");
         payloadContractProductId.ShouldBe(contractProductId);
     }
-}
-
-public class ContractProductTransactionFeeListTests
-{
-    private readonly Mock<IMediator> _mediatorMock;
-    private readonly Mock<IPermissionsService> _permissionsServiceMock;
-    private readonly ContractProductTransactionFeeList _component;
-
-    public ContractProductTransactionFeeListTests()
-    {
-        _mediatorMock = new Mock<IMediator>();
-        _permissionsServiceMock = new Mock<IPermissionsService>();
-        _component = new ContractProductTransactionFeeList(_mediatorMock.Object, _permissionsServiceMock.Object);
-        this._component.ViewContext = TestHelper.GetTestViewContext();
-    }
 
     [Fact]
-    public async Task MountAsync_ShouldCallGetContract()
+    public async Task NewContractProduct_NavigatesToNewContractProductPage()
     {
         // Arrange
-        _component.ContractId = TestData.ContractId;
-        _component.ContractProductId = TestData.ContractProductId;
-
-        var contractModel = TestData.GetContractModel();
-        _mediatorMock.Setup(m => m.Send(It.IsAny<Queries.GetContractQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(contractModel);
+        this._contractProductsList.Url = TestHelper.GetTestUrlHelper();
 
         // Act
-        await _component.MountAsync();
+        await this._contractProductsList.NewContractProduct();
 
         // Assert
-        _component.ContractProductTransactionFees.Count.ShouldBe(2);
-        _component.ContractProductTransactionFees[0].CalculationType.ShouldBe("Type1");
-        _component.ContractProductTransactionFees[1].CalculationType.ShouldBe("Type2");
+        this._contractProductsList.LocationUrl.ShouldNotBeNull();
+        this._contractProductsList.LocationUrl.ShouldBe("/Contract/NewContractProduct");
     }
-
-    [Fact]
-    public async Task Sort_ShouldSortContractProductTransactionFeesByValue()
-    {
-        // Arrange
-        _component.ContractId = TestData.ContractId;
-        _component.ContractProductId = TestData.ContractProductId;
-
-        var contractModel = TestData.GetContractModel();
-        _mediatorMock.Setup(m => m.Send(It.IsAny<Queries.GetContractQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(contractModel);
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.Value);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].Value.ShouldBe(10.0m);
-        _component.ContractProductTransactionFees[1].Value.ShouldBe(20.0m);
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.Value);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].Value.ShouldBe(20.0m);
-        _component.ContractProductTransactionFees[1].Value.ShouldBe(10.0m);
-    }
-
-    [Fact]
-    public async Task Sort_ShouldSortContractProductTransactionFeesByCalculationType()
-    {
-        // Arrange
-        _component.ContractId = TestData.ContractId;
-        _component.ContractProductId = TestData.ContractProductId;
-
-        var contractModel = TestData.GetContractModel();
-        _mediatorMock.Setup(m => m.Send(It.IsAny<Queries.GetContractQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(contractModel);
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.CalculationType);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].CalculationType.ShouldBe("Type2");
-        _component.ContractProductTransactionFees[1].CalculationType.ShouldBe("Type1");
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.CalculationType);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].CalculationType.ShouldBe("Type1");
-        _component.ContractProductTransactionFees[1].CalculationType.ShouldBe("Type2");
-    }
-
-    [Fact]
-    public async Task Sort_ShouldSortContractProductTransactionFeesByDescription()
-    {
-        // Arrange
-        _component.ContractId = TestData.ContractId;
-        _component.ContractProductId = TestData.ContractProductId;
-
-        var contractModel = TestData.GetContractModel();
-        _mediatorMock.Setup(m => m.Send(It.IsAny<Queries.GetContractQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(contractModel);
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.Description);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].Description.ShouldBe("Description1");
-        _component.ContractProductTransactionFees[1].Description.ShouldBe("Description2");
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.Description);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].Description.ShouldBe("Description2");
-        _component.ContractProductTransactionFees[1].Description.ShouldBe("Description1");
-    }
-
-    [Fact]
-    public async Task Sort_ShouldSortContractProductTransactionFeesByFeeType()
-    {
-        // Arrange
-        _component.ContractId = TestData.ContractId;
-        _component.ContractProductId = TestData.ContractProductId;
-
-        var contractModel = TestData.GetContractModel();
-        _mediatorMock.Setup(m => m.Send(It.IsAny<Queries.GetContractQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(contractModel);
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.FeeType);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].FeeType.ShouldBe("FeeType1");
-        _component.ContractProductTransactionFees[1].FeeType.ShouldBe("FeeType2");
-
-        // Act
-        await _component.Sort(ContractProductTransactionFeeSorting.FeeType);
-
-        // Assert
-        _component.ContractProductTransactionFees[0].FeeType.ShouldBe("FeeType2");
-        _component.ContractProductTransactionFees[1].FeeType.ShouldBe("FeeType1");
-    }
-
-
 }

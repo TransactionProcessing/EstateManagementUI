@@ -1,0 +1,28 @@
+﻿@model EstateManagementUI.Pages.Merchant.MerchantDetails.AddDeviceDialog
+<div class="modal d-block init" tabindex="-1">
+    <div class="modal-dialog modal-sm" id="AddDeviceDialog">
+        <div class="modal-content">
+            <form hydro-on:submit="@(() => Model.Save())">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Device</h5>
+                    <button type="button" class="btn-close" aria-label="Close" hydro-action="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <label asp-for="MerchantDevice" class="control-label">Device Identifier</label>
+                            <input asp-for="MerchantDevice" class="form-control form-control-user" autofocus hydro-bind id="deviceIdentifier" />
+                        </div>
+                    </div>
+                </div>
+                <!--Modal Footer Start-->
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="saveMerchantDeviceButton">Add Device</button>
+                    <button type="button" class="btn btn-outline-secondary" on:click="@(() => Model.Close())" id="closeButton">Close</button>
+                </div>
+                <!--Modal Footer End-->
+            </form>
+    </div>
+</div>
+</div>

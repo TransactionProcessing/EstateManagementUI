@@ -72,8 +72,7 @@ Background:
 	When I add the following devices to the merchant
 	| DeviceIdentifier | MerchantName    | EstateName    |
 	| TestDevice1      | Test Merchant 1 | Test Estate |
-	| TestDevice2      | Test Merchant 2 | Test Estate |
-	| TestDevice3      | Test Merchant 3 | Test Estate |
+	| TestDevice2      | Test Merchant 2 | Test Estate |	
 
 	Given I am on the application home page
 
@@ -223,3 +222,33 @@ Scenario: Merchant Contract Management
 	And the following contracts are displayed in the list
 	| ContractName        | IsDeleted |
 	| Operator 1 Contract | True     |
+
+
+Scenario: Merchant Device Management
+	
+	Given I click on the My Merchants sidebar option
+	Then I am presented with the Merchants List Screen
+	And the following merchants details are in the list
+	| MerchantName    | SettlementSchedule |ContactName    | AddressLine1   | Town     | 
+	| Test Merchant 1 | Immediate          |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 2 | Weekly             |Test Contact 1 | Address Line 1 | TestTown | 
+	| Test Merchant 3 | Monthly            |Test Contact 1 | Address Line 1 | TestTown | 
+
+	When I click on the Edit Merchant Button for 'Test Merchant 3'
+	Then the Edit Merchant Screen is displayed
+
+	When I click on the Devices tab
+	Then I am presented with the Merchants Device List Screen
+	And the following devices are displayed in the list
+	| DeviceIdentifier |
+
+	When I click on the Add Device Button
+	Then the Add Device Dialog will be displayed
+	When I enter the following details for the Device
+	| MerchantDevice |
+	| 123456ABCDEF   |
+	And click the Add Device button
+	Then I am presented with the Merchants Device List Screen
+	And the following devices are displayed in the list
+	| DeviceIdentifier |
+	| 123456ABCDEF     |

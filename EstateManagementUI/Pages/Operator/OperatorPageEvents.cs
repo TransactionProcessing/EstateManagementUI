@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace EstateManagementUI.Pages.Operator.OperatorDialogs;
+namespace EstateManagementUI.Pages.Operator;
 
 [ExcludeFromCodeCoverage]
 public class OperatorPageEvents

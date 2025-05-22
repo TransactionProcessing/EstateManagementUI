@@ -138,9 +138,9 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
 
             Queries.GetMerchantQuery query = new(this.AccessToken, this.EstateId, this.MerchantId);
             Result<MerchantModel> result = await this.Mediator.Send(query, cancellationToken);
-            if (result.IsFailed) {
-                // handle this
-            }
+            //if (result.IsFailed) {
+            //    // handle this
+            //}
 
             this.Name = result.Data.MerchantName;
         }
@@ -148,10 +148,6 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         public DateTime Date { get; set; }
         public String Reference { get; set; }
         public async Task Save() {
-            if (!this.ModelState.IsValid) {
-                return;
-            }
-
             await this.PopulateTokenAndEstateId();
 
             Commands.MakeDepositCommand command = new(this.AccessToken, this.EstateId, this.MerchantId, new BusinessLogic.Models.MakeDepositModel

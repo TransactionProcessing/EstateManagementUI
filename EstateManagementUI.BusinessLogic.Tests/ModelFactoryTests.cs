@@ -796,6 +796,23 @@ namespace EstateManagementUI.BusinessLogic.Tests {
         }
 
         [Fact]
+        public void ModelFactory_ConvertFrom_AssignDeviceToMerchantModel_ModelIsConverted()
+        {
+            var model = TestData.AssignDeviceToMerchantModel;
+            var request = ModelFactory.ConvertFrom(model);
+            request.ShouldNotBeNull();
+            request.DeviceIdentifier.ShouldBe(model.DeviceIdentifier);
+        }
+
+        [Fact]
+        public void ModelFactory_ConvertFrom_AssignDeviceToMerchantModel_ModelIsNull_ModelIsConverted()
+        {
+            AssignDeviceToMerchantModel model = null;
+            var request = ModelFactory.ConvertFrom(model);
+            request.ShouldBeNull();
+        }
+
+        [Fact]
         public void ModelFactory_ConvertFrom_FileDetails_SourceIsNull_ReturnsNull()
         {
             FileDetails source = null;

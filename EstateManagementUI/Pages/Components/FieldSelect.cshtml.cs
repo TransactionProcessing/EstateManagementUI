@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using Hydro;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace EstateManagementUI.Pages.Components;
 
+[ExcludeFromCodeCoverage]
 public class FieldSelect : HydroView
 {
     public string Id { get; set; }
@@ -12,4 +14,5 @@ public class FieldSelect : HydroView
     public bool UseBlank { get; set; }
 }
 
+[ExcludeFromCodeCoverage]
 public record OptionItem(object Value, string Text);

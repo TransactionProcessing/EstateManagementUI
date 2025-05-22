@@ -103,8 +103,12 @@ namespace EstateManagementUI.Testing
 
         public static Commands.RemoveContractFromMerchantCommand RemoveContractFromMerchantCommand => new(AccessToken, EstateId, Merchant1Id, Contract1Id);
 
-        public static AssignContractToMerchantModel AssignContractToMerchantModel => new AssignContractToMerchantModel { ContractId = TestData.Contract1Id };
+        public static Commands.AssignDeviceToMerchantCommand AssignDeviceToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, AssignDeviceToMerchantModel);
+
         public static AssignOperatorToMerchantModel AssignOperatorToMerchantModel => new AssignOperatorToMerchantModel { OperatorId = Operator1Id };
+        public static AssignContractToMerchantModel AssignContractToMerchantModel => new AssignContractToMerchantModel { ContractId = TestData.Contract1Id };
+        public static String DeviceIdentifier = "123456ABCDEF";
+        public static AssignDeviceToMerchantModel AssignDeviceToMerchantModel => new AssignDeviceToMerchantModel { DeviceIdentifier = DeviceIdentifier };
 
         public static Commands.AssignOperatorToMerchantCommand AssignOperatorToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new AssignOperatorToMerchantModel {
             OperatorId = Operator1Id
@@ -112,9 +116,24 @@ namespace EstateManagementUI.Testing
 
         public static Commands.RemoveOperatorFromMerchantCommand RemoveOperatorFromMerchantCommand => new(AccessToken, EstateId, Merchant1Id, Operator1Id);
 
+        public static Commands.CreateContractCommand CreateContractCommand => new(AccessToken, EstateId, CreateContractModel);
+        public static Commands.CreateContractProductCommand CreateContractProductCommand => new(AccessToken, EstateId, Contract1Id, CreateContractProductModel);
+
+        public static Commands.CreateContractProductTransactionFeeCommand CreateContractProductTransactionFeeCommand => new(AccessToken, EstateId, Contract1Id, Contract1Product1Id, CreateContractProductTransactionFeeModel);
+
+        public static Commands.MakeDepositCommand MakeDepositCommand => new(AccessToken, EstateId, Merchant1Id, MakeDepositModel);
 
         public static CreateMerchantResponse CreateMerchantResponse =>
             new() { EstateId = EstateId, MerchantId = Merchant1Id };
+
+        public static Decimal DepositAmount = 100.00m;
+        public static DateTime DepositDateTime = DateTime.Now;
+        public static String DepositReference = "Deposit Reference 1";
+        public static MakeDepositModel MakeDepositModel => new() { Amount = TestData.DepositAmount, Date = TestData.DepositDateTime, Reference = TestData.DepositReference };
+        public static CreateContractModel CreateContractModel => new() { Description = Contract1Description, OperatorId = Operator1Id };
+
+        public static CreateContractProductModel CreateContractProductModel => new() { DisplayText = Contract1Product1DisplayText, Name = Contract1Product1Name, Type = (Int32)Contract1Product1ProductType, Value = Contract1Product1Value };
+        public static CreateContractProductTransactionFeeModel CreateContractProductTransactionFeeModel => new() { CalculationType = TransactionFee1CalculationType, Description = TransactionFee1Description, FeeType = TransactionFee1Type, Value = TransactionFee1Value };
 
         public static CreateMerchantModel CreateMerchantModel(BusinessLogic.Models.SettlementSchedule settlementSchedule) =>
             new CreateMerchantModel

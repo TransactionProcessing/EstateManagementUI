@@ -31,19 +31,28 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
             Subscribe<MerchantPageEvents.ShowAddContractDialog>(Handle);
             Subscribe<MerchantPageEvents.HideAddContractDialog>(Handle);
 
+            Subscribe<MerchantPageEvents.ShowAddDeviceDialog>(Handle);
+            Subscribe<MerchantPageEvents.HideAddDeviceDialog>(Handle);
+
             Subscribe<MerchantPageEvents.OperatorAssignedToMerchantEvent>(Handle);
             Subscribe<MerchantPageEvents.OperatorRemovedFromMerchantEvent>(Handle);
 
             this.Subscribe<MerchantPageEvents.ContractAssignedToMerchantEvent>(Handle);
             this.Subscribe<MerchantPageEvents.ContractRemovedFromMerchantEvent>(Handle);
+
+            this.Subscribe<MerchantPageEvents.DeviceAssignedToMerchantEvent>(Handle);
         }
 
         public void SetActiveTab(String activeTab) {
             this.ActiveTab = activeTab;
         }
 
+        [ExcludeFromCodeCoverage]
         public Boolean ShowOperatorDialog { get; set; }
+        [ExcludeFromCodeCoverage]
         public Boolean ShowContractDialog { get; set; }
+        [ExcludeFromCodeCoverage]
+        public Boolean ShowDeviceDialog { get; set; }
 
         [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.OperatorAssignedToMerchantEvent obj) {
@@ -57,6 +66,14 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         {
             await Task.Delay(1000);
             this.Dispatch(new ShowMessage("Contract Assigned to Merchant Successfully", ToastType.Success), Scope.Global);
+            await this.LoadMerchant(CancellationToken.None);
+        }
+
+        [ExcludeFromCodeCoverage]
+        private async Task Handle(MerchantPageEvents.DeviceAssignedToMerchantEvent obj)
+        {
+            await Task.Delay(1000);
+            this.Dispatch(new ShowMessage("Device Added to Merchant Successfully", ToastType.Success), Scope.Global);
             await this.LoadMerchant(CancellationToken.None);
         }
 
@@ -88,6 +105,12 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         }
 
         [ExcludeFromCodeCoverage]
+        private async Task Handle(MerchantPageEvents.ShowAddDeviceDialog obj)
+        {
+            this.ShowDeviceDialog= true;
+        }
+
+        [ExcludeFromCodeCoverage]
         private async Task Handle(MerchantPageEvents.HideAddOperatorDialog obj) {
             this.ShowOperatorDialog = false;
         }
@@ -98,9 +121,17 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
             this.ShowContractDialog= false;
         }
 
+        [ExcludeFromCodeCoverage]
+        private async Task Handle(MerchantPageEvents.HideAddDeviceDialog obj)
+        {
+            this.ShowDeviceDialog = false;
+        }
+
         public void AddOperator() => this.Dispatch(new MerchantPageEvents.ShowAddOperatorDialog(), Scope.Global);
 
         public void AddContract() => this.Dispatch(new MerchantPageEvents.ShowAddContractDialog(), Scope.Global);
+
+        public void AddDevice() => this.Dispatch(new MerchantPageEvents.ShowAddDeviceDialog(), Scope.Global);
 
         public List<OptionItem> GetSettlementSchedules() => DataHelperFunctions.GetSettlementSchedules();
     }

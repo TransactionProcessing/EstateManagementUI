@@ -39,6 +39,7 @@ public class MediatorRegistry : ServiceRegistry {
         this.AddSingleton<IRequestHandler<Commands.AssignContractToMerchantCommand, Result>, MerchantRequestHandler>();
         this.AddSingleton<IRequestHandler<Commands.RemoveContractFromMerchantCommand, Result>, MerchantRequestHandler>();
         this.AddSingleton<IRequestHandler<Commands.MakeDepositCommand, Result>, MerchantRequestHandler>();
+        this.AddSingleton<IRequestHandler<Commands.AssignDeviceToMerchantCommand, Result>, MerchantRequestHandler>();
     }
 
     private void RegisterOperatorRequestHandler() {

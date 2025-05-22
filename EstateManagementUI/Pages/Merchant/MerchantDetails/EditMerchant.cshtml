@@ -229,6 +229,7 @@
 
                             <!-- Devices Tab -->
                             <div class="@IsActiveTabPane("devices")" id="devices" role="tabpanel" aria-labelledby="nav-devices-tab">
+                                <button class="btn btn-primary btn-sm" id="addDeviceButton" hydro-on:click="@(() => Model.AddDevice())">Add Device</button>
                                 <table class="table table-sm" id="merchantDeviceList">
                                     <thead class="thead-light">
                                     <tr class="d-flex">
@@ -260,6 +261,10 @@
 
                     @if (Model.ShowContractDialog) {
                         <hydro name="AddContractDialog" params="@(new { MerchantId = Model.MerchantId })"/>
+                    }
+                    @if (Model.ShowDeviceDialog)
+                    {
+                        <hydro name="AddDeviceDialog" params="@(new { MerchantId = Model.MerchantId })" />
                     }
                     </div>
             </div>
