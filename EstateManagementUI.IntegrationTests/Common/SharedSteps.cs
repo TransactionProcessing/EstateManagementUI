@@ -297,7 +297,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             {
                 // TODO: Handle error properly, e.g., show a message to the user
             }
-            if (identityResourceList.Data.Any() == false)
+            if (identityResourceList.Data == null || identityResourceList.Data.Any() == false)
             {
                 Result result= await this
                                                        .TestingContext.DockerHelper.SecurityServiceClient
