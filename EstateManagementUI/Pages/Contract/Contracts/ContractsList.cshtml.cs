@@ -6,6 +6,7 @@ using EstateManagementUI.Common;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Contract.Contracts
 {
@@ -32,10 +33,13 @@ namespace EstateManagementUI.Pages.Contract.Contracts
 
             Queries.GetContractsQuery query = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
 
-            List<ContractModel> response = await this.Mediator.Send(query, CancellationToken.None);
-
+            Result<List<ContractModel>> response = await this.Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
             List<ViewModels.Contract> resultList = new();
-            foreach (ContractModel contractModel in response)
+            foreach (ContractModel contractModel in response.Data)
             {
                 resultList.Add(new ViewModels.Contract
                 {

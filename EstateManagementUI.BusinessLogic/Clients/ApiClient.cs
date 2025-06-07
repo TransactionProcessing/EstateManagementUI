@@ -294,15 +294,13 @@ public class ApiClient : IApiClient {
         async Task<Result<List<ComparisonDateModel>>> ClientMethod()
         {
 
-            List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<List<ComparisonDate>> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
-        //List<ComparisonDate> apiResponse = await this.EstateReportingApiClient.GetComparisonDates(accessToken, estateId, cancellationToken);
-
-        //return Result.Success(ModelFactory.ConvertFrom(apiResponse));
     }
 
     public async Task<Result<TodaysSalesModel>> GetTodaysSales(String accessToken,
@@ -313,9 +311,10 @@ public class ApiClient : IApiClient {
                                                                DateTime comparisonDate,
                                                                CancellationToken cancellationToken) {
         async Task<Result<TodaysSalesModel>> ClientMethod() {
-            TodaysSales apiResponse = await this.EstateReportingApiClient.GetTodaysSales(accessToken, estateId, merchantReportingId.GetValueOrDefault(0), operatorReportingId.GetValueOrDefault(0), comparisonDate, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<TodaysSales> apiResponse = await this.EstateReportingApiClient.GetTodaysSales(accessToken, estateId, merchantReportingId.GetValueOrDefault(0), operatorReportingId.GetValueOrDefault(0), comparisonDate, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -329,9 +328,10 @@ public class ApiClient : IApiClient {
                                                                          DateTime comparisonDate,
                                                                          CancellationToken cancellationToken) {
         async Task<Result<TodaysSettlementModel>> ClientMethod() {
-            TodaysSettlement apiResponse = await this.EstateReportingApiClient.GetTodaysSettlement(accessToken, estateId, merchantReportingId.GetValueOrDefault(0), operatorReportingId.GetValueOrDefault(0), comparisonDate, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<TodaysSettlement> apiResponse = await this.EstateReportingApiClient.GetTodaysSettlement(accessToken, estateId, merchantReportingId.GetValueOrDefault(0), operatorReportingId.GetValueOrDefault(0), comparisonDate, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -345,9 +345,11 @@ public class ApiClient : IApiClient {
                                                                                            DateTime comparisonDate,
                                                                                            CancellationToken cancellationToken) {
         async Task<Result<List<TodaysSalesCountByHourModel>>> ClientMethod() {
-            List<TodaysSalesCountByHour> apiResponse = await this.EstateReportingApiClient.GetTodaysSalesCountByHour(accessToken, estateId, 0, 0, comparisonDate, cancellationToken);
+            Result<List<TodaysSalesCountByHour>> apiResponse = await this.EstateReportingApiClient.GetTodaysSalesCountByHour(accessToken, estateId, 0, 0, comparisonDate, cancellationToken);
 
-            return ModelFactory.ConvertFrom(apiResponse);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -361,9 +363,11 @@ public class ApiClient : IApiClient {
                                                                                            DateTime comparisonDate,
                                                                                            CancellationToken cancellationToken) {
         async Task<Result<List<TodaysSalesValueByHourModel>>> ClientMethod() {
-            List<TodaysSalesValueByHour> apiResponse = await this.EstateReportingApiClient.GetTodaysSalesValueByHour(accessToken, estateId, 0, 0, comparisonDate, cancellationToken);
+            Result<List<TodaysSalesValueByHour>> apiResponse = await this.EstateReportingApiClient.GetTodaysSalesValueByHour(accessToken, estateId, 0, 0, comparisonDate, cancellationToken);
 
-            return ModelFactory.ConvertFrom(apiResponse);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -373,7 +377,7 @@ public class ApiClient : IApiClient {
                                                       CancellationToken cancellationToken) {
         try {
             Result<T> clientResult = await clientMethod();
-            return Result.Success(clientResult);
+            return clientResult;
         }
         catch (Exception e) {
             Logger.LogError(e);
@@ -385,7 +389,7 @@ public class ApiClient : IApiClient {
                                                 CancellationToken cancellationToken) {
         try {
             Result clientResult = await clientMethod();
-            return Result.Success(clientResult);
+            return clientResult;
         }
         catch (Exception e) {
             Logger.LogError(e);
@@ -399,9 +403,10 @@ public class ApiClient : IApiClient {
                                                                      DateTime comparisonDate,
                                                                      CancellationToken cancellationToken) {
         async Task<Result<TodaysSalesModel>> ClientMethod() {
-            TodaysSales apiResponse = await this.EstateReportingApiClient.GetTodaysFailedSales(accessToken, estateId, 0, 0, responseCode, comparisonDate, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<TodaysSales> apiResponse = await this.EstateReportingApiClient.GetTodaysFailedSales(accessToken, estateId, 0, 0, responseCode, comparisonDate, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -413,9 +418,10 @@ public class ApiClient : IApiClient {
                                                                                          Int32 resultCount,
                                                                                          CancellationToken cancellationToken) {
         async Task<Result<List<TopBottomOperatorDataModel>>> ClientMethod() {
-            List<TopBottomOperatorData> apiResponse = await this.EstateReportingApiClient.GetTopBottomOperatorData(accessToken, estateId, topBottom, resultCount, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<List<TopBottomOperatorData>> apiResponse = await this.EstateReportingApiClient.GetTopBottomOperatorData(accessToken, estateId, topBottom, resultCount, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -427,9 +433,10 @@ public class ApiClient : IApiClient {
                                                                                          Int32 resultCount,
                                                                                          CancellationToken cancellationToken) {
         async Task<Result<List<TopBottomMerchantDataModel>>> ClientMethod() {
-            List<TopBottomMerchantData> apiResponse = await this.EstateReportingApiClient.GetTopBottomMerchantData(accessToken, estateId, topBottom, resultCount, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<List<TopBottomMerchantData>> apiResponse = await this.EstateReportingApiClient.GetTopBottomMerchantData(accessToken, estateId, topBottom, resultCount, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -441,9 +448,10 @@ public class ApiClient : IApiClient {
                                                                                        Int32 resultCount,
                                                                                        CancellationToken cancellationToken) {
         async Task<Result<List<TopBottomProductDataModel>>> ClientMethod() {
-            List<TopBottomProductData> apiResponse = await this.EstateReportingApiClient.GetTopBottomProductData(accessToken, estateId, topBottom, resultCount, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<List<TopBottomProductData>> apiResponse = await this.EstateReportingApiClient.GetTopBottomProductData(accessToken, estateId, topBottom, resultCount, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -453,9 +461,10 @@ public class ApiClient : IApiClient {
                                                                Guid estateId,
                                                                CancellationToken cancellationToken) {
         async Task<Result<MerchantKpiModel>> ClientMethod() {
-            MerchantKpi apiResponse = await this.EstateReportingApiClient.GetMerchantKpi(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<MerchantKpi> apiResponse = await this.EstateReportingApiClient.GetMerchantKpi(accessToken, estateId, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);
@@ -474,9 +483,10 @@ public class ApiClient : IApiClient {
                                                                      Int32? operatorReportingId,
                                                                      CancellationToken cancellationToken) {
         async Task<Result<LastSettlementModel>> ClientMethod() {
-            LastSettlement apiResponse = await this.EstateReportingApiClient.GetLastSettlement(accessToken, estateId, cancellationToken);
-
-            return ModelFactory.ConvertFrom(apiResponse);
+            Result<LastSettlement> apiResponse = await this.EstateReportingApiClient.GetLastSettlement(accessToken, estateId, cancellationToken);
+            if (apiResponse.IsFailed)
+                return ResultHelpers.CreateFailure(apiResponse);
+            return ModelFactory.ConvertFrom(apiResponse.Data);
         }
 
         return await this.CallClientMethod(ClientMethod, cancellationToken);

@@ -24,7 +24,7 @@ public class MediatorRegistry : ServiceRegistry {
     }
 
     private void RegisterEstateRequestHandler() {
-        this.AddSingleton<IRequestHandler<Queries.GetEstateQuery, EstateModel>, EstateRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetEstateQuery, Result<EstateModel>>, EstateRequestHandler>();
     }
 
     private void RegisterMerchantRequestHandler() {
@@ -50,7 +50,7 @@ public class MediatorRegistry : ServiceRegistry {
     }
 
     private void RegisterContractRequestHandler() {
-        this.AddSingleton<IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>, ContractRequestHandler>();
+        this.AddSingleton<IRequestHandler<Queries.GetContractsQuery, Result<List<ContractModel>>>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>, ContractRequestHandler>();
         this.AddSingleton<IRequestHandler<Queries.GetOperatorQuery, Result<OperatorModel>>, OperatorRequestHandler>();
 

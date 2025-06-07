@@ -86,8 +86,18 @@ public class PermissionsService : IPermissionsService {
 
     private async Task LoadPermissionsData() {
         // TODO: this will be cached and probably refreshed periodically
-        this.RoleFunctions = await this.PermissionsRepository.GetRolesFunctions();
-        this.UserRoles= await this.PermissionsRepository.GetUsers(CancellationToken.None);
+        var roleResult = await this.PermissionsRepository.GetRolesFunctions();
+        if (roleResult.IsFailed) {
+            // TODO : Handle error properly, e.g., log it or throw an exception
+        }
+        var userResult = await this.PermissionsRepository.GetUsers(CancellationToken.None);
+        if (userResult.IsFailed)
+        {
+            // TODO : Handle error properly, e.g., log it or throw an exception
+        }
+
+        this.RoleFunctions = roleResult.Data;
+        this.UserRoles= userResult.Data;
     }
 
     private List<(String role, String section, String function)> RoleFunctions = new();

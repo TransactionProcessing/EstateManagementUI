@@ -54,10 +54,13 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
 
             Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.AccessToken, this.EstateId);
 
-            List<MerchantModel> response = await this.Mediator.Send(query, CancellationToken.None);
-
+            Result<List<MerchantModel>> response = await this.Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
             List<SelectListItem> resultList = new();
-            foreach (MerchantModel merchantModel in response)
+            foreach (MerchantModel merchantModel in response.Data)
             {
                 resultList.Add(new SelectListItem
                 {

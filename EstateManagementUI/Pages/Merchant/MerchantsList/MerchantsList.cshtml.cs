@@ -14,6 +14,7 @@ using EstateManagementUI.Pages.Merchant.MerchantDetails;
 using EstateManagementUI.Pages.Shared.Components;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Logger;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Merchant.MerchantsList
 {
@@ -54,10 +55,13 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
 
                 Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(AccessToken, EstateId);
 
-                List<MerchantModel> response = await Mediator.Send(query, CancellationToken.None);
-
+                Result<List<MerchantModel>> response = await Mediator.Send(query, CancellationToken.None);
+                if (response.IsFailed)
+                {
+                    // TODO: Handle error properly, e.g., show a message to the user
+                }
                 List<ViewModels.Merchant> resultList = new();
-                foreach (MerchantModel merchantModel in response) {
+                foreach (MerchantModel merchantModel in response.Data) {
                     resultList.Add(new ViewModels.Merchant {
                         Id = merchantModel.MerchantId,
                         Name = merchantModel.MerchantName,

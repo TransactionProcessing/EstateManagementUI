@@ -177,7 +177,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                     String databaseName = $"EstateReportingReadModel{verifiedEstate.EstateId}";
                     var connString = Setup.GetLocalConnectionString(databaseName);
                     connString = $"{connString};Encrypt=false";
-                    var ctx = new EstateManagementSqlServerContext(connString);
+                    var ctx = new EstateManagementContext(connString);
 
                     var estates = ctx.Estates.ToList();
                     estates.Count.ShouldBe(1);
@@ -246,7 +246,7 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             List<(EstateDetails estate, CreateMerchantRequest)> requests = table.Rows.ToCreateMerchantRequests(this.TestingContext.Estates);
 
-            var verifiedMerchants = await this.TransactionProcessorSteps.WhenICreateTheFollowingMerchants(this.TestingContext.AccessToken, requests);
+            List<MerchantResponse> verifiedMerchants = await this.TransactionProcessorSteps.WhenICreateTheFollowingMerchants(this.TestingContext.AccessToken, requests);
 
             foreach (MerchantResponse verifiedMerchant in verifiedMerchants)
             {
@@ -292,9 +292,12 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             CreateIdentityResourceResponse createIdentityResourceResponse = null;
 
-            List<IdentityResourceDetails> identityResourceList = await this.TestingContext.DockerHelper.SecurityServiceClient.GetIdentityResources(cancellationToken);
-
-            if (identityResourceList == null || identityResourceList.Any() == false)
+            Result<List<IdentityResourceDetails>> identityResourceList = await this.TestingContext.DockerHelper.SecurityServiceClient.GetIdentityResources(cancellationToken);
+            if (identityResourceList.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
+            if (identityResourceList.Data.Any() == false)
             {
                 Result result= await this
                                                        .TestingContext.DockerHelper.SecurityServiceClient
@@ -306,7 +309,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             }
             else
             {
-                if (identityResourceList.Any(i => i.Name == createIdentityResourceRequest.Name))
+                if (identityResourceList.Data.Any(i => i.Name == createIdentityResourceRequest.Name))
                 {
                     return;
                 }

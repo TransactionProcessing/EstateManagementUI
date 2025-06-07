@@ -80,15 +80,15 @@ public class Merchant : SecureHydroComponent
 
         Queries.GetMerchantQuery query = new(this.AccessToken, this.EstateId, this.MerchantId);
         Result<MerchantModel> result = await this.Mediator.Send(query, cancellationToken);
-        //if (result.IsFailed)
-        //{
-        //    // handle this
-        //}
-        
+        if (result.IsFailed)
+        {
+            // handle this
+        }
+
         // We need to now get all the contracts here to populate the names on the Merchant Model
         Queries.GetContractsQuery contractsQuery = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
-        var contractsResult = await this.Mediator.Send(contractsQuery, cancellationToken);
-        if (result.IsFailed) {
+        Result<List<ContractModel>> contractsResult = await this.Mediator.Send(contractsQuery, cancellationToken);
+        if (contractsResult.IsFailed) {
             // TODO: Handle this
         }
 
@@ -128,7 +128,7 @@ public class Merchant : SecureHydroComponent
 
         this.Contracts = new List<MerchantContractModel>();
         foreach (MerchantContractModel merchantContractModel in result.Data.Contracts) {
-            ContractModel contract = contractsResult.SingleOrDefault(c => c.ContractId == merchantContractModel.ContractId);
+            ContractModel contract = contractsResult.Data.SingleOrDefault(c => c.ContractId == merchantContractModel.ContractId);
             this.Contracts.Add(new MerchantContractModel {
                 ContractId = merchantContractModel.ContractId,
                 IsDeleted = merchantContractModel.IsDeleted,

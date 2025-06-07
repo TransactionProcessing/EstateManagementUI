@@ -2,10 +2,11 @@
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers
 {
-    public class EstateRequestHandler : IRequestHandler<Queries.GetEstateQuery, EstateModel>
+    public class EstateRequestHandler : IRequestHandler<Queries.GetEstateQuery, Result<EstateModel>>
     {
         private readonly IApiClient ApiClient;
 
@@ -13,9 +14,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<EstateModel> Handle(Queries.GetEstateQuery request,
+        public async Task<Result<EstateModel>> Handle(Queries.GetEstateQuery request,
                                         CancellationToken cancellationToken) {
-            EstateModel model = await this.ApiClient.GetEstate(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+            Result<EstateModel> model = await this.ApiClient.GetEstate(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
             return model;
         }
     }

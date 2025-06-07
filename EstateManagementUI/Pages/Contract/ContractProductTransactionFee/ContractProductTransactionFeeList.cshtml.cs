@@ -9,6 +9,7 @@ using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using EstateManagementUI.BusinessLogic.PermissionService.Constants;
 using EstateManagementUI.Pages.Merchant;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Contract.ContractProductTransactionFee
 {
@@ -38,10 +39,13 @@ namespace EstateManagementUI.Pages.Contract.ContractProductTransactionFee
 
             Queries.GetContractQuery query = new Queries.GetContractQuery(this.AccessToken, this.EstateId, ContractId);
 
-            ContractModel response = await Mediator.Send(query, CancellationToken.None);
-
+            Result<ContractModel> response = await Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
             ContractProductModel contractProduct =
-                response.ContractProducts.SingleOrDefault(cp => cp.ContractProductId == this.ContractProductId);
+                response.Data.ContractProducts.SingleOrDefault(cp => cp.ContractProductId == this.ContractProductId);
             this.ContractProductName = contractProduct.ProductName;
 
             List<ViewModels.ContractProductTransactionFee> resultList = new();

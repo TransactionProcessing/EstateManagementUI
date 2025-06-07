@@ -11,6 +11,7 @@ using EstateManagementUI.Pages.Merchant;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Contracts;
 using EstateManagementUI.BusinessLogic.PermissionService;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Contract.ContractProduct
 {
@@ -39,12 +40,15 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
 
             Queries.GetContractQuery query = new Queries.GetContractQuery(this.AccessToken, this.EstateId, ContractId);
 
-            ContractModel response = await Mediator.Send(query, CancellationToken.None);
+            Result<ContractModel> response = await Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed) {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
 
-            ContractName = response.Description;
+            ContractName = response.Data.Description;
 
             List<ViewModels.ContractProduct> resultList = new();
-            foreach (ContractProductModel responseContractProduct in response.ContractProducts)
+            foreach (ContractProductModel responseContractProduct in response.Data.ContractProducts)
             {
                 resultList.Add(new ViewModels.ContractProduct
                 {

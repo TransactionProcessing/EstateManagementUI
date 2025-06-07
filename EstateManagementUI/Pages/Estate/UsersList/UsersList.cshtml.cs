@@ -9,6 +9,7 @@ using EstateManagementUI.Common;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Estate.UsersList
 {
@@ -30,9 +31,12 @@ namespace EstateManagementUI.Pages.Estate.UsersList
 
             Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
 
-            EstateModel response = await Mediator.Send(query, CancellationToken.None);
-
-            foreach (SecurityUserModel securityUserModel in response.SecurityUsers)
+            Result<EstateModel> response = await Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
+            foreach (SecurityUserModel securityUserModel in response.Data.SecurityUsers)
             {
                 Users.Add(new User()
                 {
