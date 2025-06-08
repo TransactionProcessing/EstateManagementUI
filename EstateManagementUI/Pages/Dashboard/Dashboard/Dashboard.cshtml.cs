@@ -13,6 +13,7 @@ using EstateReportingAPI.DataTransferObjects;
 using System.Reflection.Metadata;
 using System;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Primitives;
 using static EstateManagementUI.Common.ChartBuilder;
@@ -48,8 +49,8 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
             await this.PopulateTokenAndEstateId();
 
             this.Merchant = await DataHelperFunctions.GetMerchants(this.AccessToken, this.EstateId, this.Mediator);
-            this.Operator =  await DataHelperFunctions.GetOperatorsOld(this.AccessToken, this.EstateId, this.Mediator);
-            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.AccessToken, this.EstateId, this.Mediator );
+            this.Operator = await DataHelperFunctions.GetOperatorsOld(this.AccessToken, this.EstateId, this.Mediator);
+            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.AccessToken, this.EstateId, this.Mediator);
 
             await this.Query();
         }
@@ -177,7 +178,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
                 this.Client.ExecuteJs(ChartHelpers.GetScriptForCharts("salescountbyhourchart", ChartHelpers.ConvertChartOptionsToHtml(this.GetSalesCountByHourChart())));
             }
         }
-        
+
         private String GetSalesValueByHourChart() {
             List<ChartObjects.Series<Decimal>> seriesList = new List<ChartObjects.Series<Decimal>>();
             List<String> categoryList = new List<String>();
@@ -223,10 +224,10 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
                 yAxisFormatFunction: StandardJavascriptFunctions.CurrencyFormatter);
         }
 
-        public TodaysSales TodaysSales { get; set; }
-        public TodaysSettlement TodaysSettlement { get; set; }
-        public TodaysSalesValueByHour TodaysSalesValueByHour { get; set; }
-        public TodaysSalesCountByHour TodaysSalesCountByHour { get; set; }
+        public TodaysSales TodaysSales { get; set; } = new TodaysSales();
+        public TodaysSettlement TodaysSettlement { get; set; } = new TodaysSettlement();
+        public TodaysSalesValueByHour TodaysSalesValueByHour { get; set; } = new TodaysSalesValueByHour { Hours = new List<TodaysSalesValueByHourModel>() };
+        public TodaysSalesCountByHour TodaysSalesCountByHour { get; set; } = new TodaysSalesCountByHour{Hours = new List<TodaysSalesCountByHourModel>()};
     }
 
 }

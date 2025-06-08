@@ -17,6 +17,12 @@ public static class DataHelperFunctions {
 
         Result<List<ComparisonDateModel>> response = await mediator.Send(query, CancellationToken.None);
 
+        if (response.IsFailed)
+        {
+            // Handle the case where no comparison dates are found
+            return new ComparisonDateListModel { SelectedDate = null, Dates = new List<SelectListItem>() };
+        }
+
         List<SelectListItem> resultList = new();
 
         IOrderedEnumerable<ComparisonDateModel> orderedData = response.Data.OrderBy(r => r.OrderValue);
