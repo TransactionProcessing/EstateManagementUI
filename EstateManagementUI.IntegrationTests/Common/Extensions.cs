@@ -171,8 +171,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 });
             }
             catch (Exception ex) {
-                Screenshot x = webDriver.TakeScreenshot();
-                Console.WriteLine(x.AsBase64EncodedString);
+                Console.WriteLine(webDriver.PageSource);
             }
         }
 
