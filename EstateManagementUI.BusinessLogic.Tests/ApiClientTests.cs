@@ -138,8 +138,8 @@ public class ApiClientTests {
     public async Task ApiClient_GetOperator_OperatorIsReturned() {
         this.TransactionProcessorClient.Setup(e => e.GetOperator(It.IsAny<String>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(Result.Success(TestData.OperatorResponse));
         
-        OperatorModel @operator = await this.ApiClient.GetOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Operator1Id, CancellationToken.None);
-
+        Result<OperatorModel> @operator = await this.ApiClient.GetOperator(TestData.AccessToken, Guid.NewGuid(), TestData.EstateId, TestData.Operator1Id, CancellationToken.None);
+        @operator.IsSuccess.ShouldBeTrue();
         @operator.ShouldNotBeNull();
     }
 

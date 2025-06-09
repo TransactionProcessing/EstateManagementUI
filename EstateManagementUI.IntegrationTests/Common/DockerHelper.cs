@@ -371,7 +371,11 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireUpperCase=false");
             environmentVariables.Add($"ServiceOptions:UserOptions:RequireUniqueEmail=false");
             environmentVariables.Add($"ServiceOptions:SignInOptions:RequireConfirmedEmail=false");
-            
+
+            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:PersistedGrantDbContext", $"PersistedGrantStore-{this.TestId}", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:ConfigurationDbContext", $"Configuration-{this.TestId}", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:AuthenticationDbContext", $"Authentication-{this.TestId}", this.UseSecureSqlServerDatabase));
+
             environmentVariables.Add("Logging:LogLevel:Microsoft=Information");
             environmentVariables.Add("Logging:LogLevel:Default=Information");
             environmentVariables.Add("Logging:EventLog:LogLevel:Default=None");

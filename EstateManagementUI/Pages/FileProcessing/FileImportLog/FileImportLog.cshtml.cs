@@ -38,8 +38,11 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
             await this.PopulateTokenAndEstateId();
 
             Queries.GetEstateQuery estateQuery = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
-            EstateModel estate = await this.Mediator.Send(estateQuery);
-
+            Result<EstateModel> estate = await this.Mediator.Send(estateQuery);
+            if (estate.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
             Queries.GetFileImportLogQuery query = new Queries.GetFileImportLogQuery(this.AccessToken, this.EstateId,
                 this.MerchantId, this.FileImportLogId);
 
@@ -50,7 +53,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
             this.FileImportLogId = response.Data.FileImportLogId;
             List<File> resultList = new List<File>();
             foreach (FileImportLogFileModel fileImportLogFileModel in response.Data.Files) {
-                SecurityUserModel user = estate.SecurityUsers.SingleOrDefault(u => u.SecurityUserId == fileImportLogFileModel.UserId);
+                SecurityUserModel user = estate.Data.SecurityUsers.SingleOrDefault(u => u.SecurityUserId == fileImportLogFileModel.UserId);
                 String fileProfile = fileImportLogFileModel.FileProfileId.ToString().ToUpper() switch {
                     "B2A59ABF-293D-4A6B-B81B-7007503C3476" => "Safaricom Topup",
                     "8806EDBC-3ED6-406B-9E5F-A9078356BE99" => "Voucher Issue",

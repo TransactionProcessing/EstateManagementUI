@@ -13,10 +13,10 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
 
     [ExcludeFromCodeCoverage]
     public record Queries {
-        public record GetEstateQuery(String AccessToken, Guid EstateId) : IRequest<EstateModel>;
+        public record GetEstateQuery(String AccessToken, Guid EstateId) : IRequest<Result<EstateModel>>;
         public record GetMerchantsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<MerchantModel>>>;
         public record GetOperatorsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
-        public record GetContractsQuery(String AccessToken, Guid EstateId) : IRequest<List<ContractModel>>;
+        public record GetContractsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<ContractModel>>>;
         public record GetOperatorQuery(String AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
         public record GetContractQuery(String AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;
         public record GetFileImportLogsListQuery(String AccessToken, Guid EstateId, Guid MerchantId, DateTime StartDate, DateTime EndDate)

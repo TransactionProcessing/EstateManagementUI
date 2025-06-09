@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Drawing;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
@@ -48,7 +49,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             String? browser = Environment.GetEnvironmentVariable("Browser");
             String? isCi = Environment.GetEnvironmentVariable("IsCI");
-            
+            //isCi = "true";
             //browser = "Edge";
             switch (browser)
             {
@@ -64,9 +65,10 @@ namespace EstateManagementUI.IntegrationTests.Common
                                      .WithDisableGpu()
                                      .WithDisableInfobars()
                                      .WithHeadless(isCi)
-                                     .WithWindowSize(1280, 1024);
-
+                                     .WithWindowSize(1920, 1080);
+                    
                     webDriver = new ChromeDriver(options);
+                    
                     break;
                 }
                 case "Firefox":
@@ -82,19 +84,17 @@ namespace EstateManagementUI.IntegrationTests.Common
                                     }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
                     break;
                 }
-                case "Edge":
-                {
+                case "Edge": {
                     EdgeOptions options = new EdgeOptions();
                     options = options.WithAcceptInsecureCertificate()
-                                     .WithHeadless(isCi)
-                                     .WithWindowSize(1280, 1024);
-                    await Retry.For(async () =>
-                                    {
-                                        webDriver = new EdgeDriver(options);
-                                    }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
+                        .WithHeadless(isCi)
+                        .WithWindowSize(1920, 1080);
+                        
+                        await Retry.For(async () => { webDriver = new EdgeDriver(options); }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
                     break;
                 }
             }
+
             return webDriver;
         }
     }
@@ -199,7 +199,7 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Pure]
         public static EdgeOptions WithWindowSize(this EdgeOptions options, Int32 height, Int32 width)
         {
-            String windowSize = $"--window-size={height}x{width}";
+            String windowSize = $"--window-size={height},{width}";
             options.AddArguments(windowSize);
             return options;
         }

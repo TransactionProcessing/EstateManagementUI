@@ -31,6 +31,8 @@ public class EstateManagementUiHelpers{
 
     public void NavigateToHomePage(){
         this.WebDriver.Navigate().GoToUrl($"https://localhost:{this.EstateManagementUiPort}");
+        // Reapply size in headless mode
+        this.WebDriver.Manage().Window.Size = new System.Drawing.Size(1920, 1080);
         this.VerifyPageTitle("Welcome");
     }
 

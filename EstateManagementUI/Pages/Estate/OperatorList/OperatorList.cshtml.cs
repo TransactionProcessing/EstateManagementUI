@@ -8,6 +8,7 @@ using EstateManagmentUI.BusinessLogic.Requests;
 using Hydro;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using SimpleResults;
 
 namespace EstateManagementUI.Pages.Estate.OperatorList
 {
@@ -29,9 +30,12 @@ namespace EstateManagementUI.Pages.Estate.OperatorList
 
             Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
 
-            EstateModel response = await Mediator.Send(query, CancellationToken.None);
-
-            foreach (EstateOperatorModel estateOperatorModel in response.Operators)
+            Result<EstateModel> response = await Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
+            foreach (EstateOperatorModel estateOperatorModel in response.Data.Operators)
             {
                 Operators.Add(new ViewModels.Operator
                 {

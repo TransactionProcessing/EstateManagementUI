@@ -6,7 +6,7 @@ using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
-public class ContractRequestHandler : IRequestHandler<Queries.GetContractsQuery, List<ContractModel>>,
+public class ContractRequestHandler : IRequestHandler<Queries.GetContractsQuery, Result<List<ContractModel>>>,
                                       IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>,
 IRequestHandler<Commands.CreateContractCommand, Result>,
 IRequestHandler<Commands.CreateContractProductCommand, Result>,
@@ -18,15 +18,15 @@ IRequestHandler<Commands.CreateContractProductCommand, Result>,
         this.ApiClient = apiClient;
     }
 
-    public async Task<List<ContractModel>> Handle(Queries.GetContractsQuery request,
-                                                  CancellationToken cancellationToken) {
-        List<ContractModel> models = await this.ApiClient.GetContracts(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+    public async Task<Result<List<ContractModel>>> Handle(Queries.GetContractsQuery request,
+                                                          CancellationToken cancellationToken) {
+        Result<List<ContractModel>> models = await this.ApiClient.GetContracts(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
         return models;
     }
 
     public async Task<Result<ContractModel>> Handle(Queries.GetContractQuery request,
                                                     CancellationToken cancellationToken) {
-        ContractModel model = await this.ApiClient.GetContract(request.AccessToken, Guid.Empty, request.EstateId, request.ContractId, cancellationToken);
+        Result<ContractModel> model = await this.ApiClient.GetContract(request.AccessToken, Guid.Empty, request.EstateId, request.ContractId, cancellationToken);
         return model;
     }
 

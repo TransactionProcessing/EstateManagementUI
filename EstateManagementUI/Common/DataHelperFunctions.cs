@@ -1,9 +1,11 @@
+using EstateManagementUI.BusinessLogic.Common;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.Pages.Components;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Shared.Results;
 using SimpleResults;
 using System.Globalization;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
@@ -14,6 +16,12 @@ public static class DataHelperFunctions {
         Queries.GetComparisonDatesQuery query = new Queries.GetComparisonDatesQuery(accessToken, estateId);
 
         Result<List<ComparisonDateModel>> response = await mediator.Send(query, CancellationToken.None);
+
+        if (response.IsFailed)
+        {
+            // Handle the case where no comparison dates are found
+            return new ComparisonDateListModel { SelectedDate = null, Dates = new List<SelectListItem>() };
+        }
 
         List<SelectListItem> resultList = new();
 
@@ -118,10 +126,12 @@ public static class DataHelperFunctions {
     {
         Queries.GetContractsQuery query = new(accessToken, estateId);
 
-        List<ContractModel> response = await mediator.Send(query, CancellationToken.None);
-
+        Result<List<ContractModel>> response = await mediator.Send(query, CancellationToken.None);
+        if (response.IsFailed) {
+            // TODO: Handle error properly, e.g., show a message to the user
+        }
         List<SelectListItem> resultList = new();
-        foreach (var contractModel in response)
+        foreach (ContractModel contractModel in response.Data)
         {
             resultList.Add(new SelectListItem
             {

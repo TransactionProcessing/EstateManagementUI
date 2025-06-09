@@ -12,6 +12,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SimpleResults;
 using static System.Collections.Specialized.BitVector32;
 
 namespace EstateManagementUI.Pages.Estate.ViewEstate
@@ -33,13 +34,16 @@ namespace EstateManagementUI.Pages.Estate.ViewEstate
 
             Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
 
-            EstateModel response = await Mediator.Send(query, CancellationToken.None);
-
+            Result<EstateModel> response = await Mediator.Send(query, CancellationToken.None);
+            if (response.IsFailed)
+            {
+                // TODO: Handle error properly, e.g., show a message to the user
+            }
             Estate = new ViewModels.Estate
             {
-                Name = response.EstateName,
-                Id = response.EstateId,
-                Reference = response.Reference
+                Name = response.Data.EstateName,
+                Id = response.Data.EstateId,
+                Reference = response.Data.Reference
             };
         }
     }
