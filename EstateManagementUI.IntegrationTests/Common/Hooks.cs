@@ -64,7 +64,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                                      .WithDisableGpu()
                                      .WithDisableInfobars()
                                      .WithHeadless(isCi)
-                                     .WithWindowSize(1280, 1024);
+                                     .WithWindowSize(1920, 1080);
                     
                     webDriver = new ChromeDriver(options);
                     
@@ -85,9 +85,9 @@ namespace EstateManagementUI.IntegrationTests.Common
                 }
                 case "Edge": {
                     EdgeOptions options = new EdgeOptions();
-                    options = options.WithAcceptInsecureCertificate().WithHeadless(isCi).WithWindowSize(1280, 1024);
-                    
-                    await Retry.For(async () => { webDriver = new EdgeDriver(options); }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
+                    options = options.WithAcceptInsecureCertificate().WithHeadless(isCi).WithWindowSize(1920, 1080);
+
+                        await Retry.For(async () => { webDriver = new EdgeDriver(options); }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
                     break;
                 }
             }
