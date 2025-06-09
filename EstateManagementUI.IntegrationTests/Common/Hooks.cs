@@ -49,7 +49,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             String? browser = Environment.GetEnvironmentVariable("Browser");
             String? isCi = Environment.GetEnvironmentVariable("IsCI");
             
-            browser = "Edge";
+            //browser = "Edge";
             switch (browser)
             {
                 case null:
@@ -65,7 +65,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                                      .WithDisableInfobars()
                                      .WithHeadless(isCi)
                                      .WithWindowSize(1280, 1024);
-                    options.AddArgument("--start-maximized");
+                    
                     webDriver = new ChromeDriver(options);
                     
                     break;
@@ -86,7 +86,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 case "Edge": {
                     EdgeOptions options = new EdgeOptions();
                     options = options.WithAcceptInsecureCertificate().WithHeadless(isCi).WithWindowSize(1280, 1024);
-                    options.AddArgument("--start-maximized");
+                    
                     await Retry.For(async () => { webDriver = new EdgeDriver(options); }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
                     break;
                 }

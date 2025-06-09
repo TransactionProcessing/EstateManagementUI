@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using OpenQA.Selenium.Support.Extensions;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
@@ -160,13 +161,19 @@ namespace EstateManagementUI.IntegrationTests.Common
 
         public static async Task ClickButtonById(this IWebDriver webDriver,
                                                  String buttonId) {
-            await Retry.For(async () => {
-                IWebElement webElement = await webDriver.FindButtonById(buttonId);
-                webElement.ShouldNotBeNull();
-                webElement.Displayed.ShouldBe(true);
-                webElement.Enabled.ShouldBe(true);
-                webElement.Click();
-            });
+            try {
+                await Retry.For(async () => {
+                    IWebElement webElement = await webDriver.FindButtonById(buttonId);
+                    webElement.ShouldNotBeNull();
+                    webElement.Displayed.ShouldBe(true);
+                    webElement.Enabled.ShouldBe(true);
+                    webElement.Click();
+                });
+            }
+            catch (Exception ex) {
+                Screenshot x = webDriver.TakeScreenshot();
+                Console.WriteLine(x.AsBase64EncodedString);
+            }
         }
 
         public static async Task ClickButtonByText(this IWebDriver webDriver,
