@@ -85,7 +85,9 @@ namespace EstateManagementUI.IntegrationTests.Common
                 }
                 case "Edge": {
                     EdgeOptions options = new EdgeOptions();
-                    options = options.WithAcceptInsecureCertificate().WithHeadless(isCi).WithWindowSize(1920, 1080);
+                    options = options.WithAcceptInsecureCertificate()
+                        .WithHeadless(isCi)
+                        .WithWindowSize(1920, 1080);
 
                         await Retry.For(async () => { webDriver = new EdgeDriver(options); }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
                     break;
@@ -187,7 +189,7 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             if (String.Compare(isCi, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) == 0)
             {
-                options.AddArguments("--headless");
+                options.AddArguments("--headless=new");
             }
             return options;
         }
