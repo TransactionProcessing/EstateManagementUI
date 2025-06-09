@@ -190,7 +190,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:SecurityServiceLocalPort={securityServiceLocalPort}");
             environmentVariables.Add($"AppSettings:SecurityServicePort={securityServiceContainerPort}");
             environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
-            //environmentVariables.Add($"AppSettings:PermissionsBypass=true");
+            environmentVariables.Add($"AppSettings:PermissionsBypass=true");
             environmentVariables.Add($"AppSettings:IsIntegrationTest=true");
             environmentVariables.Add($"ASPNETCORE_ENVIRONMENT=Development");
             environmentVariables.Add($"EstateManagementScope=estateManagement");
