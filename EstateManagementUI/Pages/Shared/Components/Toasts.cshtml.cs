@@ -1,12 +1,13 @@
-using System.Diagnostics.CodeAnalysis;
+using EstateManagementUI.Common;
 using Hydro;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.Pages.Shared.Components
 {
     [ExcludeFromCodeCoverage]
-    public class Toasts : HydroComponent
+    public class Toasts : StandardHydroComponent
     {
         public List<Toast> ToastsList { get; set; } = new();
 

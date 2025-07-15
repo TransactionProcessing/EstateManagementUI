@@ -1,18 +1,19 @@
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
+using EstateManagementUI.Common;
 using EstateManagementUI.Pages.Shared.Components;
 using Hydro;
 using Microsoft.AspNetCore.Mvc;
 using SimpleResults;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using static Hydro.Scope;
 
 namespace EstateManagementUI.Pages.PermissionManagement.Roles.EditRole;
 
 [ExcludeFromCodeCoverage]
-public class AddRole : HydroComponent
+public class AddRole : StandardHydroComponent
 {
     private readonly IPermissionsRepository PermissionsRepository;
     

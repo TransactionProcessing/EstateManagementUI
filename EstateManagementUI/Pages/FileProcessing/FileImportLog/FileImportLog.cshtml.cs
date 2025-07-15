@@ -36,8 +36,8 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
 
         private async Task GetFileImportLog() {
             await this.PopulateTokenAndEstateId();
-
-            Queries.GetEstateQuery estateQuery = new Queries.GetEstateQuery(this.AccessToken, this.EstateId);
+            CorrelationId c = CorrelationIdHelper.New();
+            Queries.GetEstateQuery estateQuery = new(c, AccessToken, EstateId);
             Result<EstateModel> estate = await this.Mediator.Send(estateQuery);
             if (estate.IsFailed)
             {

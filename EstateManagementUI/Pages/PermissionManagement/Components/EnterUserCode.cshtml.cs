@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 using Azure;
+using EstateManagementUI.Common;
 using Hydro;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Shared.Logger;
 namespace EstateManagementUI.Pages.PermissionManagement.Components
 {
     [ExcludeFromCodeCoverage]
-    public class EnterUserCode : HydroComponent
+    public class EnterUserCode : StandardHydroComponent
     {
         public String UserCode { get; set; }
         

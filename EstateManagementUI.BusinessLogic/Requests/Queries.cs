@@ -4,16 +4,33 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using EstateManagementUI.BusinessLogic.Models;
+using Microsoft.AspNetCore.Http;
 using SimpleResults;
+using SQLitePCL;
+using Shared.Logger.TennantContext;
 
 namespace EstateManagmentUI.BusinessLogic.Requests {
+    public record CorrelationId(Guid Value);
+
+    public static class CorrelationIdHelper {
+        public static CorrelationId New(HttpContext context = null) {
+            CorrelationId c = new(Guid.NewGuid());
+            if (TenantContext.CurrentTenant != null) {
+                TenantContext.CurrentTenant.SetCorrelationId(c.Value);
+                if (context != null)
+                    context.Items["correlationId"] = c.Value;
+            }
+            return new CorrelationId(Guid.NewGuid());
+        }
+    }
 
     [ExcludeFromCodeCoverage]
     public record Queries {
-        public record GetEstateQuery(String AccessToken, Guid EstateId) : IRequest<Result<EstateModel>>;
+        public record GetEstateQuery(CorrelationId CorrelationId, String AccessToken, Guid EstateId) : IRequest<Result<EstateModel>>;
         public record GetMerchantsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<MerchantModel>>>;
         public record GetOperatorsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
         public record GetContractsQuery(String AccessToken, Guid EstateId) : IRequest<Result<List<ContractModel>>>;

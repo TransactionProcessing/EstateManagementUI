@@ -27,8 +27,8 @@ namespace EstateManagementUI.Pages.Estate.OperatorList
         public override async Task MountAsync()
         {
             await PopulateTokenAndEstateId();
-
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
+            CorrelationId c = CorrelationIdHelper.New();
+            Queries.GetEstateQuery query = new(c , AccessToken, EstateId);
 
             Result<EstateModel> response = await Mediator.Send(query, CancellationToken.None);
             if (response.IsFailed)

@@ -1,3 +1,4 @@
+using EstateManagementUI.Common;
 using Hydro;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components;
@@ -5,7 +6,8 @@ using Microsoft.AspNetCore.Http;
 using System.Globalization;
 namespace EstateManagementUI.Pages.Shared.Profile;
 
-public class ProfileDropdown : HydroComponent {
+public class ProfileDropdown : StandardHydroComponent
+{
     private readonly IHttpContextAccessor HttpContextAccessor;
     
     public ProfileDropdown(IHttpContextAccessor httpContextAccessor) {

@@ -12,8 +12,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Logger;
 using SimpleResults;
-using static System.Collections.Specialized.BitVector32;
 
 namespace EstateManagementUI.Pages.Estate.ViewEstate
 {
@@ -32,7 +32,9 @@ namespace EstateManagementUI.Pages.Estate.ViewEstate
         {
             await PopulateTokenAndEstateId();
 
-            Queries.GetEstateQuery query = new Queries.GetEstateQuery(AccessToken, EstateId);
+            Logger.LogWarning("Inside Mount Async");
+
+            Queries.GetEstateQuery query = new(this.CorrelationId, AccessToken, EstateId);
 
             Result<EstateModel> response = await Mediator.Send(query, CancellationToken.None);
             if (response.IsFailed)

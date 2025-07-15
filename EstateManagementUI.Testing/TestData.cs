@@ -30,7 +30,7 @@ namespace EstateManagementUI.Testing
         public static DateTime ComparisonDate = new DateTime(2024,1,1);
         public static String AccessToken = "token1";
         public static Guid EstateId = Guid.Parse("BD6F1ED7-6290-4285-A200-E4F8D25F4CBE");
-        public static Queries.GetEstateQuery GetEstateQuery => new(AccessToken, EstateId);
+        public static Queries.GetEstateQuery GetEstateQuery => new(CorrelationIdHelper.New(), AccessToken, EstateId);
         public static Queries.GetMerchantsQuery GetMerchantsQuery => new(AccessToken, EstateId);
 
         public static Queries.GetMerchantQuery GetMerchantQuery => new(AccessToken, EstateId, Merchant1Id);
