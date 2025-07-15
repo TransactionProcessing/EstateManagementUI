@@ -48,15 +48,15 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
         {
             await this.PopulateTokenAndEstateId();
 
-            this.Merchant = await DataHelperFunctions.GetMerchants(this.AccessToken, this.EstateId, this.Mediator);
-            this.Operator = await DataHelperFunctions.GetOperatorsOld(this.AccessToken, this.EstateId, this.Mediator);
-            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.AccessToken, this.EstateId, this.Mediator);
+            this.Merchant = await DataHelperFunctions.GetMerchants(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
+            this.Operator = await DataHelperFunctions.GetOperatorsOld(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
+            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
 
             await this.Query();
         }
 
         private async Task GetTodaysSales(DateTime selectedDate) {
-            Queries.GetTodaysSalesQuery getTodaysSalesQuery = new(this.AccessToken,
+            Queries.GetTodaysSalesQuery getTodaysSalesQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, selectedDate);
 
             Result<TodaysSalesModel> getTodaysSalesQueryResult = await this.Mediator.Send(getTodaysSalesQuery, CancellationToken.None);
@@ -77,7 +77,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
         }
 
         private async Task GetTodaysSettlement(DateTime selectedDate) {
-            Queries.GetTodaysSettlementQuery getTodaysSettlemntQuery = new(this.AccessToken,
+            Queries.GetTodaysSettlementQuery getTodaysSettlemntQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, selectedDate);
 
             Result<TodaysSettlementModel> getTodaysSettlementQueryResult = await this.Mediator.Send(getTodaysSettlemntQuery, CancellationToken.None);
@@ -101,7 +101,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
 
         private async Task GetTodaysSalesCountByHour(DateTime selectedDate) {
             Queries.GetTodaysSalesCountByHourQuery getTodaysSalesCountByHourQuery =
-                new(this.AccessToken, this.EstateId, selectedDate);
+                new(this.CorrelationId, this.AccessToken, this.EstateId, selectedDate);
 
             Result<List<BusinessLogic.Models.TodaysSalesCountByHourModel>> getTodaysSalesCountByHourQueryResult = await this.Mediator.Send(getTodaysSalesCountByHourQuery, CancellationToken.None);
             if (getTodaysSalesCountByHourQueryResult.IsSuccess && getTodaysSalesCountByHourQueryResult.Data != null)
@@ -132,7 +132,7 @@ namespace EstateManagementUI.Pages.Dashboard.Dashboard
 
         private async Task GetTodaysSalesValueByHour(DateTime selectedDate) {
             Queries.GetTodaysSalesValueByHourQuery getTodaysSalesValueByHourQuery =
-                new(this.AccessToken, this.EstateId, selectedDate);
+                new(this.CorrelationId, this.AccessToken, this.EstateId, selectedDate);
 
 
             Result<List<BusinessLogic.Models.TodaysSalesValueByHourModel>> getTodaysSalesValueByHourQueryResult = await this.Mediator.Send(getTodaysSalesValueByHourQuery, CancellationToken.None);

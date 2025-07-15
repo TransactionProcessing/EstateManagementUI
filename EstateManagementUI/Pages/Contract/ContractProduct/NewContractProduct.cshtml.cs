@@ -72,7 +72,7 @@ namespace EstateManagementUI.Pages.Contract.ContractProduct
         }
 
         private async Task CreateNeContractProduct() {
-            Commands.CreateContractProductCommand command = new(this.AccessToken, this.EstateId, this.ContractId, new CreateContractProductModel
+            Commands.CreateContractProductCommand command = new(this.CorrelationId, this.AccessToken, this.EstateId, this.ContractId, new CreateContractProductModel
             {
                 DisplayText = this.DisplayText,
                 IsVariable= this.IsVariableValue,

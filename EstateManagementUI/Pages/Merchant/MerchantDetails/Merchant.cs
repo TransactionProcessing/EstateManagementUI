@@ -78,7 +78,7 @@ public class Merchant : SecureHydroComponent
         
         await this.PopulateTokenAndEstateId();
 
-        Queries.GetMerchantQuery query = new(this.AccessToken, this.EstateId, this.MerchantId);
+        Queries.GetMerchantQuery query = new(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId);
         Result<MerchantModel> result = await this.Mediator.Send(query, cancellationToken);
         if (result.IsFailed)
         {
@@ -86,7 +86,7 @@ public class Merchant : SecureHydroComponent
         }
 
         // We need to now get all the contracts here to populate the names on the Merchant Model
-        Queries.GetContractsQuery contractsQuery = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
+        Queries.GetContractsQuery contractsQuery = new Queries.GetContractsQuery(this.CorrelationId, this.AccessToken, this.EstateId);
         Result<List<ContractModel>> contractsResult = await this.Mediator.Send(contractsQuery, cancellationToken);
         if (contractsResult.IsFailed) {
             // TODO: Handle this
@@ -177,7 +177,7 @@ public class Merchant : SecureHydroComponent
             }
         };
 
-        Commands.AddMerchantCommand command = new(this.AccessToken, this.EstateId, createMerchantModel);
+        Commands.AddMerchantCommand command = new(this.CorrelationId, this.AccessToken, this.EstateId, createMerchantModel);
 
         Result result = await this.Mediator.Send(command, CancellationToken.None);
 
@@ -202,7 +202,7 @@ public class Merchant : SecureHydroComponent
             },
             MerchantName = this.Name
         };
-        commands.Add(new Commands.UpdateMerchantCommand(this.AccessToken, this.EstateId, this.MerchantId, updateMerchantModel));
+        commands.Add(new Commands.UpdateMerchantCommand(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId, updateMerchantModel));
 
 
         AddressModel updateAddressModel = new() {
@@ -214,7 +214,7 @@ public class Merchant : SecureHydroComponent
             PostalCode = this.Address.PostCode,
             AddressId = this.Address.AddressId,
         };
-        commands.Add(new Commands.UpdateMerchantAddressCommand(this.AccessToken, this.EstateId, this.MerchantId, updateAddressModel));
+        commands.Add(new Commands.UpdateMerchantAddressCommand(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId, updateAddressModel));
 
         ContactModel updateContactModel = new() {
             ContactName = this.Contact.ContactName,
@@ -222,7 +222,7 @@ public class Merchant : SecureHydroComponent
             ContactPhoneNumber = this.Contact.PhoneNumber,
             ContactId = this.Contact.ContactId
         };
-        commands.Add(new Commands.UpdateMerchantContactCommand(this.AccessToken, this.EstateId, this.MerchantId,
+        commands.Add(new Commands.UpdateMerchantContactCommand(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId,
             updateContactModel));
 
         foreach (IRequest<Result> command in commands) {
@@ -255,7 +255,7 @@ public class Merchant : SecureHydroComponent
         await this.PopulateTokenAndEstateId();
 
         Commands.RemoveOperatorFromMerchantCommand removeOperatorFromMerchantCommand =
-            new(this.AccessToken, this.EstateId, merchantId, operatorId);
+            new(this.CorrelationId, this.AccessToken, this.EstateId, merchantId, operatorId);
         await this.Mediator.Send(removeOperatorFromMerchantCommand, CancellationToken.None);
 
         // TODO: handle result
@@ -268,7 +268,7 @@ public class Merchant : SecureHydroComponent
         await this.PopulateTokenAndEstateId();
 
         Commands.RemoveContractFromMerchantCommand removeContractFromMerchantCommand =
-            new(this.AccessToken, this.EstateId, merchantId, contractId);
+            new(this.CorrelationId, this.AccessToken, this.EstateId, merchantId, contractId);
         await this.Mediator.Send(removeContractFromMerchantCommand, CancellationToken.None);
 
         // TODO: handle result

@@ -31,7 +31,7 @@ namespace EstateManagementUI.Pages.Contract.Contracts
         {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetContractsQuery query = new Queries.GetContractsQuery(this.AccessToken, this.EstateId);
+            Queries.GetContractsQuery query = new Queries.GetContractsQuery(this.CorrelationId, this.AccessToken, this.EstateId);
 
             Result<List<ContractModel>> response = await this.Mediator.Send(query, CancellationToken.None);
             if (response.IsFailed)

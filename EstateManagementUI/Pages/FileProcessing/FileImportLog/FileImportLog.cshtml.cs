@@ -43,7 +43,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLog
             {
                 // TODO: Handle error properly, e.g., show a message to the user
             }
-            Queries.GetFileImportLogQuery query = new Queries.GetFileImportLogQuery(this.AccessToken, this.EstateId,
+            Queries.GetFileImportLogQuery query = new Queries.GetFileImportLogQuery(this.CorrelationId, this.AccessToken, this.EstateId,
                 this.MerchantId, this.FileImportLogId);
 
             Result<BusinessLogic.Models.FileImportLogModel> response =

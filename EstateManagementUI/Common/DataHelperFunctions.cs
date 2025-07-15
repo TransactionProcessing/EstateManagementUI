@@ -11,9 +11,9 @@ using System.Globalization;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 public static class DataHelperFunctions {
-    public static async Task<ComparisonDateListModel> GetComparisonDates(String accessToken, Guid estateId, IMediator mediator)
+    public static async Task<ComparisonDateListModel> GetComparisonDates(CorrelationId correlationId, String accessToken, Guid estateId, IMediator mediator)
     {
-        Queries.GetComparisonDatesQuery query = new Queries.GetComparisonDatesQuery(accessToken, estateId);
+        Queries.GetComparisonDatesQuery query = new Queries.GetComparisonDatesQuery(correlationId, accessToken, estateId);
 
         Result<List<ComparisonDateModel>> response = await mediator.Send(query, CancellationToken.None);
 
@@ -61,9 +61,9 @@ public static class DataHelperFunctions {
         return schedules;
     }
 
-    public static async Task<OperatorListModel> GetOperatorsOld(String accessToken, Guid estateId, IMediator mediator)
+    public static async Task<OperatorListModel> GetOperatorsOld(CorrelationId correlationId, String accessToken, Guid estateId, IMediator mediator)
     {
-        Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(accessToken, estateId);
+        Queries.GetOperatorsQuery query = new(correlationId, accessToken, estateId);
 
         Result<List<OperatorModel>> response = await mediator.Send(query, CancellationToken.None);
 
@@ -83,9 +83,9 @@ public static class DataHelperFunctions {
     }
 
 
-    public static async Task<List<OptionItem>> GetOperators(String accessToken, Guid estateId, IMediator mediator)
+    public static async Task<List<OptionItem>> GetOperators(CorrelationId correlationId, String accessToken, Guid estateId, IMediator mediator)
     {
-        Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(accessToken, estateId);
+        Queries.GetOperatorsQuery query = new(correlationId, accessToken, estateId);
 
         Result<List<OperatorModel>> response = await mediator.Send(query, CancellationToken.None);
 
@@ -101,9 +101,9 @@ public static class DataHelperFunctions {
         return ordered;
     }
 
-    public static async Task<MerchantListModel> GetMerchants(String accessToken, Guid estateId, IMediator mediator)
+    public static async Task<MerchantListModel> GetMerchants(CorrelationId correlationId, String accessToken, Guid estateId, IMediator mediator)
     {
-        Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(accessToken, estateId);
+        Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(correlationId, accessToken, estateId);
 
         Result<List<MerchantModel>> response = await mediator.Send(query, CancellationToken.None);
 
@@ -122,9 +122,9 @@ public static class DataHelperFunctions {
         return new MerchantListModel { Merchants = ordered };
     }
 
-    public static async Task<ContractListModel> GetContracts(String accessToken, Guid estateId, IMediator mediator)
+    public static async Task<ContractListModel> GetContracts(CorrelationId correlationId, String accessToken, Guid estateId, IMediator mediator)
     {
-        Queries.GetContractsQuery query = new(accessToken, estateId);
+        Queries.GetContractsQuery query = new(correlationId, accessToken, estateId);
 
         Result<List<ContractModel>> response = await mediator.Send(query, CancellationToken.None);
         if (response.IsFailed) {

@@ -31,7 +31,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         {
             await this.PopulateTokenAndEstateId();
 
-            this.Operator = await DataHelperFunctions.GetOperatorsOld(this.AccessToken, this.EstateId, this.Mediator);
+            this.Operator = await DataHelperFunctions.GetOperatorsOld(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
         }
 
         public async Task Save() {
@@ -43,7 +43,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
                 TerminalNumber = this.TerminalNumber
             };
             Commands.AssignOperatorToMerchantCommand assignOperatorToMerchantCommand =
-                new(this.AccessToken, this.EstateId, this.MerchantId, assignOperatorToMerchantModel);
+                new(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId, assignOperatorToMerchantModel);
             Result result = await this.Mediator.Send(assignOperatorToMerchantCommand, CancellationToken.None);
 
             if (result.IsSuccess) {

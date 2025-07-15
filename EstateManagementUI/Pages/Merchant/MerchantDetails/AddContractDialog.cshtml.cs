@@ -28,7 +28,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         {
             await this.PopulateTokenAndEstateId();
 
-            this.Contract = await DataHelperFunctions.GetContracts(this.AccessToken, this.EstateId, this.Mediator);
+            this.Contract = await DataHelperFunctions.GetContracts(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
         }
 
         public async Task Save() {
@@ -38,7 +38,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
                 ContractId= Guid.Parse(this.Contract.ContractId)
             };
             Commands.AssignContractToMerchantCommand assignContractToMerchantCommand =
-                new(this.AccessToken, this.EstateId, this.MerchantId, assignContractToMerchantModel);
+                new(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId, assignContractToMerchantModel);
             Result result = await this.Mediator.Send(assignContractToMerchantCommand, CancellationToken.None);
 
             if (result.IsSuccess) {

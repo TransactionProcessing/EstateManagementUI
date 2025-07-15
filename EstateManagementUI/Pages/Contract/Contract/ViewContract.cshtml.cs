@@ -37,7 +37,7 @@ namespace EstateManagementUI.Pages.Contract.Contract
         private async Task LoadContract(CancellationToken cancellationToken) {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetContractQuery query = new(this.AccessToken, this.EstateId, this.ContractId);
+            Queries.GetContractQuery query = new(this.CorrelationId, this.AccessToken, this.EstateId, this.ContractId);
             Result<ContractModel> result = await this.Mediator.Send(query, cancellationToken);
             if (result.IsFailed)
             {

@@ -136,7 +136,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         protected async Task LoadMerchant(CancellationToken cancellationToken) {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetMerchantQuery query = new(this.AccessToken, this.EstateId, this.MerchantId);
+            Queries.GetMerchantQuery query = new(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId);
             Result<MerchantModel> result = await this.Mediator.Send(query, cancellationToken);
             //if (result.IsFailed) {
             //    // handle this
@@ -150,7 +150,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         public async Task Save() {
             await this.PopulateTokenAndEstateId();
 
-            Commands.MakeDepositCommand command = new(this.AccessToken, this.EstateId, this.MerchantId, new BusinessLogic.Models.MakeDepositModel
+            Commands.MakeDepositCommand command = new(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId, new BusinessLogic.Models.MakeDepositModel
             {
                 Amount = this.Amount,
                 Date = this.Date,

@@ -51,7 +51,7 @@ namespace EstateManagementUI.Pages.Operator.OperatorsList
         {
             await PopulateTokenAndEstateId();
 
-            Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(AccessToken, EstateId);
+            Queries.GetOperatorsQuery query = new Queries.GetOperatorsQuery(this.CorrelationId, AccessToken, EstateId);
 
             Result<List<OperatorModel>> response = await Mediator.Send(query, CancellationToken.None);
 

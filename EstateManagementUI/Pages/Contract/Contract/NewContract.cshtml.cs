@@ -92,13 +92,13 @@ namespace EstateManagementUI.Pages.Contract.Contract
         {
             // Might have async issues :|
             this.PopulateTokenAndEstateId().Wait();
-            return DataHelperFunctions.GetOperators(this.AccessToken, this.EstateId, this.Mediator).Result;
+            return DataHelperFunctions.GetOperators(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator).Result;
         }
 
         private async Task CreateNeContract()
         {
 
-            Commands.CreateContractCommand createContractCommand = new(this.AccessToken, this.EstateId, new CreateContractModel
+            Commands.CreateContractCommand createContractCommand = new(this.CorrelationId, this.AccessToken, this.EstateId, new CreateContractModel
             {
                 OperatorId = Guid.Parse(this.OperatorId),
                 Description = this.Name
