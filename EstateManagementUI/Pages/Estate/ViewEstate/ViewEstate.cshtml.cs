@@ -32,8 +32,6 @@ namespace EstateManagementUI.Pages.Estate.ViewEstate
         {
             await PopulateTokenAndEstateId();
 
-            Logger.LogWarning("Inside Mount Async");
-
             Queries.GetEstateQuery query = new(this.CorrelationId, AccessToken, EstateId);
 
             Result<EstateModel> response = await Mediator.Send(query, CancellationToken.None);
