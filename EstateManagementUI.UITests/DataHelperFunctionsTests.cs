@@ -17,7 +17,8 @@ public class DataHelperFunctionsTests
         // Arrange
         string accessToken = "testAccessToken";
         Guid estateId = Guid.NewGuid();
-        var comparisonDates = new List<ComparisonDateModel>
+    CorrelationId correlationId = CorrelationIdHelper.New();
+    var comparisonDates = new List<ComparisonDateModel>
         {
             new ComparisonDateModel { Date = DateTime.Now, Description = "2023-01-01", OrderValue = 1 },
             new ComparisonDateModel { Date = DateTime.Now.AddDays(1), Description = "2023-01-02", OrderValue = 2 }
@@ -27,7 +28,7 @@ public class DataHelperFunctionsTests
             .ReturnsAsync(result);
 
         // Act
-        var response = await DataHelperFunctions.GetComparisonDates(accessToken, estateId, this._mediatorMock.Object);
+        var response = await DataHelperFunctions.GetComparisonDates(correlationId, accessToken, estateId, this._mediatorMock.Object);
 
         // Assert
         response.ShouldNotBeNull();
@@ -41,6 +42,7 @@ public class DataHelperFunctionsTests
         // Arrange
         string accessToken = "testAccessToken";
         Guid estateId = Guid.NewGuid();
+        CorrelationId correlationId = CorrelationIdHelper.New();
         var operators = new List<OperatorModel>
         {
             new OperatorModel { OperatorId = Guid.NewGuid(), Name = "Operator1" },
@@ -51,7 +53,7 @@ public class DataHelperFunctionsTests
             .ReturnsAsync(result);
 
         // Act
-        var response = await DataHelperFunctions.GetOperatorsOld(accessToken, estateId, this._mediatorMock.Object);
+        var response = await DataHelperFunctions.GetOperatorsOld(correlationId, accessToken, estateId, this._mediatorMock.Object);
 
         // Assert
         response.ShouldNotBeNull();
@@ -65,6 +67,7 @@ public class DataHelperFunctionsTests
         // Arrange
         string accessToken = "testAccessToken";
         Guid estateId = Guid.NewGuid();
+        CorrelationId correlationId = CorrelationIdHelper.New();
         var merchants = new List<MerchantModel>
         {
             new MerchantModel { MerchantId = Guid.NewGuid(), MerchantName = "Merchant1" },
@@ -75,7 +78,7 @@ public class DataHelperFunctionsTests
             .ReturnsAsync(result);
 
         // Act
-        var response = await DataHelperFunctions.GetMerchants(accessToken, estateId, this._mediatorMock.Object);
+        var response = await DataHelperFunctions.GetMerchants(correlationId, accessToken, estateId, this._mediatorMock.Object);
 
         // Assert
         response.ShouldNotBeNull();
@@ -89,6 +92,7 @@ public class DataHelperFunctionsTests
         // Arrange
         string accessToken = "testAccessToken";
         Guid estateId = Guid.NewGuid();
+        CorrelationId correlationId = CorrelationIdHelper.New();
         var contracts = new List<ContractModel>
         {
             new ContractModel { ContractId = Guid.NewGuid(), Description = "Contract1" },
@@ -98,7 +102,7 @@ public class DataHelperFunctionsTests
             .ReturnsAsync(contracts);
 
         // Act
-        var response = await DataHelperFunctions.GetContracts(accessToken, estateId, this._mediatorMock.Object);
+        var response = await DataHelperFunctions.GetContracts(correlationId, accessToken, estateId, this._mediatorMock.Object);
 
         // Assert
         response.ShouldNotBeNull();
@@ -112,6 +116,7 @@ public class DataHelperFunctionsTests
         // Arrange
         string accessToken = "testAccessToken";
         Guid estateId = Guid.NewGuid();
+        CorrelationId correlationId = CorrelationIdHelper.New();
         var operators = new List<OperatorModel>
         {
             new OperatorModel() { OperatorId = Guid.NewGuid(), Name = "Operator 1" },
@@ -121,7 +126,7 @@ public class DataHelperFunctionsTests
             .ReturnsAsync(operators);
 
         // Act
-        var response = await DataHelperFunctions.GetOperators(accessToken, estateId, this._mediatorMock.Object);
+        var response = await DataHelperFunctions.GetOperators(correlationId, accessToken, estateId, this._mediatorMock.Object);
 
         // Assert
         response.ShouldNotBeNull();

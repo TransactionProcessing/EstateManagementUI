@@ -52,7 +52,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
         {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.AccessToken, this.EstateId);
+            Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.CorrelationId, this.AccessToken, this.EstateId);
 
             Result<List<MerchantModel>> response = await this.Mediator.Send(query, CancellationToken.None);
             if (response.IsFailed)
@@ -78,7 +78,7 @@ namespace EstateManagementUI.Pages.FileProcessing.FileImportLogs
         {
             await this.PopulateTokenAndEstateId();
 
-            Queries.GetFileImportLogsListQuery query = new Queries.GetFileImportLogsListQuery(this.AccessToken, this.EstateId, Guid.Parse(this.Merchant.MerchantId), this.StartDate.SelectedDate.Value, this.EndDate.SelectedDate.Value);
+            Queries.GetFileImportLogsListQuery query = new Queries.GetFileImportLogsListQuery(this.CorrelationId, this.AccessToken, this.EstateId, Guid.Parse(this.Merchant.MerchantId), this.StartDate.SelectedDate.Value, this.EndDate.SelectedDate.Value);
 
             Result<List<BusinessLogic.Models.FileImportLogModel>> response = await this.Mediator.Send(query, CancellationToken.None);
 

@@ -36,7 +36,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
                 DeviceIdentifier= this.MerchantDevice
             };
             Commands.AssignDeviceToMerchantCommand assignContractToMerchantCommand =
-                new(this.AccessToken, this.EstateId, this.MerchantId, assignDeviceToMerchant);
+                new(this.CorrelationId, this.AccessToken, this.EstateId, this.MerchantId, assignDeviceToMerchant);
             Result result = await this.Mediator.Send(assignContractToMerchantCommand, CancellationToken.None);
 
             if (result.IsSuccess) {

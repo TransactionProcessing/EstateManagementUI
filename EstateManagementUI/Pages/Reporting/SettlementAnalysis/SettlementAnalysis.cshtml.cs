@@ -29,7 +29,7 @@ namespace EstateManagementUI.Pages.Reporting.SettlementAnalysis
         {
             await this.PopulateTokenAndEstateId();
 
-            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.AccessToken, this.EstateId, this.Mediator);
+            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
 
             await this.Query();
         }
@@ -50,7 +50,7 @@ namespace EstateManagementUI.Pages.Reporting.SettlementAnalysis
 
         private async Task GetTodaysSettlement(DateTime selectedDate)
         {
-            Queries.GetTodaysSettlementQuery getTodaysSettlementQuery = new(this.AccessToken,
+            Queries.GetTodaysSettlementQuery getTodaysSettlementQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, selectedDate);
 
             Result<TodaysSettlementModel> getTodaysSettlementQueryResult = await this.Mediator.Send(getTodaysSettlementQuery, CancellationToken.None);
@@ -74,7 +74,7 @@ namespace EstateManagementUI.Pages.Reporting.SettlementAnalysis
 
         private async Task GetLastSettlement()
         {
-            Queries.GetLastSettlementQuery getLastSettlementQuery = new(this.AccessToken,
+            Queries.GetLastSettlementQuery getLastSettlementQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId);
 
             Result<LastSettlementModel> getLastSettlementQueryResult = await this.Mediator.Send(getLastSettlementQuery, CancellationToken.None);

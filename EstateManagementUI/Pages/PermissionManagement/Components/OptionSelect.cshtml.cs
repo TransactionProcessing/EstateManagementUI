@@ -1,3 +1,4 @@
+using EstateManagementUI.Common;
 using Hydro;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace EstateManagementUI.Pages.PermissionManagement.Components
 {
     [ExcludeFromCodeCoverage]
-    public class OptionSelect : HydroComponent
+    public class OptionSelect : StandardHydroComponent
     {
         public void Submit1()
         {

@@ -9,12 +9,26 @@ using SimpleResults;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Security.Claims;
+using EstateManagmentUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace EstateManagementUI.Common;
 
+public class StandardHydroComponent : HydroComponent {
+    public StandardHydroComponent() : base(){
+        
+    }
+
+    protected CorrelationId CorrelationId;
+
+    protected async Task PopulateCorrelationId() {
+        if (HttpContext != null)
+            this.CorrelationId = CorrelationIdHelper.New(this.HttpContext);
+    }
+}
+
 [ExcludeFromCodeCoverage]
-public class SecureHydroComponent : HydroComponent {
+public class SecureHydroComponent : StandardHydroComponent {
 
     private readonly String SectionName;
     private readonly String PageName;
@@ -67,6 +81,8 @@ public class SecureHydroComponent : HydroComponent {
 
         if (HttpContext.User != null)
             this.EstateId = Helpers.GetClaimValue<Guid>(HttpContext.User.Identity as ClaimsIdentity, Helpers.EstateIdClaimType);
+
+        await this.PopulateCorrelationId();
     }
 
     public override async Task RenderAsync()

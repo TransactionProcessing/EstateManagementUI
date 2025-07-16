@@ -146,6 +146,17 @@ namespace EstateManagementUI.IntegrationTests.Common
             return requiredProjections;
         }
 
+        public override ContainerBuilder SetupTransactionProcessorContainer()
+        {
+
+            List<String> variables = new List<String>();
+            variables.Add($"OperatorConfiguration:PataPawaPrePay:Url=http://{this.TestHostContainerName}:{DockerPorts.TestHostPort}/api/patapawaprepay");
+
+            this.AdditionalVariables.Add(ContainerType.FileProcessor, variables);
+            
+            return base.SetupTransactionProcessorContainer();
+        }
+
         /// <summary>
         /// Starts the containers for scenario run.
         /// </summary>

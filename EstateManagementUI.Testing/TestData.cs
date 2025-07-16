@@ -1,3 +1,4 @@
+using Azure.Core;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.ViewModels;
 using EstateManagmentUI.BusinessLogic.Requests;
@@ -29,56 +30,57 @@ namespace EstateManagementUI.Testing
         
         public static DateTime ComparisonDate = new DateTime(2024,1,1);
         public static String AccessToken = "token1";
+        public static CorrelationId CorrelationId = CorrelationIdHelper.New();
         public static Guid EstateId = Guid.Parse("BD6F1ED7-6290-4285-A200-E4F8D25F4CBE");
-        public static Queries.GetEstateQuery GetEstateQuery => new(AccessToken, EstateId);
-        public static Queries.GetMerchantsQuery GetMerchantsQuery => new(AccessToken, EstateId);
+        public static Queries.GetEstateQuery GetEstateQuery => new(CorrelationIdHelper.New(), AccessToken, EstateId);
+        public static Queries.GetMerchantsQuery GetMerchantsQuery => new(CorrelationId,AccessToken, EstateId);
 
-        public static Queries.GetMerchantQuery GetMerchantQuery => new(AccessToken, EstateId, Merchant1Id);
-        public static Queries.GetOperatorsQuery GetOperatorsQuery => new(AccessToken, EstateId);
-        public static Queries.GetOperatorQuery GetOperatorQuery => new(AccessToken, EstateId, Operator1Id);
-        public static Queries.GetContractsQuery GetContractsQuery => new(AccessToken, EstateId);
-        public static Queries.GetContractQuery GetContractQuery => new(AccessToken, EstateId, Contract1Id);
+        public static Queries.GetMerchantQuery GetMerchantQuery => new(CorrelationId, AccessToken, EstateId, Merchant1Id);
+        public static Queries.GetOperatorsQuery GetOperatorsQuery => new(CorrelationId, AccessToken, EstateId);
+        public static Queries.GetOperatorQuery GetOperatorQuery => new(CorrelationId, AccessToken, EstateId, Operator1Id);
+        public static Queries.GetContractsQuery GetContractsQuery => new(CorrelationId, AccessToken, EstateId);
+        public static Queries.GetContractQuery GetContractQuery => new(CorrelationId, AccessToken, EstateId, Contract1Id);
 
         public static Queries.GetFileImportLogsListQuery GetFileImportLogsListQuery =>
-            new Queries.GetFileImportLogsListQuery(AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
+            new Queries.GetFileImportLogsListQuery(CorrelationId, AccessToken, EstateId, Merchant1Id, FileImportLogQueryStartDate,
                 FileImportLogQueryEndDate);
 
         public static Queries.GetFileImportLogQuery GetFileImportLogQuery =>
-            new Queries.GetFileImportLogQuery(AccessToken, EstateId, Merchant1Id, FileImportLogId);
+            new Queries.GetFileImportLogQuery(CorrelationId, AccessToken, EstateId, Merchant1Id, FileImportLogId);
 
         public static Queries.GetFileDetailsQuery GetFileDetailsQuery =>
-            new(AccessToken, EstateId, FileImportLogFile1.FileId);
+            new(CorrelationId, AccessToken, EstateId, FileImportLogFile1.FileId);
 
-        public static Queries.GetComparisonDatesQuery GetComparisonDatesQuery => new(AccessToken, EstateId);
-        public static Queries.GetTodaysSalesQuery GetTodaysSalesQuery => new(AccessToken, EstateId, DateTime.Now);
-        public static Queries.GetTodaysSettlementQuery GetTodaysSettlementQuery => new(AccessToken, EstateId, DateTime.Now);
-        public static Queries.GetTodaysSalesCountByHourQuery GetTodaysSalesCountByHourQuery => new(AccessToken, EstateId, DateTime.Now);
-        public static Queries.GetTodaysSalesValueByHourQuery GetTodaysSalesValueByHourQuery => new(AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetComparisonDatesQuery GetComparisonDatesQuery => new(CorrelationId, AccessToken, EstateId);
+        public static Queries.GetTodaysSalesQuery GetTodaysSalesQuery => new(CorrelationId, AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetTodaysSettlementQuery GetTodaysSettlementQuery => new(CorrelationId, AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetTodaysSalesCountByHourQuery GetTodaysSalesCountByHourQuery => new(CorrelationId, AccessToken, EstateId, DateTime.Now);
+        public static Queries.GetTodaysSalesValueByHourQuery GetTodaysSalesValueByHourQuery => new(CorrelationId, AccessToken, EstateId, DateTime.Now);
 
-        public static Queries.GetMerchantKpiQuery GetMerchantKpiQuery => new (AccessToken, EstateId);
+        public static Queries.GetMerchantKpiQuery GetMerchantKpiQuery => new (CorrelationId, AccessToken, EstateId);
 
         public static Queries.GetTodaysFailedSalesQuery GetTodaysFailedSalesQuery =>
-            new(AccessToken, EstateId, "1009", DateTime.Now);
+            new(CorrelationId, AccessToken, EstateId, "1009", DateTime.Now);
 
         public static Queries.GetTopProductDataQuery GetTopProductDataQuery =>
-            new Queries.GetTopProductDataQuery(AccessToken, EstateId, 1);
+            new Queries.GetTopProductDataQuery(CorrelationId, AccessToken, EstateId, 1);
 
-        public static Queries.GetBottomProductDataQuery GetBottomProductDataQuery => new(AccessToken, EstateId, 1);
-        public static Queries.GetTopMerchantDataQuery GetTopMerchantDataQuery => new(AccessToken, EstateId, 1);
-        public static Queries.GetBottomMerchantDataQuery GetBottomMerchantDataQuery => new(AccessToken, EstateId, 1);
-        public static Queries.GetTopOperatorDataQuery GetTopOperatorDataQuery => new(AccessToken, EstateId, 1);
-        public static Queries.GetBottomOperatorDataQuery GetBottomOperatorDataQuery => new(AccessToken, EstateId, 1);
+        public static Queries.GetBottomProductDataQuery GetBottomProductDataQuery => new(CorrelationId, AccessToken, EstateId, 1);
+        public static Queries.GetTopMerchantDataQuery GetTopMerchantDataQuery => new(CorrelationId, AccessToken, EstateId, 1);
+        public static Queries.GetBottomMerchantDataQuery GetBottomMerchantDataQuery => new(CorrelationId, AccessToken, EstateId, 1);
+        public static Queries.GetTopOperatorDataQuery GetTopOperatorDataQuery => new(CorrelationId, AccessToken, EstateId, 1);
+        public static Queries.GetBottomOperatorDataQuery GetBottomOperatorDataQuery => new(CorrelationId, AccessToken, EstateId, 1);
 
-        public static Queries.GetLastSettlementQuery GetLastSettlementQuery => new(AccessToken, EstateId);
+        public static Queries.GetLastSettlementQuery GetLastSettlementQuery => new(CorrelationId, AccessToken, EstateId);
 
-        public static Commands.AddMerchantCommand AddNewMerchantCommand => new(AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
+        public static Commands.AddMerchantCommand AddNewMerchantCommand => new(CorrelationId, AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
 
-        public static Commands.UpdateMerchantCommand UpdateMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new UpdateMerchantModel {
+        public static Commands.UpdateMerchantCommand UpdateMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, new UpdateMerchantModel {
             MerchantName = Merchant1Name,
             SettlementSchedule = EstateManagementUI.BusinessLogic.Models.SettlementSchedule.Immediate
         });
 
-        public static Commands.UpdateMerchantAddressCommand UpdateMerchantAddressCommand => new(AccessToken, EstateId, Merchant1Id, new AddressModel
+        public static Commands.UpdateMerchantAddressCommand UpdateMerchantAddressCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, new AddressModel
         {
             AddressLine1 = Merchant1AddressLine1,
             AddressLine2 = Merchant1AddressLine2,
@@ -90,38 +92,38 @@ namespace EstateManagementUI.Testing
             Town = Merchant1Town
         });
 
-        public static Commands.UpdateMerchantContactCommand UpdateMerchantContactCommand => new(AccessToken, EstateId, Merchant1Id, new ContactModel
+        public static Commands.UpdateMerchantContactCommand UpdateMerchantContactCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, new ContactModel
         {
             ContactName = Merchant1ContactName,
             ContactPhoneNumber = Merchant1ContactPhoneNumber,
             ContactEmailAddress = Merchant1ContactEmailAddress
         });
 
-        public static Commands.AssignContractToMerchantCommand AssignContractToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new AssignContractToMerchantModel {
+        public static Commands.AssignContractToMerchantCommand AssignContractToMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, new AssignContractToMerchantModel {
             ContractId = Contract1Id
         });
 
-        public static Commands.RemoveContractFromMerchantCommand RemoveContractFromMerchantCommand => new(AccessToken, EstateId, Merchant1Id, Contract1Id);
+        public static Commands.RemoveContractFromMerchantCommand RemoveContractFromMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, Contract1Id);
 
-        public static Commands.AssignDeviceToMerchantCommand AssignDeviceToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, AssignDeviceToMerchantModel);
+        public static Commands.AssignDeviceToMerchantCommand AssignDeviceToMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, AssignDeviceToMerchantModel);
 
         public static AssignOperatorToMerchantModel AssignOperatorToMerchantModel => new AssignOperatorToMerchantModel { OperatorId = Operator1Id };
         public static AssignContractToMerchantModel AssignContractToMerchantModel => new AssignContractToMerchantModel { ContractId = TestData.Contract1Id };
         public static String DeviceIdentifier = "123456ABCDEF";
         public static AssignDeviceToMerchantModel AssignDeviceToMerchantModel => new AssignDeviceToMerchantModel { DeviceIdentifier = DeviceIdentifier };
 
-        public static Commands.AssignOperatorToMerchantCommand AssignOperatorToMerchantCommand => new(AccessToken, EstateId, Merchant1Id, new AssignOperatorToMerchantModel {
+        public static Commands.AssignOperatorToMerchantCommand AssignOperatorToMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, new AssignOperatorToMerchantModel {
             OperatorId = Operator1Id
         });
 
-        public static Commands.RemoveOperatorFromMerchantCommand RemoveOperatorFromMerchantCommand => new(AccessToken, EstateId, Merchant1Id, Operator1Id);
+        public static Commands.RemoveOperatorFromMerchantCommand RemoveOperatorFromMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, Operator1Id);
 
-        public static Commands.CreateContractCommand CreateContractCommand => new(AccessToken, EstateId, CreateContractModel);
-        public static Commands.CreateContractProductCommand CreateContractProductCommand => new(AccessToken, EstateId, Contract1Id, CreateContractProductModel);
+        public static Commands.CreateContractCommand CreateContractCommand => new(CorrelationId, AccessToken, EstateId, CreateContractModel);
+        public static Commands.CreateContractProductCommand CreateContractProductCommand => new(CorrelationId, AccessToken, EstateId, Contract1Id, CreateContractProductModel);
 
-        public static Commands.CreateContractProductTransactionFeeCommand CreateContractProductTransactionFeeCommand => new(AccessToken, EstateId, Contract1Id, Contract1Product1Id, CreateContractProductTransactionFeeModel);
+        public static Commands.CreateContractProductTransactionFeeCommand CreateContractProductTransactionFeeCommand => new(CorrelationId, AccessToken, EstateId, Contract1Id, Contract1Product1Id, CreateContractProductTransactionFeeModel);
 
-        public static Commands.MakeDepositCommand MakeDepositCommand => new(AccessToken, EstateId, Merchant1Id, MakeDepositModel);
+        public static Commands.MakeDepositCommand MakeDepositCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, MakeDepositModel);
 
         public static CreateMerchantResponse CreateMerchantResponse =>
             new() { EstateId = EstateId, MerchantId = Merchant1Id };
@@ -182,11 +184,11 @@ namespace EstateManagementUI.Testing
         public static ContactModel ContactModel => new ContactModel { ContactEmailAddress = Merchant1ContactEmailAddress, ContactName = Merchant1ContactName, ContactPhoneNumber = Merchant1ContactPhoneNumber };
 
         public static Commands.AddNewOperatorCommand AddNewOperatorCommand =>
-            new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
+            new(CorrelationId, AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
                 RequireCustomTerminalNumber);
 
         public static Commands.UpdateOperatorCommand UpdateOperatorCommand =>
-            new(AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
+            new(CorrelationId, AccessToken, EstateId, Operator1Id, Operator1Name, RequireCustomMerchantNumber,
                 RequireCustomTerminalNumber);
 
         public static String EstateName = "Test Estate 1";

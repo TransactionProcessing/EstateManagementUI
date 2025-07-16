@@ -73,7 +73,7 @@ public class ApiClient : IApiClient {
         async Task<Result> ClientMethod()
         {
             AddMerchantDeviceRequest apiRequest = ModelFactory.ConvertFrom(assignDeviceToMerchantModel);
-
+            
             return await this.TransactionProcessorClient.AddDeviceToMerchant(accessToken, estateId, merchantId, apiRequest, cancellationToken);
         }
 
@@ -131,6 +131,8 @@ public class ApiClient : IApiClient {
                                              Guid actionId,
                                              Guid estateId,
                                              CancellationToken cancellationToken) {
+        Logger.LogWarning("in GetEstate");
+        
         async Task<Result<EstateModel>> ClientMethod() {
             Result<EstateResponse>? result = await this.TransactionProcessorClient.GetEstate(accessToken, estateId, cancellationToken);
             if (result.IsFailed)

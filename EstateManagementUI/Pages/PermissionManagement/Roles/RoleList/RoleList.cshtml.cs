@@ -1,5 +1,6 @@
 using EstateManagementUI.BusinessLogic.Clients;
 using EstateManagementUI.BusinessLogic.PermissionService;
+using EstateManagementUI.Common;
 using Hydro;
 using Microsoft.AspNetCore.Mvc;
 using SimpleResults;
@@ -8,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace EstateManagementUI.Pages.PermissionManagement.Roles.RoleList
 {
     [ExcludeFromCodeCoverage]
-    public class RoleList : HydroComponent
+    public class RoleList : StandardHydroComponent
     {
         private readonly IPermissionsRepository PermissionsRepository;
 

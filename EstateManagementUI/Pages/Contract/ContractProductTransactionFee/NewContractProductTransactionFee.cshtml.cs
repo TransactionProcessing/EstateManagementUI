@@ -49,7 +49,7 @@ namespace EstateManagementUI.Pages.Contract.ContractProductTransactionFee
         public async Task Save() {
             await this.PopulateTokenAndEstateId();
 
-            Commands.CreateContractProductTransactionFeeCommand command = new(this.AccessToken, this.EstateId, this.ContractId, this.ProductId, new CreateContractProductTransactionFeeModel
+            Commands.CreateContractProductTransactionFeeCommand command = new(this.CorrelationId, this.AccessToken, this.EstateId, this.ContractId, this.ProductId, new CreateContractProductTransactionFeeModel
             {
                 Description = this.Description,
                 Value = this.Value,

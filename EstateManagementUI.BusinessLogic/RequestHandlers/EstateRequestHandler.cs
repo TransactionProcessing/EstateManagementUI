@@ -16,7 +16,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<EstateModel>> Handle(Queries.GetEstateQuery request,
                                         CancellationToken cancellationToken) {
-            Result<EstateModel> model = await this.ApiClient.GetEstate(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+            Result<EstateModel> model = await this.ApiClient.GetEstate(request.AccessToken, request.CorrelationId.Value, request.EstateId, cancellationToken);
             return model;
         }
     }

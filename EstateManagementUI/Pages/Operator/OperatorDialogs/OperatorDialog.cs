@@ -51,7 +51,7 @@ public class Operator : SecureHydroComponent {
 
         await this.PopulateTokenAndEstateId();
 
-        Queries.GetOperatorQuery query = new Queries.GetOperatorQuery(this.AccessToken, this.EstateId, this.OperatorId);
+        Queries.GetOperatorQuery query = new Queries.GetOperatorQuery(this.CorrelationId, this.AccessToken, this.EstateId, this.OperatorId);
         Result<OperatorModel> result = await this.Mediator.Send(query, cancellationToken);
         //if (result.IsFailed) {
         //    // handle this
@@ -81,7 +81,7 @@ public class Operator : SecureHydroComponent {
         await this.PopulateTokenAndEstateId();
 
         if (this.OperatorId == Guid.Empty) {
-            Commands.AddNewOperatorCommand command = new Commands.AddNewOperatorCommand(this.AccessToken, this.EstateId,
+            Commands.AddNewOperatorCommand command = new Commands.AddNewOperatorCommand(this.CorrelationId, this.AccessToken, this.EstateId,
                 Guid.NewGuid(), this.Name, this.RequireCustomMerchantNumber, this.RequireCustomTerminalNumber);
 
             Result result = await this.Mediator.Send(command, CancellationToken.None);
@@ -94,7 +94,7 @@ public class Operator : SecureHydroComponent {
             this.Dispatch(new OperatorPageEvents.OperatorCreatedEvent(), Scope.Global);
         }
         else {
-            Commands.UpdateOperatorCommand command = new Commands.UpdateOperatorCommand(this.AccessToken, this.EstateId,
+            Commands.UpdateOperatorCommand command = new Commands.UpdateOperatorCommand(this.CorrelationId, this.AccessToken, this.EstateId,
                 this.OperatorId, this.Name, this.RequireCustomMerchantNumber, this.RequireCustomTerminalNumber);
 
             Result result = await this.Mediator.Send(command, CancellationToken.None);

@@ -35,7 +35,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
         {
             await this.PopulateTokenAndEstateId();
 
-            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.AccessToken, this.EstateId, this.Mediator);
+            this.ComparisonDate = await DataHelperFunctions.GetComparisonDates(this.CorrelationId, this.AccessToken, this.EstateId, this.Mediator);
 
             await this.Query();
         }
@@ -60,7 +60,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
         }
 
         private async Task GetMerchantKpis() {
-            Queries.GetMerchantKpiQuery getMerchantKpiQuery = new(this.AccessToken, this.EstateId);
+            Queries.GetMerchantKpiQuery getMerchantKpiQuery = new(this.CorrelationId, this.AccessToken, this.EstateId);
 
             Result<MerchantKpiModel> getMerchantKpiQueryResult = await this.Mediator.Send(getMerchantKpiQuery, CancellationToken.None);
             if (getMerchantKpiQueryResult.IsSuccess && getMerchantKpiQueryResult.Data != null)
@@ -80,7 +80,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
 
         private async Task GetTodaysSales(DateTime selectedDate)
         {
-            Queries.GetTodaysSalesQuery getTodaysSalesQuery = new(this.AccessToken,
+            Queries.GetTodaysSalesQuery getTodaysSalesQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, selectedDate);
 
             Result<TodaysSalesModel> getTodaysSalesQueryResult = await this.Mediator.Send(getTodaysSalesQuery, CancellationToken.None);
@@ -102,7 +102,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
 
         private async Task GetBottomMerchantsBySales()
         {
-            Queries.GetBottomMerchantDataQuery getBottomMerchantDataQuery = new(this.AccessToken,
+            Queries.GetBottomMerchantDataQuery getBottomMerchantDataQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId,3);
 
             var getBottomMerchantDataQueryResult = await this.Mediator.Send(getBottomMerchantDataQuery, CancellationToken.None);
@@ -123,7 +123,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
 
         private async Task GetBottomOperatorsBySales()
         {
-            Queries.GetBottomOperatorDataQuery getBottomOperatorDataQuery = new(this.AccessToken,
+            Queries.GetBottomOperatorDataQuery getBottomOperatorDataQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, 3);
 
             var getBottomOperatorDataQueryResult = await this.Mediator.Send(getBottomOperatorDataQuery, CancellationToken.None);
@@ -147,7 +147,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
 
         private async Task GetBottomProductsBySales()
         {
-            Queries.GetBottomProductDataQuery getBottomProductDataQuery = new(this.AccessToken,
+            Queries.GetBottomProductDataQuery getBottomProductDataQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, 3);
 
             var getBottomProductDataQueryResult = await this.Mediator.Send(getBottomProductDataQuery, CancellationToken.None);
@@ -171,7 +171,7 @@ namespace EstateManagementUI.Pages.Reporting.TransactionAnalysis
 
         private async Task GetTodaysFailedSales(DateTime selectedDate, String responseCode)
         {
-            Queries.GetTodaysFailedSalesQuery getTodaysFailedSalesQuery = new(this.AccessToken,
+            Queries.GetTodaysFailedSalesQuery getTodaysFailedSalesQuery = new(this.CorrelationId, this.AccessToken,
                 this.EstateId, responseCode,  selectedDate);
 
             Result<TodaysSalesModel> getTodaysFailedSalesQueryResult = await this.Mediator.Send(getTodaysFailedSalesQuery, CancellationToken.None);

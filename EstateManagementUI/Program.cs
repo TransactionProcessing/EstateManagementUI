@@ -1,15 +1,8 @@
-using System.ComponentModel.Design;
-using System.Diagnostics.CodeAnalysis;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using EstateManagementUI.Bootstrapper;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 using Hydro;
 using Hydro.Configuration;
-using Lamar;
 using Lamar.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -24,126 +17,15 @@ using NLog;
 using NLog.Extensions.Logging;
 using Shared.Extensions;
 using Shared.General;
+using Shared.Logger;
+using Shared.Middleware;
 using SimpleResults;
+using System.ComponentModel.Design;
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 using Logger = Shared.Logger.Logger;
-
-[ExcludeFromCodeCoverage]
-public class Startup {
-    private static IWebHostEnvironment WebHostEnvironment;
-    public static Container Container;
-
-    public static IConfigurationRoot Configuration { get; set; }
-
-    public Startup(IWebHostEnvironment webHostEnvironment)
-    {
-        IConfigurationBuilder builder = new ConfigurationBuilder().SetBasePath(webHostEnvironment.ContentRootPath)
-            .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
-            .AddJsonFile($"/home/txnproc/config/appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true)
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{webHostEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables();
-
-        Startup.Configuration = builder.Build();
-        Startup.WebHostEnvironment = webHostEnvironment;
-        
-        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-    }
-
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureContainer(ServiceRegistry services)
-    {
-        ConfigurationReader.Initialise(Startup.Configuration);
-
-        services.AddHttpContextAccessor();
-        
-        services.IncludeRegistry<MiddlewareRegistry>();
-        if (Startup.WebHostEnvironment.IsEnvironment("IntegrationTest") == false){
-            services.IncludeRegistry<AuthenticationRegistry>();
-        }
-        services.IncludeRegistry<ClientRegistry>();
-        services.IncludeRegistry<MediatorRegistry>();
-
-        Startup.Container = new Container(services);
-    }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
-                          ILoggerFactory loggerFactory) {
-
-        // TODO: where should the logging be configured??
-
-        //// Configure the HTTP request pipeline.
-        //if (!env.IsDevelopment())
-        //{
-        //    app.UseExceptionHandler("/Error");
-        //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-        //    app.UseHsts();
-        //}
-        //else
-        //{
-        //    app.UseDeveloperExceptionPage();
-
-        //}
-
-        //app.UseExceptionHandler(b => b.Run(async context =>
-        //{
-        //    if (!context.IsHydro())
-        //    {
-        //        return;
-        //    }
-
-        //    IExceptionHandlerFeature contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-        //    switch (contextFeature?.Error)
-        //    {
-        //        // custom cases for custom exception types if needed
-
-        //        default:
-        //            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-        //            await context.Response.WriteAsJsonAsync(new UnhandledHydroError(
-        //                Message: "There was a problem with this operation and it wasn't finished",
-        //                Data: null
-        //            ));
-
-        //            return;
-        //    }
-        //}));
-
-        String nlogConfigFilename = "nlog.config";
-
-        if (env.IsDevelopment())
-        {
-            var developmentNlogConfigFilename = "nlog.development.config";
-            if (File.Exists(Path.Combine(env.ContentRootPath, developmentNlogConfigFilename)))
-            {
-                nlogConfigFilename = developmentNlogConfigFilename;
-            }
-
-            app.UseDeveloperExceptionPage();
-        }
-        
-        app.AddRequestLogging();
-        app.AddResponseLogging();
-        
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-
-        app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseHydro(env);
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
-            endpoints.MapRazorPages();
-        });
-
-        app.PreWarm().Wait();
-    }
-}
 
 
 [ExcludeFromCodeCoverage]
@@ -220,9 +102,27 @@ public class Program {
             .AddJsonFile("hosting.json", optional: true).AddJsonFile("hosting.development.json", optional: true)
             .AddEnvironmentVariables().Build();
 
+        String contentRoot = Directory.GetCurrentDirectory();
+        String nlogConfigPath = Path.Combine(contentRoot, "nlog.config");
+
+        LogManager.Setup(b =>
+        {
+            b.SetupLogFactory(setup =>
+            {
+                setup.AddCallSiteHiddenAssembly(typeof(NlogLogger).Assembly);
+                setup.AddCallSiteHiddenAssembly(typeof(Shared.Logger.Logger).Assembly);
+                setup.AddCallSiteHiddenAssembly(typeof(TenantMiddleware).Assembly);
+            });
+            b.LoadConfigurationFromFile(nlogConfigPath);
+        });
+
         IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args);
         hostBuilder.UseWindowsService();
         hostBuilder.UseLamar();
+        hostBuilder.ConfigureLogging((context,
+                                     loggingBuilder) => {
+            loggingBuilder.AddNLog();
+        });
         hostBuilder.ConfigureWebHostDefaults(webBuilder => {
             webBuilder.UseStartup<Startup>();
 
@@ -244,31 +144,7 @@ public class Program {
             });
 
             webBuilder.UseConfiguration(config);
-            webBuilder.ConfigureLogging((context,
-                                         loggingBuilder) => {
-                // NLog: Setup NLog for Dependency injection
-
-                //loggingBuilder.ClearProviders();
-                loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace); // TODO: Config
-
-                String nlogConfigFilename = "nlog.config";
-
-                if (context.HostingEnvironment.IsDevelopment()) {
-                    var developmentNlogConfigFilename = "nlog.development.config";
-                    if (File.Exists(Path.Combine(context.HostingEnvironment.ContentRootPath,
-                            developmentNlogConfigFilename))) {
-                        nlogConfigFilename = developmentNlogConfigFilename;
-                    }
-                }
-
-                NLog.LogManager.Setup().LoadConfigurationFromFile(nlogConfigFilename);
-                loggingBuilder.AddNLog();
-
-                var loggerFactory = new NLog.Extensions.Logging.NLogLoggerFactory();
-                var l = loggerFactory.CreateLogger("");
-                Shared.Logger.Logger.Initialise(l);
-                Startup.Configuration.LogConfiguration(Shared.Logger.Logger.LogWarning);
-            });
+            
             webBuilder.UseKestrel(options =>
             {
                 var port = 5004;
@@ -294,28 +170,14 @@ public class Program {
     }
 
     private static X509Certificate2 LoadCertificate(String path) {
-        Shared.Logger.Logger.LogWarning(path);
-        var g = Directory.Exists($"{path}//Certificates");
-        if (g) {
-            {
+        //just to ensure that we are picking the right file! little bit of ugly code:
+        var files = Directory.GetFiles($"{path}/Certificates");
 
-                //just to ensure that we are picking the right file! little bit of ugly code:
-                var files = Directory.GetFiles($"{path}/Certificates");
-                foreach (String file in files) {
-                    Shared.Logger.Logger.LogWarning(file);
-                }
-                var certificateFile = files.First(name => name.Contains("pfx"));
-                Console.WriteLine($"Certficate File: {certificateFile}");
+        var certificateFile = files.First(name => name.Contains("pfx"));
+        Console.WriteLine($"Certficate File: {certificateFile}");
 
-                var x509 = new X509Certificate2(certificateFile, "password");
-                return x509;
-            }
-        }
-        else {
-            Shared.Logger.Logger.LogWarning($"Folder [{path}//Certificates] doesnt exist");
-        }
-
-        return null;
+        var x509 = new X509Certificate2(certificateFile, "password");
+        return x509;
     }
 }
 

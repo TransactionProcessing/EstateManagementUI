@@ -53,7 +53,7 @@ namespace EstateManagementUI.Pages.Merchant.MerchantsList
         {
                 await PopulateTokenAndEstateId();
 
-                Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(AccessToken, EstateId);
+                Queries.GetMerchantsQuery query = new Queries.GetMerchantsQuery(this.CorrelationId, AccessToken, EstateId);
 
                 Result<List<MerchantModel>> response = await Mediator.Send(query, CancellationToken.None);
                 if (response.IsFailed)
