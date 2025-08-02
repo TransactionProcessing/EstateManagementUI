@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FileProcessor.Client" Version="2025.7.2-build82" />
+    <PackageReference Include="FileProcessor.Client" Version="2025.7.2" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
       <PrivateAssets>all</PrivateAssets>
@@ -18,11 +18,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Shared" Version="2025.7.10" />
+    <PackageReference Include="Shared" Version="2025.7.13" />
     <PackageReference Include="SimpleResults" Version="4.0.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="EstateReportingAPI.Client" Version="2025.7.2-build69" />
-    <PackageReference Include="TransactionProcessor.Client" Version="2025.7.2-build189" />
+    <PackageReference Include="EstateReportingAPI.Client" Version="2025.7.2" />
+    <PackageReference Include="TransactionProcessor.Client" Version="2025.7.2" />
   </ItemGroup>
 
 </Project>
