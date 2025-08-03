@@ -137,7 +137,6 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             List<String> requiredProjections = new List<String>();
 
-            requiredProjections.Add("CallbackHandlerEnricher.js");
             requiredProjections.Add("EstateAggregator.js");
             requiredProjections.Add("MerchantAggregator.js");
             requiredProjections.Add("MerchantBalanceCalculator.js");
@@ -210,6 +209,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"AppSettings:ClientSecret=Secret1");
             environmentVariables.Add($"DataReloadConfig:DefaultInSeconds=1");
             environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
+            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:TransactionProcessorReadModel", "TransactionProcessorReadModel", this.UseSecureSqlServerDatabase));
 
             TraceX("About to Built Estate Management UI Container");
             ContainerBuilder containerBuilder = new Builder().UseContainer()

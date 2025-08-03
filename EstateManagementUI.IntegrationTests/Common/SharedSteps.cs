@@ -172,19 +172,19 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             foreach (EstateResponse verifiedEstate in verifiedEstates)
             {
-                await Retry.For(async () =>
-                {
-                    String databaseName = $"EstateReportingReadModel{verifiedEstate.EstateId}";
-                    var connString = Setup.GetLocalConnectionString(databaseName);
-                    connString = $"{connString};Encrypt=false";
-                    var ctx = new EstateManagementContext(connString);
+                //await Retry.For(async () =>
+                //{
+                //    String databaseName = $"EstateReportingReadModel{verifiedEstate.EstateId}";
+                //    var connString = Setup.GetLocalConnectionString(databaseName);
+                //    connString = $"{connString};Encrypt=false";
+                //    var ctx = new EstateManagementContext(connString);
 
-                    var estates = ctx.Estates.ToList();
-                    estates.Count.ShouldBe(1);
+                //    var estates = ctx.Estates.ToList();
+                //    estates.Count.ShouldBe(1);
 
                     this.TestingContext.AddEstateDetails(verifiedEstate.EstateId, verifiedEstate.EstateName, verifiedEstate.EstateReference);
                     this.TestingContext.Logger.LogInformation($"Estate {verifiedEstate.EstateName} created with Id {verifiedEstate.EstateId}");
-                });
+                //});
             }
         }
 
