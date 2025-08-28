@@ -7,6 +7,8 @@ using Shared.General;
 using Shared.Middleware;
 using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 [ExcludeFromCodeCoverage]
 public class Startup {
@@ -118,6 +120,18 @@ public class Startup {
         {
             endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
             endpoints.MapRazorPages();
+            endpoints.MapHealthChecks("health",
+                new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = Shared.HealthChecks.HealthCheckMiddleware.WriteResponse
+                });
+            endpoints.MapHealthChecks("healthui",
+                new HealthCheckOptions
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
         });
 
         app.PreWarm().Wait();
