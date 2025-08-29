@@ -117,6 +117,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             configuration.Add("AppSettings:SecurityService", "http://127.0.0.1");
             configuration.Add("AppSettings:MessagingServiceApi", "http://127.0.0.1");
             configuration.Add("AppSettings:TransactionProcessorApi", "http://127.0.0.1");
+            configuration.Add("AppSettings:FileProcessorApi", "http://127.0.0.1");
             configuration.Add("AppSettings:DatabaseEngine", "SqlServer");
             configuration.Add("AppSettings:EstateReportingApi", "http://127.0.0.1");
 
