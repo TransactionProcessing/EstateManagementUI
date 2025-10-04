@@ -86,6 +86,7 @@ namespace EstateManagementUI.Pages.Contract.Contract
 
         private async Task UpdateExitingContract()
         {
+            // This will be implemented later
         }
 
         public List<OptionItem> GetOperators()

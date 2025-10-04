@@ -6,8 +6,5 @@ namespace EstateManagementUI.Pages.Reporting
     [ExcludeFromCodeCoverage]
     public class IndexModel : PageModel
     {
-        public void OnGet()
-        {
-        }
     }
 }

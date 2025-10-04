@@ -24,11 +24,6 @@ namespace EstateManagementUI.Pages.Merchant.MerchantDetails
         public AddDeviceDialog(IMediator mediator, IPermissionsService permissionsService) : base(mediator, permissionsService, MerchantFunctions.AddContract) {
         }
 
-        public override async Task MountAsync()
-        {
-            
-        }
-
         public async Task Save() {
             await this.PopulateTokenAndEstateId();
 
