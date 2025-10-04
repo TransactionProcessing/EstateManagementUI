@@ -5,13 +5,13 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 [ExcludeFromCodeCoverage]
 public record EstateFunctions
 {
-    public const string View = "View Estate";
-    public const string ViewUsersList = "View Estate Users";
-    public const string ViewOperatorsList = "View Estate Operators";
-    
-    //public const string Edit = "Edit Estate";
-    //public const string AddOperator = "Add Operator";
-    //public const string RemoveOperator = "Remove Operator";
-    //public const string AddUser = "Add User";
-    //public const string RemoveUser = "Remove User";
+    public static readonly string View = "View Estate";
+    public static readonly string ViewUsersList = "View Estate Users";
+    public static readonly string ViewOperatorsList = "View Estate Operators";
+
+    //public static readonly string Edit = "Edit Estate";
+    //public static readonly string AddOperator = "Add Operator";
+    //public static readonly string RemoveOperator = "Remove Operator";
+    //public static readonly string AddUser = "Add User";
+    //public static readonly string RemoveUser = "Remove User";
 }

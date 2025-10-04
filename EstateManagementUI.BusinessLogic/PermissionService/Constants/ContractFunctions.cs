@@ -5,15 +5,15 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 [ExcludeFromCodeCoverage]
 public record ContractFunctions
 {
-    public const string ViewList = "View Contracts List";
-    public const string ViewProductsList = "View Contract Products List";
-    public const string ViewProductFeesList = "View Contract Product Fees List";
-    public const string View = "View Contract";
-    public const string Edit = "Edit Contract";
-    public const string New = "New Contract";
-    //public const string Remove = "Remove Contract";
-    public const string AddProduct = "Add Product";
-    //public const string RemoveProduct = "Remove Product";
-    public const string AddTransactionFee = "Add Transaction Fee";
-    //public const string RemoveTransactionFee = "Remove Transaction Fee";
+    public static readonly string ViewList = "View Contracts List";
+    public static readonly string ViewProductsList = "View Contract Products List";
+    public static readonly string ViewProductFeesList = "View Contract Product Fees List";
+    public static readonly string View = "View Contract";
+    public static readonly string Edit = "Edit Contract";
+    public static readonly string New = "New Contract";
+    //public static readonly  string Remove = "Remove Contract";
+    public static readonly string AddProduct = "Add Product";
+    //public static readonly  string RemoveProduct = "Remove Product";
+    public static readonly string AddTransactionFee = "Add Transaction Fee";
+    //public static readonly  string RemoveTransactionFee = "Remove Transaction Fee";
 }

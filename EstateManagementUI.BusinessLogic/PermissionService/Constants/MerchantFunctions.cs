@@ -5,18 +5,18 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 [ExcludeFromCodeCoverage]
 public class MerchantFunctions
 {
-    public const string ViewList = "View Merchant List";
-    public const string View = "View Single Merchant";
-    public const string Edit = "Edit Merchant";
-    public const string New = "New Merchant";
-    //public const string Remove = "Remove Merchant";
-    public const string AddOperator = "Add Operator";
-    public const string RemoveOperator = "Remove Operator";
-    public const string AddContract = "Add Contract";
-    public const string RemoveContract = "Remove Contract";
-    public const string AddDevice = "Add Device";
-    //public const string RemoveDevice = "Remove Device";
-    //public const string EditAddress = "Edit Merchant Address";
-    //public const string EditContact = "Edit Merchant Contact";
-    public const string MakeDeposit = "Make Deposit";
+    public static readonly string ViewList = "View Merchant List";
+    public static readonly string View = "View Single Merchant";
+    public static readonly string Edit = "Edit Merchant";
+    public static readonly string New = "New Merchant";
+    //public static readonly string Remove = "Remove Merchant";
+    public static readonly string AddOperator = "Add Operator";
+    public static readonly string RemoveOperator = "Remove Operator";
+    public static readonly string AddContract = "Add Contract";
+    public static readonly string RemoveContract = "Remove Contract";
+    public static readonly string AddDevice = "Add Device";
+    //public static readonly string RemoveDevice = "Remove Device";
+    //public static readonly string EditAddress = "Edit Merchant Address";
+    //public static readonly string EditContact = "Edit Merchant Contact";
+    public static readonly string MakeDeposit = "Make Deposit";
 }

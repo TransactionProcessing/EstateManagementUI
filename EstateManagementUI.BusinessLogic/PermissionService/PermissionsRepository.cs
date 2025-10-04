@@ -59,7 +59,6 @@ public class PermissionsRepository : IPermissionsRepository {
     public async Task<Result> MigrateDatabase(CancellationToken cancellationToken) {
         PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
         try {
-            var conn = context.Database.GetConnectionString();
             await context.Database.MigrateAsync(cancellationToken);
             return Result.Success();
         }
@@ -116,11 +115,6 @@ public class PermissionsRepository : IPermissionsRepository {
         
 
         try {
-            if (function.Name == "New Merchant") {
-                var f = context.Functions.Where(f => f.ApplicationSectionId == function.ApplicationSectionId &&
-                                                     f.Name == function.Name).ToList();
-            }
-
             await context.Functions.AddAsync(function, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             return Result.Success();
