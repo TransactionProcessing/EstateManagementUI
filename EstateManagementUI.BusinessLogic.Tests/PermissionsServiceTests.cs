@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EstateManagementUI.BusinessLogic.Common;
+using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
 using Xunit;
 
 namespace EstateManagementUI.BusinessLogic.Tests

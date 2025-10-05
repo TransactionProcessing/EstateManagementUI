@@ -325,7 +325,7 @@ public class PermissionsRepository : IPermissionsRepository {
     {
         return typeof(T)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(field => field.IsLiteral && !field.IsInitOnly)
+            .Where(field => field.IsStatic && field.FieldType == typeof(string))
             .Select(field => (category, (string)field.GetValue(null)))
             .ToList();
     }
@@ -334,7 +334,7 @@ public class PermissionsRepository : IPermissionsRepository {
     {
         return typeof(T)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(field => field.IsLiteral && !field.IsInitOnly)
+            .Where(field => field.IsStatic && field.FieldType == typeof(string))
             .Select(field => (string)field.GetValue(null))
             .ToList();
     }
