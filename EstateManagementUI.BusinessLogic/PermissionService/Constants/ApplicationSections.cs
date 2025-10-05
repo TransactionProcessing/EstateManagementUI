@@ -5,11 +5,11 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 [ExcludeFromCodeCoverage]
 public class ApplicationSections
 {
-    public const string Dashboard = "Dashboard";
-    public const string Estate = "Estate";
-    public const string Merchant = "Merchant";
-    public const string Contract = "Contract";
-    public const string Operator = "Operator";
-    public const string FileProcessing = "FileProcessing";
-    public const string Reporting = "Reporting";
+    public static readonly string Dashboard = "Dashboard";
+    public static readonly string Estate = "Estate";
+    public static readonly string Merchant = "Merchant";
+    public static readonly string Contract = "Contract";
+    public static readonly string Operator = "Operator";
+    public static readonly string FileProcessing = "FileProcessing";
+    public static readonly string Reporting = "Reporting";
 }

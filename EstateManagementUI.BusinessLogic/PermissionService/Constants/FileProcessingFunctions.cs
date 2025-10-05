@@ -4,7 +4,7 @@ namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 [ExcludeFromCodeCoverage]
 public record FileProcessingFunctions {
-    public const String ViewImportLogList = "View Import Log List";
-    public const String ViewImportLog = "View Import Log";
-    public const String ViewFileDetails = "View File Details";
+    public static readonly String ViewImportLogList = "View Import Log List";
+    public static readonly String ViewImportLog = "View Import Log";
+    public static readonly String ViewFileDetails = "View File Details";
 }

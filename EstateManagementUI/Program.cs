@@ -89,9 +89,6 @@ public class Program {
 
         // Create the DbContextFactory instance
         var contextFactory = new DbContextFactory<PermissionsContext>(serviceProvider, optionsBuilder.Options, new DbContextFactorySource<PermissionsContext>());
-
-        //var ctx = await contextFactory.CreateDbContextAsync(cancellationToken);
-
         return new PermissionsRepository(contextFactory);
     }
 
@@ -184,12 +181,10 @@ public class Program {
 [ExcludeFromCodeCoverage]
 public static class Extensions {
     public static async Task PreWarm(this IApplicationBuilder applicationBuilder) {
-        Boolean isIntegrationTest =
-            ConfigurationReader.GetValueOrDefault<Boolean>("AppSettings", "isIntegrationTest", false);
         IPermissionsRepository permissionsRepository = Startup.Container.GetService<IPermissionsRepository>();
         Shared.Logger.Logger.LogWarning($"Before Migrate and Seed");
         Shared.Logger.Logger.LogWarning($"About to Migrate");
-        Result result = await permissionsRepository.MigrateDatabase(CancellationToken.None);
+        await permissionsRepository.MigrateDatabase(CancellationToken.None);
 
         Shared.Logger.Logger.LogWarning($"About to Seed");
         // TODO: dont do this if data already present...

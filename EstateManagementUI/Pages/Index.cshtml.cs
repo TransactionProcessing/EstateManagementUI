@@ -12,14 +12,5 @@ namespace EstateManagementUI.Pages
         public IndexModel() {
             Logger.LogWarning("In index page");
         }
-
-        public void OnGet()
-        {
-
-        }
-
-        public async Task LogIn() {
-
-        }
     }
 }

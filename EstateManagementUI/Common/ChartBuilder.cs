@@ -227,7 +227,6 @@ public class ChartBuilder {
             Converters = new List<JsonConverter> { new JavaScriptFunctionConverter() },
         };
 
-        var x = JsonConvert.SerializeObject(chartOptions, settings);
         return JsonConvert.SerializeObject(chartOptions, settings);
     }
 
@@ -291,14 +290,7 @@ public class ChartBuilder {
             throw new NotImplementedException();
         }
 
-        public override bool CanConvert(Type objectType)
-        {
-            if (objectType == typeof(JavaScriptFunction)) {
-                int i = 0;
-            }
-
-            return objectType == typeof(JavaScriptFunction);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(JavaScriptFunction);
     }
 
     public class StandardJavascriptFunctions {

@@ -59,7 +59,6 @@ public class PermissionsRepository : IPermissionsRepository {
     public async Task<Result> MigrateDatabase(CancellationToken cancellationToken) {
         PermissionsContext context = await this.PermissionsContextFactory.CreateDbContextAsync(cancellationToken);
         try {
-            var conn = context.Database.GetConnectionString();
             await context.Database.MigrateAsync(cancellationToken);
             return Result.Success();
         }
@@ -116,11 +115,6 @@ public class PermissionsRepository : IPermissionsRepository {
         
 
         try {
-            if (function.Name == "New Merchant") {
-                var f = context.Functions.Where(f => f.ApplicationSectionId == function.ApplicationSectionId &&
-                                                     f.Name == function.Name).ToList();
-            }
-
             await context.Functions.AddAsync(function, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             return Result.Success();
@@ -331,7 +325,7 @@ public class PermissionsRepository : IPermissionsRepository {
     {
         return typeof(T)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(field => field.IsLiteral && !field.IsInitOnly)
+            .Where(field => field.IsStatic && field.FieldType == typeof(string))
             .Select(field => (category, (string)field.GetValue(null)))
             .ToList();
     }
@@ -340,7 +334,7 @@ public class PermissionsRepository : IPermissionsRepository {
     {
         return typeof(T)
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-            .Where(field => field.IsLiteral && !field.IsInitOnly)
+            .Where(field => field.IsStatic && field.FieldType == typeof(string))
             .Select(field => (string)field.GetValue(null))
             .ToList();
     }
