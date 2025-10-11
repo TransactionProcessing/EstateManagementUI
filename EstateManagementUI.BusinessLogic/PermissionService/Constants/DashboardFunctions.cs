@@ -3,8 +3,7 @@
 namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 [ExcludeFromCodeCoverage]
-public class DashboardFunctions
+public record DashboardFunctions
 {
-
     public static readonly string Dashboard = "Dashboard";
 }

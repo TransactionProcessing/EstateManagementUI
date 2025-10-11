@@ -61,7 +61,8 @@ public class AddOperatorDialogTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AssignOperatorToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._addOperatorDialog.Events.ShouldContain(e => e is MerchantPageEvents.OperatorAssignedToMerchantEvent);
+        var events = this._addOperatorDialog.GetDispatchedEvents();
+        events.ShouldContain(e => e is MerchantPageEvents.OperatorAssignedToMerchantEvent);
     }
 
     [Fact]
@@ -81,7 +82,8 @@ public class AddOperatorDialogTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AssignOperatorToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._addOperatorDialog.Events.ShouldContain(e => e is ShowMessage && ((ShowMessage)e).Message == "Error assigning operator to Merchant");
+        var events = this._addOperatorDialog.GetDispatchedEvents();
+        events.ShouldContain(e => e is ShowMessage && ((ShowMessage)e).Message == "Error assigning operator to Merchant");
     }
 
     [Fact]
@@ -91,6 +93,7 @@ public class AddOperatorDialogTests
         await this._addOperatorDialog.Close();
 
         // Assert
-        this._addOperatorDialog.Events.ShouldContain(e => e is MerchantPageEvents.HideAddOperatorDialog);
+        var events = this._addOperatorDialog.GetDispatchedEvents();
+        events.ShouldContain(e => e is MerchantPageEvents.HideAddOperatorDialog);
     }
 }

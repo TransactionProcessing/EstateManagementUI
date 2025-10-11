@@ -269,7 +269,6 @@ public class ChartBuilder {
             Converters = new List<JsonConverter> { new JavaScriptFunctionConverter() },
         };
 
-        var x = JsonConvert.SerializeObject(chartOptions, settings);
         return JsonConvert.SerializeObject(chartOptions, settings);
     }
 
@@ -293,7 +292,7 @@ public class ChartBuilder {
         public override bool CanConvert(Type objectType) => objectType == typeof(JavaScriptFunction);
     }
 
-    public class StandardJavascriptFunctions {
+    public record StandardJavascriptFunctions {
         public static JavaScriptFunction CurrencyFormatter =>
             new JavaScriptFunction("function (value) {\r\n      return \"KES \" + value;\r\n    }");
         public static JavaScriptFunction EmptyFunction =>
