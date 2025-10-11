@@ -3,7 +3,7 @@
 namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 [ExcludeFromCodeCoverage]
-public class ApplicationSections
+public record ApplicationSections
 {
     public static readonly string Dashboard = "Dashboard";
     public static readonly string Estate = "Estate";

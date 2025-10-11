@@ -3,7 +3,7 @@
 namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 [ExcludeFromCodeCoverage]
-public class OperatorFunctions
+public record OperatorFunctions
 {
     public static readonly string ViewList = "View Operators List";
     public static readonly string View = "View Single Operator";

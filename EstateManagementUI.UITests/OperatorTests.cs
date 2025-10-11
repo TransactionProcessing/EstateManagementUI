@@ -74,8 +74,9 @@ public class OperatorTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AddNewOperatorCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._operator.Events.Count.ShouldBe(1);
-        this._operator.Events[0].ShouldBeOfType<OperatorPageEvents.OperatorCreatedEvent>();
+        var events = this._operator.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<OperatorPageEvents.OperatorCreatedEvent>();
     }
 
     [Fact]
@@ -94,8 +95,9 @@ public class OperatorTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AddNewOperatorCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._operator.Events.Count.ShouldBe(1);
-        this._operator.Events[0].ShouldBeOfType<ShowMessage>();
+        var events = this._operator.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<ShowMessage>();
     }
 
     [Fact]
@@ -114,8 +116,9 @@ public class OperatorTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateOperatorCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._operator.Events.Count.ShouldBe(1);
-        this._operator.Events[0].ShouldBeOfType<OperatorPageEvents.OperatorUpdatedEvent>();
+        var events = this._operator.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<OperatorPageEvents.OperatorUpdatedEvent>();
     }
 
     [Fact]
@@ -134,7 +137,8 @@ public class OperatorTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateOperatorCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._operator.Events.Count.ShouldBe(1);
-        this._operator.Events[0].ShouldBeOfType<ShowMessage>();
+        var events = this._operator.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<ShowMessage>();
     }
 }

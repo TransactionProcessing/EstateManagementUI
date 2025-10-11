@@ -19,6 +19,7 @@ namespace EstateManagementUI.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Route("createRoles")]
         public async Task<IActionResult> CreateRoles(List<String> rolesList, CancellationToken cancellationToken) {
             List<(Int32 roleId, String roleName)> results = new List<(Int32 roleId, String roleName)>();

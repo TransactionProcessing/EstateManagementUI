@@ -54,9 +54,10 @@ public class AddDeviceDialogTests {
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AssignDeviceToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._addDeviceDialog.Events.Count.ShouldBe(2);
-        this._addDeviceDialog.Events[0].ShouldBeOfType<MerchantPageEvents.DeviceAssignedToMerchantEvent>();
-        this._addDeviceDialog.Events[1].ShouldBeOfType<MerchantPageEvents.HideAddDeviceDialog>();
+        var events = this._addDeviceDialog.GetDispatchedEvents();
+        events.Count.ShouldBe(2);
+        events[0].ShouldBeOfType<MerchantPageEvents.DeviceAssignedToMerchantEvent>();
+        events[1].ShouldBeOfType<MerchantPageEvents.HideAddDeviceDialog>();
     }
 
     [Fact]
@@ -73,10 +74,11 @@ public class AddDeviceDialogTests {
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AssignDeviceToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        
-        this._addDeviceDialog.Events.Count.ShouldBe(2);
-        this._addDeviceDialog.Events[0].ShouldBeOfType<ShowMessage>();
-        this._addDeviceDialog.Events[1].ShouldBeOfType<MerchantPageEvents.HideAddDeviceDialog>();
+
+        var events = this._addDeviceDialog.GetDispatchedEvents();
+        events.Count.ShouldBe(2);
+        events[0].ShouldBeOfType<ShowMessage>();
+        events[1].ShouldBeOfType<MerchantPageEvents.HideAddDeviceDialog>();
     }
 
     [Fact]
@@ -86,7 +88,8 @@ public class AddDeviceDialogTests {
         await this._addDeviceDialog.Close();
 
         // Assert
-        this._addDeviceDialog.Events.Count.ShouldBe(1);
-        this._addDeviceDialog.Events[0].ShouldBeOfType<MerchantPageEvents.HideAddDeviceDialog>();
+        var events = this._addDeviceDialog.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<MerchantPageEvents.HideAddDeviceDialog>();
     }
 }

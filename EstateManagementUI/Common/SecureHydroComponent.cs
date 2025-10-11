@@ -54,9 +54,11 @@ public class SecureHydroComponent : StandardHydroComponent {
         Dispatch(GetFullTypeName(typeof(TEvent)), data, scope, asynchronous);
     }
 
-    public List<Object> Events = new List<Object>();
-    public String LocationUrl;
-    public object Payload;
+    private List<Object> Events = new List<Object>();
+
+    public List<Object> GetDispatchedEvents() => this.Events;
+    public String LocationUrl { get; private set; }
+    public object Payload { get; private set; }
 
 
     public new void Dispatch<TEvent>(string name,
