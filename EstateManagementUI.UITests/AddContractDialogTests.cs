@@ -57,9 +57,10 @@ public class AddContractDialogTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AssignContractToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._addContractDialog.Events.Count.ShouldBe(2);
-        this._addContractDialog.Events[0].ShouldBeOfType<MerchantPageEvents.ContractAssignedToMerchantEvent>();
-        this._addContractDialog.Events[1].ShouldBeOfType<MerchantPageEvents.HideAddContractDialog>();
+        var events = this._addContractDialog.GetDispatchedEvents();
+        events.Count.ShouldBe(2);
+        events[0].ShouldBeOfType<MerchantPageEvents.ContractAssignedToMerchantEvent>();
+        events[1].ShouldBeOfType<MerchantPageEvents.HideAddContractDialog>();
     }
 
     [Fact]
@@ -76,9 +77,10 @@ public class AddContractDialogTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AssignContractToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._addContractDialog.Events.Count.ShouldBe(2);
-        this._addContractDialog.Events[0].ShouldBeOfType<ShowMessage>();
-        this._addContractDialog.Events[1].ShouldBeOfType<MerchantPageEvents.HideAddContractDialog>();
+        var events = this._addContractDialog.GetDispatchedEvents();
+        events.Count.ShouldBe(2);
+        events[0].ShouldBeOfType<ShowMessage>();
+        events[1].ShouldBeOfType<MerchantPageEvents.HideAddContractDialog>();
     }
 
     [Fact]
@@ -88,7 +90,8 @@ public class AddContractDialogTests
         await this._addContractDialog.Close();
 
         // Assert
-        this._addContractDialog.Events.Count.ShouldBe(1);
-        this._addContractDialog.Events[0].ShouldBeOfType<MerchantPageEvents.HideAddContractDialog>();
+        var events = this._addContractDialog.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<MerchantPageEvents.HideAddContractDialog>();
     }
 }

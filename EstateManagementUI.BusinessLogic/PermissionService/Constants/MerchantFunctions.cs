@@ -3,7 +3,7 @@
 namespace EstateManagementUI.BusinessLogic.PermissionService.Constants;
 
 [ExcludeFromCodeCoverage]
-public class MerchantFunctions
+public record MerchantFunctions
 {
     public static readonly string ViewList = "View Merchant List";
     public static readonly string View = "View Single Merchant";

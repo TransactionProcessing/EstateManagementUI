@@ -42,7 +42,8 @@ public class EditMerchantTests
         this._editMerchant.AddOperator();
 
         // Assert
-        this._editMerchant.Events.ShouldContain(e => e is MerchantPageEvents.ShowAddOperatorDialog);
+        var events = this._editMerchant.GetDispatchedEvents();
+        events.ShouldContain(e => e is MerchantPageEvents.ShowAddOperatorDialog);
     }
 
     [Fact]
@@ -51,7 +52,8 @@ public class EditMerchantTests
         this._editMerchant.AddContract();
 
         // Assert
-        this._editMerchant.Events.ShouldContain(e => e is MerchantPageEvents.ShowAddContractDialog);
+        var events = this._editMerchant.GetDispatchedEvents();
+        events.ShouldContain(e => e is MerchantPageEvents.ShowAddContractDialog);
     }
 
     [Fact]
@@ -61,7 +63,8 @@ public class EditMerchantTests
         this._editMerchant.AddDevice();
 
         // Assert
-        this._editMerchant.Events.ShouldContain(e => e is MerchantPageEvents.ShowAddDeviceDialog);
+        var events = this._editMerchant.GetDispatchedEvents();
+        events.ShouldContain(e => e is MerchantPageEvents.ShowAddDeviceDialog);
     }
 
 
@@ -127,7 +130,8 @@ public class MakeDepositTests {
 
         await this._makeDeposit.Save();
 
-        this._makeDeposit.Events.ShouldContain(e => e is MerchantPageEvents.DepositMadeEvent);
+        var events = this._makeDeposit.GetDispatchedEvents();
+        events.ShouldContain(e => e is MerchantPageEvents.DepositMadeEvent);
     }
 
     [Fact]
@@ -143,6 +147,7 @@ public class MakeDepositTests {
 
         await this._makeDeposit.Save();
 
-        this._makeDeposit.Events.ShouldContain(e => e is ShowMessage);
+        var events = this._makeDeposit.GetDispatchedEvents();
+        events.ShouldContain(e => e is ShowMessage);
     }
 }

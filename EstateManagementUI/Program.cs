@@ -78,7 +78,7 @@ public class Program {
         Program.CreateHostBuilder(args).Build().Run();
     }
 
-    private static async Task<IPermissionsRepository> CreatePermissionsRepository(String dbConnString, CancellationToken cancellationToken)
+    private static IPermissionsRepository CreatePermissionsRepository(String dbConnString)
     {
         var optionsBuilder = new DbContextOptionsBuilder<PermissionsContext>();
         optionsBuilder.UseSqlite(dbConnString); // Configure for your database provider

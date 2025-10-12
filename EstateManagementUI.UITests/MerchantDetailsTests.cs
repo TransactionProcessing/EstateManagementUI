@@ -136,8 +136,9 @@ public class MerchantDetailsTests
 
         // Assert
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.AddMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._merchant.Events.Count.ShouldBe(1);
-        this._merchant.Events[0].ShouldBeOfType(typeof(ShowMessage));
+        var events = this._merchant.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType(typeof(ShowMessage));
     }
 
     [Fact]
@@ -218,8 +219,9 @@ public class MerchantDetailsTests
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Never);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Never);
-        this._merchant.Events.Count.ShouldBe(1);
-        this._merchant.Events[0].ShouldBeOfType<ShowMessage>();
+        var events = this._merchant.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<ShowMessage>();
     }
 
     [Fact]
@@ -260,8 +262,9 @@ public class MerchantDetailsTests
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Never);
-        this._merchant.Events.Count.ShouldBe(1);
-        this._merchant.Events[0].ShouldBeOfType<ShowMessage>();
+        var events = this._merchant.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<ShowMessage>();
     }
 
     [Fact]
@@ -302,8 +305,9 @@ public class MerchantDetailsTests
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         this._mediatorMock.Verify(m => m.Send(It.IsAny<Commands.UpdateMerchantContactCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-        this._merchant.Events.Count.ShouldBe(1);
-        this._merchant.Events[0].ShouldBeOfType<ShowMessage>();
+        var events = this._merchant.GetDispatchedEvents();
+        events.Count.ShouldBe(1);
+        events[0].ShouldBeOfType<ShowMessage>();
     }
 
     [Fact]
