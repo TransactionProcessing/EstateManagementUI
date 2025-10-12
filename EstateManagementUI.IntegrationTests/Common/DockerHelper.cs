@@ -251,6 +251,8 @@ namespace EstateManagementUI.IntegrationTests.Common
                     if (response.IsSuccessStatusCode == false) {
                         TraceX($"createRolesRequest failed [{response.StatusCode}]");
                     }
+                    TraceX($"Create Role Response is [{response.StatusCode}]");
+
                     HttpRequestMessage addUserToRoleRequest = new(HttpMethod.Post,
                         $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/addUserToRole");
                     List<AddUserToRole> userRolesList = new List<AddUserToRole> {
@@ -266,6 +268,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                         TraceX($"addUserToRoleRequest failed [{response.StatusCode}]");
                     }
 
+                    TraceX($"Add User to Role Response is [{response.StatusCode}]");
 
                     HttpRequestMessage getRolePermissionsRequest = new(HttpMethod.Get,
                         $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/getRolePermissions?roleName=Administrator");
