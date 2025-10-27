@@ -393,10 +393,12 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add("Logging:LogLevel:Microsoft=Information");
             environmentVariables.Add("Logging:LogLevel:Default=Information");
             environmentVariables.Add("Logging:EventLog:LogLevel:Default=None");
-            
+
+            var imageDetailsResult = this.GetImageDetails(ContainerType.SecurityService);
+
             ContainerBuilder securityServiceContainer = new Builder().UseContainer().WithName(this.SecurityServiceContainerName)
                                                                      .WithEnvironment(environmentVariables.ToArray())
-                                                                     .UseImageDetails(this.GetImageDetails(ContainerType.SecurityService))
+                                                                     .UseImageDetails(imageDetailsResult.Data)
                                                                      .ExposePort(DockerPorts.SecurityServiceDockerPort)
                                                                      .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
                                                                      .SetDockerCredentials(this.DockerCredentials);

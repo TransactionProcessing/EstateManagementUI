@@ -7,22 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FileProcessor.Client" Version="2025.7.2" />
-    <PackageReference Include="MediatR" Version="12.5.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.5">
+    <PackageReference Include="FileProcessor.Client" Version="2025.8.1" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Shared" Version="2025.7.13" />
+    <PackageReference Include="Shared" Version="2025.10.2" />
     <PackageReference Include="SimpleResults" Version="4.0.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="EstateReportingAPI.Client" Version="2025.7.2" />
-    <PackageReference Include="TransactionProcessor.Client" Version="2025.7.2" />
+    <PackageReference Include="EstateReportingAPI.Client" Version="2025.8.1" />
+    <PackageReference Include="TransactionProcessor.Client" Version="2025.9.1" />
   </ItemGroup>
 
 </Project>
