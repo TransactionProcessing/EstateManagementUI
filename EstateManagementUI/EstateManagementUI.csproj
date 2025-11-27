@@ -46,7 +46,7 @@
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="15.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="9.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.10" />
-    <PackageReference Include="Shared" Version="2025.10.2" />
+    <PackageReference Include="Shared" Version="2025.11.11" />
     <PackageReference Include="IdentityModel" Version="6.2.0" />
     <PackageReference Include="MediatR" Version="13.1.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="6.0.5" />
