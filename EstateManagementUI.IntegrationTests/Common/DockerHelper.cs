@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Ductus.FluentDocker.Builders;
-using Ductus.FluentDocker.Common;
-using Ductus.FluentDocker.Executors;
-using Ductus.FluentDocker.Extensions;
-using Ductus.FluentDocker.Services;
-using Ductus.FluentDocker.Services.Extensions;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
@@ -23,14 +17,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Networks;
+using Shared.IntegrationTesting.TestContainers;
 using TransactionProcessor.Client;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
-    public class DockerHelper : global::Shared.IntegrationTesting.DockerHelper
+    public class DockerHelper : global::Shared.IntegrationTesting.TestContainers.DockerHelper
     {
         #region Fields
 
@@ -76,7 +75,7 @@ namespace EstateManagementUI.IntegrationTests.Common
         private static void AddEntryToHostsFile(String ipaddress,
                                                 String hostname)
         {
-            if (FdOs.IsWindows())
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 var hostsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
                 using (StreamWriter w = File.AppendText(hostsPath))
@@ -84,7 +83,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                     w.WriteLine($"{ipaddress} {hostname}");
                 }
             }
-            else if (FdOs.IsLinux())
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 DockerHelper.ExecuteBashCommand($"echo {ipaddress} {hostname} | sudo tee -a /etc/hosts");
             }
@@ -148,8 +147,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         public override ContainerBuilder SetupTransactionProcessorContainer()
         {
 
-            List<String> variables = new List<String>();
-            variables.Add($"OperatorConfiguration:PataPawaPrePay:Url=http://{this.TestHostContainerName}:{DockerPorts.TestHostPort}/api/patapawaprepay");
+            Dictionary<String, String> variables = new Dictionary<String, String>();
+            variables.Add($"OperatorConfiguration:PataPawaPrePay:Url",$"http://{this.TestHostContainerName}:{DockerPorts.TestHostPort}/api/patapawaprepay");
 
             this.AdditionalVariables.Add(ContainerType.FileProcessor, variables);
             
@@ -189,45 +188,55 @@ namespace EstateManagementUI.IntegrationTests.Common
             this.ProjectionManagementClient = new EventStoreProjectionManagementClient(ConfigureEventStoreSettings());
         }
         
-        private async Task<IContainerService> StartEstateManagementUiContainer(List<INetworkService> networkServices,
+        private async Task<IContainer> StartEstateManagementUiContainer(List<INetwork> networkServices,
                                                                                Int32 securityServiceContainerPort,
                                                                                Int32 securityServiceLocalPort)
         {
             TraceX("About to Start Estate Management UI Container");
 
-            List<String> environmentVariables = this.GetCommonEnvironmentVariables();
-            environmentVariables.Add($"AppSettings:Authority=https://{this.SecurityServiceContainerName}:0");  // The port is set to 0 to stop defaulting to 443
-            environmentVariables.Add($"AppSettings:SecurityServiceLocalPort={securityServiceLocalPort}");
-            environmentVariables.Add($"AppSettings:SecurityServicePort={securityServiceContainerPort}");
-            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
+           var environmentVariables = this.GetCommonEnvironmentVariables();
+
+           environmentVariables.Remove("AppSettings:ClientId");
+           environmentVariables.Remove("AppSettings:ClientSecret");
+
+            environmentVariables.Add("AppSettings:Authority",$"https://{this.SecurityServiceContainerName}:0");  // The port is set to 0 to stop defaulting to 443
+            environmentVariables.Add("AppSettings:SecurityServiceLocalPort",$"{securityServiceLocalPort}");
+            environmentVariables.Add("AppSettings:SecurityServicePort",$"{securityServiceContainerPort}");
+            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors",$"true");
             //environmentVariables.Add($"AppSettings:PermissionsBypass=true");
-            environmentVariables.Add($"AppSettings:IsIntegrationTest=true");
-            environmentVariables.Add($"ASPNETCORE_ENVIRONMENT=Development");
-            environmentVariables.Add($"EstateManagementScope=estateManagement");
-            environmentVariables.Add("urls=https://*:5004");
-            environmentVariables.Add($"AppSettings:ClientId=estateUIClient");
-            environmentVariables.Add($"AppSettings:ClientSecret=Secret1");
-            environmentVariables.Add($"DataReloadConfig:DefaultInSeconds=1");
-            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors=true");
-            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:TransactionProcessorReadModel", "TransactionProcessorReadModel", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add("AppSettings:IsIntegrationTest","true");
+            environmentVariables.Add("ASPNETCORE_ENVIRONMENT","Development");
+            environmentVariables.Add("EstateManagementScope","estateManagement");
+            environmentVariables.Add("urls","https://*:5004");
+            environmentVariables.Add($"AppSettings:ClientId","estateUIClient");
+            environmentVariables.Add($"AppSettings:ClientSecret","Secret1");
+            environmentVariables.Add($"AppSettings:BackEndClientId", "serviceClient");
+            environmentVariables.Add($"AppSettings:BackEndClientSecret", "Secret1");
+            environmentVariables.Add($"DataReloadConfig:DefaultInSeconds","1");
+            environmentVariables.Add("ConnectionStrings:TransactionProcessorReadModel", this.SetConnectionString( "TransactionProcessorReadModel", this.UseSecureSqlServerDatabase));
 
             TraceX("About to Built Estate Management UI Container");
-            ContainerBuilder containerBuilder = new Builder().UseContainer()
-                                                             .WithName(this.EstateManagementUiContainerName)
-                                                             .UseImageDetails(("estatemanagementui", false))
-                                                             .WithEnvironment(environmentVariables.ToArray())
-                                                             //.UseNetwork(networkServices.ToArray())
-                                                             .ExposePort(5004)
-                                                             .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                                                             .SetDockerCredentials(this.DockerCredentials);
+            ContainerBuilder containerBuilder = new ContainerBuilder()
+                .WithName(this.EstateManagementUiContainerName)
+                .WithImage("estatemanagementui")
+                .WithEnvironment(environmentVariables)
+                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
+                //.UseNetwork(networkServices.ToArray())
+                .WithPortBinding(5004);
+                                                             //.MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
+                                                             //.SetDockerCredentials(this.DockerCredentials);
             TraceX("About to Call .Start()");
-            IContainerService builtContainer = containerBuilder.Build();
+            foreach (INetwork networkService in networkServices) {
+                containerBuilder = containerBuilder.WithNetwork(networkService);
+            }
+
+            IContainer? builtContainer = containerBuilder.Build();
             
             try{
 
-                builtContainer.Start();
-                builtContainer.WaitForPort("5004/tcp", 30000);
-                this.EstateManagementUiPort = builtContainer.ToHostExposedEndpoint($"5004/tcp").Port;
+                await builtContainer.StartAsync();
+                //builtContainer.WaitForPort("5004/tcp", 30000);
+                this.EstateManagementUiPort = builtContainer.GetMappedPublicPort($"5004");
 
                 await Task.Delay(5000);
 
@@ -317,23 +326,15 @@ namespace EstateManagementUI.IntegrationTests.Common
             }
             catch(Exception ex){
                 TraceX(ex.GetCombinedExceptionMessages());
-                ConsoleStream<String> logs = builtContainer.Logs(true, CancellationToken.None);
-                IList<String> xx = logs.ReadToEnd();
-                while (xx.Any())
-                {
-                    foreach (String s in xx)
-                    {
-                        TraceX($"Logs|{s}");
-                    }
-                    xx = logs.ReadToEnd();
-                }
+                
             }
 
             TraceX("About to attach networkServices");
-            foreach (INetworkService networkService in networkServices)
-            {
-                networkService.Attach(builtContainer, false);
-            }
+            //foreach (INetwork networkService in networkServices)
+            //{
+            //    //networkService..Attach(builtContainer, false);
+            //    builtContainer.
+            //}
 
             //Trace("About to get port");
             ////  Do a health check here
@@ -374,35 +375,38 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             
 
-            List<String> environmentVariables = this.GetCommonEnvironmentVariables();
-            environmentVariables.Add($"ServiceOptions:PublicOrigin=https://{this.SecurityServiceContainerName}:{DockerPorts.SecurityServiceDockerPort}");
-            environmentVariables.Add($"ServiceOptions:IssuerUrl=https://{this.SecurityServiceContainerName}:{DockerPorts.SecurityServiceDockerPort}");
-            environmentVariables.Add("ASPNETCORE_ENVIRONMENT=IntegrationTest");
-            environmentVariables.Add($"urls=https://*:{DockerPorts.SecurityServiceDockerPort}");
+            var environmentVariables = this.GetCommonEnvironmentVariables();
+            environmentVariables.Add($"ServiceOptions:PublicOrigin",$"https://{this.SecurityServiceContainerName}:{DockerPorts.SecurityServiceDockerPort}");
+            environmentVariables.Add($"ServiceOptions:IssuerUrl",$"https://{this.SecurityServiceContainerName}:{DockerPorts.SecurityServiceDockerPort}");
+            environmentVariables.Add("ASPNETCORE_ENVIRONMENT",$"IntegrationTest");
+            environmentVariables.Add($"urls",$"https://*:{DockerPorts.SecurityServiceDockerPort}");
 
-            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequiredLength=6");
-            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireDigit=false");
-            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireUpperCase=false");
-            environmentVariables.Add($"ServiceOptions:UserOptions:RequireUniqueEmail=false");
-            environmentVariables.Add($"ServiceOptions:SignInOptions:RequireConfirmedEmail=false");
+            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequiredLength","6");
+            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireDigit","false");
+            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireUpperCase","false");
+            environmentVariables.Add($"ServiceOptions:UserOptions:RequireUniqueEmail","false");
+            environmentVariables.Add($"ServiceOptions:SignInOptions:RequireConfirmedEmail","false");
 
-            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:PersistedGrantDbContext", $"PersistedGrantStore-{this.TestId}", this.UseSecureSqlServerDatabase));
-            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:ConfigurationDbContext", $"Configuration-{this.TestId}", this.UseSecureSqlServerDatabase));
-            environmentVariables.Add(this.SetConnectionString("ConnectionStrings:AuthenticationDbContext", $"Authentication-{this.TestId}", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add("ConnectionStrings:PersistedGrantDbContext",this.SetConnectionString($"PersistedGrantStore-{this.TestId}", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add("ConnectionStrings:ConfigurationDbContext", this.SetConnectionString($"Configuration-{this.TestId}", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add("ConnectionStrings:AuthenticationDbContext",this.SetConnectionString($"Authentication-{this.TestId}", this.UseSecureSqlServerDatabase));
 
-            environmentVariables.Add("Logging:LogLevel:Microsoft=Information");
-            environmentVariables.Add("Logging:LogLevel:Default=Information");
-            environmentVariables.Add("Logging:EventLog:LogLevel:Default=None");
+            environmentVariables.Add("Logging:LogLevel:Microsoft","Information");
+            environmentVariables.Add("Logging:LogLevel:Default","Information");
+            environmentVariables.Add("Logging:EventLog:LogLevel:Default","None");
 
             var imageDetailsResult = this.GetImageDetails(ContainerType.SecurityService);
 
-            ContainerBuilder securityServiceContainer = new Builder().UseContainer().WithName(this.SecurityServiceContainerName)
-                                                                     .WithEnvironment(environmentVariables.ToArray())
-                                                                     .UseImageDetails(imageDetailsResult.Data)
-                                                                     .ExposePort(DockerPorts.SecurityServiceDockerPort)
-                                                                     .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                                                                     .SetDockerCredentials(this.DockerCredentials);
-            
+            ContainerBuilder securityServiceContainer = new ContainerBuilder()
+                .WithName(this.SecurityServiceContainerName)
+                .WithEnvironment(environmentVariables)
+                .WithImage(imageDetailsResult.Data.imageName)
+                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
+                .WithPortBinding(DockerPorts.SecurityServiceDockerPort);
+                                                                     //.MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
+                                                                     //.SetDockerCredentials(this.DockerCredentials);
+
+                                                                 
             // Now build and return the container                
             return securityServiceContainer;
         }

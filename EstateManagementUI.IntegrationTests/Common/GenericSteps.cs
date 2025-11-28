@@ -44,13 +44,10 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             await Setup.GlobalSetup(this.TestingContext.DockerHelper);
 
-            this.TestingContext.DockerHelper.SqlServerContainer = Setup.DatabaseServerContainer;
-            this.TestingContext.DockerHelper.SqlServerNetwork = Setup.DatabaseServerNetwork;
             this.TestingContext.DockerHelper.DockerCredentials = Setup.DockerCredentials;
             this.TestingContext.DockerHelper.SqlCredentials = Setup.SqlCredentials;
             this.TestingContext.DockerHelper.SqlServerContainerName = "sharedsqlserver";
-
-
+            
             this.TestingContext.Logger = logger;
             this.TestingContext.Logger.LogInformation("About to Start Containers for Scenario Run");
             await this.TestingContext.DockerHelper.StartContainersForScenarioRun(scenarioName, dockerServices).ConfigureAwait(false);
@@ -59,7 +56,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
         [AfterScenario(Order = 1)]
         public async Task StopSystem(){
-            DockerServices sharedDockerServices = DockerServices.SqlServer;
+            DockerServices sharedDockerServices = DockerServices.None;
             await this.TestingContext.DockerHelper.StopContainersForScenarioRun(sharedDockerServices).ConfigureAwait(false);
         }
     }

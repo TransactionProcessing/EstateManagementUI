@@ -68,13 +68,10 @@ public static class DataHelperFunctions {
         Result<List<OperatorModel>> response = await mediator.Send(query, CancellationToken.None);
 
         List<SelectListItem> resultList = new();
-        foreach (OperatorModel operatorModel in response.Data)
-        {
-            resultList.Add(new SelectListItem
-            {
-                Value = operatorModel.OperatorId.ToString(),
-                Text = operatorModel.Name
-            });
+        if (response.IsSuccess) {
+            foreach (OperatorModel operatorModel in response.Data) {
+                resultList.Add(new SelectListItem { Value = operatorModel.OperatorId.ToString(), Text = operatorModel.Name });
+            }
         }
 
         List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();
@@ -108,13 +105,10 @@ public static class DataHelperFunctions {
         Result<List<MerchantModel>> response = await mediator.Send(query, CancellationToken.None);
 
         List<SelectListItem> resultList = new();
-        foreach (MerchantModel merchantModel in response.Data)
-        {
-            resultList.Add(new SelectListItem
-            {
-                Value = merchantModel.MerchantId.ToString(),
-                Text = merchantModel.MerchantName,
-            });
+        if (response.IsSuccess) {
+            foreach (MerchantModel merchantModel in response.Data) {
+                resultList.Add(new SelectListItem { Value = merchantModel.MerchantId.ToString(), Text = merchantModel.MerchantName, });
+            }
         }
 
         List<SelectListItem> ordered = resultList.OrderBy(m => m.Text).ToList();

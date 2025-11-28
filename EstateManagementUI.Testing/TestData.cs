@@ -27,7 +27,24 @@ using TodaysSettlement = EstateReportingAPI.DataTransferObjects.TodaysSettlement
 namespace EstateManagementUI.Testing
 {
     public static class TestData {
-        
+        public static IReadOnlyDictionary<String, String> DefaultAppSettings =>
+            new Dictionary<String, String>
+            {
+                ["AppSettings:ClientId"] = "clientId",
+                ["AppSettings:ClientSecret"] = "clientSecret",
+                ["AppSettings:BackEndClientId"] = "clientId",
+                ["AppSettings:BackEndClientSecret"] = "clientSecret",
+                ["AppSettings:UseConnectionStringConfig"] = "false",
+                ["EventStoreSettings:ConnectionString"] = "esdb://127.0.0.1:2113",
+                ["SecurityConfiguration:Authority"] = "https://127.0.0.1",
+                ["AppSettings:EstateManagementApi"] = "http://127.0.0.1",
+                ["AppSettings:SecurityService"] = "http://127.0.0.1",
+                ["AppSettings:ContractProductFeeCacheExpiryInHours"] = "",
+                ["AppSettings:ContractProductFeeCacheEnabled"] = "",
+                ["ConnectionStrings:HealthCheck"] = "HealthCheck",
+                ["ConnectionStrings:EstateReportingReadModel"] = "",
+                ["ConnectionStrings:TransactionProcessorReadModel"] = ""
+            };
         public static DateTime ComparisonDate = new DateTime(2024,1,1);
         public static String AccessToken = "token1";
         public static CorrelationId CorrelationId = CorrelationIdHelper.New();
