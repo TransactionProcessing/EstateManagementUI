@@ -18,6 +18,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="SecurityService.Client" Version="2025.10.1" />
     <PackageReference Include="Shared" Version="2025.11.11" />
     <PackageReference Include="SimpleResults" Version="4.0.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />

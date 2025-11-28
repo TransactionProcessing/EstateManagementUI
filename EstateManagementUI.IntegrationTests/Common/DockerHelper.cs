@@ -195,6 +195,10 @@ namespace EstateManagementUI.IntegrationTests.Common
             TraceX("About to Start Estate Management UI Container");
 
            var environmentVariables = this.GetCommonEnvironmentVariables();
+
+           environmentVariables.Remove("AppSettings:ClientId");
+           environmentVariables.Remove("AppSettings:ClientSecret");
+
             environmentVariables.Add("AppSettings:Authority",$"https://{this.SecurityServiceContainerName}:0");  // The port is set to 0 to stop defaulting to 443
             environmentVariables.Add("AppSettings:SecurityServiceLocalPort",$"{securityServiceLocalPort}");
             environmentVariables.Add("AppSettings:SecurityServicePort",$"{securityServiceContainerPort}");
@@ -206,8 +210,9 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add("urls","https://*:5004");
             environmentVariables.Add($"AppSettings:ClientId","estateUIClient");
             environmentVariables.Add($"AppSettings:ClientSecret","Secret1");
+            environmentVariables.Add($"AppSettings:BackEndClientId", "serviceClient");
+            environmentVariables.Add($"AppSettings:BackEndClientSecret", "Secret1");
             environmentVariables.Add($"DataReloadConfig:DefaultInSeconds","1");
-            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors","true");
             environmentVariables.Add("ConnectionStrings:TransactionProcessorReadModel", this.SetConnectionString( "TransactionProcessorReadModel", this.UseSecureSqlServerDatabase));
 
             TraceX("About to Built Estate Management UI Container");
@@ -215,6 +220,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 .WithName(this.EstateManagementUiContainerName)
                 .WithImage("estatemanagementui")
                 .WithEnvironment(environmentVariables)
+                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
                 //.UseNetwork(networkServices.ToArray())
                 .WithPortBinding(5004);
                                                              //.MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
@@ -381,7 +387,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add($"ServiceOptions:UserOptions:RequireUniqueEmail","false");
             environmentVariables.Add($"ServiceOptions:SignInOptions:RequireConfirmedEmail","false");
 
-            environmentVariables.Add("ConnectionStrings: PersistedGrantDbContext",this.SetConnectionString($"PersistedGrantStore-{this.TestId}", this.UseSecureSqlServerDatabase));
+            environmentVariables.Add("ConnectionStrings:PersistedGrantDbContext",this.SetConnectionString($"PersistedGrantStore-{this.TestId}", this.UseSecureSqlServerDatabase));
             environmentVariables.Add("ConnectionStrings:ConfigurationDbContext", this.SetConnectionString($"Configuration-{this.TestId}", this.UseSecureSqlServerDatabase));
             environmentVariables.Add("ConnectionStrings:AuthenticationDbContext",this.SetConnectionString($"Authentication-{this.TestId}", this.UseSecureSqlServerDatabase));
 
@@ -395,10 +401,12 @@ namespace EstateManagementUI.IntegrationTests.Common
                 .WithName(this.SecurityServiceContainerName)
                 .WithEnvironment(environmentVariables)
                 .WithImage(imageDetailsResult.Data.imageName)
+                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
                 .WithPortBinding(DockerPorts.SecurityServiceDockerPort);
                                                                      //.MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
                                                                      //.SetDockerCredentials(this.DockerCredentials);
-            
+
+                                                                 
             // Now build and return the container                
             return securityServiceContainer;
         }

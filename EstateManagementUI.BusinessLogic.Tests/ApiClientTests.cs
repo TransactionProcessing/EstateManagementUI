@@ -6,6 +6,7 @@ using EstateReportingAPI.Client;
 using EstateReportingAPI.DataTransferObjects;
 using FileProcessor.Client;
 using Moq;
+using SecurityService.Client;
 using Shared.Logger;
 using Shouldly;
 using SimpleResults;
@@ -26,6 +27,7 @@ public class ApiClientTests {
     private readonly Mock<ITransactionProcessorClient> TransactionProcessorClient;
     private readonly Mock<IFileProcessorClient> FileProcessorClient;
     private readonly Mock<IEstateReportingApiClient> EstateReportingApiClient;
+    private readonly Mock<ISecurityServiceClient> SecurityServiceClient;
 
     public ApiClientTests() {
         Logger.Initialise(NullLogger.Instance);
@@ -33,8 +35,10 @@ public class ApiClientTests {
         this.TransactionProcessorClient = new Mock<ITransactionProcessorClient>();
         this.FileProcessorClient = new Mock<IFileProcessorClient>();
         this.EstateReportingApiClient = new Mock<IEstateReportingApiClient>();
+        this.SecurityServiceClient = new Mock<ISecurityServiceClient>();
 
-        this.ApiClient = new ApiClient(this.TransactionProcessorClient.Object, this.FileProcessorClient.Object, this.EstateReportingApiClient.Object);
+        this.ApiClient = new ApiClient(this.TransactionProcessorClient.Object, this.FileProcessorClient.Object, this.EstateReportingApiClient.Object,
+            this.SecurityServiceClient.Object);
     }
 
 

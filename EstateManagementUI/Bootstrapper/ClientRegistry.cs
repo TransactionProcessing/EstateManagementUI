@@ -6,6 +6,7 @@ using FileProcessor.Client;
 using System.Diagnostics.CodeAnalysis;
 using ClientProxyBase;
 using EstateReportingAPI.Client;
+using SecurityService.Client;
 using TransactionProcessor.Client;
 
 namespace EstateManagementUI.Bootstrapper;
@@ -21,6 +22,7 @@ public class ClientRegistry : ServiceRegistry
         this.RegisterHttpClient<IFileProcessorClient, FileProcessorClient>();
         this.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
         this.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
+        this.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
         this.AddSingleton<Func<String, String>>(container => (serviceName) => ConfigurationReader.GetBaseServerUri(serviceName).OriginalString);
     }
 }
