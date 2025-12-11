@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System.Drawing;
+﻿using Google.Protobuf.Reflection;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Edge;
@@ -7,6 +6,8 @@ using OpenQA.Selenium.Firefox;
 using Reqnroll;
 using Reqnroll.BoDi;
 using Shared.IntegrationTesting;
+using System.Diagnostics.Contracts;
+using System.Drawing;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
@@ -56,9 +57,10 @@ namespace EstateManagementUI.IntegrationTests.Common
                 case null:
                 case "Chrome":
                 {
-                    ChromeOptions options = new ChromeOptions();
-                    
-                    options = options.WithNoSandBox()
+                    Environment.SetEnvironmentVariable("SE_MANAGER", "0");
+                        ChromeOptions options = new();
+
+                        options = options.WithNoSandBox()
                                      .WithAcceptInsecureCertificate()
                                      .WithDisableDevShmUsage()
                                      .WithDisableExtensions()
@@ -66,8 +68,8 @@ namespace EstateManagementUI.IntegrationTests.Common
                                      .WithDisableInfobars()
                                      .WithHeadless(isCi)
                                      .WithWindowSize(1920, 1080);
-                    
-                    webDriver = new ChromeDriver(options);
+                        var service = ChromeDriverService.CreateDefaultService("/usr/bin");
+                        webDriver = new ChromeDriver(service, options);
                     
                     break;
                 }
