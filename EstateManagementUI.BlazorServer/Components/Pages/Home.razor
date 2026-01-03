@@ -1,7 +1,120 @@
 ﻿@page "/"
+@using MediatR
+@inject IMediator Mediator
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Dashboard - Estate Management</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="space-y-6">
+    <!-- Welcome Header -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Estate Management and Administration</h1>
+        <p class="text-gray-600">Manage your estate, merchants and transactions with ease.</p>
+    </div>
 
-Welcome to your new app.
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Estates Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">Estates</h2>
+                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+            </div>
+            <ul class="space-y-2 text-gray-600 mb-4">
+                <li>• Manage estate details</li>
+                <li>• Manage estate users</li>
+                <li>• Operator Management</li>
+                <li>• Contract Management</li>
+            </ul>
+            <a href="/estate" class="btn btn-primary w-full text-center">View Estates</a>
+        </div>
+
+        <!-- Merchants Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">Merchants</h2>
+                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                </svg>
+            </div>
+            <ul class="space-y-2 text-gray-600 mb-4">
+                <li>• Manage Merchant Details</li>
+                <li>• Merchant Configuration</li>
+                <li>• Balance Management</li>
+                <li>• Fee Management</li>
+            </ul>
+            <a href="/merchants" class="btn btn-success w-full text-center">View Merchants</a>
+        </div>
+
+        <!-- Transaction Processing Card -->
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-gray-900">Transaction Processing</h2>
+                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+            <ul class="space-y-2 text-gray-600 mb-4">
+                <li>• Transaction Enquiry</li>
+                <li>• Transaction Reports</li>
+                <li>• Settlement Processing</li>
+                <li>• Bulk Transaction Files</li>
+            </ul>
+            <a href="/file-processing" class="btn btn-primary w-full text-center">View Files</a>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Quick Links -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h3>
+            <div class="space-y-2">
+                <a href="/contracts" class="block p-3 rounded hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span class="text-gray-700">Contract Management</span>
+                    </div>
+                </a>
+                <a href="/operators" class="block p-3 rounded hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                        </svg>
+                        <span class="text-gray-700">Operator Management</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">Estate Management</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">Transaction Processing</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-600">File Processing</span>
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // Can load dashboard data here using the stubbed mediator if needed
+        await base.OnInitializedAsync();
+    }
+}
