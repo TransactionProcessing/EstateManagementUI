@@ -22,9 +22,6 @@
                 <p class="text-gray-600 mt-1">Reference: @merchant.MerchantReference</p>
             </div>
             <div class="flex space-x-2">
-                <button class="btn btn-secondary" @onclick="ViewMerchant">
-                    View Only
-                </button>
                 <button class="btn btn-secondary" @onclick="BackToList">
                     Back to List
                 </button>
@@ -877,11 +874,6 @@
     {
         errorMessage = null;
         successMessage = null;
-    }
-
-    private void ViewMerchant()
-    {
-        NavigationManager.NavigateTo($"/merchants/{MerchantId}");
     }
 
     private void BackToList()
