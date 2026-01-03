@@ -1,0 +1,31 @@
+@inherits LayoutComponentBase
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+</head>
+<body class="h-full bg-gray-50">
+    @Body
+
+    <!-- Error UI -->
+    <div id="blazor-error-ui" class="fixed bottom-0 right-0 left-0 bg-red-600 text-white p-4 shadow-lg" data-nosnippet style="display: none;">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                </svg>
+                <span>An unhandled error has occurred.</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="." class="underline hover:no-underline">Reload</a>
+                <button class="dismiss text-white hover:text-gray-200">✕</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
