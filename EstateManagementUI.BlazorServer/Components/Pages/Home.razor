@@ -4,106 +4,243 @@
 <PageTitle>Dashboard - Estate Management</PageTitle>
 
 <div class="space-y-6">
-    <!-- Welcome Header -->
-    <div class="bg-white rounded-lg shadow-md p-6">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Estate Management and Administration</h1>
-        <p class="text-gray-600">Manage your estate, merchants and transactions with ease.</p>
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+            <p class="text-gray-600 mt-1">Welcome to Estate Management System</p>
+        </div>
+        <div class="text-sm text-gray-500">
+            <i class="bi bi-calendar"></i> @DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+        </div>
     </div>
 
-    <!-- Quick Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Estates Card -->
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-gray-900">Estates</h2>
-                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Info Boxes (AdminLTE-style) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Total Estates -->
+        <div class="info-box">
+            <div class="info-box-icon bg-admin-info">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                 </svg>
             </div>
-            <ul class="space-y-2 text-gray-600 mb-4">
-                <li>• Manage estate details</li>
-                <li>• Manage estate users</li>
-                <li>• Operator Management</li>
-                <li>• Contract Management</li>
-            </ul>
-            <a href="/estate" class="btn btn-primary w-full text-center">View Estates</a>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Estates</span>
+                <span class="info-box-number">1</span>
+            </div>
         </div>
 
-        <!-- Merchants Card -->
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-gray-900">Merchants</h2>
-                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Total Merchants -->
+        <div class="info-box">
+            <div class="info-box-icon bg-admin-success">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                 </svg>
             </div>
-            <ul class="space-y-2 text-gray-600 mb-4">
-                <li>• Manage Merchant Details</li>
-                <li>• Merchant Configuration</li>
-                <li>• Balance Management</li>
-                <li>• Fee Management</li>
-            </ul>
-            <a href="/merchants" class="btn btn-success w-full text-center">View Merchants</a>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Merchants</span>
+                <span class="info-box-number">24</span>
+            </div>
         </div>
 
-        <!-- Transaction Processing Card -->
-        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-semibold text-gray-900">Transaction Processing</h2>
-                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        <!-- Total Contracts -->
+        <div class="info-box">
+            <div class="info-box-icon bg-admin-warning">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
             </div>
-            <ul class="space-y-2 text-gray-600 mb-4">
-                <li>• Transaction Enquiry</li>
-                <li>• Transaction Reports</li>
-                <li>• Settlement Processing</li>
-                <li>• Bulk Transaction Files</li>
-            </ul>
-            <a href="/file-processing" class="btn btn-primary w-full text-center">View Files</a>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Contracts</span>
+                <span class="info-box-number">48</span>
+            </div>
+        </div>
+
+        <!-- Total Operators -->
+        <div class="info-box">
+            <div class="info-box-icon bg-admin-danger">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                </svg>
+            </div>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Operators</span>
+                <span class="info-box-number">12</span>
+            </div>
         </div>
     </div>
 
-    <!-- Recent Activity Section -->
+    <!-- Main Content Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Estates Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Estate Management</h3>
+            </div>
+            <div class="card-body">
+                <div class="flex items-center justify-center mb-4">
+                    <svg class="w-16 h-16 text-admin-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <ul class="space-y-2 text-gray-600 mb-4">
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Manage estate details
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Manage estate users
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Operator Management
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="/estate" class="btn btn-primary w-full justify-center">View Estate</a>
+            </div>
+        </div>
+
+        <!-- Merchants Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Merchant Management</h3>
+            </div>
+            <div class="card-body">
+                <div class="flex items-center justify-center mb-4">
+                    <svg class="w-16 h-16 text-admin-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                </div>
+                <ul class="space-y-2 text-gray-600 mb-4">
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Manage Merchant Details
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Balance Management
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Fee Management
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="/merchants" class="btn btn-success w-full justify-center">View Merchants</a>
+            </div>
+        </div>
+
+        <!-- File Processing Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">File Processing</h3>
+            </div>
+            <div class="card-body">
+                <div class="flex items-center justify-center mb-4">
+                    <svg class="w-16 h-16 text-admin-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <ul class="space-y-2 text-gray-600 mb-4">
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Transaction Files
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Settlement Processing
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-4 h-4 mr-2 text-admin-success" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        Bulk Processing
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <a href="/file-processing" class="btn btn-info w-full justify-center">View Files</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Quick Links -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h3>
-            <div class="space-y-2">
-                <a href="/contracts" class="block p-3 rounded hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center space-x-3">
-                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        <span class="text-gray-700">Contract Management</span>
-                    </div>
-                </a>
-                <a href="/operators" class="block p-3 rounded hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center space-x-3">
-                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                        </svg>
-                        <span class="text-gray-700">Operator Management</span>
-                    </div>
-                </a>
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Quick Links</h3>
+            </div>
+            <div class="card-body">
+                <div class="space-y-2">
+                    <a href="/contracts" class="flex items-center p-3 rounded hover:bg-gray-50 transition-colors group">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
+                            <svg class="w-5 h-5 text-admin-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-gray-700 font-medium">Contract Management</span>
+                    </a>
+                    <a href="/operators" class="flex items-center p-3 rounded hover:bg-gray-50 transition-colors group">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors">
+                            <svg class="w-5 h-5 text-admin-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                            </svg>
+                        </div>
+                        <span class="text-gray-700 font-medium">Operator Management</span>
+                    </a>
+                </div>
             </div>
         </div>
 
         <!-- System Status -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-600">Estate Management</span>
-                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-600">Transaction Processing</span>
-                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-600">File Processing</span>
-                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Active</span>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">System Status</h3>
+            </div>
+            <div class="card-body">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+                            <span class="text-gray-700 font-medium">Estate Management</span>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+                            <span class="text-gray-700 font-medium">Transaction Processing</span>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
+                            <span class="text-gray-700 font-medium">File Processing</span>
+                        </div>
+                        <span class="badge badge-success">Active</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,7 +250,6 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        // Can load dashboard data here using the stubbed mediator if needed
         await base.OnInitializedAsync();
     }
 }
