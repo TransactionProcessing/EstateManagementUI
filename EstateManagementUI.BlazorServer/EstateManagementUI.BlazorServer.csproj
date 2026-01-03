@@ -16,9 +16,14 @@
   </ItemGroup>
 
   <!-- Build Tailwind CSS before build -->
+  <Target Name="NpmInstall" BeforeTargets="BuildTailwindCSS" Condition="!Exists('node_modules')">
+    <Message Importance="high" Text="Installing npm packages..." />
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" ContinueOnError="false" />
+  </Target>
+
   <Target Name="BuildTailwindCSS" BeforeTargets="BeforeBuild">
-    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" />
-    <Exec Command="npm run css:build" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Message Importance="high" Text="Building Tailwind CSS..." />
+    <Exec Command="npm run css:build" WorkingDirectory="$(MSBuildProjectDirectory)" ContinueOnError="false" IgnoreExitCode="false" />
   </Target>
 
 </Project>
