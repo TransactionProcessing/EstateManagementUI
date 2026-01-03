@@ -131,7 +131,8 @@
   }
   
   /* Forms */
-  .form-control {
+  .form-control,
+  .input {
     @apply block w-full px-3 py-2 border border-gray-300 rounded shadow-sm focus:border-admin-primary focus:ring-1 focus:ring-admin-primary transition-colors duration-150;
   }
   
