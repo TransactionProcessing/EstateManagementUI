@@ -4,6 +4,53 @@
 
 /* AdminLTE-inspired components */
 @layer components {
+  /* Navigation Menu Items */
+  .nav-menu-item {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.625rem 0.75rem;
+    color: rgb(209 213 219);
+    border-radius: 0.375rem;
+    transition: all 0.15s;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .nav-menu-item:hover {
+    background-color: #1f2125;
+    color: white;
+  }
+  
+  .nav-menu-item.active {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+  }
+  
+  .nav-menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+  }
+  
+  .nav-menu-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25rem;
+    white-space: nowrap;
+  }
+  
+  .nav-menu-item:hover .nav-menu-icon svg {
+    transform: scale(1.1);
+    transition: transform 0.15s ease-in-out;
+  }
+  
+
   /* Buttons */
   .btn {
     @apply inline-flex items-center justify-center px-4 py-2 border border-transparent rounded font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2;
