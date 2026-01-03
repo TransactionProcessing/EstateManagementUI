@@ -1,0 +1,219 @@
+@page "/operators/{OperatorId:guid}/edit"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit Operator</PageTitle>
+
+<div class="space-y-6">
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (operator != null)
+    {
+        <!-- Page Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Edit Operator: @operator.Name</h1>
+            </div>
+            <div class="flex space-x-2">
+                <button class="btn btn-secondary" @onclick="BackToList">
+                    Back to List
+                </button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Success</p>
+                <p class="text-sm">@successMessage</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Error</p>
+                <p class="text-sm">@errorMessage</p>
+            </div>
+        }
+
+        <!-- Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+
+                <!-- Operator Details Section -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Operator Details</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Operator Name <span class="text-red-500">*</span>
+                            </label>
+                            <InputText @bind-Value="model.OperatorName" class="input w-full" placeholder="Enter operator name" />
+                            <ValidationMessage For="@(() => model.OperatorName)" class="text-red-600 text-sm mt-1" />
+                        </div>
+
+                        <div>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <InputCheckbox @bind-Value="model.RequireCustomMerchantNumber" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                                <span class="text-sm font-medium text-gray-700">Require Custom Merchant Number</span>
+                            </label>
+                            <p class="text-sm text-gray-500 mt-1 ml-7">Enable this if the operator requires a custom merchant number for transactions</p>
+                        </div>
+
+                        <div>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <InputCheckbox @bind-Value="model.RequireCustomTerminalNumber" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                                <span class="text-sm font-medium text-gray-700">Require Custom Terminal Number</span>
+                            </label>
+                            <p class="text-sm text-gray-500 mt-1 ml-7">Enable this if the operator requires a custom terminal number for transactions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end space-x-4 pt-4 border-t">
+                    <button type="button" class="btn btn-secondary" @onclick="BackToList" disabled="@isSaving">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Update Operator</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <p class="text-gray-600">Operator not found</p>
+            <button class="btn btn-primary mt-4" @onclick="BackToList">Back to List</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid OperatorId { get; set; }
+
+    private OperatorModel? @operator;
+    private EditOperatorModel model = new();
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOperator();
+    }
+
+    private async Task LoadOperator()
+    {
+        try
+        {
+            isLoading = true;
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            var result = await Mediator.Send(new Queries.GetOperatorQuery(correlationId, accessToken, estateId, OperatorId));
+            
+            if (result.IsSuccess && result.Data != null)
+            {
+                @operator = result.Data;
+                
+                // Initialize model with current values
+                model = new EditOperatorModel
+                {
+                    OperatorName = @operator.Name,
+                    RequireCustomMerchantNumber = @operator.RequireCustomMerchantNumber,
+                    RequireCustomTerminalNumber = @operator.RequireCustomTerminalNumber
+                };
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSaving = true;
+        ClearMessages();
+
+        try
+        {
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            var command = new Commands.UpdateOperatorCommand(
+                correlationId,
+                accessToken,
+                estateId,
+                OperatorId,
+                model.OperatorName!,
+                model.RequireCustomMerchantNumber,
+                model.RequireCustomTerminalNumber
+            );
+
+            var result = await Mediator.Send(command);
+
+            if (result.IsSuccess)
+            {
+                successMessage = "Operator updated successfully";
+                await LoadOperator();
+            }
+            else
+            {
+                errorMessage = result.Message ?? "Failed to update operator";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ClearMessages()
+    {
+        errorMessage = null;
+        successMessage = null;
+    }
+
+    private void BackToList()
+    {
+        NavigationManager.NavigateTo("/operators");
+    }
+
+    public class EditOperatorModel
+    {
+        [Required(ErrorMessage = "Operator name is required")]
+        public string? OperatorName { get; set; }
+
+        public bool RequireCustomMerchantNumber { get; set; }
+
+        public bool RequireCustomTerminalNumber { get; set; }
+    }
+}
