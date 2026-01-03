@@ -104,78 +104,88 @@
                     @foreach (var product in contractModel.Products)
                     {
                         <div class="border border-gray-200 rounded-lg p-4">
-                            <div class="flex items-start justify-between">
-                                <div class="flex-1">
-                                    <h4 class="text-md font-semibold text-gray-900 mb-2">@product.ProductName</h4>
-                                    <div class="grid grid-cols-2 gap-4 text-sm">
-                                        <div>
-                                            <span class="text-gray-600">Display Text:</span>
-                                            <span class="text-gray-900 font-medium ml-1">@product.DisplayText</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-600">Product Type:</span>
-                                            <span class="text-gray-900 font-medium ml-1">@product.ProductType</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-600">Value:</span>
-                                            <span class="text-gray-900 font-medium ml-1">@product.Value</span>
-                                        </div>
-                                        <div>
-                                            <span class="text-gray-600">Transaction Fees:</span>
-                                            <span class="text-gray-900 font-medium ml-1">@product.NumberOfFees</span>
-                                        </div>
-                                    </div>
-
-                                    <!-- Transaction Fees Management -->
-                                    @if (product.TransactionFees != null && product.TransactionFees.Any())
-                                    {
-                                        <div class="mt-4 border-t pt-4">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <h5 class="text-sm font-semibold text-gray-700">Transaction Fees</h5>
-                                                <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ShowAddFeeModal(product.ContractProductId)">
-                                                    Add Fee
-                                                </button>
-                                            </div>
-                                            <div class="space-y-2">
-                                                @foreach (var fee in product.TransactionFees)
-                                                {
-                                                    <div class="bg-gray-50 rounded p-3 text-sm flex items-start justify-between">
-                                                        <div class="flex-1 grid grid-cols-2 gap-2">
-                                                            <div>
-                                                                <span class="text-gray-600">Description:</span>
-                                                                <span class="text-gray-900 font-medium ml-1">@fee.Description</span>
-                                                            </div>
-                                                            <div>
-                                                                <span class="text-gray-600">Value:</span>
-                                                                <span class="text-gray-900 font-medium ml-1">@fee.Value.ToString("F2")</span>
-                                                            </div>
-                                                            <div>
-                                                                <span class="text-gray-600">Calculation Type:</span>
-                                                                <span class="text-gray-900 font-medium ml-1">@fee.CalculationType</span>
-                                                            </div>
-                                                            <div>
-                                                                <span class="text-gray-600">Fee Type:</span>
-                                                                <span class="text-gray-900 font-medium ml-1">@fee.FeeType</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="mt-4 border-t pt-4">
-                                            <div class="flex items-center justify-between">
-                                                <p class="text-sm text-gray-500">No transaction fees added yet.</p>
-                                                <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ShowAddFeeModal(product.ContractProductId)">
-                                                    Add Fee
-                                                </button>
-                                            </div>
-                                        </div>
-                                    }
+                            <div class="flex items-start justify-between mb-2">
+                                <h4 class="text-md font-semibold text-gray-900">@product.ProductName</h4>
+                                <div class="flex space-x-2">
+                                    <button type="button" class="text-red-600 hover:text-red-800 p-1" @onclick="() => RemoveProduct(product.ContractProductId)" title="Remove Product">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">Display Text:</span>
+                                    <span class="text-gray-900 font-medium ml-1">@product.DisplayText</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Product Type:</span>
+                                    <span class="text-gray-900 font-medium ml-1">@product.ProductType</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Value:</span>
+                                    <span class="text-gray-900 font-medium ml-1">@product.Value</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">Transaction Fees:</span>
+                                    <span class="text-gray-900 font-medium ml-1">@product.NumberOfFees</span>
+                                </div>
+                            </div>
+
+                            <!-- Transaction Fees Management -->
+                            @if (product.TransactionFees != null && product.TransactionFees.Any())
+                            {
+                                <div class="mt-4 border-t pt-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="text-sm font-semibold text-gray-700">Transaction Fees</h5>
+                                        <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ShowAddFeeModal(product.ContractProductId)">
+                                            Add Fee
+                                        </button>
+                                    </div>
+                                    <div class="space-y-2">
+                                        @foreach (var fee in product.TransactionFees)
+                                        {
+                                            <div class="bg-gray-50 rounded p-3 text-sm flex items-start justify-between">
+                                                <div class="flex-1 grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <span class="text-gray-600">Description:</span>
+                                                        <span class="text-gray-900 font-medium ml-1">@fee.Description</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-gray-600">Value:</span>
+                                                        <span class="text-gray-900 font-medium ml-1">@fee.Value.ToString("F2")</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-gray-600">Calculation Type:</span>
+                                                        <span class="text-gray-900 font-medium ml-1">@fee.CalculationType</span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-gray-600">Fee Type:</span>
+                                                        <span class="text-gray-900 font-medium ml-1">@fee.FeeType</span>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="text-red-600 hover:text-red-800 ml-2" @onclick="() => RemoveFee(product.ContractProductId, fee.TransactionFeeId)" title="Remove Fee">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="mt-4 border-t pt-4">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm text-gray-500">No transaction fees added yet.</p>
+                                        <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ShowAddFeeModal(product.ContractProductId)">
+                                            Add Fee
+                                        </button>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -291,6 +301,30 @@
                         </label>
                         <InputText @bind-Value="feeModel.Description" class="input w-full" placeholder="Enter fee description" />
                         <ValidationMessage For="@(() => feeModel.Description)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Calculation Type <span class="text-red-500">*</span>
+                        </label>
+                        <InputSelect @bind-Value="feeModel.CalculationType" class="input w-full">
+                            <option value="">-- Select Calculation Type --</option>
+                            <option value="0">Fixed</option>
+                            <option value="1">Percentage</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => feeModel.CalculationType)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Fee Type <span class="text-red-500">*</span>
+                        </label>
+                        <InputSelect @bind-Value="feeModel.FeeType" class="input w-full">
+                            <option value="">-- Select Fee Type --</option>
+                            <option value="0">Merchant</option>
+                            <option value="1">Service Provider</option>
+                        </InputSelect>
+                        <ValidationMessage For="@(() => feeModel.FeeType)" class="text-red-600 text-sm mt-1" />
                     </div>
 
                     <div>
@@ -526,6 +560,36 @@
         successMessage = null;
     }
 
+    private async void RemoveProduct(Guid productId)
+    {
+        if (contractModel == null || contractModel.Products == null) return;
+
+        var product = contractModel.Products.FirstOrDefault(p => p.ContractProductId == productId);
+        if (product != null)
+        {
+            // Note: Backend API for product removal not yet implemented
+            // For now, show a message to the user
+            errorMessage = "Product removal is not yet supported by the backend API. This feature will be available once the backend endpoint is implemented.";
+        }
+    }
+
+    private async void RemoveFee(Guid productId, Guid feeId)
+    {
+        if (contractModel == null || contractModel.Products == null) return;
+
+        var product = contractModel.Products.FirstOrDefault(p => p.ContractProductId == productId);
+        if (product?.TransactionFees != null)
+        {
+            var fee = product.TransactionFees.FirstOrDefault(f => f.TransactionFeeId == feeId);
+            if (fee != null)
+            {
+                // Note: Backend API for fee removal not yet implemented
+                // For now, show a message to the user
+                errorMessage = "Transaction fee removal is not yet supported by the backend API. This feature will be available once the backend endpoint is implemented.";
+            }
+        }
+    }
+
     private void BackToView()
     {
         NavigationManager.NavigateTo($"/contracts/{ContractId}");
@@ -559,6 +623,12 @@
     {
         [Required(ErrorMessage = "Description is required")]
         public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Calculation type is required")]
+        public string? CalculationType { get; set; }
+
+        [Required(ErrorMessage = "Fee type is required")]
+        public string? FeeType { get; set; }
 
         [Required(ErrorMessage = "Fee value is required")]
         [Range(0.01, double.MaxValue, ErrorMessage = "Fee value must be greater than 0")]
