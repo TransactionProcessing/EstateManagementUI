@@ -1,0 +1,176 @@
+@page "/contracts/new"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create New Contract</PageTitle>
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Create New Contract</h1>
+            <p class="text-gray-600 mt-1">Add a new contract to the estate</p>
+        </div>
+        <button class="btn btn-secondary" @onclick="Cancel">
+            Cancel
+        </button>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <p class="font-medium">Error</p>
+            <p class="text-sm">@errorMessage</p>
+        </div>
+    }
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+            <DataAnnotationsValidator />
+
+            <!-- Contract Details Section -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Contract Details</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Description <span class="text-red-500">*</span>
+                        </label>
+                        <InputText @bind-Value="model.Description" class="input w-full" placeholder="Enter contract description" />
+                        <ValidationMessage For="@(() => model.Description)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Operator <span class="text-red-500">*</span>
+                        </label>
+                        @if (isLoadingOperators)
+                        {
+                            <div class="text-sm text-gray-500">Loading operators...</div>
+                        }
+                        else if (operators != null && operators.Any())
+                        {
+                            <InputSelect @bind-Value="model.OperatorId" class="input w-full">
+                                <option value="">-- Select Operator --</option>
+                                @foreach (var op in operators)
+                                {
+                                    <option value="@op.OperatorId">@op.Name</option>
+                                }
+                            </InputSelect>
+                            <ValidationMessage For="@(() => model.OperatorId)" class="text-red-600 text-sm mt-1" />
+                        }
+                        else
+                        {
+                            <p class="text-sm text-red-600">No operators available. Please create an operator first.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4 pt-4 border-t">
+                <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@isSaving">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                    @if (isSaving)
+                    {
+                        <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                        <span>Saving...</span>
+                    }
+                    else
+                    {
+                        <span>Create Contract</span>
+                    }
+                </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreateContractFormModel model = new();
+    private bool isSaving = false;
+    private bool isLoadingOperators = true;
+    private string? errorMessage;
+    private List<OperatorModel>? operators;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadOperators();
+    }
+
+    private async Task LoadOperators()
+    {
+        try
+        {
+            isLoadingOperators = true;
+            var result = await Mediator.Send(new Queries.GetOperatorsQuery(CorrelationIdHelper.New(), "stubbed-token", Guid.Parse("11111111-1111-1111-1111-111111111111")));
+            if (result.IsSuccess)
+            {
+                operators = result.Data;
+            }
+        }
+        finally
+        {
+            isLoadingOperators = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSaving = true;
+        errorMessage = null;
+
+        try
+        {
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            // Create contract
+            var createCommand = new Commands.CreateContractCommand(
+                CorrelationIdHelper.New(),
+                accessToken,
+                estateId,
+                model.Description!,
+                Guid.Parse(model.OperatorId!)
+            );
+
+            var createResult = await Mediator.Send(createCommand);
+
+            if (!createResult.IsSuccess)
+            {
+                errorMessage = createResult.Message ?? "Failed to create contract";
+                return;
+            }
+
+            // Navigate to contracts list with success
+            NavigationManager.NavigateTo("/contracts");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/contracts");
+    }
+
+    public class CreateContractFormModel
+    {
+        [Required(ErrorMessage = "Description is required")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Operator is required")]
+        public string? OperatorId { get; set; }
+    }
+}

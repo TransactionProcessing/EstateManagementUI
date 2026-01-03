@@ -1,0 +1,179 @@
+@page "/contracts/{ContractId:guid}"
+@rendermode InteractiveServer
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<PageTitle>View Contract</PageTitle>
+
+<div class="space-y-6">
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (contractModel != null)
+    {
+        <!-- Page Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">View Contract: @contractModel.Description</h1>
+            </div>
+            <div class="flex space-x-2">
+                <button class="btn btn-secondary" @onclick="BackToList">
+                    Back to List
+                </button>
+                <button class="btn btn-primary" @onclick="EditContract">
+                    Edit Contract
+                </button>
+            </div>
+        </div>
+
+        <!-- Contract Details -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Contract Details</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <p class="text-gray-900 font-medium">@contractModel.Description</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Operator</label>
+                    <p class="text-gray-900 font-medium">@contractModel.OperatorName</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products List -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Products</h3>
+            </div>
+
+            @if (contractModel.Products != null && contractModel.Products.Any())
+            {
+                <div class="space-y-4">
+                    @foreach (var product in contractModel.Products)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h4 class="text-md font-semibold text-gray-900 mb-2">@product.ProductName</h4>
+                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span class="text-gray-600">Display Text:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.DisplayText</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Product Type:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.ProductType</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Value:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.Value</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Transaction Fees:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.NumberOfFees</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Transaction Fees -->
+                                    @if (product.TransactionFees != null && product.TransactionFees.Any())
+                                    {
+                                        <div class="mt-4 border-t pt-4">
+                                            <h5 class="text-sm font-semibold text-gray-700 mb-2">Transaction Fees</h5>
+                                            <div class="space-y-2">
+                                                @foreach (var fee in product.TransactionFees)
+                                                {
+                                                    <div class="bg-gray-50 rounded p-3 text-sm">
+                                                        <div class="grid grid-cols-2 gap-2">
+                                                            <div>
+                                                                <span class="text-gray-600">Description:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.Description</span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-gray-600">Value:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.Value.ToString("F2")</span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-gray-600">Calculation Type:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.CalculationType</span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-gray-600">Fee Type:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.FeeType</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                    </svg>
+                    <p>No products added to this contract yet.</p>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <p class="text-gray-600">Contract not found</p>
+            <button class="btn btn-primary mt-4" @onclick="BackToList">Back to List</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Guid ContractId { get; set; }
+
+    private ContractModel? contractModel;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadContract();
+    }
+
+    private async Task LoadContract()
+    {
+        try
+        {
+            isLoading = true;
+            var result = await Mediator.Send(new Queries.GetContractQuery(CorrelationIdHelper.New(), "stubbed-token", Guid.Parse("11111111-1111-1111-1111-111111111111"), ContractId));
+            
+            if (result.IsSuccess && result.Data != null)
+            {
+                contractModel = result.Data;
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void BackToList()
+    {
+        NavigationManager.NavigateTo("/contracts");
+    }
+
+    private void EditContract()
+    {
+        NavigationManager.NavigateTo($"/contracts/{ContractId}/edit");
+    }
+}

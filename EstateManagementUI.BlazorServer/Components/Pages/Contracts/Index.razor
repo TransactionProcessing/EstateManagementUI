@@ -73,11 +73,7 @@
     {
         try
         {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var result = await Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
+            var result = await Mediator.Send(new Queries.GetContractsQuery(CorrelationIdHelper.New(), "stubbed-token", Guid.Parse("11111111-1111-1111-1111-111111111111")));
             if (result.IsSuccess)
             {
                 contracts = result.Data;

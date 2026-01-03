@@ -1,0 +1,572 @@
+@page "/contracts/{ContractId:guid}/edit"
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit Contract</PageTitle>
+
+<div class="space-y-6">
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (contractModel != null)
+    {
+        <!-- Page Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Edit Contract: @contractModel.Description</h1>
+            </div>
+            <div class="flex space-x-2">
+                <button class="btn btn-secondary" @onclick="BackToView">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Success</p>
+                <p class="text-sm">@successMessage</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Error</p>
+                <p class="text-sm">@errorMessage</p>
+            </div>
+        }
+
+        <!-- Contract Details Form -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <EditForm Model="@model" OnValidSubmit="@HandleSubmit">
+                <DataAnnotationsValidator />
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Contract Details</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Description <span class="text-red-500">*</span>
+                            </label>
+                            <InputText @bind-Value="model.Description" class="input w-full" placeholder="Enter contract description" />
+                            <ValidationMessage For="@(() => model.Description)" class="text-red-600 text-sm mt-1" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Operator</label>
+                            <p class="text-gray-900 font-medium">@contractModel.OperatorName</p>
+                            <p class="text-sm text-gray-500">Operator cannot be changed after contract creation</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-4 border-t">
+                    <button type="button" class="btn btn-secondary" @onclick="BackToView" disabled="@isSaving">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                        @if (isSaving)
+                        {
+                            <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                            <span>Saving...</span>
+                        }
+                        else
+                        {
+                            <span>Update Contract</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+
+        <!-- Products Management -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Products</h3>
+                <button class="btn btn-primary" @onclick="ShowAddProductModal">
+                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add Product
+                </button>
+            </div>
+
+            @if (contractModel.Products != null && contractModel.Products.Any())
+            {
+                <div class="space-y-4">
+                    @foreach (var product in contractModel.Products)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <h4 class="text-md font-semibold text-gray-900 mb-2">@product.ProductName</h4>
+                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span class="text-gray-600">Display Text:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.DisplayText</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Product Type:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.ProductType</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Value:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.Value</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-600">Transaction Fees:</span>
+                                            <span class="text-gray-900 font-medium ml-1">@product.NumberOfFees</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Transaction Fees Management -->
+                                    @if (product.TransactionFees != null && product.TransactionFees.Any())
+                                    {
+                                        <div class="mt-4 border-t pt-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h5 class="text-sm font-semibold text-gray-700">Transaction Fees</h5>
+                                                <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ShowAddFeeModal(product.ContractProductId)">
+                                                    Add Fee
+                                                </button>
+                                            </div>
+                                            <div class="space-y-2">
+                                                @foreach (var fee in product.TransactionFees)
+                                                {
+                                                    <div class="bg-gray-50 rounded p-3 text-sm flex items-start justify-between">
+                                                        <div class="flex-1 grid grid-cols-2 gap-2">
+                                                            <div>
+                                                                <span class="text-gray-600">Description:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.Description</span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-gray-600">Value:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.Value.ToString("F2")</span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-gray-600">Calculation Type:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.CalculationType</span>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-gray-600">Fee Type:</span>
+                                                                <span class="text-gray-900 font-medium ml-1">@fee.FeeType</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="mt-4 border-t pt-4">
+                                            <div class="flex items-center justify-between">
+                                                <p class="text-sm text-gray-500">No transaction fees added yet.</p>
+                                                <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ShowAddFeeModal(product.ContractProductId)">
+                                                    Add Fee
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                    </svg>
+                    <p>No products added yet.</p>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <p class="text-gray-600">Contract not found</p>
+            <button class="btn btn-primary mt-4" @onclick="BackToList">Back to List</button>
+        </div>
+    }
+</div>
+
+<!-- Add Product Modal -->
+@if (showAddProductModal)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @onclick="CloseAddProductModal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4" @onclick:stopPropagation="true">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Add New Product</h3>
+            
+            <EditForm Model="@productModel" OnValidSubmit="@HandleAddProduct">
+                <DataAnnotationsValidator />
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Product Name <span class="text-red-500">*</span>
+                        </label>
+                        <InputText @bind-Value="productModel.ProductName" class="input w-full" placeholder="Enter product name" />
+                        <ValidationMessage For="@(() => productModel.ProductName)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Display Text <span class="text-red-500">*</span>
+                        </label>
+                        <InputText @bind-Value="productModel.DisplayText" class="input w-full" placeholder="Enter display text" />
+                        <ValidationMessage For="@(() => productModel.DisplayText)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <div>
+                        <label class="flex items-center space-x-2 cursor-pointer mb-2">
+                            <InputCheckbox @bind-Value="productModel.IsVariableValue" class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500" />
+                            <span class="text-sm font-medium text-gray-700">Variable Value</span>
+                        </label>
+                    </div>
+
+                    @if (!productModel.IsVariableValue)
+                    {
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">
+                                Value <span class="text-red-500">*</span>
+                            </label>
+                            <InputNumber @bind-Value="productModel.Value" class="input w-full" placeholder="Enter value" />
+                            <ValidationMessage For="@(() => productModel.Value)" class="text-red-600 text-sm mt-1" />
+                        </div>
+                    }
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(productErrorMessage))
+                {
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mt-4">
+                        <p class="text-sm">@productErrorMessage</p>
+                    </div>
+                }
+
+                <div class="flex justify-end space-x-4 pt-4 border-t mt-6">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseAddProductModal" disabled="@isAddingProduct">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" disabled="@isAddingProduct">
+                        @if (isAddingProduct)
+                        {
+                            <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                            <span>Adding...</span>
+                        }
+                        else
+                        {
+                            <span>Add Product</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<!-- Add Transaction Fee Modal -->
+@if (showAddFeeModal)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @onclick="CloseAddFeeModal">
+        <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4" @onclick:stopPropagation="true">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Add Transaction Fee</h3>
+            
+            <EditForm Model="@feeModel" OnValidSubmit="@HandleAddFee">
+                <DataAnnotationsValidator />
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Description <span class="text-red-500">*</span>
+                        </label>
+                        <InputText @bind-Value="feeModel.Description" class="input w-full" placeholder="Enter fee description" />
+                        <ValidationMessage For="@(() => feeModel.Description)" class="text-red-600 text-sm mt-1" />
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Fee Value <span class="text-red-500">*</span>
+                        </label>
+                        <InputNumber @bind-Value="feeModel.Value" class="input w-full" placeholder="Enter fee value" />
+                        <ValidationMessage For="@(() => feeModel.Value)" class="text-red-600 text-sm mt-1" />
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(feeErrorMessage))
+                {
+                    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mt-4">
+                        <p class="text-sm">@feeErrorMessage</p>
+                    </div>
+                }
+
+                <div class="flex justify-end space-x-4 pt-4 border-t mt-6">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseAddFeeModal" disabled="@isAddingFee">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary" disabled="@isAddingFee">
+                        @if (isAddingFee)
+                        {
+                            <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                            <span>Adding...</span>
+                        }
+                        else
+                        {
+                            <span>Add Fee</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid ContractId { get; set; }
+
+    private ContractModel? contractModel;
+    private EditContractModel model = new();
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private string? errorMessage;
+    private string? successMessage;
+
+    // Product modal state
+    private bool showAddProductModal = false;
+    private bool isAddingProduct = false;
+    private AddProductModel productModel = new();
+    private string? productErrorMessage;
+
+    // Transaction fee modal state
+    private bool showAddFeeModal = false;
+    private bool isAddingFee = false;
+    private AddTransactionFeeModel feeModel = new();
+    private string? feeErrorMessage;
+    private Guid currentProductId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadContract();
+    }
+
+    private async Task LoadContract()
+    {
+        try
+        {
+            isLoading = true;
+            var result = await Mediator.Send(new Queries.GetContractQuery(CorrelationIdHelper.New(), "stubbed-token", Guid.Parse("11111111-1111-1111-1111-111111111111"), ContractId));
+            
+            if (result.IsSuccess && result.Data != null)
+            {
+                contractModel = result.Data;
+                
+                // Initialize model with current values
+                model = new EditContractModel
+                {
+                    Description = contractModel.Description
+                };
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        isSaving = true;
+        ClearMessages();
+
+        try
+        {
+            // Note: Update contract description is not currently implemented in the backend
+            // For now, just show success message
+            successMessage = "Contract description updated successfully (Note: Backend update not yet implemented)";
+            
+            // Update local model
+            if (contractModel != null)
+            {
+                contractModel.Description = model.Description!;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void ShowAddProductModal()
+    {
+        productModel = new AddProductModel();
+        productErrorMessage = null;
+        showAddProductModal = true;
+    }
+
+    private void CloseAddProductModal()
+    {
+        showAddProductModal = false;
+        productModel = new AddProductModel();
+        productErrorMessage = null;
+    }
+
+    private async Task HandleAddProduct()
+    {
+        isAddingProduct = true;
+        productErrorMessage = null;
+
+        try
+        {
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            var command = new Commands.AddProductToContractCommand(
+                CorrelationIdHelper.New(),
+                accessToken,
+                estateId,
+                ContractId,
+                productModel.ProductName!,
+                productModel.DisplayText!,
+                productModel.IsVariableValue ? null : productModel.Value
+            );
+
+            var result = await Mediator.Send(command);
+
+            if (result.IsSuccess)
+            {
+                successMessage = "Product added successfully";
+                CloseAddProductModal();
+                await LoadContract();
+            }
+            else
+            {
+                productErrorMessage = result.Message ?? "Failed to add product";
+            }
+        }
+        catch (Exception ex)
+        {
+            productErrorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isAddingProduct = false;
+        }
+    }
+
+    private void ShowAddFeeModal(Guid productId)
+    {
+        currentProductId = productId;
+        feeModel = new AddTransactionFeeModel();
+        feeErrorMessage = null;
+        showAddFeeModal = true;
+    }
+
+    private void CloseAddFeeModal()
+    {
+        showAddFeeModal = false;
+        feeModel = new AddTransactionFeeModel();
+        feeErrorMessage = null;
+        currentProductId = Guid.Empty;
+    }
+
+    private async Task HandleAddFee()
+    {
+        isAddingFee = true;
+        feeErrorMessage = null;
+
+        try
+        {
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            var command = new Commands.AddTransactionFeeForProductToContractCommand(
+                CorrelationIdHelper.New(),
+                accessToken,
+                estateId,
+                ContractId,
+                currentProductId,
+                feeModel.Description!,
+                feeModel.Value!.Value
+            );
+
+            var result = await Mediator.Send(command);
+
+            if (result.IsSuccess)
+            {
+                successMessage = "Transaction fee added successfully";
+                CloseAddFeeModal();
+                await LoadContract();
+            }
+            else
+            {
+                feeErrorMessage = result.Message ?? "Failed to add transaction fee";
+            }
+        }
+        catch (Exception ex)
+        {
+            feeErrorMessage = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isAddingFee = false;
+        }
+    }
+
+    private void ClearMessages()
+    {
+        errorMessage = null;
+        successMessage = null;
+    }
+
+    private void BackToView()
+    {
+        NavigationManager.NavigateTo($"/contracts/{ContractId}");
+    }
+
+    private void BackToList()
+    {
+        NavigationManager.NavigateTo("/contracts");
+    }
+
+    public class EditContractModel
+    {
+        [Required(ErrorMessage = "Description is required")]
+        public string? Description { get; set; }
+    }
+
+    public class AddProductModel
+    {
+        [Required(ErrorMessage = "Product name is required")]
+        public string? ProductName { get; set; }
+
+        [Required(ErrorMessage = "Display text is required")]
+        public string? DisplayText { get; set; }
+
+        public bool IsVariableValue { get; set; }
+
+        public decimal? Value { get; set; }
+    }
+
+    public class AddTransactionFeeModel
+    {
+        [Required(ErrorMessage = "Description is required")]
+        public string? Description { get; set; }
+
+        [Required(ErrorMessage = "Fee value is required")]
+        public decimal? Value { get; set; }
+    }
+}
