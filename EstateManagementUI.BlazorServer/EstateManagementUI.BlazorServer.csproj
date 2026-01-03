@@ -15,4 +15,10 @@
     <PackageReference Include="IdentityModel" Version="6.2.0" />
   </ItemGroup>
 
+  <!-- Build Tailwind CSS before build -->
+  <Target Name="BuildTailwindCSS" BeforeTargets="BeforeBuild">
+    <Exec Command="npm install" WorkingDirectory="$(MSBuildProjectDirectory)" />
+    <Exec Command="npm run css:build" WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
 </Project>
