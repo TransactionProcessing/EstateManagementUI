@@ -1,5 +1,8 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IMediator Mediator
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 
 <PageTitle>Dashboard - Estate Management</PageTitle>
 
@@ -250,6 +253,16 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        
+        // Redirect unauthenticated users to entry screen
+        if (!user.Identity?.IsAuthenticated ?? true)
+        {
+            NavigationManager.NavigateTo("/entry", replace: true);
+            return;
+        }
+        
         await base.OnInitializedAsync();
     }
 }
