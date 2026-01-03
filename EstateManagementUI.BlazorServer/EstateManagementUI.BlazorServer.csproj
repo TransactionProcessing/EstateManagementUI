@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.1" />
+    <PackageReference Include="Lamar" Version="15.0.1" />
+    <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="15.0.1" />
+    <PackageReference Include="MediatR" Version="14.0.0" />
+    <PackageReference Include="IdentityModel" Version="6.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
+    <ProjectReference Include="..\EstateManagementUI.ViewModels\EstateManagementUI.ViewModels.csproj" />
+  </ItemGroup>
+
+</Project>
