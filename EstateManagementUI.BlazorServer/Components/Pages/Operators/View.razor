@@ -12,12 +12,12 @@
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
     }
-    else if (operator != null)
+    else if (operatorModel != null)
     {
         <!-- Page Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">View Operator: @operator.Name</h1>
+                <h1 class="text-2xl font-bold text-gray-900">View Operator: @operatorModel.Name</h1>
             </div>
             <div class="flex space-x-2">
                 <button class="btn btn-secondary" @onclick="BackToList">
@@ -35,12 +35,12 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Operator Name</label>
-                    <p class="text-gray-900 font-medium">@operator.Name</p>
+                    <p class="text-gray-900 font-medium">@operatorModel.Name</p>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Require Custom Merchant Number</label>
-                    @if (operator.RequireCustomMerchantNumber)
+                    @if (operatorModel.RequireCustomMerchantNumber)
                     {
                         <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium inline-block">Required</span>
                     }
@@ -53,7 +53,7 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Require Custom Terminal Number</label>
-                    @if (operator.RequireCustomTerminalNumber)
+                    @if (operatorModel.RequireCustomTerminalNumber)
                     {
                         <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium inline-block">Required</span>
                     }
@@ -79,7 +79,7 @@
     [Parameter]
     public Guid OperatorId { get; set; }
 
-    private OperatorModel? @operator;
+    private OperatorModel? operatorModel;
     private bool isLoading = true;
 
     protected override async Task OnInitializedAsync()
@@ -100,7 +100,7 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                @operator = result.Data;
+                operatorModel = result.Data;
             }
         }
         finally

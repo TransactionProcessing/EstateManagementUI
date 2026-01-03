@@ -13,12 +13,12 @@
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
     }
-    else if (operator != null)
+    else if (operatorModel != null)
     {
         <!-- Page Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-gray-900">Edit Operator: @operator.Name</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Edit Operator: @operatorModel.Name</h1>
             </div>
             <div class="flex space-x-2">
                 <button class="btn btn-secondary" @onclick="BackToList">
@@ -111,7 +111,7 @@
     [Parameter]
     public Guid OperatorId { get; set; }
 
-    private OperatorModel? @operator;
+    private OperatorModel? operatorModel;
     private EditOperatorModel model = new();
     private bool isLoading = true;
     private bool isSaving = false;
@@ -136,14 +136,14 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                @operator = result.Data;
+                operatorModel = result.Data;
                 
                 // Initialize model with current values
                 model = new EditOperatorModel
                 {
-                    OperatorName = @operator.Name,
-                    RequireCustomMerchantNumber = @operator.RequireCustomMerchantNumber,
-                    RequireCustomTerminalNumber = @operator.RequireCustomTerminalNumber
+                    OperatorName = operatorModel.Name,
+                    RequireCustomMerchantNumber = operatorModel.RequireCustomMerchantNumber,
+                    RequireCustomTerminalNumber = operatorModel.RequireCustomTerminalNumber
                 };
             }
         }
