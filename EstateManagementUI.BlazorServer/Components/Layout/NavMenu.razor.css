@@ -20,12 +20,12 @@
 }
 
 .nav-menu-icon {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-center: center;
-    width: 2rem;
-    height: 2rem;
-    margin-right: 0.75rem;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.625rem;
     flex-shrink: 0;
 }
 
