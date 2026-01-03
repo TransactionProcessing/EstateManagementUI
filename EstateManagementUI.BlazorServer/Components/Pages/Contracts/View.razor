@@ -23,9 +23,6 @@
                 <button class="btn btn-secondary" @onclick="BackToList">
                     Back to List
                 </button>
-                <button class="btn btn-primary" @onclick="EditContract">
-                    Edit Contract
-                </button>
             </div>
         </div>
 
@@ -170,10 +167,5 @@
     private void BackToList()
     {
         NavigationManager.NavigateTo("/contracts");
-    }
-
-    private void EditContract()
-    {
-        NavigationManager.NavigateTo($"/contracts/{ContractId}/edit");
     }
 }
