@@ -1,0 +1,119 @@
+@page "/operators"
+@inject IMediator Mediator
+@inject NavigationManager NavigationManager
+
+<PageTitle>Operator Management</PageTitle>
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">Operator Management</h1>
+        <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/operators/new")'>
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Add New Operator
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (operators != null && operators.Any())
+    {
+        <!-- Operators Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Operator Name</th>
+                        <th>Custom Merchant Number</th>
+                        <th>Custom Terminal Number</th>
+                        <th class="text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var op in operators)
+                    {
+                        <tr class="hover:bg-gray-50 cursor-pointer" @onclick='() => NavigationManager.NavigateTo($"/operators/{op.OperatorId}")'>
+                            <td>
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center mr-3">
+                                        @op.Name.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <p class="font-medium text-gray-900">@op.Name</p>
+                                </div>
+                            </td>
+                            <td>
+                                @if (op.RequireCustomMerchantNumber)
+                                {
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Required</span>
+                                }
+                                else
+                                {
+                                    <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">Not Required</span>
+                                }
+                            </td>
+                            <td>
+                                @if (op.RequireCustomTerminalNumber)
+                                {
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Required</span>
+                                }
+                                else
+                                {
+                                    <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">Not Required</span>
+                                }
+                            </td>
+                            <td class="text-right">
+                                <button class="text-blue-600 hover:text-blue-800 p-2" @onclick:stopPropagation="true" @onclick='() => NavigationManager.NavigateTo($"/operators/{op.OperatorId}")' title="View">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+            </svg>
+            <p class="text-gray-600 mb-4">No operators found.</p>
+            <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/operators/new")'>Add Your First Operator</button>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isLoading = true;
+    private List<OperatorModel>? operators;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            var result = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
+            if (result.IsSuccess)
+            {
+                operators = result.Data;
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
