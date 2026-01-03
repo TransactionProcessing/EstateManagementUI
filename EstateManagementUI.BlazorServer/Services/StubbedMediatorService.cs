@@ -1,7 +1,6 @@
-using EstateManagementUI.BusinessLogic.Models;
-using EstateManagmentUI.BusinessLogic.Requests;
+using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BlazorServer.Requests;
 using MediatR;
-using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Services;
 
