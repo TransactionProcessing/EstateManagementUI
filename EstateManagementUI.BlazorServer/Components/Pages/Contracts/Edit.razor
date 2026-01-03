@@ -297,8 +297,8 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Fee Value <span class="text-red-500">*</span>
                         </label>
-                        <InputNumber @bind-Value="feeModel.Value" class="input w-full" placeholder="Enter fee value" />
-                        <ValidationMessage For="@(() => feeModel.Value)" class="text-red-600 text-sm mt-1" />
+                        <InputNumber @bind-Value="feeModel.FeeValue" class="input w-full" placeholder="Enter fee value" />
+                        <ValidationMessage For="@(() => feeModel.FeeValue)" class="text-red-600 text-sm mt-1" />
                     </div>
                 </div>
 
@@ -390,15 +390,9 @@
 
         try
         {
-            // Note: Update contract description is not currently implemented in the backend
-            // For now, just show success message
-            successMessage = "Contract description updated successfully (Note: Backend update not yet implemented)";
-            
-            // Update local model
-            if (contractModel != null)
-            {
-                contractModel.Description = model.Description!;
-            }
+            // Note: Update contract description endpoint is not currently implemented in the backend
+            // This form is present for future implementation
+            errorMessage = "Contract description update is not yet supported by the backend API";
         }
         catch (Exception ex)
         {
@@ -500,7 +494,7 @@
                 ContractId,
                 currentProductId,
                 feeModel.Description!,
-                feeModel.Value!.Value
+                feeModel.FeeValue!.Value
             );
 
             var result = await Mediator.Send(command);
@@ -567,6 +561,7 @@
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "Fee value is required")]
-        public decimal? Value { get; set; }
+        [Range(0.01, double.MaxValue, ErrorMessage = "Fee value must be greater than 0")]
+        public decimal? FeeValue { get; set; }
     }
 }
