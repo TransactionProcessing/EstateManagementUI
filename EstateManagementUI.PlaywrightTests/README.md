@@ -20,12 +20,12 @@ The tests use:
 
 ## Required Docker Images
 
-The tests require the following Docker images to be available:
+The tests automatically pull the required Docker images from Docker Hub:
 
-1. **securityservice:latest** - The authorization/identity server
-2. **estatemanagementui:latest** - The Estate Management UI application
+1. **stuartferguson/securityservice:latest** - The authorization/identity server
+2. **stuartferguson/estatemanagementui:latest** - The Estate Management UI application
 
-You need to build these images before running the tests. See the main project's integration tests or build scripts for how to create these images.
+These images are automatically pulled when you run the tests for the first time. No manual Docker image building is required.
 
 ## Setup
 
@@ -46,20 +46,9 @@ dotnet build
 playwright install chromium
 ```
 
-### 2. Ensure Docker Images are Available
-
-Build or pull the required Docker images:
-
-```bash
-# Build Estate Management UI image (from the solution root)
-docker build -t estatemanagementui:latest -f EstateManagementUI.BlazorServer/Dockerfile .
-
-# The Security Service image should be available from the existing integration tests
-# Check if it exists:
-docker images | grep securityservice
-```
-
 ## Running the Tests
+
+The Docker images will be automatically pulled from Docker Hub on the first test run.
 
 ### Run All Tests
 

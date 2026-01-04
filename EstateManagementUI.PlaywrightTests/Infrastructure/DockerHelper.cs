@@ -1,5 +1,6 @@
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Images;
 using DotNet.Testcontainers.Networks;
 using System.Runtime.InteropServices;
 
@@ -70,7 +71,8 @@ public class DockerHelper
 
         _securityServiceContainer = new ContainerBuilder()
             .WithName(_securityServiceContainerName)
-            .WithImage("securityservice:latest")
+            .WithImage("stuartferguson/securityservice:latest")
+            .WithImagePullPolicy(PullPolicy.Always)
             .WithEnvironment(environmentVariables)
             .WithNetwork(_network)
             .WithPortBinding(5001, true)
@@ -102,7 +104,8 @@ public class DockerHelper
 
         _estateManagementUiContainer = new ContainerBuilder()
             .WithName(_estateManagementUiContainerName)
-            .WithImage("estatemanagementui:latest")
+            .WithImage("stuartferguson/estatemanagementui:latest")
+            .WithImagePullPolicy(PullPolicy.Always)
             .WithEnvironment(environmentVariables)
             .WithNetwork(_network)
             .WithPortBinding(5004, true)

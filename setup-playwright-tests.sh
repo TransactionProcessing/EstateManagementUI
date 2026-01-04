@@ -33,33 +33,11 @@ fi
 echo "✓ Docker found and running"
 echo ""
 
-# Check for required Docker images
-echo "Checking for required Docker images..."
-
-if docker images | grep -q "securityservice.*latest"; then
-    echo "✓ securityservice:latest found"
-else
-    echo "✗ securityservice:latest NOT found"
-    echo "  You need to build this image from the existing integration tests."
-    MISSING_IMAGES=true
-fi
-
-if docker images | grep -q "estatemanagementui.*latest"; then
-    echo "✓ estatemanagementui:latest found"
-else
-    echo "✗ estatemanagementui:latest NOT found"
-    echo "  You can build this image by running:"
-    echo "  docker build -t estatemanagementui:latest -f EstateManagementUI.BlazorServer/Dockerfile ."
-    MISSING_IMAGES=true
-fi
-
-if [ "$MISSING_IMAGES" = true ]; then
-    echo ""
-    echo "WARNING: Some required Docker images are missing."
-    echo "Tests will fail without these images."
-    echo "Please build the required images before running tests."
-    echo ""
-fi
+# Docker images will be pulled automatically from Docker Hub
+echo "Note: Docker images will be automatically pulled from Docker Hub when tests run."
+echo "  - stuartferguson/securityservice:latest"
+echo "  - stuartferguson/estatemanagementui:latest"
+echo ""
 
 # Restore NuGet packages
 echo "Restoring NuGet packages..."

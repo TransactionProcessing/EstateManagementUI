@@ -131,9 +131,9 @@ The implementation follows the pattern of the existing integration tests but use
 ### Prerequisites
 1. .NET 10.0 SDK installed
 2. Docker installed and running
-3. Required Docker images built:
-   - `securityservice:latest`
-   - `estatemanagementui:latest`
+3. Required Docker images (automatically pulled from Docker Hub):
+   - `stuartferguson/securityservice:latest`
+   - `stuartferguson/estatemanagementui:latest`
 
 ### Quick Start
 ```bash
@@ -163,10 +163,11 @@ dotnet test
 These can be modified in the test class constants if needed.
 
 ### Container Configuration
-Containers use environment variables to configure:
+Containers are automatically pulled from Docker Hub and use environment variables to configure:
 - Security Service runs on internal port 5001
 - Estate Management UI runs on internal port 5004
 - Both get dynamically assigned external ports
+- Images: `stuartferguson/securityservice:latest` and `stuartferguson/estatemanagementui:latest`
 
 ### Browser Options
 - Headless mode in CI (when `CI=true` or `IsCI=true`)
@@ -177,10 +178,9 @@ Containers use environment variables to configure:
 ## Limitations and Notes
 
 ### Current Limitations
-1. **Requires Docker images** - Tests need pre-built images
-2. **No backend services** - Only tests UI and authentication
-3. **Mock data** - Uses in-memory databases, no real data
-4. **Limited coverage** - Focuses on login and dashboard only
+1. **No backend services** - Only tests UI and authentication
+2. **Mock data** - Uses in-memory databases, no real data
+3. **Limited coverage** - Focuses on login and dashboard only
 
 ### Future Enhancements
 As noted in the README, potential improvements include:
