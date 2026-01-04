@@ -9,6 +9,16 @@ using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load hosting.json configuration for port settings
+builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true);
+
+// Apply URLs from configuration
+var urls = builder.Configuration["urls"];
+if (!string.IsNullOrEmpty(urls))
+{
+    builder.WebHost.UseUrls(urls);
+}
+
 // Clear default claims mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
