@@ -136,8 +136,8 @@ public class DockerHelper
 
     private string GetConnectionString(string databaseName)
     {
-        // Using in-memory SQLite for simplicity in tests
-        return $"Data Source={databaseName}{_testId:N}.db;Mode=Memory;Cache=Shared";
+        // Using pure in-memory SQLite for tests
+        return "Data Source=:memory:;Cache=Shared";
     }
 
     private static void AddEntryToHostsFile(string ipaddress, string hostname)

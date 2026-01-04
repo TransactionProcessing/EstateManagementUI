@@ -105,7 +105,7 @@ public class LoginAndDashboardTests : PlaywrightTestBase
     public async Task Test_04_Dashboard_Should_Display_Navigation_Menu()
     {
         // Arrange - Login first
-        await PerformLogin().ConfigureAwait(false);
+        await PerformLogin();
 
         // Assert - Check for navigation elements
         var merchantsLink = Page.Locator("#merchantsLink");
@@ -127,7 +127,7 @@ public class LoginAndDashboardTests : PlaywrightTestBase
     public async Task Test_05_Dashboard_Should_Allow_Navigation_To_Merchants()
     {
         // Arrange - Login first
-        await PerformLogin().ConfigureAwait(false);
+        await PerformLogin();
 
         // Act
         var merchantsLink = Page!.Locator("#merchantsLink");
@@ -148,7 +148,7 @@ public class LoginAndDashboardTests : PlaywrightTestBase
     public async Task Test_06_Dashboard_Should_Allow_Navigation_To_Operators()
     {
         // Arrange - Login first
-        await PerformLogin().ConfigureAwait(false);
+        await PerformLogin();
 
         // Act
         var operatorsLink = Page!.Locator("#operatorsLink");
@@ -169,7 +169,7 @@ public class LoginAndDashboardTests : PlaywrightTestBase
     public async Task Test_07_Dashboard_Should_Allow_Navigation_To_Contracts()
     {
         // Arrange - Login first
-        await PerformLogin().ConfigureAwait(false);
+        await PerformLogin();
 
         // Act
         var contractsLink = Page!.Locator("#contractsLink");
