@@ -1,4 +1,4 @@
-@base @shared @uigeneral
+@base @shared @playwright
 Feature: Dashboard Tests
 
 Background: 
