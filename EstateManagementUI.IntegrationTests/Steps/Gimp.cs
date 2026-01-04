@@ -625,6 +625,23 @@ namespace EstateManagementUI.IntegrationTests.Steps
             await this.UiHelpers.ClickTheSaveTransactionFeeButton();
         }
 
+        [Then(@"the dashboard displays the navigation menu")]
+        public async Task ThenTheDashboardDisplaysTheNavigationMenu()
+        {
+            await this.UiHelpers.VerifyDashboardNavigationMenuIsDisplayed();
+        }
+
+        [Then(@"the dashboard shows estate information")]
+        public async Task ThenTheDashboardShowsEstateInformation()
+        {
+            await this.UiHelpers.VerifyDashboardEstateInformationIsDisplayed();
+        }
+
+        [When(@"I navigate back to the dashboard")]
+        public async Task WhenINavigateBackToTheDashboard()
+        {
+            await this.UiHelpers.NavigateToDashboard();
+        }
 
 
     }

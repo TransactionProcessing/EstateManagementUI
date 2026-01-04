@@ -1130,4 +1130,49 @@ public class EstateManagementUiHelpers{
             foundRowCount.ShouldBe(devicesList.Count, sb.ToString());
         }, TimeSpan.FromSeconds(120));
     }
+
+    public async Task VerifyDashboardNavigationMenuIsDisplayed()
+    {
+        await Retry.For(async () =>
+        {
+            IWebElement merchantsLink = this.WebDriver.FindElement(By.Id("merchantsLink"));
+            IWebElement operatorsLink = this.WebDriver.FindElement(By.Id("operatorsLink"));
+            IWebElement contractsLink = this.WebDriver.FindElement(By.Id("contractsLink"));
+            IWebElement estateDetailsLink = this.WebDriver.FindElement(By.Id("estateDetailsLink"));
+
+            merchantsLink.ShouldNotBeNull();
+            operatorsLink.ShouldNotBeNull();
+            contractsLink.ShouldNotBeNull();
+            estateDetailsLink.ShouldNotBeNull();
+
+            merchantsLink.Displayed.ShouldBeTrue();
+            operatorsLink.Displayed.ShouldBeTrue();
+            contractsLink.Displayed.ShouldBeTrue();
+            estateDetailsLink.Displayed.ShouldBeTrue();
+        }, TimeSpan.FromSeconds(30));
+    }
+
+    public async Task VerifyDashboardEstateInformationIsDisplayed()
+    {
+        await Retry.For(async () =>
+        {
+            // Verify the dashboard page is displayed
+            this.VerifyPageTitle("Dashboard");
+            
+            // Check that we're on the dashboard page
+            String currentUrl = this.WebDriver.Url;
+            currentUrl.ShouldContain("/Dashboard");
+        }, TimeSpan.FromSeconds(30));
+    }
+
+    public async Task NavigateToDashboard()
+    {
+        // Navigate to dashboard by URL
+        this.WebDriver.Navigate().GoToUrl($"https://localhost:{this.EstateManagementUiPort}/Dashboard");
+        
+        await Retry.For(async () =>
+        {
+            this.VerifyPageTitle("Dashboard");
+        }, TimeSpan.FromSeconds(30));
+    }
 }
