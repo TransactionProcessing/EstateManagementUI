@@ -64,8 +64,8 @@
                                     <div class="text-sm font-medium text-gray-900">@context.User.Identity?.Name</div>
                                     <div class="text-xs text-gray-500">Administrator</div>
                                 </div>
-                                <div class="relative" @onclick="ToggleDropdown">
-                                    <button class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 focus:outline-none">
+                                <div class="relative">
+                                    <button type="button" @onclick="ToggleDropdown" @onclick:stopPropagation class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 focus:outline-none">
                                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold shadow-md">
                                             @GetInitials(context.User.Identity?.Name)
                                         </div>
@@ -76,7 +76,7 @@
                                     
                                     @if (isDropdownOpen)
                                     {
-                                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200" @onclick:stopPropagation>
                                             <div class="px-4 py-2 border-b border-gray-100">
                                                 <div class="text-sm font-medium text-gray-900">@context.User.Identity?.Name</div>
                                                 <div class="text-xs text-gray-500">Administrator</div>
