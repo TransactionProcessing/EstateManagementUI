@@ -70,6 +70,20 @@ builder.Services.AddAuthentication(options =>
         NameClaimType = "name",
         RoleClaimType = "role"
     };
+    
+    // Handle prompt parameter for forcing re-authentication
+    options.Events = new OpenIdConnectEvents
+    {
+        OnRedirectToIdentityProvider = context =>
+        {
+            // Pass prompt parameter if specified in authentication properties
+            if (context.Properties.Items.TryGetValue("prompt", out var prompt))
+            {
+                context.ProtocolMessage.Prompt = prompt;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddAuthorization();
@@ -109,7 +123,11 @@ app.MapGet("/login", (HttpContext context) =>
     return Results.Challenge(
         properties: new Microsoft.AspNetCore.Authentication.AuthenticationProperties
         {
-            RedirectUri = "/"
+            RedirectUri = "/",
+            Items =
+            {
+                { "prompt", "login" } // Force the user to re-enter credentials
+            }
         },
         authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
     );
