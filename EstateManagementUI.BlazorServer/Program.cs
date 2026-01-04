@@ -38,6 +38,9 @@ builder.Services.AddAuthentication(options =>
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
     
+    // Set the callback path - REQUIRED for OIDC to work
+    options.CallbackPath = builder.Configuration["Authentication:CallbackPath"] ?? "/signin-oidc";
+    
     options.Scope.Clear();
     options.Scope.Add("openid");
     options.Scope.Add("profile");
