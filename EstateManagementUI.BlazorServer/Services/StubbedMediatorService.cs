@@ -187,13 +187,33 @@ public class StubbedMediatorService : IMediator
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
             Description = "Standard Transaction Contract",
-            OperatorName = "Safaricom"
+            OperatorName = "Safaricom",
+            OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                    ProductName = "Mobile Topup",
+                    DisplayText = "Mobile Airtime"
+                }
+            }
         },
         new ContractModel
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444445"),
             Description = "Voucher Sales Contract",
-            OperatorName = "Voucher"
+            OperatorName = "Voucher",
+            OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555556"),
+                    ProductName = "Voucher",
+                    DisplayText = "Voucher Purchase"
+                }
+            }
         }
     };
 
@@ -202,6 +222,7 @@ public class StubbedMediatorService : IMediator
         ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
         Description = "Standard Transaction Contract",
         OperatorName = "Safaricom",
+        OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
         Products = new List<ContractProductModel>
         {
             new ContractProductModel
@@ -209,7 +230,48 @@ public class StubbedMediatorService : IMediator
                 ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
                 ProductName = "Mobile Topup",
                 DisplayText = "Mobile Airtime",
-                Value = null
+                ProductType = "Mobile Topup",
+                Value = "Variable",
+                NumberOfFees = 2,
+                TransactionFees = new List<ContractProductTransactionFeeModel>
+                {
+                    new ContractProductTransactionFeeModel
+                    {
+                        TransactionFeeId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
+                        Description = "Merchant Commission",
+                        CalculationType = "Fixed",
+                        FeeType = "Merchant",
+                        Value = 0.50m
+                    },
+                    new ContractProductTransactionFeeModel
+                    {
+                        TransactionFeeId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
+                        Description = "Service Provider Fee",
+                        CalculationType = "Percentage",
+                        FeeType = "Service Provider",
+                        Value = 2.5m
+                    }
+                }
+            },
+            new ContractProductModel
+            {
+                ContractProductId = Guid.Parse("88888888-8888-8888-8888-888888888888"),
+                ProductName = "Bill Payment",
+                DisplayText = "Utility Bill Payment",
+                ProductType = "Bill Payment",
+                Value = "Variable",
+                NumberOfFees = 1,
+                TransactionFees = new List<ContractProductTransactionFeeModel>
+                {
+                    new ContractProductTransactionFeeModel
+                    {
+                        TransactionFeeId = Guid.Parse("99999999-9999-9999-9999-999999999999"),
+                        Description = "Transaction Fee",
+                        CalculationType = "Fixed",
+                        FeeType = "Merchant",
+                        Value = 1.00m
+                    }
+                }
             }
         }
     };
