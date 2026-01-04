@@ -1,8 +1,13 @@
-﻿using Microsoft.Playwright;
+﻿using Google.Protobuf.Reflection;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Edge;
+using OpenQA.Selenium.Firefox;
 using Reqnroll;
 using Reqnroll.BoDi;
 using Shared.IntegrationTesting;
 using System.Diagnostics.Contracts;
+using System.Drawing;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
@@ -11,8 +16,7 @@ namespace EstateManagementUI.IntegrationTests.Common
     {
         private readonly IObjectContainer ObjectContainer;
         private ScenarioContext ScenarioContext;
-        private IPlaywright? Playwright;
-        private IBrowser? Browser;
+
 
         public Hooks(IObjectContainer objectContainer)
         {
@@ -20,104 +24,186 @@ namespace EstateManagementUI.IntegrationTests.Common
         }
 
         [BeforeScenario(Order = 0)]
-        public async Task BeforeScenario(ScenarioContext scenarioContext)
-        {
+        public async Task BeforeScenario(ScenarioContext scenarioContext){
             this.ScenarioContext = scenarioContext;
             String scenarioName = scenarioContext.ScenarioInfo.Title.Replace(" ", "");
+            IWebDriver webDriver = await this.CreateWebDriver();
             
-            // Initialize Playwright
-            Playwright = await Microsoft.Playwright.Playwright.CreateAsync();
-            
-            // Create browser and page
-            var (browser, page) = await this.CreatePlaywrightBrowser();
-            Browser = browser;
-            
-            // Register page for the scenario
-            scenarioContext.ScenarioContainer.RegisterInstanceAs(page, scenarioName);
+            webDriver.Manage().Window.Maximize();
+            //this.ObjectContainer.RegisterInstanceAs(this.WebDriver, scenarioName);
+            scenarioContext.ScenarioContainer.RegisterInstanceAs(webDriver, scenarioName);
         }
 
         [AfterScenario(Order = 0)]
-        public async Task AfterScenario()
+        public void AfterScenario()
         {
             String scenarioName = this.ScenarioContext.ScenarioInfo.Title.Replace(" ", "");
-            
-            try
+            IWebDriver webDriver = this.ScenarioContext.ScenarioContainer.Resolve<IWebDriver>(this.ScenarioContext.ScenarioInfo.Title.Replace(" ", ""));
+            if (webDriver != null)
             {
-                IPage page = this.ScenarioContext.ScenarioContainer.Resolve<IPage>(scenarioName);
-                if (page != null)
-                {
-                    await page.CloseAsync();
-                }
-            }
-            catch { }
-
-            if (Browser != null)
-            {
-                await Browser.CloseAsync();
-                await Browser.DisposeAsync();
-            }
-
-            if (Playwright != null)
-            {
-                Playwright.Dispose();
+                webDriver.Quit(); //.Dispose();
             }
         }
 
-        private async Task<(IBrowser, IPage)> CreatePlaywrightBrowser()
-        {
+        private async Task<IWebDriver> CreateWebDriver(){
+            IWebDriver webDriver = null;
+
             String? browser = Environment.GetEnvironmentVariable("Browser");
             String? isCi = Environment.GetEnvironmentVariable("IsCI");
-            bool isHeadless = String.Compare(isCi, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) == 0;
-
-            IBrowser playwrightBrowser;
-            
+            //isCi = "true";
+            //browser = "Edge";
             switch (browser)
             {
-                case "Firefox":
-                    playwrightBrowser = await Playwright!.Firefox.LaunchAsync(new BrowserTypeLaunchOptions
-                    {
-                        Headless = isHeadless,
-                        Args = new[] { "--ignore-certificate-errors" }
-                    });
-                    break;
-                    
-                case "Edge":
-                    // Playwright uses Chromium-based Edge
-                    playwrightBrowser = await Playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-                    {
-                        Channel = "msedge",
-                        Headless = isHeadless,
-                        Args = new[] { "--ignore-certificate-errors" }
-                    });
-                    break;
-                    
                 case null:
                 case "Chrome":
-                default:
-                    playwrightBrowser = await Playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-                    {
-                        Headless = isHeadless,
-                        Args = new[] { 
-                            "--ignore-certificate-errors",
-                            "--no-sandbox",
-                            "--disable-dev-shm-usage",
-                            "--disable-gpu"
-                        }
-                    });
+                {
+                    Environment.SetEnvironmentVariable("SE_MANAGER", "0");
+                        ChromeOptions options = new();
+
+                        options = options.WithNoSandBox()
+                                     .WithAcceptInsecureCertificate()
+                                     .WithDisableDevShmUsage()
+                                     .WithDisableExtensions()
+                                     .WithDisableGpu()
+                                     .WithDisableInfobars()
+                                     .WithHeadless(isCi)
+                                     .WithWindowSize(1920, 1080);
+                        var service = ChromeDriverService.CreateDefaultService("/usr/bin");
+                        webDriver = new ChromeDriver(service, options);
+                    
                     break;
+                }
+                case "Firefox":
+                {
+                    FirefoxOptions options = new FirefoxOptions();
+                    options = options.WithAcceptInsecureCertificate()
+                                     .WithHeadless(isCi)
+                                     .WithNetworkCookieBehaviour();
+
+                    await Retry.For(async () =>
+                                    {
+                                        webDriver = new FirefoxDriver(options);
+                                    }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
+                    break;
+                }
+                case "Edge": {
+                    EdgeOptions options = new EdgeOptions();
+                    options = options.WithAcceptInsecureCertificate()
+                        .WithHeadless(isCi)
+                        .WithWindowSize(1920, 1080);
+                        
+                        await Retry.For(async () => { webDriver = new EdgeDriver(options); }, TimeSpan.FromMinutes(5), TimeSpan.FromSeconds(60));
+                    break;
+                }
             }
 
-            // Create context with settings
-            var context = await playwrightBrowser.NewContextAsync(new BrowserNewContextOptions
+            return webDriver;
+        }
+    }
+    
+    public static class ChromeOptionsBuilder{
+
+        [Pure]
+        public static ChromeOptions WithDisableGpu(this ChromeOptions options){
+            options.AddArgument("--disable-gpu");
+            return options;
+        }
+
+        [Pure]
+        public static ChromeOptions WithNoSandBox(this ChromeOptions options){
+            options.AddArgument("--no-sandbox");
+            return options;
+        }
+
+        [Pure]
+        public static ChromeOptions WithDisableDevShmUsage(this ChromeOptions options){
+            options.AddArgument("--disable-dev-shm-usage");
+            return options;
+        }
+
+        [Pure]
+        public static ChromeOptions WithHeadless(this ChromeOptions options, String isCI){
+            if (String.Compare(isCI, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) == 0){
+                options.AddArgument("--headless");
+            }
+            return options;
+        }
+
+        [Pure]
+        public static ChromeOptions WithDisableInfobars(this ChromeOptions options){
+            options.AddArguments("--disable-infobars");
+            return options;
+        }
+
+        [Pure]
+        public static ChromeOptions WithDisableExtensions(this ChromeOptions options)
+        {
+            options.AddArguments("--disable-extensions");
+            return options;
+        }
+
+        [Pure]
+        public static ChromeOptions WithWindowSize(this ChromeOptions options, Int32 height, Int32 width){
+            String windowSize = $"--window-size={height}x{width}";
+            options.AddArguments(windowSize);
+            return options;
+        }
+
+        public static ChromeOptions WithAcceptInsecureCertificate(this ChromeOptions options){
+            options.AcceptInsecureCertificates = true;
+            return options;
+        }
+    }
+
+    public static class FirefoxOptionsBuilder{
+        [Pure]
+        public static FirefoxOptions WithHeadless(this FirefoxOptions options, String isCi){
+            if (String.Compare(isCi, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) == 0)
             {
-                IgnoreHTTPSErrors = true,
-                ViewportSize = new ViewportSize { Width = 1920, Height = 1080 }
-            });
+                options.AddArguments("--headless");
+            }
+            return options;
+        }
 
-            // Create page
-            var page = await context.NewPageAsync();
+        [Pure]
+        public static FirefoxOptions WithNetworkCookieBehaviour(this FirefoxOptions options){
+            options.SetPreference("network.cookie.cookieBehavior", 0);
+            return options;
+        }
+        
+        [Pure]
+        public static FirefoxOptions WithAcceptInsecureCertificate(this FirefoxOptions options)
+        {
+            options.AcceptInsecureCertificates = true;
+            return options;
+        }
+    }
 
-            return (playwrightBrowser, page);
+    public static class EdgeOptionsBuilder{
+
+        [Pure]
+        public static EdgeOptions WithAcceptInsecureCertificate(this EdgeOptions options)
+        {
+            options.AcceptInsecureCertificates = true;
+            return options;
+        }
+
+        [Pure]
+        public static EdgeOptions WithHeadless(this EdgeOptions options, String isCi)
+        {
+            if (String.Compare(isCi, Boolean.TrueString, StringComparison.InvariantCultureIgnoreCase) == 0)
+            {
+                options.AddArguments("--headless");
+            }
+            return options;
+        }
+
+        [Pure]
+        public static EdgeOptions WithWindowSize(this EdgeOptions options, Int32 height, Int32 width)
+        {
+            String windowSize = $"--window-size={height},{width}";
+            options.AddArguments(windowSize);
+            return options;
         }
     }
 }
