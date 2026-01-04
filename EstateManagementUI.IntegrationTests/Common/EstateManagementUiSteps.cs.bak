@@ -8,7 +8,7 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.TextContentAsync();
+using System.Text;
 using System.Threading.Tasks;
 
 namespace EstateManagementUI.IntegrationTests.Common;
@@ -24,7 +24,7 @@ public class EstateManagementUiHelpers{
     }
 
     private async Task VerifyPageTitle(String expectedTitle) {
-        var title = await this.Page.TitleAsync()Async();
+        var title = await this.Page.TitleAsync();
         title.ShouldBe($"{expectedTitle} - Estate Management");
     }
 
@@ -56,7 +56,7 @@ public class EstateManagementUiHelpers{
 
     public async Task VerifyOnTheMakeMerchantDepositScreen(){
         await Retry.For(async () => { 
-            var title = await this.Page.TitleAsync()Async();
+            var title = await this.Page.TitleAsync();
             title.ShouldBe("Make Merchant Deposit"); 
         });
     }
@@ -64,7 +64,7 @@ public class EstateManagementUiHelpers{
     public async Task VerifyOnTheTheMerchantDetailsScreen(String merchantName){
 
         await Retry.For(async () => {
-                            ILocator element = this.Page.Locator("#MerchantName");
+                            IWebElement element = this.WebDriver.FindElement(By.Id("MerchantName"));
                             element.ShouldNotBeNull();
                             String elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(merchantName);
@@ -124,13 +124,12 @@ public class EstateManagementUiHelpers{
     
     public async Task VerifyOnTheNewTransactionFeeScreen()
     {
-        await Retry.For(async () => { await this.VerifyPageTitle("New Transaction Fee"); });
+        await Retry.For(async () => { this.VerifyPageTitle("New Transaction Fee"); });
     }
 
     public async Task VerifyOnTheLoginScreen(){
         await Retry.For(async () => {
-                            var loginButton = this.Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Login" });
-                            await loginButton.WaitForAsync(new LocatorWaitForOptions { Timeout = 120000 });
+                            IWebElement loginButton = await this.WebDriver.FindButtonByText("Login", TimeSpan.FromMinutes(2));
                             loginButton.ShouldNotBeNull();
                         });
     }
@@ -151,28 +150,28 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task VerifyOnMerchantOperatorsTab() {
-        ILocator element = this.Page.Locator("#merchantOperatorList");
+        IWebElement element = this.WebDriver.FindElement(By.Id("merchantOperatorList"));
         element.ShouldNotBeNull();
     }
 
     public async Task VerifyOnMerchantContractsTab()
     {
-        ILocator element = this.Page.Locator("#merchantContractList");
+        IWebElement element = this.WebDriver.FindElement(By.Id("merchantContractList"));
         element.ShouldNotBeNull();
     }
 
     public async Task VerifyOnMerchantDevicesTab()
     {
-        ILocator element = this.Page.Locator("#merchantDeviceList");
+        IWebElement element = this.WebDriver.FindElement(By.Id("merchantDeviceList"));
         element.ShouldNotBeNull();
     }
 
     public async Task VerifyOnTheDashboard()
     {
         await Retry.For(async () => {
-            //if (this.Page.TitleAsync() != "Dashboard  - Estate Management")
+            //if (this.WebDriver.Title != "Dashboard  - Estate Management")
             //{
-            //    var screenshot = this.Page.TakeScreenshot();
+            //    var screenshot = this.WebDriver.TakeScreenshot();
             //    var stringVersion = screenshot.AsBase64EncodedString;
             //    Console.WriteLine(stringVersion);
             //}
@@ -197,22 +196,22 @@ public class EstateManagementUiHelpers{
 
     public async Task VerifyOnTheProductsListScreen()
     {
-        await Retry.For(async () => { this.Page.TitleAsync().ShouldContain("Products for Contract - "); });
+        await Retry.For(async () => { this.WebDriver.Title.ShouldContain("Products for Contract - "); });
     }
 
     public async Task VerifyOnTheTransactionFeeListScreen()
     {
-        await Retry.For(async () => { this.Page.TitleAsync().ShouldContain("Transaction Fees for Product - "); });
+        await Retry.For(async () => { this.WebDriver.Title.ShouldContain("Transaction Fees for Product - "); });
     }
 
     public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName){
         await Retry.For(async () => {
-                            ILocator element = this.Page.Locator("#Estate_Name");
+                            IWebElement element = this.WebDriver.FindElement(By.Id("Estate_Name"));
                             element.ShouldNotBeNull();
                             String elementValue = element.GetDomProperty("value");
                             elementValue.ShouldBe(estateName);
 
-                            element = this.Page.Locator("#Estate_Reference");
+                            element = this.WebDriver.FindElement(By.Id("Estate_Reference"));
                             element.ShouldNotBeNull();
                             elementValue = element.GetDomProperty("value");
                             elementValue.ShouldNotBeNull();
@@ -222,7 +221,7 @@ public class EstateManagementUiHelpers{
 
     public async Task VerifyTheAvailableBalanceIsDisplayed(Decimal availableBalance){
         await Retry.For(async () => {
-                            ILocator element = this.Page.Locator("#merchantAvailableBalanceLabel");
+                            IWebElement element = this.WebDriver.FindElement(By.Id("merchantAvailableBalanceLabel"));
                             element.ShouldNotBeNull();
                             String elementValue = element.GetDomProperty("value");
                             Decimal actualBalance = Decimal.Parse(elementValue);
@@ -235,27 +234,27 @@ public class EstateManagementUiHelpers{
     public async Task VerifyTheContractDetailsAreInTheList(List<(String, String, Int32)> contractDescriptions){
         await Retry.For(async () => {
                             Int32 foundRowCount = 0;
-                            ILocator tableElement = this.Page.Locator("#contractList");
-                            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+                            IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractList"));
+                            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                             rows.Count.ShouldBe(contractDescriptions.Count + 1);
                             foreach ((String, String, Int32) contractDescription in contractDescriptions){
-                                IList<ILocator> rowTD;
-                                foreach (ILocator row in rows){
-                                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                                IList<IWebElement> rowTD;
+                                foreach (IWebElement row in rows){
+                                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                                     if (rowTH.Any()){
                                         // header row so skip
                                         continue;
                                     }
 
-                                    rowTD = row.Locator("td").AllAsync();
+                                    rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].TextContentAsync() == contractDescription.Item1){
+                                    if (rowTD[0].Text == contractDescription.Item1){
                                         // Compare other fields
-                                        rowTD[0].TextContentAsync().ShouldBe(contractDescription.Item1);
-                                        rowTD[1].TextContentAsync().ShouldBe(contractDescription.Item2);
-                                        rowTD[2].TextContentAsync().ShouldBe(contractDescription.Item3.ToString());
+                                        rowTD[0].Text.ShouldBe(contractDescription.Item1);
+                                        rowTD[1].Text.ShouldBe(contractDescription.Item2);
+                                        rowTD[2].Text.ShouldBe(contractDescription.Item3.ToString());
 
                         // We have found the row
                         foundRowCount++;
@@ -273,16 +272,16 @@ public class EstateManagementUiHelpers{
     {
         await Retry.For(async () => {
                 Int32 foundRowCount = 0;
-                ILocator tableElement = this.Page.Locator("#contractProductList");
-                IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+                IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+                IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                 rows.Count.ShouldBe(contractProductDescriptions.Count + 1);
                 foreach ((String, String, String,String) contractProductDescription in contractProductDescriptions)
                 {
-                    IList<ILocator> rowTD;
-                    foreach (ILocator row in rows)
+                    IList<IWebElement> rowTD;
+                    foreach (IWebElement row in rows)
                     {
-                        IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                        ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                         if (rowTH.Any())
                         {
@@ -290,15 +289,15 @@ public class EstateManagementUiHelpers{
                             continue;
                         }
 
-                        rowTD = row.Locator("td").AllAsync();
+                        rowTD = row.FindElements(By.TagName("td"));
 
-                        if (rowTD[0].TextContentAsync() == contractProductDescription.Item1)
+                        if (rowTD[0].Text == contractProductDescription.Item1)
                         {
                             // Compare other fields
-                            rowTD[0].TextContentAsync().ShouldBe(contractProductDescription.Item1);
-                            rowTD[1].TextContentAsync().ShouldBe(contractProductDescription.Item2);
-                            rowTD[2].TextContentAsync().ShouldBe(contractProductDescription.Item3.ToString());
-                            rowTD[3].TextContentAsync().ShouldBe(contractProductDescription.Item4.ToString());
+                            rowTD[0].Text.ShouldBe(contractProductDescription.Item1);
+                            rowTD[1].Text.ShouldBe(contractProductDescription.Item2);
+                            rowTD[2].Text.ShouldBe(contractProductDescription.Item3.ToString());
+                            rowTD[3].Text.ShouldBe(contractProductDescription.Item4.ToString());
 
                         // We have found the row
                         foundRowCount++;
@@ -316,16 +315,16 @@ public class EstateManagementUiHelpers{
     {
         await Retry.For(async () => {
                             Int32 foundRowCount = 0;
-                            ILocator tableElement = this.Page.Locator("#contractProductTransactionFeeList");
-                            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+                            IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductTransactionFeeList"));
+                            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                             rows.Count.ShouldBe(feeDescriptions.Count + 1);
                             foreach (String feeDescription in feeDescriptions)
                             {
-                                IList<ILocator> rowTD;
-                                foreach (ILocator row in rows)
+                                IList<IWebElement> rowTD;
+                                foreach (IWebElement row in rows)
                                 {
-                                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                                     if (rowTH.Any())
                                     {
@@ -333,12 +332,12 @@ public class EstateManagementUiHelpers{
                                         continue;
                                     }
 
-                                    rowTD = row.Locator("td").AllAsync();
+                                    rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].TextContentAsync() == feeDescription)
+                                    if (rowTD[0].Text == feeDescription)
                                     {
                                         // Compare other fields
-                                        rowTD[0].TextContentAsync().ShouldBe(feeDescription);
+                                        rowTD[0].Text.ShouldBe(feeDescription);
 
                                         // We have found the row
                                         foundRowCount++;
@@ -355,16 +354,16 @@ public class EstateManagementUiHelpers{
     public async Task VerifyMerchantDetailsAreInTheList(List<MerchantDetails> merchantDetails){
         await Retry.For(async () => {
                             Int32 foundRowCount = 0;
-                            ILocator tableElement = this.Page.Locator("#merchantList");
-                            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+                            IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+                            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                             rows.Count.ShouldBe(merchantDetails.Count + 1);
                             foreach (MerchantDetails merchant in merchantDetails)
                             {
-                                IList<ILocator> rowTD;
-                                foreach (ILocator row in rows)
+                                IList<IWebElement> rowTD;
+                                foreach (IWebElement row in rows)
                                 {
-                                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                                     if (rowTH.Any())
                                     {
@@ -372,14 +371,14 @@ public class EstateManagementUiHelpers{
                                         continue;
                                     }
 
-                                    rowTD = row.Locator("td").AllAsync();
+                                    rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].TextContentAsync() == merchant.MerchantName) {
+                                    if (rowTD[0].Text == merchant.MerchantName) {
                                         // Compare other fields
-                                        rowTD[2].TextContentAsync().ShouldBe(merchant.SettlementSchedule);
-                                        rowTD[3].TextContentAsync().ShouldBe(merchant.ContactName);
-                                        rowTD[4].TextContentAsync().ShouldBe(merchant.AddressLine1);
-                                        rowTD[5].TextContentAsync().ShouldBe(merchant.Town);
+                                        rowTD[2].Text.ShouldBe(merchant.SettlementSchedule);
+                                        rowTD[3].Text.ShouldBe(merchant.ContactName);
+                                        rowTD[4].Text.ShouldBe(merchant.AddressLine1);
+                                        rowTD[5].Text.ShouldBe(merchant.Town);
 
                                         // We have found the row
                                         foundRowCount++;
@@ -396,30 +395,30 @@ public class EstateManagementUiHelpers{
     public async Task VerifyOperatorDetailsAreInTheList(String tableId,  List<(String, String, String, String)> operatorDetails) {
         await Retry.For(async () => {
             Int32 foundRowCount = 0;
-            ILocator tableElement = this.Page.FindElement(By.Id(tableId));
-            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
             rows.Count.ShouldBe(operatorDetails.Count + 1);
             StringBuilder sb = new StringBuilder();
             foreach ((String, String, String, String) operatorDetail in operatorDetails) {
-                IList<ILocator> rowTD;
-                foreach (ILocator row in rows) {
-                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in rows) {
+                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                     if (rowTH.Any()) {
                         // header row so skip
                         continue;
                     }
 
-                    rowTD = row.Locator("td").AllAsync();
+                    rowTD = row.FindElements(By.TagName("td"));
 
-                    if (rowTD[0].TextContentAsync() == operatorDetail.Item1) {
+                    if (rowTD[0].Text == operatorDetail.Item1) {
                         // Compare other fields
-                        rowTD[0].TextContentAsync().ShouldBe(operatorDetail.Item1);
-                        rowTD[1].TextContentAsync().ShouldBe(operatorDetail.Item2);
-                        rowTD[2].TextContentAsync().ShouldBe(operatorDetail.Item3);
+                        rowTD[0].Text.ShouldBe(operatorDetail.Item1);
+                        rowTD[1].Text.ShouldBe(operatorDetail.Item2);
+                        rowTD[2].Text.ShouldBe(operatorDetail.Item3);
                         if (String.IsNullOrEmpty(operatorDetail.Item4) == false) {
-                            rowTD[3].TextContentAsync().ShouldBe(operatorDetail.Item4);
+                            rowTD[3].Text.ShouldBe(operatorDetail.Item4);
                         }
 
                         // We have found the row
@@ -441,17 +440,17 @@ public class EstateManagementUiHelpers{
     {
         await Retry.For(async () => {
             Int32 foundRowCount = 0;
-            ILocator tableElement = this.Page.FindElement(By.Id(tableId));
-            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
             rows.Count.ShouldBe(contractDetails.Count + 1);
             StringBuilder sb = new StringBuilder();
             foreach ((String, String) contractDetail in contractDetails)
             {
-                IList<ILocator> rowTD;
-                foreach (ILocator row in rows)
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in rows)
                 {
-                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                     if (rowTH.Any())
                     {
@@ -459,13 +458,13 @@ public class EstateManagementUiHelpers{
                         continue;
                     }
 
-                    rowTD = row.Locator("td").AllAsync();
+                    rowTD = row.FindElements(By.TagName("td"));
 
-                    if (rowTD[0].TextContentAsync() == contractDetail.Item1)
+                    if (rowTD[0].Text == contractDetail.Item1)
                     {
                         // Compare other fields
-                        rowTD[0].TextContentAsync().ShouldBe(contractDetail.Item1);
-                        rowTD[1].TextContentAsync().ShouldBe(contractDetail.Item2);
+                        rowTD[0].Text.ShouldBe(contractDetail.Item1);
+                        rowTD[1].Text.ShouldBe(contractDetail.Item2);
                         
                         // We have found the row
                         foundRowCount++;
@@ -487,16 +486,16 @@ public class EstateManagementUiHelpers{
     {
         await Retry.For(async () => {
                             Int32 foundRowCount = 0;
-                            ILocator tableElement = this.Page.Locator("#contractProductList");
-                            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+                            IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+                            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
                             rows.Count.ShouldBe(productDetails.Count + 1);
                             foreach (String productDetail in productDetails)
                             {
-                                IList<ILocator> rowTD;
-                                foreach (ILocator row in rows)
+                                IList<IWebElement> rowTD;
+                                foreach (IWebElement row in rows)
                                 {
-                                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                                     if (rowTH.Any())
                                     {
@@ -504,12 +503,12 @@ public class EstateManagementUiHelpers{
                                         continue;
                                     }
 
-                                    rowTD = row.Locator("td").AllAsync();
+                                    rowTD = row.FindElements(By.TagName("td"));
 
-                                    if (rowTD[0].TextContentAsync() == productDetail)
+                                    if (rowTD[0].Text == productDetail)
                                     {
                                         // Compare other fields
-                                        rowTD[0].TextContentAsync().ShouldBe(productDetail);
+                                        rowTD[0].Text.ShouldBe(productDetail);
 
                                         // We have found the row
                                         foundRowCount++;
@@ -524,105 +523,105 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task VerifyMerchantsSettlementSchedule(String settlementSchedule){
-        String selectedText = await this.Page.GetDropDownItemText("settlementScheduleList");
+        String selectedText = await this.WebDriver.GetDropDownItemText("settlementScheduleList");
         selectedText.ShouldBe(settlementSchedule);
     }
 
     public async Task ClickAddNewContractButton(){
-        await Retry.For(async () => { await this.Page.ClickButtonById("newContractButton"); });
+        await Retry.For(async () => { await this.WebDriver.ClickButtonById("newContractButton"); });
     }
 
     public async Task ClickAddNewMerchantButton()
     {
-        await Retry.For(async () => { await this.Page.ClickButtonById("newMerchantButton"); });
+        await Retry.For(async () => { await this.WebDriver.ClickButtonById("newMerchantButton"); });
     }
 
     public async Task ClickAddNewProductButton()
     {
-        await Retry.For(async () => { await this.Page.ClickButtonById("newContractProductButton"); });
+        await Retry.For(async () => { await this.WebDriver.ClickButtonById("newContractProductButton"); });
     }
 
     public async Task ClickAddNewTransactionFeeButton(){
-        await Retry.For(async () => { await this.Page.ClickButtonById("newContractProductTransactionFeeButton"); });
+        await Retry.For(async () => { await this.WebDriver.ClickButtonById("newContractProductTransactionFeeButton"); });
     }
 
     public async Task ClickTheCreateContractButton(){
-        await this.Page.ClickButtonById("createContractButton");
+        await this.WebDriver.ClickButtonById("createContractButton");
     }
 
     public async Task ClickTheNewMerchantButton()
     {
-        await this.Page.ClickButtonById("newMerchantButton");
+        await this.WebDriver.ClickButtonById("newMerchantButton");
     }
 
     public async Task ClickTheNewOperatorButton()
     {
-        await this.Page.ClickButtonById("newOperatorButton");
+        await this.WebDriver.ClickButtonById("newOperatorButton");
     }
 
     public async Task ClickTheAddDeviceButton()
     {
-        await this.Page.ClickButtonById("addDeviceButton");
+        await this.WebDriver.ClickButtonById("addDeviceButton");
     }
 
     public async Task ClickTheSaveOperatorButton()
     {
-        await this.Page.ClickButtonById("saveOperatorButton");
+        await this.WebDriver.ClickButtonById("saveOperatorButton");
     }
 
     public async Task ClickTheAssignOperatorButton()
     {
-        await this.Page.ClickButtonById("saveMerchantOperatorButton");
+        await this.WebDriver.ClickButtonById("saveMerchantOperatorButton");
     }
 
     public async Task ClickTheAssignContractButton()
     {
-        await this.Page.ClickButtonById("saveMerchantContractButton");
+        await this.WebDriver.ClickButtonById("saveMerchantContractButton");
     }
 
     public async Task ClickTheAssignDeviceButton()
     {
-        await this.Page.ClickButtonById("saveMerchantDeviceButton");
+        await this.WebDriver.ClickButtonById("saveMerchantDeviceButton");
     }
 
     public async Task ClickTheSaveMerchantButton()
     {
-        await this.Page.ClickButtonById("saveMerchantButton");
+        await this.WebDriver.ClickButtonById("saveMerchantButton");
     }
 
     public async Task ClickTheMakeDepositButton()
     {
-        await this.Page.ClickButtonById("makeDepositButton");
+        await this.WebDriver.ClickButtonById("makeDepositButton");
     }
 
     public async Task ClickTheSaveContractButton()
     {
-        await this.Page.ClickButtonById("saveContractButton");
+        await this.WebDriver.ClickButtonById("saveContractButton");
     }
 
     public async Task ClickTheSaveProductButton()
     {
-        await this.Page.ClickButtonById("saveContractProductButton");
+        await this.WebDriver.ClickButtonById("saveContractProductButton");
     }
 
     public async Task ClickTheNewContractButton()
     {
-        await this.Page.ClickButtonById("newContractButton");
+        await this.WebDriver.ClickButtonById("newContractButton");
     }
 
     public async Task ClickTheNewContractProductButton()
     {
-        await this.Page.ClickButtonById("newContractProductButton");
+        await this.WebDriver.ClickButtonById("newContractProductButton");
     }
 
     public async Task ClickTheCreateProductButton()
     {
-        await this.Page.ClickButtonById("createContractProductButton");
+        await this.WebDriver.ClickButtonById("createContractProductButton");
     }
     
     public async Task ClickTheCreateTransactionFeeButton()
     {
-        await this.Page.ClickButtonById("createTransactionFeeButton");
+        await this.WebDriver.ClickButtonById("createTransactionFeeButton");
     }
 
     public async Task ClickTheProductsLinkForContract(String contractDescription){
@@ -640,25 +639,25 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task EnterContractDetails(String contractDescription, String operatorName){
-        await this.Page.FillIn("Name", contractDescription);
-        await this.Page.SelectDropDownItemByText("operatorList", operatorName);
+        await this.WebDriver.FillIn("Name", contractDescription);
+        await this.WebDriver.SelectDropDownItemByText("operatorList", operatorName);
     }
 
     public async Task EnterContractProductDetails(String productName, String productType, String displayText, String value, Boolean isVariableValue=false)
     {
-        await this.Page.FillIn("Name", productName);
-        await this.Page.FillIn("DisplayText", displayText);
-        await this.Page.SelectDropDownItemByText("productTypeList", productType);
+        await this.WebDriver.FillIn("Name", productName);
+        await this.WebDriver.FillIn("DisplayText", displayText);
+        await this.WebDriver.SelectDropDownItemByText("productTypeList", productType);
         if (isVariableValue) {
-            await this.Page.ClickCheckBoxById("isVariableValue");
+            await this.WebDriver.ClickCheckBoxById("isVariableValue");
         }
         else {
-            await this.Page.FillIn("Value", value);
+            await this.WebDriver.FillIn("Value", value);
         }
     }
 
     public async Task ClickTab(String tabName) {
-        await this.Page.ClickButtonById(tabName);
+        await this.WebDriver.ClickButtonById(tabName);
     }
 
     public async Task EnterMerchantUpdateDetails(List<EstateManagementUiSteps.MerchantUpdate> updates) {
@@ -678,13 +677,13 @@ public class EstateManagementUiHelpers{
             // Fill in the field
             switch (update.field) {
                 case "Name":
-                    await this.Page.FillIn("Name", update.value, true);
+                    await this.WebDriver.FillIn("Name", update.value, true);
                     break;
                 case "AddressLine1":
-                    await this.Page.FillIn("Address.AddressLine1", update.value, true);
+                    await this.WebDriver.FillIn("Address.AddressLine1", update.value, true);
                     break;
                 case "ContactName":
-                    await this.Page.FillIn("Contact.ContactName", update.value, true);
+                    await this.WebDriver.FillIn("Contact.ContactName", update.value, true);
                     break;
             }
         }
@@ -693,29 +692,29 @@ public class EstateManagementUiHelpers{
     public async Task EnterDepositDetails(String amount,
                                           String date,
                                           String reference) {
-        await this.Page.FillInNumeric("Amount", amount);
-        await this.Page.FillIn("Date", date);
-        await this.Page.FillIn("Reference", reference);
+        await this.WebDriver.FillInNumeric("Amount", amount);
+        await this.WebDriver.FillIn("Date", date);
+        await this.WebDriver.FillIn("Reference", reference);
     }
 
     public async Task EnterMerchantDetails(String merchantName, String addressLine1, String town, String region, String postCode, String country, String contactName, String contactEmail, String contactPhoneNumber, String settlementSchedule){
-        await this.Page.FillIn("Name", merchantName);
-        await this.Page.FillIn("Address.AddressLine1", addressLine1);
-        await this.Page.FillIn("Address.Town", town);
-        await this.Page.FillIn("Address.Region", region);
-        await this.Page.FillIn("Address.PostCode", postCode);
-        await this.Page.FillIn("Address.Country", country);
-        await this.Page.FillIn("Contact.ContactName", contactName);
-        await this.Page.FillIn("Contact.EmailAddress", contactEmail);
-        await this.Page.FillIn("Contact.PhoneNumber", contactPhoneNumber);
-        await this.Page.SelectDropDownItemByText("settlementSchedule", settlementSchedule);
+        await this.WebDriver.FillIn("Name", merchantName);
+        await this.WebDriver.FillIn("Address.AddressLine1", addressLine1);
+        await this.WebDriver.FillIn("Address.Town", town);
+        await this.WebDriver.FillIn("Address.Region", region);
+        await this.WebDriver.FillIn("Address.PostCode", postCode);
+        await this.WebDriver.FillIn("Address.Country", country);
+        await this.WebDriver.FillIn("Contact.ContactName", contactName);
+        await this.WebDriver.FillIn("Contact.EmailAddress", contactEmail);
+        await this.WebDriver.FillIn("Contact.PhoneNumber", contactPhoneNumber);
+        await this.WebDriver.SelectDropDownItemByText("settlementSchedule", settlementSchedule);
     }
 
     public async Task EnterOperatorDetails(String operatorName,
                                            Boolean requireCustomMerchantNumber,
                                            Boolean requireCustomTerminalNumber) {
-        await this.Page.FillInById("operatorName", operatorName, true);
-        Boolean requireCustomMerchantNumberIsChecked = await this.Page.IsCheckboxChecked("requireCustomMerchantNumber");
+        await this.WebDriver.FillInById("operatorName", operatorName, true);
+        Boolean requireCustomMerchantNumberIsChecked = await this.WebDriver.IsCheckboxChecked("requireCustomMerchantNumber");
         Boolean clickRequireCustomMerchantNumberCheckBox = (requireCustomMerchantNumber, requireCustomMerchantNumberIsChecked) switch {
             (true, true) => false,
             (true, false) => true,
@@ -724,10 +723,10 @@ public class EstateManagementUiHelpers{
         };
         
         if (clickRequireCustomMerchantNumberCheckBox) {
-            await this.Page.ClickCheckBoxById("requireCustomMerchantNumber");
+            await this.WebDriver.ClickCheckBoxById("requireCustomMerchantNumber");
         }
 
-        Boolean requireCustomTerminalNumberIsChecked = await this.Page.IsCheckboxChecked("requireCustomTerminalNumber");
+        Boolean requireCustomTerminalNumberIsChecked = await this.WebDriver.IsCheckboxChecked("requireCustomTerminalNumber");
         Boolean clickRequireCustomTerminalNumberCheckBox = (requireCustomTerminalNumber, requireCustomTerminalNumberIsChecked) switch
         {
             (true, true) => false,
@@ -737,7 +736,7 @@ public class EstateManagementUiHelpers{
         };
 
         if (clickRequireCustomTerminalNumberCheckBox) {
-            await this.Page.ClickCheckBoxById("requireCustomTerminalNumber");
+            await this.WebDriver.ClickCheckBoxById("requireCustomTerminalNumber");
         }
     }
 
@@ -745,50 +744,50 @@ public class EstateManagementUiHelpers{
                                            String merchantNumber,
                                            String terminalNumber)
     {
-        await this.Page.SelectDropDownItemByText("operatorName", operatorName);
-        await this.Page.FillInById("merchantNumber", merchantNumber, true);
-        await this.Page.FillInById("terminalNumber", terminalNumber, true);
+        await this.WebDriver.SelectDropDownItemByText("operatorName", operatorName);
+        await this.WebDriver.FillInById("merchantNumber", merchantNumber, true);
+        await this.WebDriver.FillInById("terminalNumber", terminalNumber, true);
     }
 
     public async Task EnterContractDetails(String contractName)
     {
-        await this.Page.SelectDropDownItemByText("contractName", contractName);
+        await this.WebDriver.SelectDropDownItemByText("contractName", contractName);
     }
 
     public async Task EnterDeviceDetails(String deviceIdentifier)
     {
-        await this.Page.FillInById("deviceIdentifier", deviceIdentifier, true);
+        await this.WebDriver.FillInById("deviceIdentifier", deviceIdentifier, true);
     }
 
     public async Task EnterProductDetails(String productName, String displayText, String productValue, String productType){
-        await this.Page.FillIn("productName", productName);
-        await this.Page.FillIn("displayText", displayText);
-        await this.Page.SelectDropDownItemByText("productTypeList", productType);
+        await this.WebDriver.FillIn("productName", productName);
+        await this.WebDriver.FillIn("displayText", displayText);
+        await this.WebDriver.SelectDropDownItemByText("productTypeList", productType);
 
         if (String.IsNullOrEmpty(productValue))
         {
             // Set the IsVariable flag
-            await this.Page.FillIn("isVariable", "true");
+            await this.WebDriver.FillIn("isVariable", "true");
         }
         else
         {
             // Set the product value
-            await this.Page.FillIn("value", productValue);
+            await this.WebDriver.FillIn("value", productValue);
         }
     }
 
     public async Task Login(String username, String password){
-        await this.Page.FillIn("Input.Username", username);
-        await this.Page.FillIn("Input.Password", password);
-        await this.Page.ClickButtonByText("Login");
+        await this.WebDriver.FillIn("Input.Username", username);
+        await this.WebDriver.FillIn("Input.Password", password);
+        await this.WebDriver.ClickButtonByText("Login");
     }
     
     public async Task EnterTransactionFeeDetails(String description, String calculationType, String feeType, String feeValue)
     {
-        await this.Page.FillIn("Description", description);
-        await this.Page.SelectDropDownItemByText("calculationTypeList", calculationType);
-        await this.Page.SelectDropDownItemByText("feeTypeList", feeType);
-        await this.Page.FillInNumeric("Value", feeValue);
+        await this.WebDriver.FillIn("Description", description);
+        await this.WebDriver.SelectDropDownItemByText("calculationTypeList", calculationType);
+        await this.WebDriver.SelectDropDownItemByText("feeTypeList", feeType);
+        await this.WebDriver.FillInNumeric("Value", feeValue);
     }
 
     public async Task ClickTheMerchantLinkForMerchant(String merchantName)
@@ -801,25 +800,25 @@ public class EstateManagementUiHelpers{
                                            String textToSearchFor,
                                            String elementToClickId) {
         Boolean foundRow = false;
-        ILocator itemrow = null;
+        IWebElement itemrow = null;
         await Retry.For(async () => {
-            ILocator tableElement = this.Page.FindElement(By.Id(tableId));
-            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
             rows.ShouldNotBeNull();
             rows.Any().ShouldBeTrue();
-            IList<ILocator> rowTD;
-            foreach (ILocator row in rows) {
-                IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+            IList<IWebElement> rowTD;
+            foreach (IWebElement row in rows) {
+                ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                 if (rowTH.Any()) {
                     // header row so skip
                     continue;
                 }
 
-                rowTD = row.Locator("td").AllAsync();
+                rowTD = row.FindElements(By.TagName("td"));
 
-                if (rowTD[0].TextContentAsync() == textToSearchFor) {
+                if (rowTD[0].Text == textToSearchFor) {
                     itemrow = row;
                     foundRow = true;
                     break;
@@ -833,36 +832,36 @@ public class EstateManagementUiHelpers{
 
 
         await Retry.For(async () => {
-            ILocator element = itemrow.FindElement(By.Id(elementToClickId));
-            if (element.IsVisibleAsync()) {
-                element.ClickAsync();
+            IWebElement element = itemrow.FindElement(By.Id(elementToClickId));
+            if (element.Displayed) {
+                element.Click();
             }
             else {
-                this.Page.ExecuteJavaScript($"document.getElementById('{elementToClickId}').click();");
+                this.WebDriver.ExecuteJavaScript($"document.getElementById('{elementToClickId}').click();");
             }
         }, TimeSpan.FromSeconds(120));
     }
 
-    private async Task<ILocator> GetButtonInDropdown(ILocator dropdownButton,
+    private async Task<IWebElement> GetButtonInDropdown(IWebElement dropdownButton,
                                                         String buttonId) {
-        ILocator result = null;
-        dropdownButton.ClickAsync();
-        ILocator button = this.Page.FindElement(By.Id(buttonId));
-        if (button.IsVisibleAsync() && button.Enabled) {
+        IWebElement result = null;
+        dropdownButton.Click();
+        IWebElement button = this.WebDriver.FindElement(By.Id(buttonId));
+        if (button.Displayed && button.Enabled) {
             result = button;
         }
         else {
-            dropdownButton.ClickAsync();
+            dropdownButton.Click();
         }
         
         return result;
     }
 
     public async Task ClickTheEditOperatorButton(String operatorName) {
-        ILocator tableElement = this.Page.Locator("#operatorList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x) {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("operatorList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x) {
             var gg = await GetButtonInDropdown(webElement, $"{operatorName}Edit");
             if (gg != null) {
                 editButton = gg;
@@ -871,7 +870,7 @@ public class EstateManagementUiHelpers{
         }
 
         if (editButton != null) {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else {
             throw new Exception($"Edit button not found for operator {operatorName}");
@@ -880,10 +879,10 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheRemoveOperatorButton(String operatorName)
     {
-        ILocator tableElement = this.Page.Locator("#merchantOperatorList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x) {
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantOperatorList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x) {
             var gg = await GetButtonInDropdown(webElement, $"{operatorName}Remove");
             if (gg != null) {
                 editButton = gg;
@@ -892,7 +891,7 @@ public class EstateManagementUiHelpers{
         }
 
         if (editButton != null) {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else {
             throw new Exception($"Remove button not found for operator {operatorName}");
@@ -901,10 +900,10 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheRemoveContractButton(String contractName)
     {
-        ILocator tableElement = this.Page.Locator("#merchantContractList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x)
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantContractList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
         {
             var gg = await GetButtonInDropdown(webElement, $"{contractName}Remove");
             if (gg != null)
@@ -916,7 +915,7 @@ public class EstateManagementUiHelpers{
 
         if (editButton != null)
         {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else
         {
@@ -926,10 +925,10 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheEditMerchantButton(String merchantName)
     {
-        ILocator tableElement = this.Page.Locator("#merchantList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x)
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
         {
             var gg = await GetButtonInDropdown(webElement, $"{merchantName}Edit");
             if (gg != null)
@@ -941,7 +940,7 @@ public class EstateManagementUiHelpers{
 
         if (editButton != null)
         {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else
         {
@@ -951,10 +950,10 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheMakeDepositButton(String merchantName)
     {
-        ILocator tableElement = this.Page.Locator("#merchantList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x)
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
         {
             var gg = await GetButtonInDropdown(webElement, $"{merchantName}MakeDeposit");
             if (gg != null)
@@ -966,7 +965,7 @@ public class EstateManagementUiHelpers{
 
         if (editButton != null)
         {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else
         {
@@ -976,10 +975,10 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheViewMerchantButton(String merchantName)
     {
-        ILocator tableElement = this.Page.Locator("#merchantList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x)
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("merchantList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
         {
             var gg = await GetButtonInDropdown(webElement, $"{merchantName}View");
             if (gg != null)
@@ -991,7 +990,7 @@ public class EstateManagementUiHelpers{
 
         if (editButton != null)
         {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else
         {
@@ -1001,10 +1000,10 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheViewContractProductsButton(String contractName)
     {
-        ILocator tableElement = this.Page.Locator("#contractList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x)
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
         {
             var gg = await GetButtonInDropdown(webElement, $"{contractName}ViewProducts");
             if (gg != null)
@@ -1016,7 +1015,7 @@ public class EstateManagementUiHelpers{
 
         if (editButton != null)
         {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else
         {
@@ -1026,15 +1025,15 @@ public class EstateManagementUiHelpers{
 
     public async Task ClickTheViewContractProductFeesButton(String productName)
     {
-        //ILocator tableElement = this.Page.Locator("#contractProductList");
-        //var dropdownMenuButton = tableElement.Locator("#dropdownMenuButton");
-        //dropdownMenuButton.ClickAsync();
-        //ILocator editButton = this.Page.FindElement(By.Id($"{productName.Replace(" ", "")}ViewFees"));
-        //editButton.ClickAsync();
-        ILocator tableElement = this.Page.Locator("#contractProductList");
-        var x = tableElement.Locator("#dropdownMenuButton").AllAsync();
-        ILocator editButton = null;
-        foreach (ILocator webElement in x)
+        //IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+        //var dropdownMenuButton = tableElement.FindElement(By.Id("dropdownMenuButton"));
+        //dropdownMenuButton.Click();
+        //IWebElement editButton = this.WebDriver.FindElement(By.Id($"{productName.Replace(" ", "")}ViewFees"));
+        //editButton.Click();
+        IWebElement tableElement = this.WebDriver.FindElement(By.Id("contractProductList"));
+        var x = tableElement.FindElements(By.Id("dropdownMenuButton"));
+        IWebElement editButton = null;
+        foreach (IWebElement webElement in x)
         {
             var gg = await GetButtonInDropdown(webElement, $"{productName.Replace(" ", "")}ViewFees");
             if (gg != null)
@@ -1046,7 +1045,7 @@ public class EstateManagementUiHelpers{
 
         if (editButton != null)
         {
-            editButton.ClickAsync();
+            editButton.Click();
         }
         else
         {
@@ -1055,18 +1054,18 @@ public class EstateManagementUiHelpers{
     }
 
     public async Task ClickTheAddOperatorButton() {
-        await this.Page.ClickButtonById("addOperatorButton");
+        await this.WebDriver.ClickButtonById("addOperatorButton");
     }
 
     public async Task ClickTheAddContractButton()
     {
-        await this.Page.ClickButtonById("addContractButton");
+        await this.WebDriver.ClickButtonById("addContractButton");
     }
 
 
     public async Task VerifyAssignOperatorDialogIsDisplayed() {
         await Retry.For(async () => {
-            ILocator element = this.Page.Locator("#AssignOperatorDialog");
+            IWebElement element = this.WebDriver.FindElement(By.Id("AssignOperatorDialog"));
             element.ShouldNotBeNull();
         });
     }
@@ -1074,38 +1073,38 @@ public class EstateManagementUiHelpers{
     public async Task VerifyAssignContractDialogIsDisplayed()
     {
         await Retry.For(async () => {
-            ILocator element = this.Page.Locator("#AssignContractDialog");
+            IWebElement element = this.WebDriver.FindElement(By.Id("AssignContractDialog"));
             element.ShouldNotBeNull();
         });
     }
 
     public async Task VerifyAddDeviceDialogIsDisplayed() {
         await Retry.For(async () => {
-            ILocator element = this.Page.Locator("#AddDeviceDialog");
+            IWebElement element = this.WebDriver.FindElement(By.Id("AddDeviceDialog"));
             element.ShouldNotBeNull();
         });
     }
 
     public async Task ClickTheSaveTransactionFeeButton()
     {
-        await this.Page.ClickButtonById("saveContractProductFeeButton");
+        await this.WebDriver.ClickButtonById("saveContractProductFeeButton");
     }
 
     public async Task VerifyDeviceDetailsAreInTheList(String tableId,
                                                       List<String> devicesList) {
         await Retry.For(async () => {
             Int32 foundRowCount = 0;
-            ILocator tableElement = this.Page.FindElement(By.Id(tableId));
-            IList<ILocator> rows = tableElement.Locator("tr").AllAsync();
+            IWebElement tableElement = this.WebDriver.FindElement(By.Id(tableId));
+            IList<IWebElement> rows = tableElement.FindElements(By.TagName("tr"));
 
             rows.Count.ShouldBe(devicesList.Count + 1);
             StringBuilder sb = new StringBuilder();
             foreach (String deviceDetail in devicesList)
             {
-                IList<ILocator> rowTD;
-                foreach (ILocator row in rows)
+                IList<IWebElement> rowTD;
+                foreach (IWebElement row in rows)
                 {
-                    IReadOnlyList<ILocator> rowTH = row.Locator("th").AllAsync();
+                    ReadOnlyCollection<IWebElement> rowTH = row.FindElements(By.TagName("th"));
 
                     if (rowTH.Any())
                     {
@@ -1113,9 +1112,9 @@ public class EstateManagementUiHelpers{
                         continue;
                     }
 
-                    rowTD = row.Locator("td").AllAsync();
+                    rowTD = row.FindElements(By.TagName("td"));
 
-                    if (rowTD[0].TextContentAsync() == deviceDetail)
+                    if (rowTD[0].Text == deviceDetail)
                     {
                         // We have found the row
                         foundRowCount++;
@@ -1137,20 +1136,20 @@ public class EstateManagementUiHelpers{
     {
         await Retry.For(async () =>
         {
-            var merchantsLink = this.Page.Locator("#merchantsLink");
-            var operatorsLink = this.Page.Locator("#operatorsLink");
-            var contractsLink = this.Page.Locator("#contractsLink");
-            var estateDetailsLink = this.Page.Locator("#estateDetailsLink");
+            IWebElement merchantsLink = this.WebDriver.FindElement(By.Id("merchantsLink"));
+            IWebElement operatorsLink = this.WebDriver.FindElement(By.Id("operatorsLink"));
+            IWebElement contractsLink = this.WebDriver.FindElement(By.Id("contractsLink"));
+            IWebElement estateDetailsLink = this.WebDriver.FindElement(By.Id("estateDetailsLink"));
 
             merchantsLink.ShouldNotBeNull();
             operatorsLink.ShouldNotBeNull();
             contractsLink.ShouldNotBeNull();
             estateDetailsLink.ShouldNotBeNull();
 
-            (await merchantsLink.IsVisibleAsync()).ShouldBeTrue();
-            (await operatorsLink.IsVisibleAsync()).ShouldBeTrue();
-            (await contractsLink.IsVisibleAsync()).ShouldBeTrue();
-            (await estateDetailsLink.IsVisibleAsync()).ShouldBeTrue();
+            merchantsLink.Displayed.ShouldBeTrue();
+            operatorsLink.Displayed.ShouldBeTrue();
+            contractsLink.Displayed.ShouldBeTrue();
+            estateDetailsLink.Displayed.ShouldBeTrue();
         }, TimeSpan.FromSeconds(30));
     }
 
@@ -1159,10 +1158,10 @@ public class EstateManagementUiHelpers{
         await Retry.For(async () =>
         {
             // Verify the dashboard page is displayed
-            await this.VerifyPageTitle("Dashboard");
+            this.VerifyPageTitle("Dashboard");
             
             // Check that we're on the dashboard page
-            String currentUrl = this.Page.Url;
+            String currentUrl = this.WebDriver.Url;
             currentUrl.ShouldContain("/Dashboard");
         }, TimeSpan.FromSeconds(30));
     }
@@ -1170,11 +1169,11 @@ public class EstateManagementUiHelpers{
     public async Task NavigateToDashboard()
     {
         // Navigate to dashboard by URL
-        await this.Page.GotoAsync($"https://localhost:{this.EstateManagementUiPort}/Dashboard");
+        this.WebDriver.Navigate().GoToUrl($"https://localhost:{this.EstateManagementUiPort}/Dashboard");
         
         await Retry.For(async () =>
         {
-            await this.VerifyPageTitle("Dashboard");
+            this.VerifyPageTitle("Dashboard");
         }, TimeSpan.FromSeconds(30));
     }
 }

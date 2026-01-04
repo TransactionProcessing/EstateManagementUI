@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Shared.IntegrationTesting;
 using EstateManagementUI.IntegrationTests.Common;
-using OpenQA.Selenium;
+using Microsoft.Playwright;
 using Reqnroll.BoDi;
 using SecurityService.IntegrationTesting.Helpers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -25,10 +25,10 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
         public EstateManagementUiSteps(ScenarioContext scenarioContext, TestingContext testingContext, IObjectContainer container)
         {
-            var webDriver = scenarioContext.ScenarioContainer.Resolve<IWebDriver>(scenarioContext.ScenarioInfo.Title.Replace(" ", ""));
+            var page = scenarioContext.ScenarioContainer.Resolve<IPage>(scenarioContext.ScenarioInfo.Title.Replace(" ", ""));
 
             this.TestingContext = testingContext;
-            this.UiHelpers = new EstateManagementUiHelpers(webDriver, this.TestingContext.DockerHelper.EstateManagementUiPort);
+            this.UiHelpers = new EstateManagementUiHelpers(page, this.TestingContext.DockerHelper.EstateManagementUiPort);
         }
 
         [Given(@"I am on the application home page")]
