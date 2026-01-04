@@ -77,4 +77,16 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
+// Add login endpoint to trigger OIDC authentication
+app.MapGet("/login", (HttpContext context) =>
+{
+    return Results.Challenge(
+        properties: new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+        {
+            RedirectUri = "/"
+        },
+        authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
+    );
+}).AllowAnonymous();
+
 app.Run();

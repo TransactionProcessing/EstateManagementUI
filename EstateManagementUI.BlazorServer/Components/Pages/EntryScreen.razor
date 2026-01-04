@@ -1,0 +1,143 @@
+@page "/entry"
+@using Microsoft.AspNetCore.Components.Authorization
+@layout Components.Layout.EntryLayout
+
+<PageTitle>Welcome - Estate Management</PageTitle>
+
+<div class="min-h-screen bg-gray-50 flex flex-col">
+    <!-- Main Content -->
+    <div class="flex-1 flex items-center justify-center px-4 py-12">
+        <div class="max-w-7xl w-full">
+            <!-- Three Column Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Estate Management Card -->
+                <div class="bg-white rounded-lg shadow-lg p-8 flex flex-col">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Estate Management</h2>
+                    
+                    <!-- Icon -->
+                    <div class="flex justify-center mb-6">
+                        <svg class="w-24 h-24 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="space-y-3 mb-8 flex-1">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Manage estate details</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Manage estate users</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Operator Management</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Button -->
+                    <a href="/estate-info" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded transition-colors duration-150 text-center text-lg shadow-sm">
+                        View More
+                    </a>
+                </div>
+
+                <!-- Merchant Management Card -->
+                <div class="bg-white rounded-lg shadow-lg p-8 flex flex-col">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Merchant Management</h2>
+                    
+                    <!-- Icon -->
+                    <div class="flex justify-center mb-6">
+                        <svg class="w-24 h-24 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="space-y-3 mb-8 flex-1">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Manage Merchant Details</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Balance Management</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Fee Management</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Button -->
+                    <a href="/merchant-info" class="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded transition-colors duration-150 text-center text-lg">
+                        View More
+                    </a>
+                </div>
+
+                <!-- File Processing Card -->
+                <div class="bg-white rounded-lg shadow-lg p-8 flex flex-col">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">File Processing</h2>
+                    
+                    <!-- Icon -->
+                    <div class="flex justify-center mb-6">
+                        <svg class="w-24 h-24 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    
+                    <!-- Features -->
+                    <div class="space-y-3 mb-8 flex-1">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Transaction Files</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Settlement Processing</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-gray-700">Bulk Processing</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Button -->
+                    <a href="/file-info" class="bg-teal-600 hover:bg-teal-700 text-white font-medium px-6 py-3 rounded transition-colors duration-150 text-center text-lg">
+                        View More
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sign In Section -->
+            <div class="mt-12 text-center">
+                <p class="text-gray-600 mb-4">Sign in to access all features</p>
+                <a href="/login" class="inline-flex items-center px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-150">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
