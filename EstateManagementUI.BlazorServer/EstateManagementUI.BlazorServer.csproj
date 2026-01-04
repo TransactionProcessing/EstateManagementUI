@@ -15,6 +15,12 @@
     <PackageReference Include="IdentityModel" Version="6.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="hosting.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <!-- Build Tailwind CSS before build -->
   <Target Name="NpmInstall" BeforeTargets="BuildTailwindCSS" Condition="!Exists('node_modules')">
     <Message Importance="high" Text="Installing npm packages..." />
