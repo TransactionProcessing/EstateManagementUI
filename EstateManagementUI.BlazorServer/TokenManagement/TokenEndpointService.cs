@@ -65,9 +65,21 @@ namespace EstateManagementUI.BlazorServer.TokenManagement
             OpenIdConnectOptions oidcOptions = await this.GetOidcOptionsAsync();
             OpenIdConnectConfiguration configuration = await oidcOptions.ConfigurationManager.GetConfigurationAsync(default);
             
+            // Get revocation endpoint from discovery document
+            String? revocationEndpoint = configuration.AdditionalData.ContainsKey(OidcConstants.Discovery.RevocationEndpoint)
+                ? configuration.AdditionalData[OidcConstants.Discovery.RevocationEndpoint]?.ToString()
+                : null;
+            
+            if (string.IsNullOrEmpty(revocationEndpoint))
+            {
+                this.Logger.LogWarning("Revocation endpoint not found in discovery document");
+                // Return a failed response - cannot create custom error responses, so just return result from empty call
+                return new TokenRevocationResponse();
+            }
+            
             return await this.HttpClient.RevokeTokenAsync(new TokenRevocationRequest
             {
-                Address = configuration.AdditionalData[OidcConstants.Discovery.RevocationEndpoint].ToString(),
+                Address = revocationEndpoint,
                 ClientId = oidcOptions.ClientId,
                 ClientSecret = oidcOptions.ClientSecret,
                 Token = refreshToken,
