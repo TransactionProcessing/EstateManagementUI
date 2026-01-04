@@ -1,0 +1,8 @@
+bin/
+obj/
+.vs/
+*.user
+*.suo
+TestResults/
+playwright-report/
+test-results/
