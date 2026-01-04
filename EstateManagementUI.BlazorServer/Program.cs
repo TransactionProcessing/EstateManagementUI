@@ -1,6 +1,8 @@
 using EstateManagementUI.BlazorServer.Components;
 using EstateManagementUI.BlazorServer.Services;
+using EstateManagementUI.BlazorServer.TokenManagement;
 using MediatR;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
@@ -20,6 +22,11 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
+.AddAutomaticTokenManagement(o => {
+    o.RefreshBeforeExpiration = TimeSpan.FromSeconds(30);
+    o.RevokeRefreshTokenOnSignout = true;
+    o.Scheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
@@ -27,7 +34,7 @@ builder.Services.AddAuthentication(options =>
     options.Authority = builder.Configuration["Authentication:Authority"];
     options.ClientId = builder.Configuration["Authentication:ClientId"];
     options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
-    options.ResponseType = "code";
+    options.ResponseType = "code id_token";
     options.SaveTokens = true;
     options.GetClaimsFromUserInfoEndpoint = true;
     
@@ -35,12 +42,18 @@ builder.Services.AddAuthentication(options =>
     options.Scope.Add("openid");
     options.Scope.Add("profile");
     options.Scope.Add("email");
+    options.Scope.Add("offline_access");
+    
+    // Add additional scopes from old app
+    options.Scope.Add("fileProcessor");
+    options.Scope.Add("transactionProcessor");
     
     options.RequireHttpsMetadata = false; // For development - set to true in production
     
-    // Map claims if needed
+    // Map claims
     options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
+        ValidateAudience = false,
         NameClaimType = "name",
         RoleClaimType = "role"
     };
@@ -88,5 +101,13 @@ app.MapGet("/login", (HttpContext context) =>
         authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
     );
 }).AllowAnonymous();
+
+// Add logout endpoint
+app.MapGet("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+}).RequireAuthorization();
 
 app.Run();
