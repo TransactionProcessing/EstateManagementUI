@@ -59,16 +59,12 @@
                     <!-- User Profile Dropdown -->
                     <AuthorizeView>
                         <Authorized>
-                            <div class="flex items-center space-x-3 pl-3 border-l border-gray-200">
+                            <div class="relative flex items-center space-x-3 pl-3 border-l border-gray-200">
                                 <div class="text-right hidden sm:block">
                                     <div class="text-sm font-medium text-gray-900">@context.User.Identity?.Name</div>
                                     <div class="text-xs text-gray-500">Administrator</div>
                                 </div>
-                                <button class="flex items-center space-x-1 text-gray-600 hover:text-gray-900 focus:outline-none">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold shadow-md">
-                                        @GetInitials(context.User.Identity?.Name)
-                                    </div>
-                                </button>
+                                <UserProfileDropdown UserName="@context.User.Identity?.Name" />
                             </div>
                         </Authorized>
                         <NotAuthorized>
@@ -131,20 +127,24 @@
             }
         }
     }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = event.target.closest('[data-dropdown]');
+        if (!dropdown) {
+            // Trigger Blazor to close dropdown
+            const dropdowns = document.querySelectorAll('[data-dropdown]');
+            dropdowns.forEach(d => {
+                const button = d.querySelector('button');
+                if (button) {
+                    button.dispatchEvent(new Event('blur'));
+                }
+            });
+        }
+    });
 </script>
 
 @code {
     [CascadingParameter]
     public string? PageTitle { get; set; }
-    
-    private string GetInitials(string? name)
-    {
-        if (string.IsNullOrEmpty(name)) return "U";
-        
-        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length >= 2)
-            return $"{parts[0][0]}{parts[1][0]}".ToUpper();
-        
-        return name.Length >= 2 ? name.Substring(0, 2).ToUpper() : name.ToUpper();
-    }
 }
