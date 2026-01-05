@@ -147,6 +147,35 @@ namespace EstateManagementUI.BlazorIntegrationTests.Common
             }, timeout);
         }
 
+        public static async Task SelectDropDownItemByText(this IPage page,
+                                                          String dropDownName,
+                                                          String selectionText,
+                                                          TimeSpan? timeout = null)
+        {
+            await Retry.For(async () =>
+            {
+                var locator = page.Locator($"[name='{dropDownName}']");
+                await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
+                await locator.SelectOptionAsync(new SelectOptionValue { Label = selectionText });
+            }, timeout);
+        }
+
+        public static async Task<String> GetDropDownItemText(this IPage page, String dropDownName, TimeSpan? timeout = null)
+        {
+            String selectedText = null;
+            await Retry.For(async () =>
+            {
+                var locator = page.Locator($"[name='{dropDownName}']");
+                await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
+                var selectedValue = await locator.InputValueAsync();
+                
+                // Get the text of the selected option
+                var selectedOption = locator.Locator($"option[value='{selectedValue}']");
+                selectedText = await selectedOption.TextContentAsync();
+            }, timeout);
+            return selectedText;
+        }
+
         public static async Task<String> GetTextById(this IPage page, String elementId, TimeSpan? timeout = null)
         {
             String text = null;
