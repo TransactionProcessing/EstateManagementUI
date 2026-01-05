@@ -5,19 +5,57 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Load hosting.json configuration for port settings
 builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true);
 
-// Apply URLs from configuration
-var urls = builder.Configuration["urls"];
-if (!string.IsNullOrEmpty(urls))
+// Configure Kestrel with certificate for HTTPS
+builder.WebHost.UseKestrel(options =>
 {
-    builder.WebHost.UseUrls(urls);
-}
+    var port = 5004;
+    
+    options.Listen(IPAddress.Any, port, listenOptions =>
+    {
+        try
+        {
+            // Enable support for HTTP1 and HTTP2
+            listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+            
+            // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
+            var certificatePath = Path.Combine(AppContext.BaseDirectory, "Certificates");
+            if (Directory.Exists(certificatePath))
+            {
+                var certificateFiles = Directory.GetFiles(certificatePath, "*.pfx");
+                if (certificateFiles.Length > 0)
+                {
+                    var certificateFile = certificateFiles.First();
+                    Console.WriteLine($"Certificate File: {certificateFile}");
+                    var certificate = new X509Certificate2(certificateFile, "password");
+                    listenOptions.UseHttps(certificate);
+                }
+                else
+                {
+                    Console.WriteLine("No certificate file found in Certificates folder");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Certificates folder not found at: {certificatePath}");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error configuring HTTPS: {e.Message}");
+            throw;
+        }
+    });
+});
 
 // Clear default claims mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

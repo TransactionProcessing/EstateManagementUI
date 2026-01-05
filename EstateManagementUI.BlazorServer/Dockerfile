@@ -33,4 +33,6 @@ RUN dotnet publish "./EstateManagementUI.BlazorServer.csproj" -c $BUILD_CONFIGUR
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# Copy certificates to the runtime image
+COPY --from=build /src/EstateManagementUI.BlazorServer/Certificates ./Certificates
 ENTRYPOINT ["dotnet", "EstateManagementUI.BlazorServer.dll"]
