@@ -150,7 +150,7 @@
                 <button type="button" class="btn btn-secondary" @onclick="Cancel" disabled="@isSaving">
                     Cancel
                 </button>
-                <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                <button id="createMerchantButton" type="submit" class="btn btn-primary" disabled="@isSaving">
                     @if (isSaving)
                     {
                         <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
