@@ -281,11 +281,250 @@ public class BlazorUiHelpers
     {
         await this.Page.ClickButtonById("saveProductButton");
     }
+
+    public async Task Login(String username, String password)
+    {
+        await this.Page.FillIn("Input.Username", username);
+        await this.Page.FillIn("Input.Password", password);
+        await this.Page.ClickButtonByText("Login");
+    }
+
+    public async Task ClickTheNewOperatorButton()
+    {
+        await this.Page.ClickButtonById("newOperatorButton");
+    }
+
+    public async Task ClickTheNewMerchantButton()
+    {
+        await this.Page.ClickButtonById("newMerchantButton");
+    }
+
+    public async Task ClickTheEditOperatorButton(String operatorName)
+    {
+        await this.ClickElementInTable("operatorList", operatorName, "editOperatorLink");
+    }
+
+    public async Task ClickTheEditMerchantButton(String merchantName)
+    {
+        await this.ClickElementInTable("merchantList", merchantName, "editMerchantLink");
+    }
+
+    public async Task ClickTheMakeDepositButtonFor(String merchantName)
+    {
+        await this.ClickElementInTable("merchantList", merchantName, "makeDepositLink");
+    }
+
+    public async Task ClickTheAssignOperatorButton()
+    {
+        await this.Page.ClickButtonById("assignOperatorButton");
+    }
+
+    public async Task ClickTheAddDeviceButton()
+    {
+        await this.Page.ClickButtonById("addDeviceButton");
+    }
+
+    public async Task ClickAddNewContractButton()
+    {
+        await Retry.For(async () => { await this.Page.ClickButtonById("newContractButton"); });
+    }
+
+    public async Task ClickAddNewMerchantButton()
+    {
+        await Retry.For(async () => { await this.Page.ClickButtonById("newMerchantButton"); });
+    }
+
+    public async Task ClickAddNewProductButton()
+    {
+        await Retry.For(async () => { await this.Page.ClickButtonById("newContractProductButton"); });
+    }
+
+    public async Task ClickAddNewTransactionFeeButton()
+    {
+        await Retry.For(async () => { await this.Page.ClickButtonById("newContractProductTransactionFeeButton"); });
+    }
+
+    public async Task ClickTheCreateContractButton()
+    {
+        await this.Page.ClickButtonById("createContractButton");
+    }
+
+    public async Task VerifyMerchantDetailsAreInTheList(List<MerchantDetails> merchantDetailsList)
+    {
+        await Retry.For(async () =>
+        {
+            Int32 foundRowCount = 0;
+            var rows = await this.Page.Locator("#merchantList tr").AllAsync();
+
+            rows.Count.ShouldBe(merchantDetailsList.Count + 1);
+
+            foreach (var merchantDetails in merchantDetailsList)
+            {
+                foreach (var row in rows)
+                {
+                    var headers = await row.Locator("th").AllAsync();
+                    if (headers.Any())
+                    {
+                        continue;
+                    }
+
+                    var cells = await row.Locator("td").AllAsync();
+                    if (cells.Count > 0)
+                    {
+                        var cellText = await cells[0].TextContentAsync();
+                        if (cellText == merchantDetails.MerchantName)
+                        {
+                            cellText.ShouldBe(merchantDetails.MerchantName);
+                            var townText = await cells[4].TextContentAsync();
+                            townText.ShouldBe(merchantDetails.Town);
+
+                            foundRowCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foundRowCount.ShouldBe(merchantDetailsList.Count);
+        }, TimeSpan.FromSeconds(120));
+    }
+
+    public async Task VerifyOperatorDetailsAreInTheList(String tableId, List<(String, String, String, String)> operatorDetails)
+    {
+        await Retry.For(async () =>
+        {
+            Int32 foundRowCount = 0;
+            var rows = await this.Page.Locator($"#{tableId} tr").AllAsync();
+
+            rows.Count.ShouldBe(operatorDetails.Count + 1);
+
+            foreach ((String name, String merchantNumber, String terminalNumber, String isDeleted) in operatorDetails)
+            {
+                foreach (var row in rows)
+                {
+                    var headers = await row.Locator("th").AllAsync();
+                    if (headers.Any())
+                    {
+                        continue;
+                    }
+
+                    var cells = await row.Locator("td").AllAsync();
+                    if (cells.Count > 0)
+                    {
+                        var cellText = await cells[0].TextContentAsync();
+                        if (cellText == name)
+                        {
+                            cellText.ShouldBe(name);
+                            var col1Text = await cells[1].TextContentAsync();
+                            col1Text.ShouldBe(merchantNumber);
+                            var col2Text = await cells[2].TextContentAsync();
+                            col2Text.ShouldBe(terminalNumber);
+                            
+                            if (!String.IsNullOrEmpty(isDeleted))
+                            {
+                                var col3Text = await cells[3].TextContentAsync();
+                                col3Text.ShouldBe(isDeleted);
+                            }
+
+                            foundRowCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foundRowCount.ShouldBe(operatorDetails.Count);
+        }, TimeSpan.FromSeconds(120));
+    }
+
+    public async Task VerifyContractDetailsAreInTheList(String tableId, List<(String, String)> contractDetails)
+    {
+        await Retry.For(async () =>
+        {
+            Int32 foundRowCount = 0;
+            var rows = await this.Page.Locator($"#{tableId} tr").AllAsync();
+
+            rows.Count.ShouldBe(contractDetails.Count + 1);
+
+            foreach ((String contractName, String isDeleted) in contractDetails)
+            {
+                foreach (var row in rows)
+                {
+                    var headers = await row.Locator("th").AllAsync();
+                    if (headers.Any())
+                    {
+                        continue;
+                    }
+
+                    var cells = await row.Locator("td").AllAsync();
+                    if (cells.Count > 0)
+                    {
+                        var cellText = await cells[0].TextContentAsync();
+                        if (cellText == contractName)
+                        {
+                            cellText.ShouldBe(contractName);
+                            var col1Text = await cells[1].TextContentAsync();
+                            col1Text.ShouldBe(isDeleted);
+
+                            foundRowCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foundRowCount.ShouldBe(contractDetails.Count);
+        }, TimeSpan.FromSeconds(120));
+    }
+
+    private async Task ClickElementInTable(String tableId, String textToSearchFor, String elementToClickId)
+    {
+        await Retry.For(async () =>
+        {
+            var rows = await this.Page.Locator($"#{tableId} tr").AllAsync();
+            rows.ShouldNotBeNull();
+            rows.Any().ShouldBeTrue();
+
+            foreach (var row in rows)
+            {
+                var headers = await row.Locator("th").AllAsync();
+                if (headers.Any())
+                {
+                    continue;
+                }
+
+                var cells = await row.Locator("td").AllAsync();
+                if (cells.Count > 0)
+                {
+                    var cellText = await cells[0].TextContentAsync();
+                    if (cellText == textToSearchFor)
+                    {
+                        var link = row.Locator($"#{elementToClickId}");
+                        await link.ClickAsync();
+                        return;
+                    }
+                }
+            }
+
+            throw new Exception($"Could not find row with text '{textToSearchFor}' in table '{tableId}'");
+        });
+    }
 }
 
 public record MerchantDetails
 {
     public String MerchantName { get; init; }
+    public String SettlementSchedule { get; init; }
+    public String ContactName { get; init; }
+    public String AddressLine1 { get; init; }
     public String Town { get; init; }
-    public Decimal AvailableBalance { get; init; }
+
+    public MerchantDetails(String merchantName, String settlementSchedule, String contactName, String addressLine1, String town)
+    {
+        this.MerchantName = merchantName;
+        this.SettlementSchedule = settlementSchedule;
+        this.ContactName = contactName;
+        this.AddressLine1 = addressLine1;
+        this.Town = town;
+    }
 }
