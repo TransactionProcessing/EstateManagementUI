@@ -1,3 +1,4 @@
+using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
 using EstateManagementUI.BlazorServer.Services;
 using EstateManagementUI.BlazorServer.TokenManagement;
@@ -81,8 +82,19 @@ builder.Services.AddAuthentication(options =>
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    // Configure OpenID Connect settings from appsettings.json
-    options.Authority = builder.Configuration["Authentication:Authority"];
+    // Read configuration values
+    var authority = builder.Configuration["Authentication:Authority"];
+    var securityServiceLocalPort = builder.Configuration["AppSettings:SecurityServiceLocalPort"];
+    var securityServicePort = builder.Configuration["AppSettings:SecurityServicePort"];
+    
+    // Use helper method to get adjusted addresses for integration testing
+    var (authorityAddress, issuerAddress) = AuthenticationHelpers.GetSecurityServiceAddresses(
+        authority, 
+        securityServiceLocalPort, 
+        securityServicePort);
+    
+    // Configure OpenID Connect settings
+    options.Authority = authorityAddress;
     options.ClientId = builder.Configuration["Authentication:ClientId"];
     options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
     options.ResponseType = "code id_token";
@@ -111,6 +123,9 @@ builder.Services.AddAuthentication(options =>
         NameClaimType = "name",
         RoleClaimType = "role"
     };
+    
+    // Set MetadataAddress to use the authority address
+    options.MetadataAddress = $"{authorityAddress}/.well-known/openid-configuration";
     
     // Handle prompt parameter for forcing re-authentication
     options.Events = new OpenIdConnectEvents
