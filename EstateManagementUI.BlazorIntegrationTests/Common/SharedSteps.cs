@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using JasperFx.Core;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OpenQA.Selenium;
 using Reqnroll;
 using Reqnroll.BoDi;
 using SecurityService.DataTransferObjects;
@@ -41,7 +40,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
         private readonly TestingContext TestingContext;
 
-        private readonly IWebDriver WebDriver;
+        //private readonly IWebDriver WebDriver;
 
         private readonly TransactionProcessorSteps TransactionProcessorSteps;
 
@@ -53,7 +52,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
         public SharedSteps(ScenarioContext scenarioContext, TestingContext testingContext, IObjectContainer container)
         {
-            IWebDriver? webDriver = scenarioContext.ScenarioContainer.Resolve<IWebDriver>(scenarioContext.ScenarioInfo.Title.Replace(" ", ""));
+            //IWebDriver? webDriver = scenarioContext.ScenarioContainer.Resolve<IWebDriver>(scenarioContext.ScenarioInfo.Title.Replace(" ", ""));
 
             this.TestingContext = testingContext;
             this.SecurityServiceSteps = new SecurityServiceSteps(this.TestingContext.DockerHelper.SecurityServiceClient);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
-using EstateManagementUI.Controllers;
+//using EstateManagementUI.Controllers;
 using EventStore.Client;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -222,7 +222,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             TraceX("About to Built Estate Management UI Blazor Container");
             ContainerBuilder containerBuilder = new ContainerBuilder()
                 .WithName(this.EstateManagementUiContainerName)
-                .WithImage("estatemanagementuiblazor")
+                .WithImage("estatemanagementuiblazorserver")
                 .WithEnvironment(environmentVariables)
                 .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
                 //.UseNetwork(networkServices.ToArray())
@@ -246,7 +246,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
                 TraceX("Estate Management UI Started");
 
-                HttpClientHandler handler = new HttpClientHandler();
+                /*HttpClientHandler handler = new HttpClientHandler();
                 handler.ServerCertificateCustomValidationCallback =
                     HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
                 // TODO: Refactor this code once it works...
@@ -326,7 +326,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                     {
                         TraceX($"addRolePermissionsRequest failed [{response.StatusCode}]");
                     }
-                }
+                }*/
             }
             catch(Exception ex){
                 TraceX(ex.GetCombinedExceptionMessages());

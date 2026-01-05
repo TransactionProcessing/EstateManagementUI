@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using Shared.IntegrationTesting;
 using EstateManagementUI.BlazorIntegrationTests.Common;
+using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll.BoDi;
 
