@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="nlog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="coverlet.collector" Version="6.0.4">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
+	  <PackageReference Include="EventStoreProjections" Version="2023.12.3" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.1" />
+	  <PackageReference Include="SecurityService.Client" Version="2025.12.1" />
+	  <PackageReference Include="SecurityService.IntegrationTesting.Helpers" Version="2025.12.1" />
+	  <PackageReference Include="Shouldly" Version="4.3.0" />
+	  <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+	  <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="3.2.1" />
+		<PackageReference Include="NUnit" Version="4.4.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="6.0.0" />
+    <PackageReference Include="Reqnroll" Version="3.2.1" />
+    <PackageReference Include="Reqnroll.NUnit" Version="3.2.1" />
+    <PackageReference Include="Shared.IntegrationTesting" Version="2025.12.1" />
+	  <PackageReference Include="Microsoft.Playwright" Version="1.49.0" />
+
+	  <PackageReference Include="MessagingService.IntegrationTesting.Helpers" Version="2025.12.1" />
+
+	  <PackageReference Include="TransactionProcessor.Client" Version="2025.12.1" />
+
+	  <PackageReference Include="TransactionProcessor.Database" Version="2025.12.1" />
+
+	  <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2025.12.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EstateManagementUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
+    <ProjectReference Include="..\EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj" />
+  </ItemGroup>
+
+</Project>

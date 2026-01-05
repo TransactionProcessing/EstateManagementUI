@@ -1,0 +1,291 @@
+using Microsoft.Playwright;
+using Reqnroll;
+using Shared.IntegrationTesting;
+using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EstateManagementUI.BlazorIntegrationTests.Common;
+
+public class BlazorUiHelpers
+{
+    private readonly IPage Page;
+    private readonly Int32 EstateManagementUiPort;
+
+    public BlazorUiHelpers(IPage page, Int32 estateManagementUiPort)
+    {
+        this.Page = page;
+        this.EstateManagementUiPort = estateManagementUiPort;
+    }
+
+    private async Task VerifyPageTitle(String expectedTitle)
+    {
+        await Retry.For(async () =>
+        {
+            var title = await this.Page.TitleAsync();
+            title.ShouldBe($"{expectedTitle} - Estate Management");
+        });
+    }
+
+    public async Task NavigateToHomePage()
+    {
+        await this.Page.GotoAsync($"https://localhost:{this.EstateManagementUiPort}");
+        await this.VerifyPageTitle("Welcome");
+    }
+
+    public async Task ClickContractsSidebarOption()
+    {
+        await this.Page.ClickButtonById("contractsLink");
+    }
+
+    public async Task ClickMyEstateSidebarOption()
+    {
+        await this.Page.ClickButtonById("estateDetailsLink");
+    }
+
+    public async Task ClickMyMerchantsSidebarOption()
+    {
+        await this.Page.ClickButtonById("merchantsLink");
+    }
+
+    public async Task ClickMyOperatorsSidebarOption()
+    {
+        await this.Page.ClickButtonById("operatorsLink");
+    }
+
+    public async Task ClickOnTheSignInButton()
+    {
+        await this.Page.ClickButtonById("loginButton");
+    }
+
+    public async Task VerifyOnTheMakeMerchantDepositScreen()
+    {
+        await Retry.For(async () => 
+        { 
+            var title = await this.Page.TitleAsync();
+            title.ShouldBe("Make Merchant Deposit"); 
+        });
+    }
+
+    public async Task VerifyOnTheTheMerchantDetailsScreen(String merchantName)
+    {
+        await Retry.For(async () =>
+        {
+            var value = await this.Page.GetValueById("MerchantName");
+            value.ShouldBe(merchantName);
+        });
+    }
+
+    public async Task VerifyOnTheNewContractScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("New Contract"); });
+    }
+
+    public async Task VerifyOnTheNewContractProductScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("New Contract Product"); });
+    }
+
+    public async Task VerifyOnTheNewMerchantScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("New Merchant"); });
+    }
+
+    public async Task VerifyOnTheEditMerchantScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("Edit Merchant"); });
+    }
+
+    public async Task VerifyOnTheMakeDepositScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("Make Deposit"); });
+    }
+
+    public async Task VerifyOnTheViewMerchantScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Merchant"); });
+    }
+
+    public async Task VerifyOnTheNewOperatorScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("New Operator"); });
+    }
+
+    public async Task VerifyOnTheEditOperatorScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("Edit Operator"); });
+    }
+
+    public async Task VerifyOnTheContractsListScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Contracts"); });
+    }
+
+    public async Task VerifyOnTheContractProductsListScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Contract Products"); });
+    }
+
+    public async Task VerifyOnTheContractProductsFeesListScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Contract Product Fees"); });
+    }
+
+    public async Task VerifyOnTheNewTransactionFeeScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("New Transaction Fee"); });
+    }
+
+    public async Task VerifyOnTheLoginScreen()
+    {
+        await Retry.For(async () =>
+        {
+            var loginButton = await this.Page.FindButtonByText("Login", TimeSpan.FromMinutes(2));
+            loginButton.ShouldNotBeNull();
+        });
+    }
+
+    public async Task ClickOnTheMerchantOperatorsTab()
+    {
+        await this.ClickTab("nav-operators-tab");
+    }
+
+    public async Task ClickOnTheMerchantContractsTab()
+    {
+        await this.ClickTab("nav-contracts-tab");
+    }
+
+    public async Task ClickOnTheMerchantDevicesTab()
+    {
+        await this.ClickTab("nav-devices-tab");
+    }
+
+    private async Task ClickTab(String tabId)
+    {
+        await Retry.For(async () =>
+        {
+            var locator = this.Page.Locator($"#{tabId}");
+            await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
+            await locator.ClickAsync();
+        });
+    }
+
+    public async Task VerifyOnMerchantOperatorsTab()
+    {
+        await Retry.For(async () =>
+        {
+            var locator = this.Page.Locator("#merchantOperatorList");
+            await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
+        });
+    }
+
+    public async Task VerifyOnMerchantContractsTab()
+    {
+        await Retry.For(async () =>
+        {
+            var locator = this.Page.Locator("#merchantContractList");
+            await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
+        });
+    }
+
+    public async Task VerifyOnMerchantDevicesTab()
+    {
+        await Retry.For(async () =>
+        {
+            var locator = this.Page.Locator("#merchantDeviceList");
+            await locator.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 30000 });
+        });
+    }
+
+    public async Task VerifyOnTheDashboard()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("Dashboard"); });
+    }
+
+    public async Task VerifyOnTheEstateDetailsScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Estate"); });
+    }
+
+    public async Task VerifyOnTheMerchantsListScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Merchants"); });
+    }
+
+    public async Task VerifyOnTheOperatorsListScreen()
+    {
+        await Retry.For(async () => { await this.VerifyPageTitle("View Operators"); });
+    }
+
+    public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName)
+    {
+        await Retry.For(async () =>
+        {
+            var estateNameValue = await this.Page.GetValueById("Estate_Name");
+            estateNameValue.ShouldBe(estateName);
+
+            var estateRefValue = await this.Page.GetValueById("Estate_Reference");
+            estateRefValue.ShouldNotBeNull();
+            estateRefValue.ShouldNotBeEmpty();
+        });
+    }
+
+    public async Task VerifyTheContractDetailsAreInTheList(List<(String, String, Int32)> contractDescriptions)
+    {
+        await Retry.For(async () =>
+        {
+            Int32 foundRowCount = 0;
+            var rows = await this.Page.Locator("#contractList tr").AllAsync();
+
+            rows.Count.ShouldBe(contractDescriptions.Count + 1);
+            
+            foreach ((String description, String operatorName, Int32 products) in contractDescriptions)
+            {
+                foreach (var row in rows)
+                {
+                    var headers = await row.Locator("th").AllAsync();
+                    if (headers.Any())
+                    {
+                        // header row so skip
+                        continue;
+                    }
+
+                    var cells = await row.Locator("td").AllAsync();
+                    if (cells.Count > 0)
+                    {
+                        var cellText = await cells[0].TextContentAsync();
+                        if (cellText == description)
+                        {
+                            // Compare other fields
+                            var operatorText = await cells[1].TextContentAsync();
+                            var productsText = await cells[2].TextContentAsync();
+                            
+                            cellText.ShouldBe(description);
+                            operatorText.ShouldBe(operatorName);
+                            productsText.ShouldBe(products.ToString());
+
+                            foundRowCount++;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            foundRowCount.ShouldBe(contractDescriptions.Count);
+        }, TimeSpan.FromSeconds(120));
+    }
+
+    public async Task ClickTheSaveProductButton()
+    {
+        await this.Page.ClickButtonById("saveProductButton");
+    }
+}
+
+public record MerchantDetails
+{
+    public String MerchantName { get; init; }
+    public String Town { get; init; }
+    public Decimal AvailableBalance { get; init; }
+}
