@@ -22,37 +22,40 @@ builder.WebHost.UseKestrel(options =>
     
     options.Listen(IPAddress.Any, port, listenOptions =>
     {
+        // Enable support for HTTP1 and HTTP2
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+        
+        // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
+        var certificatePath = Path.Combine(AppContext.BaseDirectory, "Certificates");
+        Console.WriteLine($"Looking for certificates in: {certificatePath}");
+        Console.WriteLine($"AppContext.BaseDirectory: {AppContext.BaseDirectory}");
+        Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
+        
+        if (!Directory.Exists(certificatePath))
+        {
+            throw new InvalidOperationException($"Certificates folder not found at: {certificatePath}");
+        }
+        
+        var certificateFiles = Directory.GetFiles(certificatePath, "*.pfx");
+        if (certificateFiles.Length == 0)
+        {
+            throw new InvalidOperationException($"No .pfx certificate file found in {certificatePath}");
+        }
+        
+        var certificateFile = certificateFiles.First();
+        Console.WriteLine($"Loading certificate from: {certificateFile}");
+        
         try
         {
-            // Enable support for HTTP1 and HTTP2
-            listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-            
-            // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
-            var certificatePath = Path.Combine(AppContext.BaseDirectory, "Certificates");
-            if (Directory.Exists(certificatePath))
-            {
-                var certificateFiles = Directory.GetFiles(certificatePath, "*.pfx");
-                if (certificateFiles.Length > 0)
-                {
-                    var certificateFile = certificateFiles.First();
-                    Console.WriteLine($"Certificate File: {certificateFile}");
-                    var certificate = new X509Certificate2(certificateFile, "password");
-                    listenOptions.UseHttps(certificate);
-                }
-                else
-                {
-                    Console.WriteLine("No certificate file found in Certificates folder");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"Certificates folder not found at: {certificatePath}");
-            }
+            var certificate = new X509Certificate2(certificateFile, "password");
+            Console.WriteLine($"Certificate loaded successfully. Subject: {certificate.Subject}");
+            listenOptions.UseHttps(certificate);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error configuring HTTPS: {e.Message}");
-            throw;
+            Console.WriteLine($"Error loading certificate: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            throw new InvalidOperationException($"Failed to load certificate from {certificateFile}: {ex.Message}", ex);
         }
     });
 });

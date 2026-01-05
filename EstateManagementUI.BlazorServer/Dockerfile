@@ -6,8 +6,8 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Install Node.js for Tailwind CSS build
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+# Install Node.js for Tailwind CSS build - use insecure curl for corporate proxy environments
+RUN curl -fsSL --insecure https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
 COPY ["EstateManagementUI.BlazorServer/NuGet.Config", "."]
