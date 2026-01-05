@@ -86,12 +86,24 @@ builder.Services.AddAuthentication(options =>
     var authority = builder.Configuration["Authentication:Authority"];
     var securityServiceLocalPort = builder.Configuration["AppSettings:SecurityServiceLocalPort"];
     var securityServicePort = builder.Configuration["AppSettings:SecurityServicePort"];
+    var httpClientIgnoreCertificateErrors = builder.Configuration.GetValue<bool>("AppSettings:HttpClientIgnoreCertificateErrors", false);
     
     // Use helper method to get adjusted addresses for integration testing
     var (authorityAddress, issuerAddress) = AuthenticationHelpers.GetSecurityServiceAddresses(
         authority, 
         securityServiceLocalPort, 
         securityServicePort);
+    
+    // Configure certificate validation bypass for CI/CD testing
+    if (httpClientIgnoreCertificateErrors)
+    {
+        Console.WriteLine("WARNING: Certificate validation is disabled for HttpClient backchannel communication");
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+        options.BackchannelHttpHandler = handler;
+    }
     
     // Configure OpenID Connect settings
     options.Authority = authorityAddress;
