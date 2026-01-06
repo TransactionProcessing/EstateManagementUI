@@ -372,9 +372,11 @@ public class BlazorUiHelpers
                     if (cells.Count > 0)
                     {
                         var cellText = await cells[0].TextContentAsync();
-                        if (cellText == merchantDetails.MerchantName)
+                        // The merchant name cell contains an avatar with the first letter and the full name
+                        // So we check if the cell text contains the merchant name
+                        if (cellText != null && cellText.Contains(merchantDetails.MerchantName))
                         {
-                            cellText.ShouldBe(merchantDetails.MerchantName);
+                            cellText.ShouldContain(merchantDetails.MerchantName);
                             var settlementScheduleText = await cells[4].TextContentAsync();
                             settlementScheduleText.ShouldBe(merchantDetails.SettlementSchedule);
 
