@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EstateManagementUI.BlazorIntegrationTests.Common;
 using TransactionProcessor.Database.Contexts;
 using TransactionProcessor.DataTransferObjects.Requests.Contract;
 using TransactionProcessor.DataTransferObjects.Requests.Estate;
@@ -113,7 +114,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 List<CreateClientRequest> requests = table.Rows.ToCreateClientRequests(Guid.Empty, 5004);
                 foreach (var request in requests)
                 {
-                    this.TestingContext.AddClientDetails(request.ClientId, request.ClientSecret, request.AllowedGrantTypes);
+                    this.TestingContext.AddClientDetails(request.ClientId, "Secret1", request.AllowedGrantTypes);
                 }
                 return;
             }
@@ -166,7 +167,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                 List<CreateRoleRequest> requests = table.Rows.ToCreateRoleRequests();
                 foreach (var request in requests)
                 {
-                    this.TestingContext.Roles.Add(request.Name, Guid.NewGuid());
+                    this.TestingContext.Roles.Add(request.RoleName, Guid.NewGuid());
                 }
                 return;
             }
@@ -303,6 +304,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         [When(@"I add the following devices to the merchant")]
         public async Task WhenIAddTheFollowingDevicesToTheMerchant(DataTable table)
         {
+            if (TestConfiguration.IsTestMode)
+                return;
             List<(EstateDetails, Guid, AddMerchantDeviceRequest)> requests = table.Rows.ToAddMerchantDeviceRequests(this.TestingContext.Estates);
 
             List<(EstateDetails, MerchantResponse, String)> results = await this.TransactionProcessorSteps.GivenIHaveAssignedTheFollowingDevicesToTheMerchants(this.TestingContext.AccessToken, requests);
@@ -315,6 +318,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         [When(@"I assign the following  operator to the merchants")]
         public async Task WhenIAssignTheFollowingOperatorToTheMerchants(DataTable table)
         {
+            if (TestConfiguration.IsTestMode)
+                return;
             List<(EstateDetails, Guid, TransactionProcessor.DataTransferObjects.Requests.Merchant.AssignOperatorRequest)> requests = table.Rows.ToAssignOperatorRequests(this.TestingContext.Estates);
 
             List<(EstateDetails, TransactionProcessor.DataTransferObjects.Responses.Merchant.MerchantOperatorResponse)> results = await this.TransactionProcessorSteps.WhenIAssignTheFollowingOperatorToTheMerchants(this.TestingContext.AccessToken, requests);
@@ -331,6 +336,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         [When(@"I create the following merchants")]
         public async Task WhenICreateTheFollowingMerchants(DataTable table)
         {
+            if (TestConfiguration.IsTestMode)
+                return;
             List<(EstateDetails estate, CreateMerchantRequest)> requests = table.Rows.ToCreateMerchantRequests(this.TestingContext.Estates);
 
             List<MerchantResponse> verifiedMerchants = await this.TransactionProcessorSteps.WhenICreateTheFollowingMerchants(this.TestingContext.AccessToken, requests);

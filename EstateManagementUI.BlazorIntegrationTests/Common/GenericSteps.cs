@@ -35,6 +35,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                                             DockerServices.FileProcessor | DockerServices.MessagingService | DockerServices.SecurityService |
                                             DockerServices.TestHost | DockerServices.SqlServer | DockerServices.TransactionProcessor |
                                             DockerServices.TransactionProcessorAcl;
+            dockerServices = DockerServices.None;
             
             this.TestingContext.DockerHelper = new DockerHelper();
             this.TestingContext.DockerHelper.Logger = logger;

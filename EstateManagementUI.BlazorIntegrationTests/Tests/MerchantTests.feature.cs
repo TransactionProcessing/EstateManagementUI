@@ -531,6 +531,12 @@ await this.FeatureBackgroundAsync();
                             "Test Contact 1",
                             "Address Line 1",
                             "TestTown"});
+                table47.AddRow(new string[] {
+                            "Test Merchant 4",
+                            "Immediate",
+                            "Test Contact 4",
+                            "Address Line 1",
+                            "TestTown"});
 #line 104
  await testRunner.AndAsync("the following merchants details are in the list", ((string)(null)), table47, "And ");
 #line hidden
@@ -587,6 +593,12 @@ await this.FeatureBackgroundAsync();
                             "Test Merchant 3",
                             "Monthly",
                             "Test Contact 1",
+                            "Address Line 1",
+                            "TestTown"});
+                table49.AddRow(new string[] {
+                            "Test Merchant 4",
+                            "Immediate",
+                            "Test Contact 4",
                             "Address Line 1",
                             "TestTown"});
 #line 119

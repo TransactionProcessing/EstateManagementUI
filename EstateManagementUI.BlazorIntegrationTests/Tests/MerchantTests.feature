@@ -106,7 +106,7 @@ Scenario: Merchant PR Test
 	| Test Merchant 1 | Immediate          | Test Contact 1 | Address Line 1 | TestTown |
 	| Test Merchant 2 | Weekly             | Test Contact 1 | Address Line 1 | TestTown |
 	| Test Merchant 3 | Monthly            | Test Contact 1 | Address Line 1 | TestTown |
-	#| Test Merchant 4 | Immediate          | Test Contact 4 | Address Line 1 | TestTown |
+	| Test Merchant 4 | Immediate          | Test Contact 4 | Address Line 1 | TestTown |
 	When I click on the Edit Merchant Button for 'Test Merchant 1'
 	Then the Edit Merchant Screen is displayed
 	When I enter the following details for the updated Merchant
@@ -123,7 +123,7 @@ Scenario: Merchant PR Test
 	| Test Merchant 1 | Immediate          | Test Contact 1  | Address Line 1  | TestTown |
 	| Test Merchant 2        | Weekly             | Test Contact 1        | Address Line 1        | TestTown |
 	| Test Merchant 3        | Monthly            | Test Contact 1        | Address Line 1        | TestTown |
-	#| Test Merchant 4        | Immediate          | Test Contact 4        | Address Line 1        | TestTown |
+	| Test Merchant 4        | Immediate          | Test Contact 4        | Address Line 1        | TestTown |
 	#When I click on the Make Deposit Button for 'Test Merchant 1 Update'
 	#Then the Make Deposit Screen is displayed
 	#When I enter the following details for the deposit
