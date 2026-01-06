@@ -99,7 +99,7 @@ Scenario: Merchant PR Test
 	When I enter the following details for the new Merchant
 	| MerchantName    | SettlementSchedule | AddressLine1   | Town     | Region | Country | ContactName    | EmailAddress |
 	| Test Merchant 4 | Immediate          | Address Line 1 | TestTown | Region | Country | Test Contact 4 | 1@2.com      |
-	And click the Save Merchant button
+	And click the Create Merchant button
 	Then I am presented with the Merchants List Screen
 	And the following merchants details are in the list
 	| MerchantName    | SettlementSchedule | ContactName    | AddressLine1   | Town     |
@@ -114,7 +114,7 @@ Scenario: Merchant PR Test
 	| Merchant Details | Name         | Test Merchant 1 Update |
 	| Address Details | AddressLine1 | Address Line 1 Update  |
 	| Contact Details | ContactName  | Test Contact 1 Update  |
-	And click the Save Merchant button
+	And click the Update Merchant button
 	Then I am presented with the Merchants List Screen
 	And the following merchants details are in the list
 	#| MerchantName           | SettlementSchedule | ContactName           | AddressLine1          | Town     |

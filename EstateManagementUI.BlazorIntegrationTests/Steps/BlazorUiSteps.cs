@@ -346,10 +346,16 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
                 ReqnrollTableHelper.GetStringRowValue(row, "EmailAddress"));
         }
 
-        [When("click the Save Merchant button")]
-        public async Task WhenClickTheSaveMerchantButton()
+        [When("click the Create Merchant button")]
+        public async Task WhenClickTheCreateMerchantButton()
         {
-            await this.UiHelpers.ClickTheSaveMerchantButton();
+            await this.UiHelpers.ClickTheCreateMerchantButton();
+        }
+
+        [When("click the Update Merchant button")]
+        public async Task WhenClickTheUpdateMerchantButton()
+        {
+            await this.UiHelpers.ClickTheUpdateMerchantButton();
         }
 
         [When("I enter the following details for the updated Merchant")]

@@ -502,7 +502,7 @@ await this.FeatureBackgroundAsync();
  await testRunner.WhenAsync("I enter the following details for the new Merchant", ((string)(null)), table46, "When ");
 #line hidden
 #line 102
- await testRunner.AndAsync("click the Save Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+ await testRunner.AndAsync("click the Create Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 103
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
@@ -560,7 +560,7 @@ await this.FeatureBackgroundAsync();
  await testRunner.WhenAsync("I enter the following details for the updated Merchant", ((string)(null)), table48, "When ");
 #line hidden
 #line 117
- await testRunner.AndAsync("click the Save Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+ await testRunner.AndAsync("click the Update Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 118
  await testRunner.ThenAsync("I am presented with the Merchants List Screen", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");

@@ -580,7 +580,8 @@
             }
 
             successMessage = "Merchant details updated successfully";
-            await LoadMerchant();
+            // Navigate to edit page
+            NavigationManager.NavigateTo($"/merchants");
         }
         catch (Exception ex)
         {

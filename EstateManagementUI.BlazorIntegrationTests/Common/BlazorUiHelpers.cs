@@ -530,9 +530,20 @@ public class BlazorUiHelpers
         await this.Page.FillIn("PhoneNumber", "1234567890"); // Default phone number
     }
 
-    public async Task ClickTheSaveMerchantButton()
+    public async Task ClickTheCreateMerchantButton()
     {
         await this.Page.ClickButtonById("createMerchantButton");
+    }
+
+    public async Task ClickTheUpdateMerchantButton()
+    {
+        //await this.Page.ClickButtonById("createMerchantButton");
+        // Click the save button on the respective tab
+        await Retry.For(async () =>
+        {
+            var saveButton = this.Page.Locator("button:has-text('Save')").First;
+            await saveButton.ClickAsync();
+        }, TimeSpan.FromSeconds(30));
     }
 
     public async Task UpdateMerchantField(String tab, String field, String value)
@@ -564,13 +575,6 @@ public class BlazorUiHelpers
         {
             await this.Page.FillIn(field, value);
         }
-
-        // Click the save button on the respective tab
-        await Retry.For(async () =>
-        {
-            var saveButton = this.Page.Locator("button:has-text('Save')").First;
-            await saveButton.ClickAsync();
-        }, TimeSpan.FromSeconds(30));
     }
 
     public async Task FillInDepositForm(String amount, String date, String reference)
