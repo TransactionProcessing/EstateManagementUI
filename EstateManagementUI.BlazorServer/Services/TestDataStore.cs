@@ -22,9 +22,18 @@ public class TestDataStore : ITestDataStore
 
     public EstateModel GetEstate(Guid estateId)
     {
-        return _estates.TryGetValue(estateId, out var estate) 
-            ? estate 
-            : throw new KeyNotFoundException($"Estate {estateId} not found");
+        if (_estates.TryGetValue(estateId, out var estate))
+        {
+            return estate;
+        }
+        
+        // Return a default estate if not found for consistency
+        return new EstateModel
+        {
+            EstateId = estateId,
+            EstateName = "Unknown Estate",
+            Reference = "Unknown"
+        };
     }
 
     public void SetEstate(EstateModel estate)
@@ -64,14 +73,8 @@ public class TestDataStore : ITestDataStore
 
     public void UpdateMerchant(Guid estateId, MerchantModel merchant)
     {
-        if (_merchants.TryGetValue(estateId, out var merchantDict))
-        {
-            merchantDict[merchant.MerchantId] = merchant;
-        }
-        else
-        {
-            throw new KeyNotFoundException($"Estate {estateId} not found");
-        }
+        var merchantDict = _merchants.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, MerchantModel>());
+        merchantDict[merchant.MerchantId] = merchant;
     }
 
     public void RemoveMerchant(Guid estateId, Guid merchantId)
@@ -109,14 +112,8 @@ public class TestDataStore : ITestDataStore
 
     public void UpdateOperator(Guid estateId, OperatorModel operatorModel)
     {
-        if (_operators.TryGetValue(estateId, out var operatorDict))
-        {
-            operatorDict[operatorModel.OperatorId] = operatorModel;
-        }
-        else
-        {
-            throw new KeyNotFoundException($"Estate {estateId} not found");
-        }
+        var operatorDict = _operators.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, OperatorModel>());
+        operatorDict[operatorModel.OperatorId] = operatorModel;
     }
 
     public void RemoveOperator(Guid estateId, Guid operatorId)
@@ -154,14 +151,8 @@ public class TestDataStore : ITestDataStore
 
     public void UpdateContract(Guid estateId, ContractModel contract)
     {
-        if (_contracts.TryGetValue(estateId, out var contractDict))
-        {
-            contractDict[contract.ContractId] = contract;
-        }
-        else
-        {
-            throw new KeyNotFoundException($"Estate {estateId} not found");
-        }
+        var contractDict = _contracts.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, ContractModel>());
+        contractDict[contract.ContractId] = contract;
     }
 
     public void RemoveContract(Guid estateId, Guid contractId)
