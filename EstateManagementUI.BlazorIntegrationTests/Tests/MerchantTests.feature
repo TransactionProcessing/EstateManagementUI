@@ -111,9 +111,9 @@ Scenario: Merchant PR Test
 	Then the Edit Merchant Screen is displayed
 	When I enter the following details for the updated Merchant
 	| Tab     | Field        | Value                  |
-	| Details | Name         | Test Merchant 1 Update |
-	| Address | AddressLine1 | Address Line 1 Update  |
-	| Contact | ContactName  | Test Contact 1 Update  |
+	| Merchant Details | Name         | Test Merchant 1 Update |
+	| Address Details | AddressLine1 | Address Line 1 Update  |
+	| Contact Details | ContactName  | Test Contact 1 Update  |
 	And click the Save Merchant button
 	Then I am presented with the Merchants List Screen
 	And the following merchants details are in the list

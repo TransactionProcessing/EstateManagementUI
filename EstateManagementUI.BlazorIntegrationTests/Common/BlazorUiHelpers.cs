@@ -548,7 +548,7 @@ public class BlazorUiHelpers
         await Task.Delay(500);
 
         // Fill in the field based on the tab
-        if (tab.Equals("Details", StringComparison.OrdinalIgnoreCase))
+        if (tab.Equals("Merchant Details", StringComparison.OrdinalIgnoreCase))
         {
             if (field.Equals("Name", StringComparison.OrdinalIgnoreCase))
             {
@@ -556,11 +556,11 @@ public class BlazorUiHelpers
                 // The test may need adjustment as the Blazor app might not support name updates
             }
         }
-        else if (tab.Equals("Address", StringComparison.OrdinalIgnoreCase))
+        else if (tab.Equals("Address Details", StringComparison.OrdinalIgnoreCase))
         {
             await this.Page.FillIn(field, value);
         }
-        else if (tab.Equals("Contact", StringComparison.OrdinalIgnoreCase))
+        else if (tab.Equals("Contact Details", StringComparison.OrdinalIgnoreCase))
         {
             await this.Page.FillIn(field, value);
         }

@@ -545,15 +545,15 @@ await this.FeatureBackgroundAsync();
                             "Field",
                             "Value"});
                 table48.AddRow(new string[] {
-                            "Details",
+                            "Merchant Details",
                             "Name",
                             "Test Merchant 1 Update"});
                 table48.AddRow(new string[] {
-                            "Address",
+                            "Address Details",
                             "AddressLine1",
                             "Address Line 1 Update"});
                 table48.AddRow(new string[] {
-                            "Contact",
+                            "Contact Details",
                             "ContactName",
                             "Test Contact 1 Update"});
 #line 112
