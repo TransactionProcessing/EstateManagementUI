@@ -31,10 +31,10 @@
                 <thead>
                     <tr>
                         <th>Merchant Name</th>
+                        <th>Reference</th>
+                        <th>Balance</th>
+                        <th>Available Balance</th>
                         <th>Settlement Schedule</th>
-                        <th>Contact Name</th>
-                        <th>Address Line 1</th>
-                        <th>Town</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
@@ -52,14 +52,14 @@
                                     </div>
                                 </div>
                             </td>
+                            <td class="font-mono text-sm">@merchant.MerchantReference</td>
+                            <td class="font-semibold text-green-600">@(merchant.Balance?.ToString("C") ?? "N/A")</td>
+                            <td class="font-semibold">@(merchant.AvailableBalance?.ToString("C") ?? "N/A")</td>
                             <td>
                                 <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                                     @(merchant.SettlementSchedule ?? "Not Set")
                                 </span>
                             </td>
-                            <td>@(merchant.Contact?.ContactName ?? "N/A")</td>
-                            <td>@(merchant.Address?.AddressLine1 ?? "N/A")</td>
-                            <td>@(merchant.Address?.Town ?? "N/A")</td>
                             <td class="text-right">
                                 <div class="flex items-center justify-end space-x-2">
                                     <button class="text-blue-600 hover:text-blue-800 p-2" @onclick:stopPropagation="true" @onclick="() => ViewMerchant(merchant.MerchantId)" title="View">
@@ -81,10 +81,20 @@
             </table>
         </div>
 
-        <!-- Summary Card -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
-            <p class="text-3xl font-bold text-gray-900">@merchants.Count</p>
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
+                <p class="text-3xl font-bold text-gray-900">@merchants.Count</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">Total Balance</p>
+                <p class="text-3xl font-bold text-green-600">@merchants.Sum(m => m.Balance ?? 0).ToString("C")</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">Available Balance</p>
+                <p class="text-3xl font-bold text-blue-600">@merchants.Sum(m => m.AvailableBalance ?? 0).ToString("C")</p>
+            </div>
         </div>
     }
     else

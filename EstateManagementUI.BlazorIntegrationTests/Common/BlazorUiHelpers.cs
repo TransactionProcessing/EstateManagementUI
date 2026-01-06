@@ -375,8 +375,8 @@ public class BlazorUiHelpers
                         if (cellText == merchantDetails.MerchantName)
                         {
                             cellText.ShouldBe(merchantDetails.MerchantName);
-                            var townText = await cells[4].TextContentAsync();
-                            townText.ShouldBe(merchantDetails.Town);
+                            var settlementScheduleText = await cells[4].TextContentAsync();
+                            settlementScheduleText.ShouldBe(merchantDetails.SettlementSchedule);
 
                             foundRowCount++;
                             break;
