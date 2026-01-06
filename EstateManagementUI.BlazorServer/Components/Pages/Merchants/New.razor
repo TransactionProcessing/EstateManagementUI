@@ -243,7 +243,7 @@
             await Mediator.Send(scheduleCommand);
 
             // Navigate to edit page
-            NavigationManager.NavigateTo($"/merchants/{merchantId}/edit");
+            NavigationManager.NavigateTo($"/merchants");
         }
         catch (Exception ex)
         {

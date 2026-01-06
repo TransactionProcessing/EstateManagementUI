@@ -499,8 +499,11 @@ public class BlazorUiHelpers
                 if (cells.Count > 0)
                 {
                     var cellText = await cells[0].TextContentAsync();
-                    if (cellText == textToSearchFor)
+                    // The merchant name cell contains an avatar with the first letter and the full name
+                    // So we check if the cell text contains the merchant name
+                    if (cellText != null && cellText.Contains(textToSearchFor))
                     {
+
                         var link = row.Locator($"#{elementToClickId}");
                         await link.ClickAsync();
                         return;
