@@ -113,26 +113,26 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Address Line 1 <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="addressModel.AddressLine1" class="input w-full" />
+                                <InputText @bind-Value="addressModel.AddressLine1" class="input w-full" name="AddressLine1" />
                                 <ValidationMessage For="@(() => addressModel.AddressLine1)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
-                                <InputText @bind-Value="addressModel.AddressLine2" class="input w-full" />
+                                <InputText @bind-Value="addressModel.AddressLine2" class="input w-full" name="AddressLine2" />
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Town <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.Town" class="input w-full" />
+                                    <InputText @bind-Value="addressModel.Town" class="input w-full" name="Town" />
                                     <ValidationMessage For="@(() => addressModel.Town)" class="text-red-600 text-sm mt-1" />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Region <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.Region" class="input w-full" />
+                                    <InputText @bind-Value="addressModel.Region" class="input w-full" name="Region" />
                                     <ValidationMessage For="@(() => addressModel.Region)" class="text-red-600 text-sm mt-1" />
                                 </div>
                             </div>
@@ -141,14 +141,14 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         PostCode <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.PostalCode" class="input w-full" />
+                                    <InputText @bind-Value="addressModel.PostalCode" class="input w-full" name="PostCode" />
                                     <ValidationMessage For="@(() => addressModel.PostalCode)" class="text-red-600 text-sm mt-1" />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Country <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.Country" class="input w-full" />
+                                    <InputText @bind-Value="addressModel.Country" class="input w-full" name="Country" />
                                     <ValidationMessage For="@(() => addressModel.Country)" class="text-red-600 text-sm mt-1" />
                                 </div>
                             </div>
@@ -176,21 +176,21 @@
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Contact Name <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="contactModel.ContactName" class="input w-full" />
+                                <InputText @bind-Value="contactModel.ContactName" class="input w-full" name="ContactName" />
                                 <ValidationMessage For="@(() => contactModel.ContactName)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Email Address <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="contactModel.ContactEmailAddress" type="email" class="input w-full" />
+                                <InputText @bind-Value="contactModel.ContactEmailAddress" type="email" class="input w-full" name="EmailAddress" />
                                 <ValidationMessage For="@(() => contactModel.ContactEmailAddress)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Phone Number <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="contactModel.ContactPhoneNumber" type="tel" class="input w-full" />
+                                <InputText @bind-Value="contactModel.ContactPhoneNumber" type="tel" class="input w-full" name="PhoneNumber" />
                                 <ValidationMessage For="@(() => contactModel.ContactPhoneNumber)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div class="flex justify-end pt-4">
