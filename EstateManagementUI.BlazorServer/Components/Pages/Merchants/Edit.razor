@@ -44,96 +44,93 @@
             </div>
         }
 
-        <!-- Tabs -->
-        <div class="bg-white rounded-lg shadow-md">
-            <div class="border-b border-gray-200">
-                <nav class="flex -mb-px">
-                    <button @onclick='() => SetActiveTab("details")' class="@GetTabClass("details")">
-                        Merchant Details
-                    </button>
-                    <button @onclick='() => SetActiveTab("address")' class="@GetTabClass("address")">
-                        Address Details
-                    </button>
-                    <button @onclick='() => SetActiveTab("contact")' class="@GetTabClass("contact")">
-                        Contact Details
-                    </button>
-                    <button @onclick='() => SetActiveTab("operators")' class="@GetTabClass("operators")">
-                        Assigned Operators
-                    </button>
-                    <button @onclick='() => SetActiveTab("contracts")' class="@GetTabClass("contracts")">
-                        Assigned Contracts
-                    </button>
-                    <button @onclick='() => SetActiveTab("devices")' class="@GetTabClass("devices")">
-                        Assigned Devices
-                    </button>
-                    <button @onclick='() => SetActiveTab("transactions")' class="@GetTabClass("transactions")">
-                        Transaction History
-                    </button>
-                </nav>
-            </div>
+        <!-- EditForm wrapping all tabs -->
+        <EditForm Model="@merchantEditModel" OnValidSubmit="@SaveAllChanges">
+            <DataAnnotationsValidator />
+            
+            <!-- Tabs -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="border-b border-gray-200">
+                    <nav class="flex -mb-px">
+                        <button type="button" @onclick='() => SetActiveTab("details")' class="@GetTabClass("details")">
+                            Merchant Details
+                        </button>
+                        <button type="button" @onclick='() => SetActiveTab("address")' class="@GetTabClass("address")">
+                            Address Details
+                        </button>
+                        <button type="button" @onclick='() => SetActiveTab("contact")' class="@GetTabClass("contact")">
+                            Contact Details
+                        </button>
+                        <button type="button" @onclick='() => SetActiveTab("operators")' class="@GetTabClass("operators")">
+                            Assigned Operators
+                        </button>
+                        <button type="button" @onclick='() => SetActiveTab("contracts")' class="@GetTabClass("contracts")">
+                            Assigned Contracts
+                        </button>
+                        <button type="button" @onclick='() => SetActiveTab("devices")' class="@GetTabClass("devices")">
+                            Assigned Devices
+                        </button>
+                        <button type="button" @onclick='() => SetActiveTab("transactions")' class="@GetTabClass("transactions")">
+                            Transaction History
+                        </button>
+                    </nav>
+                </div>
 
-            <div class="p-6">
-                @if (activeTab == "details")
-                {
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Merchant Name</label>
-                            <input type="text" value="@merchant.MerchantName" class="input w-full" disabled />
-                            <p class="text-sm text-gray-500 mt-1">Merchant name cannot be changed after creation</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Settlement Schedule</label>
-                            <div class="flex items-center space-x-4">
-                                <select @bind="settlementSchedule" class="input w-full md:w-64">
+                <div class="p-6">
+                    @if (activeTab == "details")
+                    {
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Merchant Name</label>
+                                <input type="text" value="@merchant.MerchantName" class="input w-full" disabled />
+                                <p class="text-sm text-gray-500 mt-1">Merchant name cannot be changed after creation</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Settlement Schedule</label>
+                                <InputSelect @bind-Value="merchantEditModel.SettlementSchedule" class="input w-full md:w-64">
                                     <option value="Immediate">Immediate</option>
                                     <option value="Weekly">Weekly</option>
                                     <option value="Monthly">Monthly</option>
-                                </select>
-                                <button @onclick="UpdateSettlementSchedule" class="btn btn-primary" disabled="@isSaving">
-                                    Update Schedule
-                                </button>
+                                </InputSelect>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
+                                <p class="text-2xl font-bold text-green-600">@(merchant.Balance?.ToString("C") ?? "N/A")</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Available Balance</label>
+                                <p class="text-2xl font-bold text-blue-600">@(merchant.AvailableBalance?.ToString("C") ?? "N/A")</p>
                             </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
-                            <p class="text-2xl font-bold text-green-600">@(merchant.Balance?.ToString("C") ?? "N/A")</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Available Balance</label>
-                            <p class="text-2xl font-bold text-blue-600">@(merchant.AvailableBalance?.ToString("C") ?? "N/A")</p>
-                        </div>
-                    </div>
-                }
-                else if (activeTab == "address")
-                {
-                    <EditForm Model="@addressModel" OnValidSubmit="@UpdateAddress">
-                        <DataAnnotationsValidator />
+                    }
+                    else if (activeTab == "address")
+                    {
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Address Line 1 <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="addressModel.AddressLine1" class="input w-full" name="AddressLine1" />
-                                <ValidationMessage For="@(() => addressModel.AddressLine1)" class="text-red-600 text-sm mt-1" />
+                                <InputText @bind-Value="merchantEditModel.AddressLine1" class="input w-full" name="AddressLine1" />
+                                <ValidationMessage For="@(() => merchantEditModel.AddressLine1)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Address Line 2</label>
-                                <InputText @bind-Value="addressModel.AddressLine2" class="input w-full" name="AddressLine2" />
+                                <InputText @bind-Value="merchantEditModel.AddressLine2" class="input w-full" name="AddressLine2" />
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Town <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.Town" class="input w-full" name="Town" />
-                                    <ValidationMessage For="@(() => addressModel.Town)" class="text-red-600 text-sm mt-1" />
+                                    <InputText @bind-Value="merchantEditModel.Town" class="input w-full" name="Town" />
+                                    <ValidationMessage For="@(() => merchantEditModel.Town)" class="text-red-600 text-sm mt-1" />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Region <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.Region" class="input w-full" name="Region" />
-                                    <ValidationMessage For="@(() => addressModel.Region)" class="text-red-600 text-sm mt-1" />
+                                    <InputText @bind-Value="merchantEditModel.Region" class="input w-full" name="Region" />
+                                    <ValidationMessage For="@(() => merchantEditModel.Region)" class="text-red-600 text-sm mt-1" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -141,232 +138,225 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         PostCode <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.PostalCode" class="input w-full" name="PostCode" />
-                                    <ValidationMessage For="@(() => addressModel.PostalCode)" class="text-red-600 text-sm mt-1" />
+                                    <InputText @bind-Value="merchantEditModel.PostalCode" class="input w-full" name="PostCode" />
+                                    <ValidationMessage For="@(() => merchantEditModel.PostalCode)" class="text-red-600 text-sm mt-1" />
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">
                                         Country <span class="text-red-500">*</span>
                                     </label>
-                                    <InputText @bind-Value="addressModel.Country" class="input w-full" name="Country" />
-                                    <ValidationMessage For="@(() => addressModel.Country)" class="text-red-600 text-sm mt-1" />
+                                    <InputText @bind-Value="merchantEditModel.Country" class="input w-full" name="Country" />
+                                    <ValidationMessage For="@(() => merchantEditModel.Country)" class="text-red-600 text-sm mt-1" />
                                 </div>
                             </div>
-                            <div class="flex justify-end pt-4">
-                                <button type="submit" class="btn btn-primary" disabled="@isSaving">
-                                    @if (isSaving)
-                                    {
-                                        <span>Saving...</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Update Address</span>
-                                    }
-                                </button>
-                            </div>
                         </div>
-                    </EditForm>
-                }
-                else if (activeTab == "contact")
-                {
-                    <EditForm Model="@contactModel" OnValidSubmit="@UpdateContact">
-                        <DataAnnotationsValidator />
+                    }
+                    else if (activeTab == "contact")
+                    {
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Contact Name <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="contactModel.ContactName" class="input w-full" name="ContactName" />
-                                <ValidationMessage For="@(() => contactModel.ContactName)" class="text-red-600 text-sm mt-1" />
+                                <InputText @bind-Value="merchantEditModel.ContactName" class="input w-full" name="ContactName" />
+                                <ValidationMessage For="@(() => merchantEditModel.ContactName)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Email Address <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="contactModel.ContactEmailAddress" type="email" class="input w-full" name="EmailAddress" />
-                                <ValidationMessage For="@(() => contactModel.ContactEmailAddress)" class="text-red-600 text-sm mt-1" />
+                                <InputText @bind-Value="merchantEditModel.ContactEmailAddress" type="email" class="input w-full" name="EmailAddress" />
+                                <ValidationMessage For="@(() => merchantEditModel.ContactEmailAddress)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">
                                     Phone Number <span class="text-red-500">*</span>
                                 </label>
-                                <InputText @bind-Value="contactModel.ContactPhoneNumber" type="tel" class="input w-full" name="PhoneNumber" />
-                                <ValidationMessage For="@(() => contactModel.ContactPhoneNumber)" class="text-red-600 text-sm mt-1" />
+                                <InputText @bind-Value="merchantEditModel.ContactPhoneNumber" type="tel" class="input w-full" name="PhoneNumber" />
+                                <ValidationMessage For="@(() => merchantEditModel.ContactPhoneNumber)" class="text-red-600 text-sm mt-1" />
                             </div>
-                            <div class="flex justify-end pt-4">
-                                <button type="submit" class="btn btn-primary" disabled="@isSaving">
-                                    @if (isSaving)
-                                    {
-                                        <span>Saving...</span>
-                                    }
-                                    else
-                                    {
-                                        <span>Update Contact</span>
-                                    }
+                        </div>
+                    }
+                    else if (activeTab == "operators")
+                    {
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold">Assigned Operators</h3>
+                                <button type="button" id="addOperatorButton" @onclick="() => showAddOperator = !showAddOperator" class="btn btn-primary">
+                                    @(showAddOperator ? "Cancel" : "Add Operator")
                                 </button>
                             </div>
-                        </div>
-                    </EditForm>
-                }
-                else if (activeTab == "operators")
-                {
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold">Assigned Operators</h3>
-                            <button id="addOperatorButton" @onclick="() => showAddOperator = !showAddOperator" class="btn btn-primary">
-                                @(showAddOperator ? "Cancel" : "Add Operator")
-                            </button>
-                        </div>
 
-                        @if (showAddOperator)
-                        {
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Operator</label>
-                                <div class="flex space-x-2">
-                                    <select @bind="selectedOperatorId" class="input flex-1">
-                                        <option value="">Select an operator...</option>
-                                        @if (availableOperators != null)
-                                        {
-                                            @foreach (var op in availableOperators)
+                            @if (showAddOperator)
+                            {
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Operator</label>
+                                    <div class="flex space-x-2">
+                                        <select @bind="selectedOperatorId" class="input flex-1">
+                                            <option value="">Select an operator...</option>
+                                            @if (availableOperators != null)
                                             {
-                                                <option value="@op.OperatorId">@op.Name</option>
+                                                @foreach (var op in availableOperators)
+                                                {
+                                                    <option value="@op.OperatorId">@op.Name</option>
+                                                }
                                             }
-                                        }
-                                    </select>
-                                    <button @onclick="AddOperatorToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedOperatorId))">
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        }
-
-                        @if (assignedOperators == null || !assignedOperators.Any())
-                        {
-                            <p class="text-gray-500 text-center py-8">No operators assigned</p>
-                        }
-                        else
-                        {
-                            <div class="space-y-2">
-                                @foreach (var op in assignedOperators)
-                                {
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <span class="font-medium">@op.Name</span>
-                                        <button @onclick="() => RemoveOperatorFromMerchant(op.OperatorId)" class="text-red-600 hover:text-red-800">
-                                            Remove
+                                        </select>
+                                        <button type="button" @onclick="AddOperatorToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedOperatorId))">
+                                            Add
                                         </button>
                                     </div>
-                                }
-                            </div>
-                        }
-                    </div>
-                }
-                else if (activeTab == "contracts")
-                {
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold">Assigned Contracts</h3>
-                            <button id="addContractButton" @onclick="() => showAddContract = !showAddContract" class="btn btn-primary">
-                                @(showAddContract ? "Cancel" : "Assign Contract")
-                            </button>
-                        </div>
-
-                        @if (showAddContract)
-                        {
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Contract</label>
-                                <div class="flex space-x-2">
-                                    <select @bind="selectedContractId" class="input flex-1">
-                                        <option value="">Select a contract...</option>
-                                        @if (availableContracts != null)
-                                        {
-                                            @foreach (var contract in availableContracts)
-                                            {
-                                                <option value="@contract.ContractId">@contract.Description (@contract.OperatorName)</option>
-                                            }
-                                        }
-                                    </select>
-                                    <button @onclick="AssignContractToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedContractId))">
-                                        Assign
-                                    </button>
                                 </div>
-                            </div>
-                        }
+                            }
 
-                        @if (assignedContracts == null || !assignedContracts.Any())
-                        {
-                            <p class="text-gray-500 text-center py-8">No contracts assigned</p>
-                        }
-                        else
-                        {
-                            <div class="space-y-2">
-                                @foreach (var contract in assignedContracts)
-                                {
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div>
-                                            <p class="font-medium">@contract.Description</p>
-                                            <p class="text-sm text-gray-600">Operator: @contract.OperatorName</p>
+                            @if (assignedOperators == null || !assignedOperators.Any())
+                            {
+                                <p class="text-gray-500 text-center py-8">No operators assigned</p>
+                            }
+                            else
+                            {
+                                <div class="space-y-2">
+                                    @foreach (var op in assignedOperators)
+                                    {
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <span class="font-medium">@op.Name</span>
+                                            <button type="button" @onclick="() => RemoveOperatorFromMerchant(op.OperatorId)" class="text-red-600 hover:text-red-800">
+                                                Remove
+                                            </button>
                                         </div>
-                                        <button @onclick="() => RemoveContractFromMerchant(contract.ContractId)" class="text-red-600 hover:text-red-800">
-                                            Remove
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (activeTab == "contracts")
+                    {
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold">Assigned Contracts</h3>
+                                <button type="button" id="addContractButton" @onclick="() => showAddContract = !showAddContract" class="btn btn-primary">
+                                    @(showAddContract ? "Cancel" : "Assign Contract")
+                                </button>
+                            </div>
+
+                            @if (showAddContract)
+                            {
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Contract</label>
+                                    <div class="flex space-x-2">
+                                        <select @bind="selectedContractId" class="input flex-1">
+                                            <option value="">Select a contract...</option>
+                                            @if (availableContracts != null)
+                                            {
+                                                @foreach (var contract in availableContracts)
+                                                {
+                                                    <option value="@contract.ContractId">@contract.Description (@contract.OperatorName)</option>
+                                                }
+                                            }
+                                        </select>
+                                        <button type="button" @onclick="AssignContractToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedContractId))">
+                                            Assign
                                         </button>
                                     </div>
-                                }
+                                </div>
+                            }
+
+                            @if (assignedContracts == null || !assignedContracts.Any())
+                            {
+                                <p class="text-gray-500 text-center py-8">No contracts assigned</p>
+                            }
+                            else
+                            {
+                                <div class="space-y-2">
+                                    @foreach (var contract in assignedContracts)
+                                    {
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <div>
+                                                <p class="font-medium">@contract.Description</p>
+                                                <p class="text-sm text-gray-600">Operator: @contract.OperatorName</p>
+                                            </div>
+                                            <button type="button" @onclick="() => RemoveContractFromMerchant(contract.ContractId)" class="text-red-600 hover:text-red-800">
+                                                Remove
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (activeTab == "devices")
+                    {
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold">Assigned Devices</h3>
+                                <button type="button" id="addDeviceButton" @onclick="() => showAddDevice = !showAddDevice" class="btn btn-primary">
+                                    @(showAddDevice ? "Cancel" : "Add Device")
+                                </button>
                             </div>
-                        }
-                    </div>
-                }
-                else if (activeTab == "devices")
+
+                            @if (showAddDevice)
+                            {
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Device Identifier</label>
+                                    <div class="flex space-x-2">
+                                        <input @bind="deviceIdentifier" type="text" class="input flex-1" placeholder="Enter device identifier" />
+                                        <button type="button" @onclick="AddDeviceToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(deviceIdentifier))">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (assignedDevices == null || !assignedDevices.Any())
+                            {
+                                <p class="text-gray-500 text-center py-8">No devices assigned</p>
+                            }
+                            else
+                            {
+                                <div class="space-y-2">
+                                    @foreach (var device in assignedDevices)
+                                    {
+                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                            <span class="font-mono">@device</span>
+                                            <button type="button" @onclick="() => RemoveDevice(device)" class="text-red-600 hover:text-red-800">
+                                                Remove
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (activeTab == "transactions")
+                    {
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold mb-4">Transaction History</h3>
+                            <p class="text-gray-500 text-center py-8">Transaction history will be displayed here</p>
+                        </div>
+                    }
+                </div>
+                
+                <!-- Single Save Button for Details, Address, and Contact tabs -->
+                @if (activeTab == "details" || activeTab == "address" || activeTab == "contact")
                 {
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold">Assigned Devices</h3>
-                            <button id="addDeviceButton" @onclick="() => showAddDevice = !showAddDevice" class="btn btn-primary">
-                                @(showAddDevice ? "Cancel" : "Add Device")
+                    <div class="px-6 pb-6 pt-0 border-t">
+                        <div class="flex justify-end pt-4">
+                            <button type="submit" class="btn btn-primary" disabled="@isSaving">
+                                @if (isSaving)
+                                {
+                                    <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                                    <span>Saving...</span>
+                                }
+                                else
+                                {
+                                    <span>Save</span>
+                                }
                             </button>
                         </div>
-
-                        @if (showAddDevice)
-                        {
-                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Device Identifier</label>
-                                <div class="flex space-x-2">
-                                    <input @bind="deviceIdentifier" type="text" class="input flex-1" placeholder="Enter device identifier" />
-                                    <button @onclick="AddDeviceToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(deviceIdentifier))">
-                                        Add
-                                    </button>
-                                </div>
-                            </div>
-                        }
-
-                        @if (assignedDevices == null || !assignedDevices.Any())
-                        {
-                            <p class="text-gray-500 text-center py-8">No devices assigned</p>
-                        }
-                        else
-                        {
-                            <div class="space-y-2">
-                                @foreach (var device in assignedDevices)
-                                {
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <span class="font-mono">@device</span>
-                                        <button @onclick="() => RemoveDevice(device)" class="text-red-600 hover:text-red-800">
-                                            Remove
-                                        </button>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-                }
-                else if (activeTab == "transactions")
-                {
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold mb-4">Transaction History</h3>
-                        <p class="text-gray-500 text-center py-8">Transaction history will be displayed here</p>
                     </div>
                 }
             </div>
-        </div>
+        </EditForm>
     }
     else
     {
@@ -388,10 +378,8 @@
     private string? successMessage;
     private string activeTab = "details";
 
-    // Models for editing
-    private AddressModel addressModel = new();
-    private ContactModel contactModel = new();
-    private string settlementSchedule = "";
+    // Unified model for editing
+    private MerchantEditModel merchantEditModel = new();
 
     // Operators
     private List<OperatorModel>? availableOperators;
@@ -432,25 +420,20 @@
             {
                 merchant = result.Data;
                 
-                // Initialize models with current values
-                addressModel = new AddressModel
+                // Initialize unified model with current values
+                merchantEditModel = new MerchantEditModel
                 {
+                    SettlementSchedule = merchant.SettlementSchedule ?? "Immediate",
                     AddressLine1 = merchant.AddressLine1,
                     AddressLine2 = merchant.AddressLine2,
                     Town = merchant.Town,
                     Region = merchant.Region,
                     PostalCode = merchant.PostalCode,
-                    Country = merchant.Country
-                };
-
-                contactModel = new ContactModel
-                {
+                    Country = merchant.Country,
                     ContactName = merchant.ContactName,
                     ContactEmailAddress = merchant.ContactEmailAddress,
                     ContactPhoneNumber = merchant.ContactPhoneNumber
                 };
-
-                settlementSchedule = merchant.SettlementSchedule ?? "Immediate";
 
                 // Mock some assigned data
                 assignedOperators = new List<OperatorModel>
@@ -528,7 +511,7 @@
             : baseClass + "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300";
     }
 
-    private async Task UpdateAddress()
+    private async Task SaveAllChanges()
     {
         isSaving = true;
         ClearMessages();
@@ -539,113 +522,65 @@
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             var accessToken = "stubbed-token";
 
-            var command = new Commands.UpdateMerchantAddressCommand(
+            // Update settlement schedule if changed
+            if (merchantEditModel.SettlementSchedule != merchant?.SettlementSchedule)
+            {
+                var scheduleCommand = new Commands.SetMerchantSettlementScheduleCommand(
+                    correlationId,
+                    accessToken,
+                    estateId,
+                    MerchantId,
+                    merchantEditModel.SettlementSchedule!
+                );
+
+                var scheduleResult = await Mediator.Send(scheduleCommand);
+                if (!scheduleResult.IsSuccess)
+                {
+                    errorMessage = scheduleResult.Message ?? "Failed to update settlement schedule";
+                    return;
+                }
+            }
+
+            // Update address
+            var addressCommand = new Commands.UpdateMerchantAddressCommand(
                 correlationId,
                 accessToken,
                 estateId,
                 MerchantId,
-                addressModel.AddressLine1!,
-                addressModel.Town!,
-                addressModel.Region!,
-                addressModel.PostalCode!,
-                addressModel.Country!
+                merchantEditModel.AddressLine1!,
+                merchantEditModel.Town!,
+                merchantEditModel.Region!,
+                merchantEditModel.PostalCode!,
+                merchantEditModel.Country!
             );
 
-            var result = await Mediator.Send(command);
-
-            if (result.IsSuccess)
+            var addressResult = await Mediator.Send(addressCommand);
+            if (!addressResult.IsSuccess)
             {
-                successMessage = "Address updated successfully";
-                await LoadMerchant();
+                errorMessage = addressResult.Message ?? "Failed to update address";
+                return;
             }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to update address";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            isSaving = false;
-        }
-    }
 
-    private async Task UpdateContact()
-    {
-        isSaving = true;
-        ClearMessages();
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var command = new Commands.UpdateMerchantContactCommand(
+            // Update contact
+            var contactCommand = new Commands.UpdateMerchantContactCommand(
                 correlationId,
                 accessToken,
                 estateId,
                 MerchantId,
-                contactModel.ContactName!,
-                contactModel.ContactEmailAddress!,
-                contactModel.ContactPhoneNumber!
+                merchantEditModel.ContactName!,
+                merchantEditModel.ContactEmailAddress!,
+                merchantEditModel.ContactPhoneNumber!
             );
 
-            var result = await Mediator.Send(command);
-
-            if (result.IsSuccess)
+            var contactResult = await Mediator.Send(contactCommand);
+            if (!contactResult.IsSuccess)
             {
-                successMessage = "Contact details updated successfully";
-                await LoadMerchant();
+                errorMessage = contactResult.Message ?? "Failed to update contact details";
+                return;
             }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to update contact details";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            isSaving = false;
-        }
-    }
 
-    private async Task UpdateSettlementSchedule()
-    {
-        isSaving = true;
-        ClearMessages();
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var command = new Commands.SetMerchantSettlementScheduleCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                MerchantId,
-                settlementSchedule
-            );
-
-            var result = await Mediator.Send(command);
-
-            if (result.IsSuccess)
-            {
-                successMessage = "Settlement schedule updated successfully";
-                await LoadMerchant();
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to update settlement schedule";
-            }
+            successMessage = "Merchant details updated successfully";
+            await LoadMerchant();
         }
         catch (Exception ex)
         {
@@ -881,8 +816,10 @@
         NavigationManager.NavigateTo("/merchants");
     }
 
-    public class AddressModel
+    public class MerchantEditModel
     {
+        public string? SettlementSchedule { get; set; }
+
         [Required(ErrorMessage = "Address line 1 is required")]
         public string? AddressLine1 { get; set; }
 
@@ -899,10 +836,7 @@
 
         [Required(ErrorMessage = "Country is required")]
         public string? Country { get; set; }
-    }
 
-    public class ContactModel
-    {
         [Required(ErrorMessage = "Contact name is required")]
         public string? ContactName { get; set; }
 
