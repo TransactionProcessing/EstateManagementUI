@@ -64,98 +64,118 @@ builder.WebHost.UseKestrel(options =>
 // Clear default claims mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+// Check if running in test mode
+var testMode = builder.Configuration.GetValue<bool>("AppSettings:TestMode", false);
+Console.WriteLine($"Application running in Test Mode: {testMode}");
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Add authentication
-builder.Services.AddAuthentication(options =>
+// Configure authentication based on mode
+if (testMode)
 {
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-})
-.AddAutomaticTokenManagement(o => {
-    o.RefreshBeforeExpiration = TimeSpan.FromSeconds(30);
-    o.RevokeRefreshTokenOnSignout = true;
-    o.Scheme = OpenIdConnectDefaults.AuthenticationScheme;
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
-.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-{
-    // Read configuration values
-    var authority = builder.Configuration["Authentication:Authority"];
-    var securityServiceLocalPort = builder.Configuration["AppSettings:SecurityServiceLocalPort"];
-    var securityServicePort = builder.Configuration["AppSettings:SecurityServicePort"];
-    var httpClientIgnoreCertificateErrors = builder.Configuration.GetValue<bool>("AppSettings:HttpClientIgnoreCertificateErrors", false);
-    
-    // Use helper method to get adjusted addresses for integration testing
-    var (authorityAddress, issuerAddress) = AuthenticationHelpers.GetSecurityServiceAddresses(
-        authority, 
-        securityServiceLocalPort, 
-        securityServicePort);
-    
-    // Configure certificate validation bypass for CI/CD testing
-    if (httpClientIgnoreCertificateErrors)
+    // Test mode: Use test authentication handler to bypass OIDC
+    builder.Services.AddAuthentication(options =>
     {
-        Console.WriteLine("WARNING: Certificate validation is disabled for HttpClient backchannel communication");
-        var handler = new HttpClientHandler
+        options.DefaultScheme = TestAuthenticationHandler.SchemeName;
+        options.DefaultChallengeScheme = TestAuthenticationHandler.SchemeName;
+    })
+    .AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(
+        TestAuthenticationHandler.SchemeName, 
+        options => { });
+}
+else
+{
+    // Production mode: Use OIDC authentication
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddAutomaticTokenManagement(o => {
+        o.RefreshBeforeExpiration = TimeSpan.FromSeconds(30);
+        o.RevokeRefreshTokenOnSignout = true;
+        o.Scheme = OpenIdConnectDefaults.AuthenticationScheme;
+    })
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+    {
+        // Read configuration values
+        var authority = builder.Configuration["Authentication:Authority"];
+        var securityServiceLocalPort = builder.Configuration["AppSettings:SecurityServiceLocalPort"];
+        var securityServicePort = builder.Configuration["AppSettings:SecurityServicePort"];
+        var httpClientIgnoreCertificateErrors = builder.Configuration.GetValue<bool>("AppSettings:HttpClientIgnoreCertificateErrors", false);
+        
+        // Use helper method to get adjusted addresses for integration testing
+        var (authorityAddress, issuerAddress) = AuthenticationHelpers.GetSecurityServiceAddresses(
+            authority, 
+            securityServiceLocalPort, 
+            securityServicePort);
+        
+        // Configure certificate validation bypass for CI/CD testing
+        if (httpClientIgnoreCertificateErrors)
         {
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        };
-        options.BackchannelHttpHandler = handler;
-    }
-    else {
-        Console.WriteLine("WARNING: Certificate validation is enabled for HttpClient backchannel communication");
-    }
+            Console.WriteLine("WARNING: Certificate validation is disabled for HttpClient backchannel communication");
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+            options.BackchannelHttpHandler = handler;
+        }
+        else {
+            Console.WriteLine("WARNING: Certificate validation is enabled for HttpClient backchannel communication");
+        }
 
         // Configure OpenID Connect settings
         options.Authority = authorityAddress;
-    options.ClientId = builder.Configuration["Authentication:ClientId"];
-    options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
-    options.ResponseType = "code id_token";
-    options.SaveTokens = true;
-    options.GetClaimsFromUserInfoEndpoint = true;
-    
-    // Set the callback path - REQUIRED for OIDC to work
-    options.CallbackPath = builder.Configuration["Authentication:CallbackPath"] ?? "/signin-oidc";
-    
-    options.Scope.Clear();
-    options.Scope.Add("openid");
-    options.Scope.Add("profile");
-    options.Scope.Add("email");
-    options.Scope.Add("offline_access");
-    
-    // Add additional scopes from old app
-    options.Scope.Add("fileProcessor");
-    options.Scope.Add("transactionProcessor");
-    
-    options.RequireHttpsMetadata = false; // For development - set to true in production
-    
-    // Map claims
-    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-    {
-        ValidateAudience = false,
-        NameClaimType = "name",
-        RoleClaimType = "role"
-    };
-    
-    // Set MetadataAddress to use the authority address
-    options.MetadataAddress = $"{authorityAddress}/.well-known/openid-configuration";
-    
-    // Handle prompt parameter for forcing re-authentication
-    options.Events = new OpenIdConnectEvents
-    {
-        OnRedirectToIdentityProvider = context =>
+        options.ClientId = builder.Configuration["Authentication:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
+        options.ResponseType = "code id_token";
+        options.SaveTokens = true;
+        options.GetClaimsFromUserInfoEndpoint = true;
+        
+        // Set the callback path - REQUIRED for OIDC to work
+        options.CallbackPath = builder.Configuration["Authentication:CallbackPath"] ?? "/signin-oidc";
+        
+        options.Scope.Clear();
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
+        options.Scope.Add("offline_access");
+        
+        // Add additional scopes from old app
+        options.Scope.Add("fileProcessor");
+        options.Scope.Add("transactionProcessor");
+        
+        options.RequireHttpsMetadata = false; // For development - set to true in production
+        
+        // Map claims
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
-            // Pass prompt parameter if specified in authentication properties
-            if (context.Properties.Items.TryGetValue("prompt", out var prompt))
+            ValidateAudience = false,
+            NameClaimType = "name",
+            RoleClaimType = "role"
+        };
+        
+        // Set MetadataAddress to use the authority address
+        options.MetadataAddress = $"{authorityAddress}/.well-known/openid-configuration";
+        
+        // Handle prompt parameter for forcing re-authentication
+        options.Events = new OpenIdConnectEvents
+        {
+            OnRedirectToIdentityProvider = context =>
             {
-                context.ProtocolMessage.Prompt = prompt;
+                // Pass prompt parameter if specified in authentication properties
+                if (context.Properties.Items.TryGetValue("prompt", out var prompt))
+                {
+                    context.ProtocolMessage.Prompt = prompt;
+                }
+                return Task.CompletedTask;
             }
-            return Task.CompletedTask;
-        }
-    };
-});
+        };
+    });
+}
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
@@ -163,8 +183,18 @@ builder.Services.AddCascadingAuthenticationState();
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
-// Register stubbed MediatR service
-builder.Services.AddSingleton<IMediator, StubbedMediatorService>();
+// Register MediatR service based on test mode
+if (testMode)
+{
+    Console.WriteLine("Registering TestMediatorService with in-memory test data store");
+    builder.Services.AddSingleton<ITestDataStore, TestDataStore>();
+    builder.Services.AddSingleton<IMediator, TestMediatorService>();
+}
+else
+{
+    Console.WriteLine("Registering StubbedMediatorService");
+    builder.Services.AddSingleton<IMediator, StubbedMediatorService>();
+}
 
 var app = builder.Build();
 
@@ -188,28 +218,50 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// Add login endpoint to trigger OIDC authentication
-app.MapGet("/login", (HttpContext context) =>
+// Add login endpoint - behavior depends on test mode
+if (testMode)
 {
-    return Results.Challenge(
-        properties: new Microsoft.AspNetCore.Authentication.AuthenticationProperties
-        {
-            RedirectUri = "/",
-            Items =
+    app.MapGet("/login", (HttpContext context) =>
+    {
+        // In test mode, redirect directly to home since authentication is automatic
+        return Results.Redirect("/");
+    }).AllowAnonymous();
+}
+else
+{
+    app.MapGet("/login", (HttpContext context) =>
+    {
+        return Results.Challenge(
+            properties: new Microsoft.AspNetCore.Authentication.AuthenticationProperties
             {
-                { "prompt", "login" } // Force the user to re-enter credentials
-            }
-        },
-        authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
-    );
-}).AllowAnonymous();
+                RedirectUri = "/",
+                Items =
+                {
+                    { "prompt", "login" } // Force the user to re-enter credentials
+                }
+            },
+            authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
+        );
+    }).AllowAnonymous();
+}
 
-// Add logout endpoint
-app.MapGet("/logout", async (HttpContext context) =>
+// Add logout endpoint - behavior depends on test mode
+if (testMode)
 {
-    await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-    return Results.Redirect("/");
-}).RequireAuthorization();
+    app.MapGet("/logout", (HttpContext context) =>
+    {
+        // In test mode, just redirect to home
+        return Results.Redirect("/");
+    }).RequireAuthorization();
+}
+else
+{
+    app.MapGet("/logout", async (HttpContext context) =>
+    {
+        await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+        await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return Results.Redirect("/");
+    }).RequireAuthorization();
+}
 
 app.Run();
