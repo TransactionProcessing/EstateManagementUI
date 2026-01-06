@@ -90,7 +90,7 @@ public class BlazorUiHelpers
 
     public async Task VerifyOnTheNewMerchantScreen()
     {
-        await Retry.For(async () => { await this.VerifyPageTitle("New Merchant"); });
+        await Retry.For(async () => { await this.VerifyPageTitle("Create New Merchant"); });
     }
 
     public async Task VerifyOnTheEditMerchantScreen()
