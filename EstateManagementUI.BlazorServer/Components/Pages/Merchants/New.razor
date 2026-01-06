@@ -39,7 +39,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Merchant Name <span class="text-red-500">*</span>
                         </label>
-                        <InputText @bind-Value="model.MerchantName" class="input w-full" placeholder="Enter merchant name" />
+                        <InputText @bind-Value="model.MerchantName" class="input w-full" placeholder="Enter merchant name" name="MerchantName" />
                         <ValidationMessage For="@(() => model.MerchantName)" class="text-red-600 text-sm mt-1" />
                     </div>
 
@@ -47,7 +47,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Settlement Schedule <span class="text-red-500">*</span>
                         </label>
-                        <InputSelect @bind-Value="model.SettlementSchedule" class="input w-full">
+                        <InputSelect @bind-Value="model.SettlementSchedule" class="input w-full" name="SettlementSchedule">
                             <option value="">Select a schedule...</option>
                             <option value="Immediate">Immediate</option>
                             <option value="Weekly">Weekly</option>
@@ -66,7 +66,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Address Line 1 <span class="text-red-500">*</span>
                         </label>
-                        <InputText @bind-Value="model.AddressLine1" class="input w-full" placeholder="Enter address line 1" />
+                        <InputText @bind-Value="model.AddressLine1" class="input w-full" placeholder="Enter address line 1" name="AddressLine1" />
                         <ValidationMessage For="@(() => model.AddressLine1)" class="text-red-600 text-sm mt-1" />
                     </div>
 
@@ -74,7 +74,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Address Line 2
                         </label>
-                        <InputText @bind-Value="model.AddressLine2" class="input w-full" placeholder="Enter address line 2 (optional)" />
+                        <InputText @bind-Value="model.AddressLine2" class="input w-full" placeholder="Enter address line 2 (optional)" name="AddressLine2" />
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -82,7 +82,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Town <span class="text-red-500">*</span>
                             </label>
-                            <InputText @bind-Value="model.Town" class="input w-full" placeholder="Enter town" />
+                            <InputText @bind-Value="model.Town" class="input w-full" placeholder="Enter town" name="Town" />
                             <ValidationMessage For="@(() => model.Town)" class="text-red-600 text-sm mt-1" />
                         </div>
 
@@ -90,7 +90,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Region <span class="text-red-500">*</span>
                             </label>
-                            <InputText @bind-Value="model.Region" class="input w-full" placeholder="Enter region" />
+                            <InputText @bind-Value="model.Region" class="input w-full" placeholder="Enter region" name="Region" />
                             <ValidationMessage For="@(() => model.Region)" class="text-red-600 text-sm mt-1" />
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 PostCode <span class="text-red-500">*</span>
                             </label>
-                            <InputText @bind-Value="model.PostCode" class="input w-full" placeholder="Enter postcode" />
+                            <InputText @bind-Value="model.PostCode" class="input w-full" placeholder="Enter postcode" name="PostCode" />
                             <ValidationMessage For="@(() => model.PostCode)" class="text-red-600 text-sm mt-1" />
                         </div>
 
@@ -108,7 +108,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Country <span class="text-red-500">*</span>
                             </label>
-                            <InputText @bind-Value="model.Country" class="input w-full" placeholder="Enter country" />
+                            <InputText @bind-Value="model.Country" class="input w-full" placeholder="Enter country" name="Country" />
                             <ValidationMessage For="@(() => model.Country)" class="text-red-600 text-sm mt-1" />
                         </div>
                     </div>
@@ -123,7 +123,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Contact Name <span class="text-red-500">*</span>
                         </label>
-                        <InputText @bind-Value="model.ContactName" class="input w-full" placeholder="Enter contact name" />
+                        <InputText @bind-Value="model.ContactName" class="input w-full" placeholder="Enter contact name" name="ContactName" />
                         <ValidationMessage For="@(() => model.ContactName)" class="text-red-600 text-sm mt-1" />
                     </div>
 
@@ -131,7 +131,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Email Address <span class="text-red-500">*</span>
                         </label>
-                        <InputText @bind-Value="model.EmailAddress" type="email" class="input w-full" placeholder="Enter email address" />
+                        <InputText @bind-Value="model.EmailAddress" type="email" class="input w-full" placeholder="Enter email address" name="EmailAddress" />
                         <ValidationMessage For="@(() => model.EmailAddress)" class="text-red-600 text-sm mt-1" />
                     </div>
 
@@ -139,7 +139,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Phone Number <span class="text-red-500">*</span>
                         </label>
-                        <InputText @bind-Value="model.PhoneNumber" type="tel" class="input w-full" placeholder="Enter phone number" />
+                        <InputText @bind-Value="model.PhoneNumber" type="tel" class="input w-full" placeholder="Enter phone number" name="PhoneNumber" />
                         <ValidationMessage For="@(() => model.PhoneNumber)" class="text-red-600 text-sm mt-1" />
                     </div>
                 </div>
@@ -242,8 +242,8 @@
 
             await Mediator.Send(scheduleCommand);
 
-            // Navigate to edit page
-            NavigationManager.NavigateTo($"/merchants/{merchantId}/edit");
+            // Navigate to merchant list
+            NavigationManager.NavigateTo($"/merchants");
         }
         catch (Exception ex)
         {

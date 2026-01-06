@@ -27,7 +27,7 @@
     {
         <!-- Merchants Table -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <table class="table">
+            <table id="merchantList" class="table">
                 <thead>
                     <tr>
                         <th>Merchant Name</th>
@@ -62,13 +62,13 @@
                             </td>
                             <td class="text-right">
                                 <div class="flex items-center justify-end space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-800 p-2" @onclick:stopPropagation="true" @onclick="() => ViewMerchant(merchant.MerchantId)" title="View">
+                                    <button id="viewMerchantLink" class="text-blue-600 hover:text-blue-800 p-2" @onclick:stopPropagation="true" @onclick="() => ViewMerchant(merchant.MerchantId)" title="View">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                         </svg>
                                     </button>
-                                    <button class="text-green-600 hover:text-green-800 p-2" @onclick:stopPropagation="true" @onclick="() => EditMerchant(merchant.MerchantId)" title="Edit">
+                                    <button id="editMerchantLink" class="text-green-600 hover:text-green-800 p-2" @onclick:stopPropagation="true" @onclick="() => EditMerchant(merchant.MerchantId)" title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                         </svg>
