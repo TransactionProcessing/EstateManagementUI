@@ -329,5 +329,63 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
         {
             await this.UiHelpers.VerifyOnTheNewContractScreen();
         }
+
+        [When("I enter the following details for the new Merchant")]
+        public async Task WhenIEnterTheFollowingDetailsForTheNewMerchant(DataTable dataTable)
+        {
+            DataTableRow row = dataTable.Rows.Single();
+            
+            await this.UiHelpers.FillInNewMerchantForm(
+                ReqnrollTableHelper.GetStringRowValue(row, "MerchantName"),
+                ReqnrollTableHelper.GetStringRowValue(row, "SettlementSchedule"),
+                ReqnrollTableHelper.GetStringRowValue(row, "AddressLine1"),
+                ReqnrollTableHelper.GetStringRowValue(row, "Town"),
+                ReqnrollTableHelper.GetStringRowValue(row, "Region"),
+                ReqnrollTableHelper.GetStringRowValue(row, "Country"),
+                ReqnrollTableHelper.GetStringRowValue(row, "ContactName"),
+                ReqnrollTableHelper.GetStringRowValue(row, "EmailAddress"));
+        }
+
+        [When("click the Save Merchant button")]
+        public async Task WhenClickTheSaveMerchantButton()
+        {
+            await this.UiHelpers.ClickTheSaveMerchantButton();
+        }
+
+        [When("I enter the following details for the updated Merchant")]
+        public async Task WhenIEnterTheFollowingDetailsForTheUpdatedMerchant(DataTable dataTable)
+        {
+            foreach (DataTableRow row in dataTable.Rows)
+            {
+                String tab = ReqnrollTableHelper.GetStringRowValue(row, "Tab");
+                String field = ReqnrollTableHelper.GetStringRowValue(row, "Field");
+                String value = ReqnrollTableHelper.GetStringRowValue(row, "Value");
+                
+                await this.UiHelpers.UpdateMerchantField(tab, field, value);
+            }
+        }
+
+        [When("I enter the following details for the deposit")]
+        public async Task WhenIEnterTheFollowingDetailsForTheDeposit(DataTable dataTable)
+        {
+            DataTableRow row = dataTable.Rows.Single();
+            
+            await this.UiHelpers.FillInDepositForm(
+                ReqnrollTableHelper.GetStringRowValue(row, "Amount"),
+                ReqnrollTableHelper.GetStringRowValue(row, "Date"),
+                ReqnrollTableHelper.GetStringRowValue(row, "Reference"));
+        }
+
+        [When("click the Make Deposit button")]
+        public async Task WhenClickTheMakeDepositButton()
+        {
+            await this.UiHelpers.ClickTheMakeDepositButton();
+        }
+
+        [When("I click on the View Merchant Button for {string}")]
+        public async Task WhenIClickOnTheViewMerchantButtonFor(string merchantName)
+        {
+            await this.UiHelpers.ClickTheViewMerchantButton(merchantName);
+        }
     }
 }
