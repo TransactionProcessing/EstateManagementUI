@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using JasperFx.Core;
+﻿using JasperFx.Core;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Reqnroll;
 using Reqnroll.BoDi;
@@ -14,6 +9,11 @@ using SecurityService.IntegrationTesting.Helpers;
 using Shared.IntegrationTesting;
 using Shouldly;
 using SimpleResults;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using TransactionProcessor.Database.Contexts;
 using TransactionProcessor.DataTransferObjects.Requests.Contract;
 using TransactionProcessor.DataTransferObjects.Requests.Estate;
@@ -23,6 +23,7 @@ using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using TransactionProcessor.IntegrationTesting.Helpers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using AssignOperatorRequest = TransactionProcessor.DataTransferObjects.Requests.Estate.AssignOperatorRequest;
 using ReqnrollTableHelper = Shared.IntegrationTesting.ReqnrollTableHelper;
 
@@ -259,6 +260,7 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given("I have created the following security users")]
         public async Task WhenICreateTheFollowingSecurityUsers(DataTable table)
         {
+
             List<CreateNewUserRequest> createUserRequests = table.Rows.ToCreateNewUserRequests(this.TestingContext.Estates);
             await this.TransactionProcessorSteps.WhenICreateTheFollowingSecurityUsers(this.TestingContext.AccessToken, createUserRequests, this.TestingContext.Estates);
         }

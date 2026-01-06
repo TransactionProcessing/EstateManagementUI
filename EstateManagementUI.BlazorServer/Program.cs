@@ -104,9 +104,12 @@ builder.Services.AddAuthentication(options =>
         };
         options.BackchannelHttpHandler = handler;
     }
-    
-    // Configure OpenID Connect settings
-    options.Authority = authorityAddress;
+    else {
+        Console.WriteLine("WARNING: Certificate validation is enabled for HttpClient backchannel communication");
+    }
+
+        // Configure OpenID Connect settings
+        options.Authority = authorityAddress;
     options.ClientId = builder.Configuration["Authentication:ClientId"];
     options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
     options.ResponseType = "code id_token";

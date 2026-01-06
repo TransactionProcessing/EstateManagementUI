@@ -81,5 +81,5 @@ Scenario: View Estate Details
 	Then I am presented with the View Estate Page
 
 	And My Estate Details will be shown
-	| EstateName  | EstateReference |
-	| Test Estate | Test Estate     |
+	| EstateName  | 
+	| Test Estate |

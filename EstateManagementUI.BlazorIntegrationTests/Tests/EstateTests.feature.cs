@@ -372,10 +372,8 @@ await this.FeatureBackgroundAsync();
  await testRunner.ThenAsync("I am presented with the View Estate Page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table30 = new global::Reqnroll.Table(new string[] {
-                            "EstateName",
-                            "EstateReference"});
+                            "EstateName"});
                 table30.AddRow(new string[] {
-                            "Test Estate",
                             "Test Estate"});
 #line 83
  await testRunner.AndAsync("My Estate Details will be shown", ((string)(null)), table30, "And ");

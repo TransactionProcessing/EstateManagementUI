@@ -238,6 +238,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             
             try{
 
+                
                 await builtContainer.StartAsync();
                 //builtContainer.WaitForPort("5004/tcp", 30000);
                 this.EstateManagementUiPort = builtContainer.GetMappedPublicPort($"5004");

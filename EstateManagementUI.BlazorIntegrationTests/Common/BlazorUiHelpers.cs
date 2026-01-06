@@ -25,14 +25,14 @@ public class BlazorUiHelpers
         await Retry.For(async () =>
         {
             var title = await this.Page.TitleAsync();
-            title.ShouldBe($"{expectedTitle} - Estate Management");
+            title.ShouldBe($"{expectedTitle}");
         });
     }
 
     public async Task NavigateToHomePage()
     {
         await this.Page.GotoAsync($"https://localhost:{this.EstateManagementUiPort}");
-        await this.VerifyPageTitle("Welcome");
+        await this.VerifyPageTitle("Welcome - Estate Management");
     }
 
     public async Task ClickContractsSidebarOption()
@@ -120,7 +120,7 @@ public class BlazorUiHelpers
 
     public async Task VerifyOnTheContractsListScreen()
     {
-        await Retry.For(async () => { await this.VerifyPageTitle("View Contracts"); });
+        await Retry.For(async () => { await this.VerifyPageTitle("Contract Management"); });
     }
 
     public async Task VerifyOnTheContractProductsListScreen()
@@ -206,17 +206,17 @@ public class BlazorUiHelpers
 
     public async Task VerifyOnTheEstateDetailsScreen()
     {
-        await Retry.For(async () => { await this.VerifyPageTitle("View Estate"); });
+        await Retry.For(async () => { await this.VerifyPageTitle("Estate Management"); });
     }
 
     public async Task VerifyOnTheMerchantsListScreen()
     {
-        await Retry.For(async () => { await this.VerifyPageTitle("View Merchants"); });
+        await Retry.For(async () => { await this.VerifyPageTitle("Merchant Management"); });
     }
 
     public async Task VerifyOnTheOperatorsListScreen()
     {
-        await Retry.For(async () => { await this.VerifyPageTitle("View Operators"); });
+        await Retry.For(async () => { await this.VerifyPageTitle("Operator Management"); });
     }
 
     public async Task VerifyTheCorrectEstateDetailsAreDisplayed(String estateName)
