@@ -1,3 +1,4 @@
+using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
 using EstateManagementUI.BlazorServer.Services;
 using EstateManagementUI.BlazorServer.TokenManagement;
@@ -5,19 +6,60 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Load hosting.json configuration for port settings
 builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true);
 
-// Apply URLs from configuration
-var urls = builder.Configuration["urls"];
-if (!string.IsNullOrEmpty(urls))
+// Configure Kestrel with certificate for HTTPS
+builder.WebHost.UseKestrel(options =>
 {
-    builder.WebHost.UseUrls(urls);
-}
+    var port = 5004;
+    
+    options.Listen(IPAddress.Any, port, listenOptions =>
+    {
+        // Enable support for HTTP1 and HTTP2
+        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+        
+        // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
+        var certificatePath = Path.Combine(AppContext.BaseDirectory, "Certificates");
+        Console.WriteLine($"Looking for certificates in: {certificatePath}");
+        Console.WriteLine($"AppContext.BaseDirectory: {AppContext.BaseDirectory}");
+        Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
+        
+        if (!Directory.Exists(certificatePath))
+        {
+            throw new InvalidOperationException($"Certificates folder not found at: {certificatePath}");
+        }
+        
+        var certificateFiles = Directory.GetFiles(certificatePath, "*.pfx");
+        if (certificateFiles.Length == 0)
+        {
+            throw new InvalidOperationException($"No .pfx certificate file found in {certificatePath}");
+        }
+        
+        var certificateFile = certificateFiles.First();
+        Console.WriteLine($"Loading certificate from: {certificateFile}");
+        
+        try
+        {
+            var certificate = new X509Certificate2(certificateFile, "password");
+            Console.WriteLine($"Certificate loaded successfully. Subject: {certificate.Subject}");
+            listenOptions.UseHttps(certificate);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading certificate: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            throw new InvalidOperationException($"Failed to load certificate from {certificateFile}: {ex.Message}", ex);
+        }
+    });
+});
 
 // Clear default claims mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -40,8 +82,34 @@ builder.Services.AddAuthentication(options =>
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
-    // Configure OpenID Connect settings from appsettings.json
-    options.Authority = builder.Configuration["Authentication:Authority"];
+    // Read configuration values
+    var authority = builder.Configuration["Authentication:Authority"];
+    var securityServiceLocalPort = builder.Configuration["AppSettings:SecurityServiceLocalPort"];
+    var securityServicePort = builder.Configuration["AppSettings:SecurityServicePort"];
+    var httpClientIgnoreCertificateErrors = builder.Configuration.GetValue<bool>("AppSettings:HttpClientIgnoreCertificateErrors", false);
+    
+    // Use helper method to get adjusted addresses for integration testing
+    var (authorityAddress, issuerAddress) = AuthenticationHelpers.GetSecurityServiceAddresses(
+        authority, 
+        securityServiceLocalPort, 
+        securityServicePort);
+    
+    // Configure certificate validation bypass for CI/CD testing
+    if (httpClientIgnoreCertificateErrors)
+    {
+        Console.WriteLine("WARNING: Certificate validation is disabled for HttpClient backchannel communication");
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+        options.BackchannelHttpHandler = handler;
+    }
+    else {
+        Console.WriteLine("WARNING: Certificate validation is enabled for HttpClient backchannel communication");
+    }
+
+        // Configure OpenID Connect settings
+        options.Authority = authorityAddress;
     options.ClientId = builder.Configuration["Authentication:ClientId"];
     options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
     options.ResponseType = "code id_token";
@@ -70,6 +138,9 @@ builder.Services.AddAuthentication(options =>
         NameClaimType = "name",
         RoleClaimType = "role"
     };
+    
+    // Set MetadataAddress to use the authority address
+    options.MetadataAddress = $"{authorityAddress}/.well-known/openid-configuration";
     
     // Handle prompt parameter for forcing re-authentication
     options.Events = new OpenIdConnectEvents

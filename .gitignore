@@ -396,3 +396,10 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /EstateManagementUI/appsettings.Development.json
+
+# Playwright
+.playwright/
+playwright-report/
+test-results/
+screenshot-*.png
+*.har

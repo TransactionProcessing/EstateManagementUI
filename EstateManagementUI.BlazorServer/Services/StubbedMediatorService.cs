@@ -103,7 +103,7 @@ public class StubbedMediatorService : IMediator
     {
         EstateId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
         EstateName = "Test Estate",
-        Reference = "ESTATE001"
+        Reference = "Test Estate"
     };
 
     private static List<MerchantModel> GetMockMerchants() => new()
