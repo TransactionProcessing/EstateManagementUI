@@ -81,9 +81,11 @@
                     {
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Merchant Name</label>
-                                <input type="text" value="@merchant.MerchantName" class="input w-full" disabled />
-                                <p class="text-sm text-gray-500 mt-1">Merchant name cannot be changed after creation</p>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">
+                                    Merchant Name <span class="text-red-500">*</span>
+                                </label>
+                                <InputText @bind-Value="merchantEditModel.MerchantName" class="input w-full" name="MerchantName" />
+                                <ValidationMessage For="@(() => merchantEditModel.MerchantName)" class="text-red-600 text-sm mt-1" />
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Settlement Schedule</label>
@@ -423,6 +425,7 @@
                 // Initialize unified model with current values
                 merchantEditModel = new MerchantEditModel
                 {
+                    MerchantName = merchant.MerchantName,
                     SettlementSchedule = merchant.SettlementSchedule ?? "Immediate",
                     AddressLine1 = merchant.AddressLine1,
                     AddressLine2 = merchant.AddressLine2,
@@ -521,6 +524,25 @@
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             var accessToken = "stubbed-token";
+
+            // Update merchant name if changed
+            if (merchantEditModel.MerchantName != merchant?.MerchantName)
+            {
+                var nameCommand = new Commands.UpdateMerchantCommand(
+                    correlationId,
+                    accessToken,
+                    estateId,
+                    MerchantId,
+                    merchantEditModel.MerchantName!
+                );
+
+                var nameResult = await Mediator.Send(nameCommand);
+                if (!nameResult.IsSuccess)
+                {
+                    errorMessage = nameResult.Message ?? "Failed to update merchant name";
+                    return;
+                }
+            }
 
             // Update settlement schedule if changed
             if (merchantEditModel.SettlementSchedule != merchant?.SettlementSchedule)
@@ -819,6 +841,9 @@
 
     public class MerchantEditModel
     {
+        [Required(ErrorMessage = "Merchant name is required")]
+        public string? MerchantName { get; set; }
+
         public string? SettlementSchedule { get; set; }
 
         [Required(ErrorMessage = "Address line 1 is required")]
