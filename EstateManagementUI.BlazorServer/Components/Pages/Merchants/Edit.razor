@@ -213,7 +213,7 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold">Assigned Operators</h3>
-                            <button @onclick="() => showAddOperator = !showAddOperator" class="btn btn-primary">
+                            <button id="addOperatorButton" @onclick="() => showAddOperator = !showAddOperator" class="btn btn-primary">
                                 @(showAddOperator ? "Cancel" : "Add Operator")
                             </button>
                         </div>
@@ -265,7 +265,7 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold">Assigned Contracts</h3>
-                            <button @onclick="() => showAddContract = !showAddContract" class="btn btn-primary">
+                            <button id="addContractButton" @onclick="() => showAddContract = !showAddContract" class="btn btn-primary">
                                 @(showAddContract ? "Cancel" : "Assign Contract")
                             </button>
                         </div>
@@ -320,7 +320,7 @@
                     <div class="space-y-4">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="text-lg font-semibold">Assigned Devices</h3>
-                            <button @onclick="() => showAddDevice = !showAddDevice" class="btn btn-primary">
+                            <button id="addDeviceButton" @onclick="() => showAddDevice = !showAddDevice" class="btn btn-primary">
                                 @(showAddDevice ? "Cancel" : "Add Device")
                             </button>
                         </div>
