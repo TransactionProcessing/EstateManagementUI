@@ -247,7 +247,7 @@ public class TestMediatorService : IMediator
         
         contract.Products.Add(new ContractProductModel
         {
-            ContractProductId = cmd.ProductId,
+            ContractProductId = Guid.NewGuid(),
             ProductName = cmd.ProductName,
             DisplayText = cmd.DisplayText,
             Value = cmd.Value?.ToString() ?? "Variable"
