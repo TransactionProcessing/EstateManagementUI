@@ -18,9 +18,22 @@ When skip remote calls mode is enabled, the test steps will:
 
 ## Configuration
 
-### Environment Variables
+### Option 1: appsettings.json (Recommended)
 
-Set these environment variables to enable the feature:
+Configure the test behavior in `appsettings.json`:
+
+```json
+{
+  "TestSettings": {
+    "SkipRemoteCalls": true,
+    "EnableTestMode": true
+  }
+}
+```
+
+### Option 2: Environment Variables (Backward Compatible)
+
+You can still use environment variables for configuration:
 
 ```bash
 # Skip remote API calls in test steps
@@ -30,21 +43,44 @@ export SKIP_REMOTE_CALLS=true
 export APP_TEST_MODE=true
 ```
 
+**Note:** appsettings.json values take precedence over environment variables if both are set.
+
 ### Running Tests
 
 ```bash
-# Set environment variables
+# Method 1: Using appsettings.json
+# Edit appsettings.json to set SkipRemoteCalls and EnableTestMode to true
+dotnet test EstateManagementUI.BlazorIntegrationTests/EstateManagementUI.BlazorIntegrationTests.csproj
+
+# Method 2: Using environment variables
 export SKIP_REMOTE_CALLS=true
 export APP_TEST_MODE=true
-
-# Run tests
 dotnet test EstateManagementUI.BlazorIntegrationTests/EstateManagementUI.BlazorIntegrationTests.csproj
 ```
 
 ### Docker Compose
 
-When running tests with Docker, set the environment variables in your docker-compose.yml:
+When running tests with Docker, you can use either approach:
 
+**Using appsettings.json:**
+```yaml
+services:
+  blazor-ui:
+    image: estatemanagementuiblazor:latest
+    environment:
+      - AppSettings__TestMode=true
+    ports:
+      - "5004:5004"
+
+  tests:
+    image: test-runner:latest
+    volumes:
+      - ./appsettings.json:/app/appsettings.json  # Mount custom appsettings
+    depends_on:
+      - blazor-ui
+```
+
+**Using environment variables:**
 ```yaml
 services:
   blazor-ui:
@@ -65,7 +101,7 @@ services:
 
 ## What Gets Skipped
 
-When `SKIP_REMOTE_CALLS=true`, the following steps skip their remote API calls:
+When skip remote calls is enabled (via `TestSettings:SkipRemoteCalls` in appsettings.json or `SKIP_REMOTE_CALLS` environment variable), the following steps skip their remote API calls:
 
 ### Security Service Steps
 - `Given I create the following api resources`
@@ -162,6 +198,17 @@ When running with skip remote calls:
 
 For full UI-only testing, enable both features:
 
+**Using appsettings.json (Recommended):**
+```json
+{
+  "TestSettings": {
+    "SkipRemoteCalls": true,
+    "EnableTestMode": true
+  }
+}
+```
+
+**Using environment variables:**
 ```bash
 # In the Blazor application
 export AppSettings__TestMode=true
@@ -179,12 +226,13 @@ This combination:
 ## Troubleshooting
 
 ### Tests still making remote calls
-- Verify `SKIP_REMOTE_CALLS` environment variable is set to `true`
-- Check that the step definition uses `TestConfiguration.SkipRemoteCalls`
+- Check `TestSettings:SkipRemoteCalls` in appsettings.json or `SKIP_REMOTE_CALLS` environment variable is set to `true`
+- Verify that the step definition uses `TestConfiguration.SkipRemoteCalls`
+- Ensure appsettings.json is being copied to the output directory
 
 ### Test data not found
-- Ensure `APP_TEST_MODE=true` is set in the Blazor application
-- Verify the TestDataStore is initialized with default data
+- Ensure `TestSettings:EnableTestMode=true` in appsettings.json or `APP_TEST_MODE=true` environment variable
+- Verify the TestDataStore is initialized with default data in the Blazor application
 - Check that the test estate ID matches the default (`11111111-1111-1111-1111-111111111111`)
 
 ### Authentication failures
@@ -192,13 +240,19 @@ This combination:
 - Verify TestAuthenticationHandler is registered
 - Check that dummy token is set in test context
 
+### Configuration not loading
+- Verify appsettings.json is in the test project root
+- Check that appsettings.json has "Copy to Output Directory" set to "Always"
+- Ensure working directory is set correctly when running tests
+
 ## Migration Guide
 
 To convert existing tests to support skip remote calls mode:
 
-1. **No changes needed** - Tests automatically respect the environment variable
-2. **Optional**: Add custom test data setup if default data is insufficient
-3. **Verify**: Run tests with `SKIP_REMOTE_CALLS=true` to ensure they pass
+1. **No changes needed** - Tests automatically respect the configuration
+2. **Update configuration**: Set `TestSettings:SkipRemoteCalls` to `true` in appsettings.json
+3. **Optional**: Add custom test data setup if default data is insufficient
+4. **Verify**: Run tests to ensure they pass with skip remote calls enabled
 
 ## See Also
 
