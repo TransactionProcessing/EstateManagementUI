@@ -1,5 +1,8 @@
 @using EstateManagementUI.BlazorServer.Permissions
+@using Microsoft.AspNetCore.Components.Authorization
 @inject IPermissionService PermissionService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@implements IDisposable
 
 @if (_hasSectionAccess)
 {
@@ -17,11 +20,29 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _hasSectionAccess = await PermissionService.HasSectionAccessAsync(Section);
+        // Subscribe to authentication state changes
+        AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await CheckAccessAsync();
     }
 
     protected override async Task OnParametersSetAsync()
     {
+        await CheckAccessAsync();
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await CheckAccessAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CheckAccessAsync()
+    {
         _hasSectionAccess = await PermissionService.HasSectionAccessAsync(Section);
+    }
+
+    public void Dispose()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
     }
 }
