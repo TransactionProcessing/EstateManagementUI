@@ -192,21 +192,57 @@
                             @if (showAddOperator)
                             {
                                 <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Operator</label>
-                                    <div class="flex space-x-2">
-                                        <select @bind="selectedOperatorId" class="input flex-1">
-                                            <option value="">Select an operator...</option>
-                                            @if (availableOperators != null)
-                                            {
-                                                @foreach (var op in availableOperators)
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Operator</label>
+                                            <select @bind="selectedOperatorId" @bind:after="OnOperatorSelected" class="input w-full">
+                                                <option value="">Select an operator...</option>
+                                                @if (availableOperators != null)
                                                 {
-                                                    <option value="@op.OperatorId">@op.Name</option>
+                                                    @foreach (var op in availableOperators)
+                                                    {
+                                                        <option value="@op.OperatorId">@op.Name</option>
+                                                    }
                                                 }
+                                            </select>
+                                        </div>
+
+                                        @if (selectedOperator != null)
+                                        {
+                                            @if (selectedOperator.RequireCustomMerchantNumber)
+                                            {
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                        Merchant Number <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input @bind="merchantNumber" type="text" class="input w-full" placeholder="Enter merchant number" />
+                                                    @if (!string.IsNullOrEmpty(merchantNumberError))
+                                                    {
+                                                        <p class="text-red-600 text-sm mt-1">@merchantNumberError</p>
+                                                    }
+                                                </div>
                                             }
-                                        </select>
-                                        <button type="button" @onclick="AddOperatorToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedOperatorId))">
-                                            Add
-                                        </button>
+
+                                            @if (selectedOperator.RequireCustomTerminalNumber)
+                                            {
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                        Terminal Number <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <input @bind="terminalNumber" type="text" class="input w-full" placeholder="Enter terminal number" />
+                                                    @if (!string.IsNullOrEmpty(terminalNumberError))
+                                                    {
+                                                        <p class="text-red-600 text-sm mt-1">@terminalNumberError</p>
+                                                    }
+                                                </div>
+                                            }
+                                        }
+
+                                        <div class="flex justify-end">
+                                            <button type="button" @onclick="AddOperatorToMerchant" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedOperatorId))">
+                                                Add
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             }
@@ -388,6 +424,11 @@
     private List<OperatorModel> assignedOperators = new();
     private bool showAddOperator = false;
     private string? selectedOperatorId;
+    private OperatorModel? selectedOperator;
+    private string? merchantNumber;
+    private string? terminalNumber;
+    private string? merchantNumberError;
+    private string? terminalNumberError;
 
     // Contracts
     private List<ContractModel>? availableContracts;
@@ -615,11 +656,78 @@
         }
     }
 
+    private void OnOperatorSelected()
+    {
+        if (string.IsNullOrEmpty(selectedOperatorId))
+        {
+            selectedOperator = null;
+            merchantNumber = null;
+            terminalNumber = null;
+            merchantNumberError = null;
+            terminalNumberError = null;
+        }
+        else
+        {
+            var operatorId = Guid.Parse(selectedOperatorId);
+            selectedOperator = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
+            merchantNumber = null;
+            terminalNumber = null;
+            merchantNumberError = null;
+            terminalNumberError = null;
+        }
+    }
+
+    private bool ValidateOperatorFields()
+    {
+        bool isValid = true;
+        merchantNumberError = null;
+        terminalNumberError = null;
+
+        if (selectedOperator != null)
+        {
+            if (selectedOperator.RequireCustomMerchantNumber)
+            {
+                if (string.IsNullOrWhiteSpace(merchantNumber))
+                {
+                    merchantNumberError = "Merchant number is required";
+                    isValid = false;
+                }
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(merchantNumber, @"^\d+$"))
+                {
+                    merchantNumberError = "Merchant number must be numeric";
+                    isValid = false;
+                }
+            }
+
+            if (selectedOperator.RequireCustomTerminalNumber)
+            {
+                if (string.IsNullOrWhiteSpace(terminalNumber))
+                {
+                    terminalNumberError = "Terminal number is required";
+                    isValid = false;
+                }
+                else if (!System.Text.RegularExpressions.Regex.IsMatch(terminalNumber, @"^\d+$"))
+                {
+                    terminalNumberError = "Terminal number must be numeric";
+                    isValid = false;
+                }
+            }
+        }
+
+        return isValid;
+    }
+
     private async Task AddOperatorToMerchant()
     {
         if (string.IsNullOrEmpty(selectedOperatorId)) return;
 
         ClearMessages();
+
+        // Validate fields
+        if (!ValidateOperatorFields())
+        {
+            return;
+        }
 
         try
         {
@@ -633,7 +741,9 @@
                 accessToken,
                 estateId,
                 MerchantId,
-                operatorId
+                operatorId,
+                merchantNumber,
+                terminalNumber
             );
 
             var result = await Mediator.Send(command);
@@ -642,6 +752,11 @@
             {
                 successMessage = "Operator added successfully";
                 selectedOperatorId = null;
+                selectedOperator = null;
+                merchantNumber = null;
+                terminalNumber = null;
+                merchantNumberError = null;
+                terminalNumberError = null;
                 showAddOperator = false;
                 
                 // Add to assigned list (in real implementation, reload from server)
