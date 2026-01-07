@@ -21,10 +21,10 @@
         <div class="bg-white rounded-lg shadow-md">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-                    <button @onclick='() => activeTab = "overview"' class="@GetTabClass("overview")">
+                    <button type="button" @onclick='() => activeTab = "overview"' class="@GetTabClass("overview")">
                         Overview
                     </button>
-                    <button @onclick='() => activeTab = "operators"' class="@GetTabClass("operators")">
+                    <button type="button" @onclick='() => activeTab = "operators"' class="@GetTabClass("operators")">
                         Operators
                     </button>
                 </nav>
