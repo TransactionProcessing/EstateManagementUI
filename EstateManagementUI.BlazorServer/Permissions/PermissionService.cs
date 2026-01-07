@@ -27,7 +27,10 @@ public class PermissionService : IPermissionService
         try
         {
             var permissions = await GetUserPermissionsAsync();
-            return permissions.Any(p => p.Section == section && p.Function == function);
+            var hasPermission = permissions.Any(p => p.Section == section && p.Function == function);
+            _logger.LogInformation("Checking permission: Section={Section}, Function={Function}, Result={Result}, TotalPermissions={Count}", 
+                section, function, hasPermission, permissions.Count);
+            return hasPermission;
         }
         catch (Exception ex)
         {

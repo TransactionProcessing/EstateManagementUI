@@ -42,6 +42,7 @@
     private async Task CheckPermissionAsync()
     {
         _hasPermission = await PermissionService.HasPermissionAsync(Section, Function);
+        Console.WriteLine($"RequirePermission: Section={Section}, Function={Function}, HasPermission={_hasPermission}");
     }
 
     public void Dispose()
