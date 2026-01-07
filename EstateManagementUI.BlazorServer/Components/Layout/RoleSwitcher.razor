@@ -1,6 +1,8 @@
 @rendermode InteractiveServer
+@using EstateManagementUI.BlazorServer.Permissions
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject IPermissionService PermissionService
 
 @if (isTestMode)
 {
@@ -63,10 +65,26 @@
         { "Viewer", "Read-only access (no edit)" }
     };
     
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         isTestMode = Configuration.GetValue<bool>("AppSettings:TestMode", false);
-        currentRole = Configuration.GetValue<string>("AppSettings:TestUserRole", "Administrator") ?? "Administrator";
+        
+        // Get the actual current role from authentication
+        var actualRole = await PermissionService.GetUserRoleAsync();
+        currentRole = actualRole ?? "Administrator";
+    }
+    
+    protected override async Task OnParametersSetAsync()
+    {
+        // Update current role when parameters change (e.g., after navigation)
+        if (isTestMode)
+        {
+            var actualRole = await PermissionService.GetUserRoleAsync();
+            if (!string.IsNullOrEmpty(actualRole))
+            {
+                currentRole = actualRole;
+            }
+        }
     }
     
     private void ToggleDropdown()
