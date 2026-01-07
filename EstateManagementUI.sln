@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.11.35103.136
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EstateManagementUI", "EstateManagementUI\EstateManagementUI.csproj", "{2EA6492F-70A7-41EB-B816-A9854C0DB47B}"
 EndProject
@@ -22,8 +22,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.UITests", "EstateManagementUI.UITests\EstateManagementUI.UITests.csproj", "{CC0964BD-CDF0-4976-AF28-B28800FDC286}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.BlazorServer", "EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj", "{C52FE3F3-E999-4A12-A20B-0D5C6DA34AA9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.BlazorIntegrationTests", "EstateManagementUI.BlazorIntegrationTests\EstateManagementUI.BlazorIntegrationTests.csproj", "{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,18 +129,6 @@ Global
 		{C52FE3F3-E999-4A12-A20B-0D5C6DA34AA9}.Release|x64.Build.0 = Release|Any CPU
 		{C52FE3F3-E999-4A12-A20B-0D5C6DA34AA9}.Release|x86.ActiveCfg = Release|Any CPU
 		{C52FE3F3-E999-4A12-A20B-0D5C6DA34AA9}.Release|x86.Build.0 = Release|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Debug|x64.Build.0 = Debug|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Debug|x86.Build.0 = Debug|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Release|x64.ActiveCfg = Release|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Release|x64.Build.0 = Release|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Release|x86.ActiveCfg = Release|Any CPU
-		{C4C390A3-85F2-47D0-8A8A-BFEC5CD52250}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
