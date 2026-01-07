@@ -84,7 +84,7 @@
                     {
                         var sectionPermissions = role.Permissions.Where(p => p.Section == section).ToList();
                         <div class="border rounded-lg p-4">
-                            <h3 class="font-semibold text-gray-900 mb-3">@section</h3>
+                            <h3 class="font-semibold text-gray-900 mb-3">@(section)</h3>
                             @if (sectionPermissions.Any())
                             {
                                 <div class="flex flex-wrap gap-2">
@@ -124,7 +124,7 @@
                         @foreach (var section in Enum.GetValues<PermissionSection>())
                         {
                             <tr>
-                                <td class="font-medium">@section</td>
+                                <td class="font-medium">@(section)</td>
                                 @foreach (var function in Enum.GetValues<PermissionFunction>())
                                 {
                                     var hasPermission = role.Permissions.Any(p => p.Section == section && p.Function == function);

@@ -56,7 +56,7 @@
                             @if (sectionPermissions.Any())
                             {
                                 <div class="flex items-center justify-between text-sm">
-                                    <span class="text-gray-700 font-medium">@section:</span>
+                                    <span class="text-gray-700 font-medium">@(section):</span>
                                     <span class="text-gray-600">@string.Join(", ", sectionPermissions.Select(p => p.Function.ToString()))</span>
                                 </div>
                             }
