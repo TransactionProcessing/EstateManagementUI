@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EstateManagementUI.BlazorIntegrationTests.Common;
 using TransactionProcessor.Database.Contexts;
 using TransactionProcessor.DataTransferObjects.Requests.Contract;
 using TransactionProcessor.DataTransferObjects.Requests.Estate;
@@ -70,10 +71,21 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given(@"I create the following api resources")]
         public async Task GivenICreateTheFollowingApiResources(DataTable table)
         {
-            List<CreateApiResourceRequest> requests = table.Rows.ToCreateApiResourceRequests();
-            await this.SecurityServiceSteps.GivenTheFollowingApiResourcesExist(requests);
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                List<CreateApiResourceRequest> requests = table.Rows.ToCreateApiResourceRequests();
+                foreach (CreateApiResourceRequest createApiResourceRequest in requests)
+                {
+                    this.TestingContext.ApiResources.Add(createApiResourceRequest.Name);
+                }
+                return;
+            }
 
-            foreach (CreateApiResourceRequest createApiResourceRequest in requests)
+            List<CreateApiResourceRequest> requests2 = table.Rows.ToCreateApiResourceRequests();
+            await this.SecurityServiceSteps.GivenTheFollowingApiResourcesExist(requests2);
+
+            foreach (CreateApiResourceRequest createApiResourceRequest in requests2)
             {
                 this.TestingContext.ApiResources.Add(createApiResourceRequest.Name);
             }
@@ -82,6 +94,12 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given(@"I create the following api scopes")]
         public async Task GivenICreateTheFollowingApiScopes(DataTable table)
         {
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                return;
+            }
+
             List<CreateApiScopeRequest> requests = table.Rows.ToCreateApiScopeRequests();
             await this.SecurityServiceSteps.GivenICreateTheFollowingApiScopes(requests);
         }
@@ -89,8 +107,20 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given(@"I create the following clients")]
         public async Task GivenICreateTheFollowingClients(DataTable table)
         {
-            List<CreateClientRequest> requests = table.Rows.ToCreateClientRequests(this.TestingContext.DockerHelper.TestId, this.TestingContext.DockerHelper.EstateManagementUiPort);
-            List<(String clientId, String secret, List<String> allowedGrantTypes)> clients = await this.SecurityServiceSteps.GivenTheFollowingClientsExist(requests);
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                // Just track client details locally
+                List<CreateClientRequest> requests = table.Rows.ToCreateClientRequests(Guid.Empty, 5004);
+                foreach (var request in requests)
+                {
+                    this.TestingContext.AddClientDetails(request.ClientId, "Secret1", request.AllowedGrantTypes);
+                }
+                return;
+            }
+
+            List<CreateClientRequest> requests2 = table.Rows.ToCreateClientRequests(this.TestingContext.DockerHelper.TestId, this.TestingContext.DockerHelper.EstateManagementUiPort);
+            List<(String clientId, String secret, List<String> allowedGrantTypes)> clients = await this.SecurityServiceSteps.GivenTheFollowingClientsExist(requests2);
             foreach ((String clientId, String secret, List<String> allowedGrantTypes) client in clients)
             {
                 this.TestingContext.AddClientDetails(client.clientId, client.secret, client.allowedGrantTypes);
@@ -100,6 +130,17 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given(@"I create the following identity resources")]
         public async Task GivenICreateTheFollowingIdentityResources(DataTable table)
         {
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                foreach (DataTableRow tableRow in table.Rows)
+                {
+                    String name = ReqnrollTableHelper.GetStringRowValue(tableRow, "Name");
+                    this.TestingContext.IdentityResources.Add(name);
+                }
+                return;
+            }
+
             foreach (DataTableRow tableRow in table.Rows)
             {
                 // Get the scopes
@@ -120,8 +161,19 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given(@"I create the following roles")]
         public async Task GivenICreateTheFollowingRoles(DataTable table)
         {
-            List<CreateRoleRequest> requests = table.Rows.ToCreateRoleRequests();
-            List<(String, Guid)> responses = await this.SecurityServiceSteps.GivenICreateTheFollowingRoles(requests, CancellationToken.None);
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                List<CreateRoleRequest> requests = table.Rows.ToCreateRoleRequests();
+                foreach (var request in requests)
+                {
+                    this.TestingContext.Roles.Add(request.RoleName, Guid.NewGuid());
+                }
+                return;
+            }
+
+            List<CreateRoleRequest> requests2 = table.Rows.ToCreateRoleRequests();
+            List<(String, Guid)> responses = await this.SecurityServiceSteps.GivenICreateTheFollowingRoles(requests2, CancellationToken.None);
 
             foreach ((String, Guid) response in responses)
             {
@@ -133,6 +185,17 @@ namespace EstateManagementUI.IntegrationTests.Common
         public async Task GivenICreateTheFollowingUsers(DataTable table)
         {
             List<CreateUserRequest> requests = table.Rows.ToCreateUserRequests();
+            
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                foreach (CreateUserRequest request in requests)
+                {
+                    this.TestingContext.Users.Add(request.EmailAddress, Guid.NewGuid());
+                }
+                return;
+            }
+
             foreach (CreateUserRequest createUserRequest in requests)
             {
                 createUserRequest.EmailAddress = createUserRequest.EmailAddress.Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
@@ -156,6 +219,14 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given(@"I have a token to access the estate management resource")]
         public async Task GivenIHaveATokenToAccessTheEstateManagementResource(DataTable table)
         {
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                // Set a dummy token since authentication is bypassed
+                this.TestingContext.AccessToken = "test-mode-token";
+                return;
+            }
+
             DataTableRow firstRow = table.Rows.First();
             String clientId = ReqnrollTableHelper.GetStringRowValue(firstRow, "ClientId").Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
             ClientDetails clientDetails = this.TestingContext.GetClientDetails(clientId);
@@ -168,29 +239,39 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             List<CreateEstateRequest> requests = table.Rows.ToCreateEstateRequests();
 
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                // Use default estate ID from TestDataStore
+                foreach (var request in requests)
+                {
+                    Guid estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+                    this.TestingContext.AddEstateDetails(estateId, request.EstateName, request.EstateName);
+                    this.TestingContext.Logger.LogInformation($"Estate {request.EstateName} registered with Id {estateId} (UI-only test mode)");
+                }
+                return;
+            }
+
             List<EstateResponse> verifiedEstates = await this.TransactionProcessorSteps.WhenICreateTheFollowingEstatesX(this.TestingContext.AccessToken, requests);
 
             foreach (EstateResponse verifiedEstate in verifiedEstates)
             {
-                //await Retry.For(async () =>
-                //{
-                //    String databaseName = $"EstateReportingReadModel{verifiedEstate.EstateId}";
-                //    var connString = Setup.GetLocalConnectionString(databaseName);
-                //    connString = $"{connString};Encrypt=false";
-                //    var ctx = new EstateManagementContext(connString);
-
-                //    var estates = ctx.Estates.ToList();
-                //    estates.Count.ShouldBe(1);
-
-                    this.TestingContext.AddEstateDetails(verifiedEstate.EstateId, verifiedEstate.EstateName, verifiedEstate.EstateReference);
-                    this.TestingContext.Logger.LogInformation($"Estate {verifiedEstate.EstateName} created with Id {verifiedEstate.EstateId}");
-                //});
+                this.TestingContext.AddEstateDetails(verifiedEstate.EstateId, verifiedEstate.EstateName, verifiedEstate.EstateReference);
+                this.TestingContext.Logger.LogInformation($"Estate {verifiedEstate.EstateName} created with Id {verifiedEstate.EstateId}");
             }
         }
 
         [Given(@"I have created the following operators")]
         public async Task GivenIHaveCreatedTheFollowingOperators(DataTable table)
         {
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                // Operators are pre-populated in TestDataStore
+                this.TestingContext.Logger.LogInformation("Operators setup skipped (UI-only test mode - using TestDataStore)");
+                return;
+            }
+
             List<(EstateDetails estate, CreateOperatorRequest request)> requests = table.Rows.ToCreateOperatorRequests(this.TestingContext.Estates);
 
             List<(Guid, EstateOperatorResponse)> results = await this.TransactionProcessorSteps.WhenICreateTheFollowingOperators(this.TestingContext.AccessToken, requests);
@@ -204,6 +285,13 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given("I have assigned the following operators to the estates")]
         public async Task GivenIHaveAssignedTheFollowingOperatorsToTheEstates(DataTable dataTable)
         {
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                this.TestingContext.Logger.LogInformation("Operator assignment skipped (UI-only test mode)");
+                return;
+            }
+
             List<(EstateDetails estate, AssignOperatorRequest request)> requests = dataTable.Rows.ToAssignOperatorToEstateRequests(this.TestingContext.Estates);
 
             await this.TransactionProcessorSteps.GivenIHaveAssignedTheFollowingOperatorsToTheEstates(this.TestingContext.AccessToken, requests);
@@ -216,6 +304,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         [When(@"I add the following devices to the merchant")]
         public async Task WhenIAddTheFollowingDevicesToTheMerchant(DataTable table)
         {
+            if (TestConfiguration.IsTestMode)
+                return;
             List<(EstateDetails, Guid, AddMerchantDeviceRequest)> requests = table.Rows.ToAddMerchantDeviceRequests(this.TestingContext.Estates);
 
             List<(EstateDetails, MerchantResponse, String)> results = await this.TransactionProcessorSteps.GivenIHaveAssignedTheFollowingDevicesToTheMerchants(this.TestingContext.AccessToken, requests);
@@ -228,6 +318,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         [When(@"I assign the following  operator to the merchants")]
         public async Task WhenIAssignTheFollowingOperatorToTheMerchants(DataTable table)
         {
+            if (TestConfiguration.IsTestMode)
+                return;
             List<(EstateDetails, Guid, TransactionProcessor.DataTransferObjects.Requests.Merchant.AssignOperatorRequest)> requests = table.Rows.ToAssignOperatorRequests(this.TestingContext.Estates);
 
             List<(EstateDetails, TransactionProcessor.DataTransferObjects.Responses.Merchant.MerchantOperatorResponse)> results = await this.TransactionProcessorSteps.WhenIAssignTheFollowingOperatorToTheMerchants(this.TestingContext.AccessToken, requests);
@@ -244,6 +336,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         [When(@"I create the following merchants")]
         public async Task WhenICreateTheFollowingMerchants(DataTable table)
         {
+            if (TestConfiguration.IsTestMode)
+                return;
             List<(EstateDetails estate, CreateMerchantRequest)> requests = table.Rows.ToCreateMerchantRequests(this.TestingContext.Estates);
 
             List<MerchantResponse> verifiedMerchants = await this.TransactionProcessorSteps.WhenICreateTheFollowingMerchants(this.TestingContext.AccessToken, requests);
@@ -260,6 +354,12 @@ namespace EstateManagementUI.IntegrationTests.Common
         [Given("I have created the following security users")]
         public async Task WhenICreateTheFollowingSecurityUsers(DataTable table)
         {
+            if (TestConfiguration.SkipRemoteCalls)
+            {
+                // Skip remote API call when running in UI-only test mode
+                this.TestingContext.Logger.LogInformation("Security users creation skipped (UI-only test mode)");
+                return;
+            }
 
             List<CreateNewUserRequest> createUserRequests = table.Rows.ToCreateNewUserRequests(this.TestingContext.Estates);
             await this.TransactionProcessorSteps.WhenICreateTheFollowingSecurityUsers(this.TestingContext.AccessToken, createUserRequests, this.TestingContext.Estates);

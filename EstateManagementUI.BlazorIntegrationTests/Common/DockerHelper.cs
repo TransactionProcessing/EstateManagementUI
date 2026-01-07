@@ -1,5 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Networks;
+using EstateManagementUI.BlazorIntegrationTests.Common;
 using EstateManagementUI.BusinessLogic.PermissionService;
 using EstateManagementUI.BusinessLogic.PermissionService.Database;
 using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
@@ -13,6 +15,9 @@ using Newtonsoft.Json;
 using SecurityService.Client;
 using Shared.Exceptions;
 using Shared.IntegrationTesting;
+using Shared.IntegrationTesting.TestContainers;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -21,10 +26,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Networks;
-using Shared.IntegrationTesting.TestContainers;
 using TransactionProcessor.Client;
 
 namespace EstateManagementUI.IntegrationTests.Common
@@ -117,7 +118,10 @@ namespace EstateManagementUI.IntegrationTests.Common
             proc.WaitForExit();
         }
 
-        public override async Task CreateSubscriptions(){
+        public override async Task CreateSubscriptions() {
+            if (TestConfiguration.IsUIOnlyTestMode)
+                return;
+
             List<(String streamName, String groupName, Int32 maxRetries)> subscriptions = new();
             subscriptions.AddRange(MessagingService.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
             subscriptions.AddRange(TransactionProcessor.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
@@ -134,6 +138,9 @@ namespace EstateManagementUI.IntegrationTests.Common
 
         protected override List<String> GetRequiredProjections()
         {
+            if (TestConfiguration.IsUIOnlyTestMode)
+                return new List<String>();
+
             List<String> requiredProjections = new List<String>();
 
             requiredProjections.Add("EstateAggregator.js");

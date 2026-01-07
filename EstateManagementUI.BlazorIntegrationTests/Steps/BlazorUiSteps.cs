@@ -57,13 +57,17 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
         [Given(@"I click on the Sign In Button")]
         public async Task GivenIClickOnTheSignInButton()
         {
-            await this.UiHelpers.ClickOnTheSignInButton();
+            if (TestConfiguration.IsTestMode == false) {
+                await this.UiHelpers.ClickOnTheSignInButton();
+            }
         }
 
         [Then(@"I am presented with a login screen")]
         public async Task ThenIAmPresentedWithALoginScreen()
         {
-            await this.UiHelpers.VerifyOnTheLoginScreen();
+            if (TestConfiguration.IsTestMode == false) {
+                await this.UiHelpers.VerifyOnTheLoginScreen();
+            }
         }
 
         [Then(@"I am presented with the Contracts List Screen")]
@@ -139,8 +143,10 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
         [When(@"I login with the username '(.*)' and password '(.*)'")]
         public async Task WhenILoginWithTheUsernameAndPassword(String userName, String password)
         {
-            String username = userName.Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
-            await this.UiHelpers.Login(username, password);
+            if (TestConfiguration.IsTestMode == false) {
+                String username = userName.Replace("[id]", this.TestingContext.DockerHelper.TestId.ToString("N"));
+                await this.UiHelpers.Login(username, password);
+            }
         }
 
         [When("I click on the New Operator Button")]
