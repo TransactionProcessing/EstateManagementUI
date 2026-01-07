@@ -72,7 +72,7 @@ public class PermissionService : IPermissionService
             }
 
             var roleName = roleClaim.Value;
-            _logger.LogDebug("Getting permissions for role: {Role}", roleName);
+            _logger.LogInformation("Getting permissions for role: {Role}", roleName);
 
             // Get permissions from the store
             var role = await _permissionStore.GetRoleAsync(roleName);
@@ -82,6 +82,7 @@ public class PermissionService : IPermissionService
                 return new List<Permission>();
             }
 
+            _logger.LogInformation("Role {Role} has {Count} permissions", roleName, role.Permissions.Count);
             return role.Permissions;
         }
         catch (Exception ex)
