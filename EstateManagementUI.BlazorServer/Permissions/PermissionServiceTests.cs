@@ -1,5 +1,6 @@
 using EstateManagementUI.BlazorServer.Permissions;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Security.Claims;
