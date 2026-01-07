@@ -1,0 +1,208 @@
+@page "/permissions"
+@rendermode InteractiveServer
+@using EstateManagementUI.BlazorServer.Permissions
+@inject IPermissionStore PermissionStore
+@inject NavigationManager NavigationManager
+
+<PageTitle>Permission Management</PageTitle>
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">Permission Management</h1>
+        <button class="btn btn-primary" @onclick="NavigateToCreateRole">
+            <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Create New Role
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (roles != null && roles.Any())
+    {
+        <!-- Roles Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var role in roles)
+            {
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">@role.Name</h3>
+                            <p class="text-sm text-gray-600 mb-4">
+                                @role.Permissions.Count permission(s)
+                            </p>
+                        </div>
+                        @if (!IsSystemRole(role.Name))
+                        {
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">Custom</span>
+                        }
+                        else
+                        {
+                            <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-medium">System</span>
+                        }
+                    </div>
+
+                    <!-- Permission Summary -->
+                    <div class="space-y-2 mb-4">
+                        @foreach (var section in Enum.GetValues<PermissionSection>())
+                        {
+                            var sectionPermissions = role.Permissions.Where(p => p.Section == section).ToList();
+                            @if (sectionPermissions.Any())
+                            {
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-gray-700 font-medium">@section:</span>
+                                    <span class="text-gray-600">@string.Join(", ", sectionPermissions.Select(p => p.Function.ToString()))</span>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex items-center justify-end space-x-2 pt-4 border-t">
+                        <button class="btn btn-secondary btn-sm" @onclick="() => ViewRole(role.Name)" title="View Details">
+                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            View
+                        </button>
+                        @if (!IsSystemRole(role.Name))
+                        {
+                            <button class="btn btn-primary btn-sm" @onclick="() => EditRole(role.Name)" title="Edit">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                Edit
+                            </button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteRole(role.Name)" title="Delete">
+                                <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <p class="text-gray-600 mb-4">No roles configured.</p>
+            <button class="btn btn-primary" @onclick="NavigateToCreateRole">Create Your First Role</button>
+        </div>
+    }
+
+    @if (showDeleteConfirm)
+    {
+        <!-- Delete Confirmation Modal -->
+        <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" @onclick="CancelDelete">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" @onclick:stopPropagation="true">
+                <div class="mt-3 text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900 mt-5">Delete Role</h3>
+                    <div class="mt-2 px-7 py-3">
+                        <p class="text-sm text-gray-500">
+                            Are you sure you want to delete the role <strong>@roleToDelete</strong>? This action cannot be undone.
+                        </p>
+                    </div>
+                    <div class="items-center px-4 py-3">
+                        <button class="btn btn-danger mr-2" @onclick="ConfirmDelete">Delete</button>
+                        <button class="btn btn-secondary" @onclick="CancelDelete">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isLoading = true;
+    private List<Role>? roles;
+    private bool showDeleteConfirm = false;
+    private string? roleToDelete;
+
+    // System roles that cannot be edited or deleted
+    private readonly HashSet<string> systemRoles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Administrator",
+        "Estate",
+        "Viewer",
+        "MerchantManager",
+        "OperatorManager"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRoles();
+    }
+
+    private async Task LoadRoles()
+    {
+        try
+        {
+            isLoading = true;
+            roles = await PermissionStore.GetAllRolesAsync();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool IsSystemRole(string roleName)
+    {
+        return systemRoles.Contains(roleName);
+    }
+
+    private void ViewRole(string roleName)
+    {
+        NavigationManager.NavigateTo($"/permissions/{roleName}");
+    }
+
+    private void EditRole(string roleName)
+    {
+        NavigationManager.NavigateTo($"/permissions/{roleName}/edit");
+    }
+
+    private void NavigateToCreateRole()
+    {
+        NavigationManager.NavigateTo("/permissions/new");
+    }
+
+    private void DeleteRole(string roleName)
+    {
+        roleToDelete = roleName;
+        showDeleteConfirm = true;
+    }
+
+    private async Task ConfirmDelete()
+    {
+        if (!string.IsNullOrEmpty(roleToDelete))
+        {
+            await PermissionStore.DeleteRoleAsync(roleToDelete);
+            await LoadRoles();
+        }
+        showDeleteConfirm = false;
+        roleToDelete = null;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirm = false;
+        roleToDelete = null;
+    }
+}

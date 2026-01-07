@@ -7,6 +7,27 @@ The Blazor Permission System provides role-based access control (RBAC) for the E
 - Which buttons and actions are available on each page
 - Access to different sections and functions of the application
 
+## Permission Management UI
+
+The system includes web-based screens for viewing and managing permissions:
+
+- **Permissions List** (`/permissions`): View all configured roles and their permission counts
+- **View Role** (`/permissions/{roleName}`): View detailed permissions for a specific role with a matrix view
+- **Create Role** (`/permissions/new`): Create a new custom role with selected permissions
+- **Edit Role** (`/permissions/{roleName}/edit`): Modify permissions for custom roles
+
+### Access Control
+- Only users with **Administrator** or **Estate** roles can access the permission management screens
+- System roles (Administrator, Estate, Viewer, MerchantManager, OperatorManager) cannot be edited or deleted
+- Custom roles can be created, edited, and deleted through the UI
+
+### Features
+- Visual permission matrix showing all section/function combinations
+- Bulk select/deselect permissions by section
+- Real-time validation and error handling
+- Persistent storage in JSON file
+- Delete confirmation for custom roles
+
 ## Architecture
 
 ### Core Components
@@ -26,6 +47,11 @@ The Blazor Permission System provides role-based access control (RBAC) for the E
 #### 3. Blazor Components
 - **RequirePermission**: Conditional rendering component for specific permissions
 - **RequireSectionAccess**: Conditional rendering component for section-level access
+
+#### 4. Management Pages
+- **Index.razor**: List all roles with summary information
+- **View.razor**: Display detailed role permissions
+- **Edit.razor**: Create or edit role permissions
 
 ## Default Roles
 

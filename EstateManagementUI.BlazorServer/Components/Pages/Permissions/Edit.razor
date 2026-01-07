@@ -1,0 +1,301 @@
+@page "/permissions/new"
+@page "/permissions/{roleName}/edit"
+@rendermode InteractiveServer
+@using EstateManagementUI.BlazorServer.Permissions
+@inject IPermissionStore PermissionStore
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(IsNewRole ? "Create Role" : $"Edit Role - {RoleName}")</PageTitle>
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <button class="btn btn-secondary" @onclick="Cancel">
+                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back
+            </button>
+            <h1 class="text-2xl font-bold text-gray-900">@(IsNewRole ? "Create New Role" : $"Edit Role: {RoleName}")</h1>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else
+    {
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Role Name -->
+            <div class="mb-6">
+                <label class="label">Role Name <span class="text-red-500">*</span></label>
+                <input type="text" 
+                       class="input-field @(string.IsNullOrWhiteSpace(roleNameInput) && showValidation ? "border-red-500" : "")"
+                       @bind="roleNameInput" 
+                       disabled="@(!IsNewRole)"
+                       placeholder="Enter role name (e.g., ReportViewer)" />
+                @if (string.IsNullOrWhiteSpace(roleNameInput) && showValidation)
+                {
+                    <p class="text-red-500 text-sm mt-1">Role name is required</p>
+                }
+                @if (!IsNewRole)
+                {
+                    <p class="text-gray-500 text-sm mt-1">Role name cannot be changed</p>
+                }
+            </div>
+
+            <!-- Permissions Selection -->
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-gray-900">Permissions</h2>
+                    <div class="space-x-2">
+                        <button class="btn btn-secondary btn-sm" @onclick="SelectAll">Select All</button>
+                        <button class="btn btn-secondary btn-sm" @onclick="ClearAll">Clear All</button>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    @foreach (var section in Enum.GetValues<PermissionSection>())
+                    {
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-semibold text-gray-900">@section</h3>
+                                <button class="text-sm text-blue-600 hover:text-blue-800" @onclick="() => ToggleSection(section)">
+                                    Toggle All
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                                @foreach (var function in Enum.GetValues<PermissionFunction>())
+                                {
+                                    var permission = new Permission(section, function);
+                                    var isSelected = selectedPermissions.Contains(permission);
+                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                        <input type="checkbox" 
+                                               checked="@isSelected"
+                                               @onchange="() => TogglePermission(permission)"
+                                               class="rounded text-blue-600 focus:ring-blue-500" />
+                                        <span class="text-sm text-gray-700">@function</span>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center justify-end space-x-3 pt-4 border-t">
+                <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                <button class="btn btn-primary" @onclick="SaveRole" disabled="@isSaving">
+                    @if (isSaving)
+                    {
+                        <svg class="animate-spin h-5 w-5 mr-2 inline-block" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    }
+                    @(IsNewRole ? "Create Role" : "Save Changes")
+                </button>
+            </div>
+        </div>
+    }
+
+    @if (showError)
+    {
+        <!-- Error Message -->
+        <div class="fixed bottom-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-lg z-50" role="alert">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>@errorMessage</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? RoleName { get; set; }
+
+    private bool IsNewRole => string.IsNullOrEmpty(RoleName);
+    private bool isLoading = true;
+    private bool isSaving = false;
+    private bool showValidation = false;
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+    private string roleNameInput = string.Empty;
+    private HashSet<Permission> selectedPermissions = new();
+
+    private readonly HashSet<string> systemRoles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Administrator",
+        "Estate",
+        "Viewer",
+        "MerchantManager",
+        "OperatorManager"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRole();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadRole();
+    }
+
+    private async Task LoadRole()
+    {
+        try
+        {
+            isLoading = true;
+            
+            if (!IsNewRole)
+            {
+                // Check if it's a system role
+                if (systemRoles.Contains(RoleName!))
+                {
+                    ShowError("System roles cannot be edited. Please create a new role instead.");
+                    await Task.Delay(2000);
+                    NavigationManager.NavigateTo("/permissions");
+                    return;
+                }
+
+                var role = await PermissionStore.GetRoleAsync(RoleName!);
+                if (role != null)
+                {
+                    roleNameInput = role.Name;
+                    selectedPermissions = new HashSet<Permission>(role.Permissions);
+                }
+                else
+                {
+                    ShowError("Role not found.");
+                    await Task.Delay(2000);
+                    NavigationManager.NavigateTo("/permissions");
+                }
+            }
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void TogglePermission(Permission permission)
+    {
+        if (selectedPermissions.Contains(permission))
+        {
+            selectedPermissions.Remove(permission);
+        }
+        else
+        {
+            selectedPermissions.Add(permission);
+        }
+    }
+
+    private void ToggleSection(PermissionSection section)
+    {
+        var sectionPermissions = Enum.GetValues<PermissionFunction>()
+            .Select(f => new Permission(section, f))
+            .ToList();
+
+        var allSelected = sectionPermissions.All(p => selectedPermissions.Contains(p));
+
+        if (allSelected)
+        {
+            // Deselect all
+            foreach (var perm in sectionPermissions)
+            {
+                selectedPermissions.Remove(perm);
+            }
+        }
+        else
+        {
+            // Select all
+            foreach (var perm in sectionPermissions)
+            {
+                selectedPermissions.Add(perm);
+            }
+        }
+    }
+
+    private void SelectAll()
+    {
+        selectedPermissions.Clear();
+        foreach (var section in Enum.GetValues<PermissionSection>())
+        {
+            foreach (var function in Enum.GetValues<PermissionFunction>())
+            {
+                selectedPermissions.Add(new Permission(section, function));
+            }
+        }
+    }
+
+    private void ClearAll()
+    {
+        selectedPermissions.Clear();
+    }
+
+    private async Task SaveRole()
+    {
+        showValidation = true;
+
+        if (string.IsNullOrWhiteSpace(roleNameInput))
+        {
+            ShowError("Role name is required.");
+            return;
+        }
+
+        // Check for duplicate role name when creating
+        if (IsNewRole)
+        {
+            var existingRole = await PermissionStore.GetRoleAsync(roleNameInput);
+            if (existingRole != null)
+            {
+                ShowError($"A role with the name '{roleNameInput}' already exists.");
+                return;
+            }
+        }
+
+        try
+        {
+            isSaving = true;
+
+            var role = new Role(roleNameInput, selectedPermissions.ToList());
+            await PermissionStore.SaveRoleAsync(role);
+
+            // Navigate back to the list
+            NavigationManager.NavigateTo("/permissions");
+        }
+        catch (Exception ex)
+        {
+            ShowError($"Error saving role: {ex.Message}");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/permissions");
+    }
+
+    private void ShowError(string message)
+    {
+        errorMessage = message;
+        showError = true;
+        Task.Delay(5000).ContinueWith(_ => 
+        {
+            showError = false;
+            StateHasChanged();
+        });
+    }
+}
