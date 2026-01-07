@@ -39,6 +39,7 @@
     private async Task CheckAccessAsync()
     {
         _hasSectionAccess = await PermissionService.HasSectionAccessAsync(Section);
+        StateHasChanged();
     }
 
     public void Dispose()

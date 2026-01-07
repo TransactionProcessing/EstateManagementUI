@@ -43,6 +43,7 @@
     {
         _hasPermission = await PermissionService.HasPermissionAsync(Section, Function);
         Console.WriteLine($"RequirePermission: Section={Section}, Function={Function}, HasPermission={_hasPermission}");
+        StateHasChanged();
     }
 
     public void Dispose()
