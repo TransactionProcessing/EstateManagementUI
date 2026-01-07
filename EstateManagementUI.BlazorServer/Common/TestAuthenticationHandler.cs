@@ -12,17 +12,23 @@ namespace EstateManagementUI.BlazorServer.Common;
 public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     public const string SchemeName = "TestAuthentication";
+    private readonly IConfiguration _configuration;
 
     public TestAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
-        UrlEncoder encoder)
+        UrlEncoder encoder,
+        IConfiguration configuration)
         : base(options, logger, encoder)
     {
+        _configuration = configuration;
     }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        // Get role from configuration, default to "Estate" if not specified
+        var roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Estate");
+        
         // Create test user claims
         var claims = new[]
         {
@@ -30,7 +36,8 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
             new Claim(ClaimTypes.Name, "Test User"),
             new Claim(ClaimTypes.Email, "testuser@test.com"),
             new Claim("estateId", "11111111-1111-1111-1111-111111111111"),
-            new Claim("role", "Estate")
+            new Claim(ClaimTypes.Role, roleName),
+            new Claim("role", roleName)
         };
 
         var identity = new ClaimsIdentity(claims, SchemeName);
