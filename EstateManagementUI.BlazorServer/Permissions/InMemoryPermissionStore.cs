@@ -29,7 +29,7 @@ public class InMemoryPermissionStore : IPermissionStore
 
     private void InitializeDefaultRoles()
     {
-        // Administrator role - full access to everything
+        // Administrator role - full access to everything including permission management
         var administratorPermissions = new List<Permission>();
         foreach (PermissionSection section in Enum.GetValues(typeof(PermissionSection)))
         {
@@ -39,6 +39,17 @@ public class InMemoryPermissionStore : IPermissionStore
             }
         }
         _roles["Administrator"] = new Role("Administrator", administratorPermissions);
+
+        // Estate role - full access to all estate operations but NOT permission management
+        var estatePermissions = new List<Permission>();
+        foreach (PermissionSection section in Enum.GetValues(typeof(PermissionSection)))
+        {
+            foreach (PermissionFunction function in Enum.GetValues(typeof(PermissionFunction)))
+            {
+                estatePermissions.Add(new Permission(section, function));
+            }
+        }
+        _roles["Estate"] = new Role("Estate", estatePermissions);
 
         // Viewer role - can only view, no create/edit/delete
         var viewerPermissions = new List<Permission>();

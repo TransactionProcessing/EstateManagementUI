@@ -76,6 +76,7 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         return roleName switch
         {
             "Administrator" => "Admin User",
+            "Estate" => "Estate Manager",
             "Viewer" => "View Only User",
             _ => "Test User"
         };
