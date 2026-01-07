@@ -125,6 +125,7 @@ namespace EstateManagementUI.Testing
         public static Commands.AssignDeviceToMerchantCommand AssignDeviceToMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, AssignDeviceToMerchantModel);
 
         public static AssignOperatorToMerchantModel AssignOperatorToMerchantModel => new AssignOperatorToMerchantModel { OperatorId = Operator1Id };
+        public static AssignOperatorToEstateModel AssignOperatorToEstateModel => new AssignOperatorToEstateModel { OperatorId = Operator1Id };
         public static AssignContractToMerchantModel AssignContractToMerchantModel => new AssignContractToMerchantModel { ContractId = TestData.Contract1Id };
         public static String DeviceIdentifier = "123456ABCDEF";
         public static AssignDeviceToMerchantModel AssignDeviceToMerchantModel => new AssignDeviceToMerchantModel { DeviceIdentifier = DeviceIdentifier };
@@ -134,6 +135,12 @@ namespace EstateManagementUI.Testing
         });
 
         public static Commands.RemoveOperatorFromMerchantCommand RemoveOperatorFromMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, Operator1Id);
+
+        public static Commands.AssignOperatorToEstateCommand AssignOperatorToEstateCommand => new(CorrelationId, AccessToken, EstateId, new AssignOperatorToEstateModel {
+            OperatorId = Operator1Id
+        });
+
+        public static Commands.RemoveOperatorFromEstateCommand RemoveOperatorFromEstateCommand => new(CorrelationId, AccessToken, EstateId, Operator1Id);
 
         public static Commands.CreateContractCommand CreateContractCommand => new(CorrelationId, AccessToken, EstateId, CreateContractModel);
         public static Commands.CreateContractProductCommand CreateContractProductCommand => new(CorrelationId, AccessToken, EstateId, Contract1Id, CreateContractProductModel);

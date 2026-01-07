@@ -24,6 +24,17 @@ public class TestDataStore : ITestDataStore
     {
         if (_estates.TryGetValue(estateId, out var estate))
         {
+            // Populate operators list
+            if (_operators.TryGetValue(estateId, out var operatorDict))
+            {
+                estate.Operators = operatorDict.Values.Select(o => new EstateOperatorModel
+                {
+                    OperatorId = o.OperatorId,
+                    Name = o.Name,
+                    RequireCustomMerchantNumber = o.RequireCustomMerchantNumber,
+                    RequireCustomTerminalNumber = o.RequireCustomTerminalNumber
+                }).ToList();
+            }
             return estate;
         }
         

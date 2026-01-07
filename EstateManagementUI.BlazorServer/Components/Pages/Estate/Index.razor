@@ -1,4 +1,5 @@
 @page "/estate"
+@rendermode InteractiveServer
 @inject IMediator Mediator
 
 <PageTitle>Estate Management</PageTitle>
@@ -17,139 +18,233 @@
     }
     else if (estate != null)
     {
-        <!-- Estate Details Card -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div>
-                    <label class="label">Estate Name</label>
-                    <input id="Estate_Name" type="text" value="@estate.EstateName" readonly class="input-field text-lg font-semibold text-gray-900 bg-gray-50" />
-                </div>
-                <div>
-                    <label class="label">Estate ID</label>
-                    <p class="text-sm text-gray-600 font-mono">@estate.EstateId</p>
-                </div>
-                <div>
-                    <label class="label">Reference</label>
-                    <input id="Estate_Reference" type="text" value="@estate.Reference" readonly class="input-field text-sm text-gray-600 bg-gray-50" />
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
-                        <p class="text-3xl font-bold text-gray-900">@(merchants?.Count ?? 0)</p>
-                    </div>
-                    <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                    </svg>
-                </div>
+        <!-- Tabs -->
+        <div class="bg-white rounded-lg shadow-md">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                    <button type="button" @onclick='() => SetActiveTab("overview")' class="@GetTabClass("overview")">
+                        Overview
+                    </button>
+                    <button type="button" @onclick='() => SetActiveTab("operators")' class="@GetTabClass("operators")">
+                        Operators
+                    </button>
+                </nav>
             </div>
 
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Operators</p>
-                        <p class="text-3xl font-bold text-gray-900">@(operators?.Count ?? 0)</p>
-                    </div>
-                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Contracts</p>
-                        <p class="text-3xl font-bold text-gray-900">@(contracts?.Count ?? 0)</p>
-                    </div>
-                    <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Users</p>
-                        <p class="text-3xl font-bold text-gray-900">5</p>
-                    </div>
-                    <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <!-- Management Sections -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Merchants Section -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900">Recent Merchants</h2>
-                    <a href="/merchants" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
-                </div>
-                @if (merchants != null && merchants.Any())
+            <div class="p-6">
+                @if (activeTab == "overview")
                 {
-                    <div class="space-y-3">
-                        @foreach (var merchant in merchants.Take(5))
-                        {
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div>
-                                    <p class="font-medium text-gray-900">@merchant.MerchantName</p>
-                                    <p class="text-sm text-gray-600">@merchant.MerchantReference</p>
-                                </div>
-                                <a href="/merchants/@merchant.MerchantId" class="text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    <!-- Estate Details Card -->
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div>
+                                <label class="label">Estate Name</label>
+                                <input id="Estate_Name" type="text" value="@estate.EstateName" readonly class="input-field text-lg font-semibold text-gray-900 bg-gray-50" />
+                            </div>
+                            <div>
+                                <label class="label">Estate ID</label>
+                                <p class="text-sm text-gray-600 font-mono">@estate.EstateId</p>
+                            </div>
+                            <div>
+                                <label class="label">Reference</label>
+                                <input id="Estate_Reference" type="text" value="@estate.Reference" readonly class="input-field text-sm text-gray-600 bg-gray-50" />
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(merchants?.Count ?? 0)</p>
+                                    </div>
+                                    <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                                     </svg>
-                                </a>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Total Operators</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(assignedOperators?.Count ?? 0)</p>
+                                    </div>
+                                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Total Contracts</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(contracts?.Count ?? 0)</p>
+                                    </div>
+                                    <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-600 mb-1">Total Users</p>
+                                        <p class="text-3xl font-bold text-gray-900">5</p>
+                                    </div>
+                                    <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Management Sections -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Merchants Section -->
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-lg font-semibold text-gray-900">Recent Merchants</h2>
+                                    <a href="/merchants" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
+                                </div>
+                                @if (merchants != null && merchants.Any())
+                                {
+                                    <div class="space-y-3">
+                                        @foreach (var merchant in merchants.Take(5))
+                                        {
+                                            <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                                                <div>
+                                                    <p class="font-medium text-gray-900">@merchant.MerchantName</p>
+                                                    <p class="text-sm text-gray-600">@merchant.MerchantReference</p>
+                                                </div>
+                                                <a href="/merchants/@merchant.MerchantId" class="text-blue-600 hover:text-blue-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-gray-600">No merchants found.</p>
+                                }
+                            </div>
+
+                            <!-- Contracts Section -->
+                            <div class="bg-gray-50 rounded-lg p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h2 class="text-lg font-semibold text-gray-900">Contracts</h2>
+                                    <a href="/contracts" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
+                                </div>
+                                @if (contracts != null && contracts.Any())
+                                {
+                                    <div class="space-y-3">
+                                        @foreach (var contract in contracts.Take(5))
+                                        {
+                                            <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                                                <div>
+                                                    <p class="font-medium text-gray-900">@contract.Description</p>
+                                                    <p class="text-sm text-gray-600">@contract.OperatorName</p>
+                                                </div>
+                                                <a href="/contracts/@contract.ContractId" class="text-blue-600 hover:text-blue-800">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p class="text-gray-600">No contracts found.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (activeTab == "operators")
+                {
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold">Assigned Operators</h3>
+                            <button type="button" id="addOperatorButton" @onclick="() => showAddOperator = !showAddOperator" class="btn btn-primary">
+                                @(showAddOperator ? "Cancel" : "Add Operator")
+                            </button>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+                                @successMessage
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
+                                @errorMessage
+                            </div>
+                        }
+
+                        @if (showAddOperator)
+                        {
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Select Operator</label>
+                                <div class="flex space-x-2">
+                                    <select @bind="selectedOperatorId" class="input flex-1">
+                                        <option value="">Select an operator...</option>
+                                        @if (availableOperators != null)
+                                        {
+                                            @foreach (var op in availableOperators)
+                                            {
+                                                <option value="@op.OperatorId">@op.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                    <button type="button" @onclick="AddOperatorToEstate" class="btn btn-primary" disabled="@(string.IsNullOrEmpty(selectedOperatorId))">
+                                        Add
+                                    </button>
+                                </div>
+                            </div>
+                        }
+
+                        @if (assignedOperators == null || !assignedOperators.Any())
+                        {
+                            <p class="text-gray-500 text-center py-8">No operators assigned</p>
+                        }
+                        else
+                        {
+                            <div class="space-y-2">
+                                @foreach (var op in assignedOperators)
+                                {
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div>
+                                            <span class="font-medium">@op.Name</span>
+                                            <p class="text-sm text-gray-600">
+                                                @if (op.RequireCustomMerchantNumber)
+                                                {
+                                                    <span class="mr-2">Requires Merchant Number</span>
+                                                }
+                                                @if (op.RequireCustomTerminalNumber)
+                                                {
+                                                    <span>Requires Terminal Number</span>
+                                                }
+                                            </p>
+                                        </div>
+                                        <button type="button" @onclick="() => RemoveOperatorFromEstate(op.OperatorId)" class="text-red-600 hover:text-red-800">
+                                            Remove
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
-                }
-                else
-                {
-                    <p class="text-gray-600">No merchants found.</p>
-                }
-            </div>
-
-            <!-- Operators Section -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900">Operators</h2>
-                    <a href="/operators" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
-                </div>
-                @if (operators != null && operators.Any())
-                {
-                    <div class="space-y-3">
-                        @foreach (var op in operators)
-                        {
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div>
-                                    <p class="font-medium text-gray-900">@op.Name</p>
-                                    <p class="text-sm text-gray-600">
-                                        @(op.RequireCustomMerchantNumber ? "Custom Merchant Number" : "")
-                                        @(op.RequireCustomTerminalNumber ? "Custom Terminal Number" : "")
-                                    </p>
-                                </div>
-                                <a href="/operators/@op.OperatorId" class="text-blue-600 hover:text-blue-800">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <p class="text-gray-600">No operators found.</p>
                 }
             </div>
         </div>
@@ -166,8 +261,14 @@
     private bool isLoading = true;
     private EstateModel? estate;
     private List<MerchantModel>? merchants;
-    private List<OperatorModel>? operators;
+    private List<OperatorModel>? availableOperators;
+    private List<OperatorModel> assignedOperators = new();
     private List<ContractModel>? contracts;
+    private string activeTab = "overview";
+    private bool showAddOperator = false;
+    private string? selectedOperatorId;
+    private string? successMessage;
+    private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -182,6 +283,17 @@
             if (estateResult.IsSuccess)
             {
                 estate = estateResult.Data;
+                // Load assigned operators from estate model
+                if (estate.Operators != null)
+                {
+                    assignedOperators = estate.Operators.Select(o => new OperatorModel
+                    {
+                        OperatorId = o.OperatorId,
+                        Name = o.Name,
+                        RequireCustomMerchantNumber = o.RequireCustomMerchantNumber,
+                        RequireCustomTerminalNumber = o.RequireCustomTerminalNumber
+                    }).ToList();
+                }
             }
 
             var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateId));
@@ -193,7 +305,7 @@
             var operatorsResult = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
             if (operatorsResult.IsSuccess)
             {
-                operators = operatorsResult.Data;
+                availableOperators = operatorsResult.Data;
             }
 
             var contractsResult = await Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
@@ -205,6 +317,106 @@
         finally
         {
             isLoading = false;
+        }
+    }
+
+    private string GetTabClass(string tab)
+    {
+        return activeTab == tab
+            ? "border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+    }
+
+    private void SetActiveTab(string tab)
+    {
+        activeTab = tab;
+        ClearMessages();
+    }
+
+    private void ClearMessages()
+    {
+        successMessage = null;
+        errorMessage = null;
+    }
+
+    private async Task AddOperatorToEstate()
+    {
+        if (string.IsNullOrEmpty(selectedOperatorId)) return;
+
+        ClearMessages();
+
+        try
+        {
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+            var operatorId = Guid.Parse(selectedOperatorId);
+
+            var command = new Commands.AddOperatorToEstateCommand(
+                correlationId,
+                accessToken,
+                estateId,
+                operatorId
+            );
+
+            var result = await Mediator.Send(command);
+
+            if (result.IsSuccess)
+            {
+                successMessage = "Operator added successfully";
+                selectedOperatorId = null;
+                showAddOperator = false;
+                
+                // Add to assigned list
+                var op = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
+                if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId))
+                {
+                    assignedOperators.Add(op);
+                }
+            }
+            else
+            {
+                errorMessage = result.Message ?? "Failed to add operator";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private async Task RemoveOperatorFromEstate(Guid operatorId)
+    {
+        ClearMessages();
+
+        try
+        {
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            var command = new Commands.RemoveOperatorFromEstateCommand(
+                correlationId,
+                accessToken,
+                estateId,
+                operatorId
+            );
+
+            var result = await Mediator.Send(command);
+
+            if (result.IsSuccess)
+            {
+                successMessage = "Operator removed successfully";
+                assignedOperators.RemoveAll(o => o.OperatorId == operatorId);
+            }
+            else
+            {
+                errorMessage = result.Message ?? "Failed to remove operator";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
         }
     }
 }

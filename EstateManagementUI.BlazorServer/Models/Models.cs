@@ -6,6 +6,15 @@ public class EstateModel
     public Guid EstateId { get; set; }
     public string? EstateName { get; set; }
     public string? Reference { get; set; }
+    public List<EstateOperatorModel>? Operators { get; set; }
+}
+
+public class EstateOperatorModel
+{
+    public Guid OperatorId { get; set; }
+    public string? Name { get; set; }
+    public bool RequireCustomMerchantNumber { get; set; }
+    public bool RequireCustomTerminalNumber { get; set; }
 }
 
 // Merchant Models

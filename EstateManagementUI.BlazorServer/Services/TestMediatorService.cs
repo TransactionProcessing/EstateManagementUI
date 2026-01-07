@@ -71,6 +71,8 @@ public class TestMediatorService : IMediator
             Commands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteRemoveContractFromMerchant(cmd)),
             Commands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteAddOperatorToMerchant(cmd)),
             Commands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteRemoveOperatorFromMerchant(cmd)),
+            Commands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)ExecuteAddOperatorToEstate(cmd)),
+            Commands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)ExecuteRemoveOperatorFromEstate(cmd)),
             Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
@@ -454,4 +456,26 @@ public class TestMediatorService : IMediator
         SalesValue = 125000.00m,
         SettlementValue = 123750.00m
     };
+
+    private Result ExecuteAddOperatorToEstate(Commands.AddOperatorToEstateCommand cmd)
+    {
+        var operator1 = _testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
+        if (operator1 == null)
+            return Result.Failure($"Operator {cmd.OperatorId} not found");
+        
+        // In a real implementation, we would add the operator to the estate
+        // For now, we just return success as the operator already exists in the data store
+        return Result.Success();
+    }
+
+    private Result ExecuteRemoveOperatorFromEstate(Commands.RemoveOperatorFromEstateCommand cmd)
+    {
+        var operator1 = _testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
+        if (operator1 == null)
+            return Result.Failure($"Operator {cmd.OperatorId} not found");
+        
+        // In a real implementation, we would remove the operator from the estate
+        // For now, we just return success
+        return Result.Success();
+    }
 }
