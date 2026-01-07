@@ -74,7 +74,7 @@ public class TestMediatorService : IMediator
             Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.MakeMerchantDepositCommand => Task.FromResult((TResponse)(object)Result.Success()),
+            Commands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)ExecuteMakeMerchantDeposit(cmd)),
             Commands.SetMerchantSettlementScheduleCommand => Task.FromResult((TResponse)(object)Result.Success()),
             
             _ => throw new NotImplementedException($"Request type {request.GetType().Name} is not implemented in test mediator")
@@ -316,6 +316,20 @@ public class TestMediatorService : IMediator
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
+        return Result.Success();
+    }
+
+    private Result ExecuteMakeMerchantDeposit(Commands.MakeMerchantDepositCommand cmd)
+    {
+        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        if (merchant == null)
+            return Result.Failure($"Merchant {cmd.MerchantId} not found");
+        
+        // Update the merchant's balance by adding the deposit amount
+        merchant.Balance = (merchant.Balance ?? 0) + cmd.Amount;
+        merchant.AvailableBalance = (merchant.AvailableBalance ?? 0) + cmd.Amount;
+        
+        _testDataStore.UpdateMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
 
