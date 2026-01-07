@@ -1,5 +1,6 @@
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
+using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Services;
 using EstateManagementUI.BlazorServer.TokenManagement;
 using MediatR;
@@ -182,6 +183,11 @@ builder.Services.AddCascadingAuthenticationState();
 
 // Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
+
+// Register Permission services
+builder.Services.AddSingleton<IPermissionStore, InMemoryPermissionStore>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+Console.WriteLine("Registered Permission services");
 
 // Register MediatR service based on test mode
 if (testMode)

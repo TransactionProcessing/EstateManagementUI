@@ -1,0 +1,30 @@
+@using EstateManagementUI.BlazorServer.Permissions
+@inject IPermissionService PermissionService
+
+@if (_hasPermission)
+{
+    @ChildContent
+}
+
+@code {
+    private bool _hasPermission;
+
+    [Parameter]
+    public PermissionSection Section { get; set; }
+
+    [Parameter]
+    public PermissionFunction Function { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hasPermission = await PermissionService.HasPermissionAsync(Section, Function);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _hasPermission = await PermissionService.HasPermissionAsync(Section, Function);
+    }
+}
