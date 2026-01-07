@@ -49,7 +49,7 @@ public static class Commands
     public record CreateMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, string ContactName, string ContactEmail) : IRequest<Result>;
     public record CreateMerchantUserCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string EmailAddress, string Password) : IRequest<Result>;
     public record CreateOperatorCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
-    public record MakeMerchantDepositCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, decimal Amount, DateTime Date) : IRequest<Result>;
+    public record MakeMerchantDepositCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, decimal Amount, DateTime Date, string Reference) : IRequest<Result>;
     public record RemoveContractFromMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
     public record RemoveOperatorFromMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid OperatorId) : IRequest<Result>;
     public record SetMerchantSettlementScheduleCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string Schedule) : IRequest<Result>;
