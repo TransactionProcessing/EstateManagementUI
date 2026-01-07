@@ -630,6 +630,55 @@ public class BlazorUiHelpers
             throw new Exception($"Could not find merchant '{merchantName}' in the list");
         }, TimeSpan.FromSeconds(60));
     }
+
+    public async Task VerifyEstateQuickStats(Int32 expectedMerchants, Int32 expectedOperators, Int32 expectedContracts, Int32 expectedUsers)
+    {
+        await Retry.For(async () =>
+        {
+            // The estate page has cards with stats - we need to find the text content
+            var merchantsCard = await this.Page.Locator("text=Total Merchants").Locator("..").Locator("p.text-3xl").TextContentAsync();
+            var operatorsCard = await this.Page.Locator("text=Total Operators").Locator("..").Locator("p.text-3xl").TextContentAsync();
+            var contractsCard = await this.Page.Locator("text=Total Contracts").Locator("..").Locator("p.text-3xl").TextContentAsync();
+            var usersCard = await this.Page.Locator("text=Total Users").Locator("..").Locator("p.text-3xl").TextContentAsync();
+
+            Int32.Parse(merchantsCard?.Trim() ?? "0").ShouldBe(expectedMerchants);
+            Int32.Parse(operatorsCard?.Trim() ?? "0").ShouldBe(expectedOperators);
+            Int32.Parse(contractsCard?.Trim() ?? "0").ShouldBe(expectedContracts);
+            Int32.Parse(usersCard?.Trim() ?? "0").ShouldBe(expectedUsers);
+        }, TimeSpan.FromSeconds(30));
+    }
+
+    public async Task VerifyEstateRecentMerchantsSection(List<String> expectedMerchantNames)
+    {
+        await Retry.For(async () =>
+        {
+            var merchantSection = this.Page.Locator("text=Recent Merchants").Locator("..");
+            
+            foreach (var merchantName in expectedMerchantNames)
+            {
+                var merchantElement = merchantSection.Locator($"text={merchantName}");
+                await merchantElement.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                var isVisible = await merchantElement.IsVisibleAsync();
+                isVisible.ShouldBeTrue($"Merchant '{merchantName}' should be visible in Recent Merchants section");
+            }
+        }, TimeSpan.FromSeconds(30));
+    }
+
+    public async Task VerifyEstateOperatorsSection(List<String> expectedOperatorNames)
+    {
+        await Retry.For(async () =>
+        {
+            var operatorSection = this.Page.Locator("h2:has-text('Operators')").Locator("..");
+            
+            foreach (var operatorName in expectedOperatorNames)
+            {
+                var operatorElement = operatorSection.Locator($"text={operatorName}");
+                await operatorElement.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
+                var isVisible = await operatorElement.IsVisibleAsync();
+                isVisible.ShouldBeTrue($"Operator '{operatorName}' should be visible in Operators section");
+            }
+        }, TimeSpan.FromSeconds(30));
+    }
 }
 
 public record MerchantDetails

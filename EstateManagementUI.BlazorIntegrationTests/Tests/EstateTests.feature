@@ -83,3 +83,61 @@ Scenario: View Estate Details
 	And My Estate Details will be shown
 	| EstateName  | 
 	| Test Estate |
+
+Scenario: View Estate Quick Stats
+
+	Given I am on the application home page
+
+	And I click on the Sign In Button
+	
+	Then I am presented with a login screen
+	
+	When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
+
+	Then I am presented with the Estate Administrator Dashboard
+
+	Given I click on the My Estate sidebar option
+
+	Then I am presented with the View Estate Page
+
+	And the Estate Quick Stats are displayed correctly
+	| TotalMerchants | TotalOperators | TotalContracts | TotalUsers |
+	| 0              | 1              | 0              | 5          |
+
+Scenario: View Estate Recent Merchants Section
+
+	Given I am on the application home page
+
+	And I click on the Sign In Button
+	
+	Then I am presented with a login screen
+	
+	When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
+
+	Then I am presented with the Estate Administrator Dashboard
+
+	Given I click on the My Estate sidebar option
+
+	Then I am presented with the View Estate Page
+
+	And the Estate Recent Merchants section is displayed
+
+Scenario: View Estate Operators Section
+
+	Given I am on the application home page
+
+	And I click on the Sign In Button
+	
+	Then I am presented with a login screen
+	
+	When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
+
+	Then I am presented with the Estate Administrator Dashboard
+
+	Given I click on the My Estate sidebar option
+
+	Then I am presented with the View Estate Page
+
+	And the Estate Operators section displays the following operators
+	| OperatorName  |
+	| Test Operator |

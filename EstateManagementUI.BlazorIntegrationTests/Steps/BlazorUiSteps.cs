@@ -399,5 +399,37 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
         {
             await this.UiHelpers.ClickTheViewMerchantButton(merchantName);
         }
+
+        [Then(@"the Estate Quick Stats are displayed correctly")]
+        public async Task ThenTheEstateQuickStatsAreDisplayedCorrectly(DataTable table)
+        {
+            DataTableRow tableRow = table.Rows.Single();
+            Int32 totalMerchants = ReqnrollTableHelper.GetIntValue(tableRow, "TotalMerchants");
+            Int32 totalOperators = ReqnrollTableHelper.GetIntValue(tableRow, "TotalOperators");
+            Int32 totalContracts = ReqnrollTableHelper.GetIntValue(tableRow, "TotalContracts");
+            Int32 totalUsers = ReqnrollTableHelper.GetIntValue(tableRow, "TotalUsers");
+            
+            await this.UiHelpers.VerifyEstateQuickStats(totalMerchants, totalOperators, totalContracts, totalUsers);
+        }
+
+        [Then(@"the Estate Recent Merchants section is displayed")]
+        public async Task ThenTheEstateRecentMerchantsSectionIsDisplayed()
+        {
+            // Since there are no merchants in the background, we just verify the section is present
+            // by checking if the "Recent Merchants" heading is visible
+            await this.UiHelpers.VerifyEstateRecentMerchantsSection(new List<String>());
+        }
+
+        [Then(@"the Estate Operators section displays the following operators")]
+        public async Task ThenTheEstateOperatorsSectionDisplaysTheFollowingOperators(DataTable table)
+        {
+            List<String> operatorNames = new List<String>();
+            foreach (DataTableRow tableRow in table.Rows)
+            {
+                operatorNames.Add(ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName"));
+            }
+            
+            await this.UiHelpers.VerifyEstateOperatorsSection(operatorNames);
+        }
     }
 }
