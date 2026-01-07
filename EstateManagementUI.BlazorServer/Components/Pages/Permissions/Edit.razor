@@ -288,14 +288,12 @@
         NavigationManager.NavigateTo("/permissions");
     }
 
-    private void ShowError(string message)
+    private async void ShowError(string message)
     {
         errorMessage = message;
         showError = true;
-        Task.Delay(5000).ContinueWith(_ => 
-        {
-            showError = false;
-            StateHasChanged();
-        });
+        await Task.Delay(5000);
+        showError = false;
+        await InvokeAsync(StateHasChanged);
     }
 }

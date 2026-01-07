@@ -83,12 +83,18 @@
     private bool collapseNavMenu = true;
     private bool isAdministrator = false;
 
+    private static readonly HashSet<string> AdminRoles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Administrator",
+        "Estate"
+    };
+
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     protected override async Task OnInitializedAsync()
     {
         var role = await PermissionService.GetUserRoleAsync();
-        isAdministrator = role != null && (role.Equals("Administrator", StringComparison.OrdinalIgnoreCase) || role.Equals("Estate", StringComparison.OrdinalIgnoreCase));
+        isAdministrator = role != null && AdminRoles.Contains(role);
     }
 
     private void ToggleNavMenu()
