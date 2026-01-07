@@ -345,11 +345,11 @@
             var accessToken = "stubbed-token";
             var operatorId = Guid.Parse(selectedOperatorId);
 
-            var command = new Commands.AssignOperatorToEstateCommand(
+            var command = new Commands.AddOperatorToEstateCommand(
                 correlationId,
                 accessToken,
                 estateId,
-                new AssignOperatorToEstateModel { OperatorId = operatorId }
+                operatorId
             );
 
             var result = await Mediator.Send(command);

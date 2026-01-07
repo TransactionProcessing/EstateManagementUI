@@ -47,6 +47,7 @@ public class StubbedMediatorService : IMediator
             // Commands - just return success
             Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.AddOperatorToMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
+            Commands.AddOperatorToEstateCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.AssignContractToMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateContractCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
@@ -55,6 +56,7 @@ public class StubbedMediatorService : IMediator
             Commands.MakeMerchantDepositCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.RemoveContractFromMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.RemoveOperatorFromMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
+            Commands.RemoveOperatorFromEstateCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.SetMerchantSettlementScheduleCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.UpdateMerchantAddressCommand => Task.FromResult((TResponse)(object)Result.Success()),
