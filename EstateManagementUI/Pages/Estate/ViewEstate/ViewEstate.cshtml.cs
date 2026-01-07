@@ -39,7 +39,7 @@ namespace EstateManagementUI.Pages.Estate.ViewEstate
             Subscribe<EstatePageEvents.OperatorAssignedToEstateEvent>(Handle);
             Subscribe<EstatePageEvents.OperatorRemovedFromEstateEvent>(Handle);
             
-            if (String.IsNullOrEmpty(this.ActiveTab) == true) {
+            if (String.IsNullOrEmpty(this.ActiveTab)) {
                 this.ActiveTab = "estatedetails";
             }
         }
