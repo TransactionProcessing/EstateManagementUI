@@ -13,28 +13,52 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
 {
     public const string SchemeName = "TestAuthentication";
     private readonly IConfiguration _configuration;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public TestAuthenticationHandler(
         IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHttpContextAccessor httpContextAccessor)
         : base(options, logger, encoder)
     {
         _configuration = configuration;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        // Get role from configuration, default to "Estate" if not specified
-        var roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Estate");
+        // Check for role switch in query parameter
+        string? roleName = null;
+        if (_httpContextAccessor.HttpContext?.Request.Query.TryGetValue("switchRole", out var roleQuery) == true)
+        {
+            roleName = roleQuery.ToString();
+            // Store in session for persistence
+            _httpContextAccessor.HttpContext.Session.SetString("TestUserRole", roleName);
+        }
+        
+        // Try to get from session first
+        if (string.IsNullOrEmpty(roleName))
+        {
+            roleName = _httpContextAccessor.HttpContext?.Session.GetString("TestUserRole");
+        }
+        
+        // Fall back to configuration
+        if (string.IsNullOrEmpty(roleName))
+        {
+            roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Estate");
+        }
+        
+        // Get user name based on role
+        var userName = GetUserNameForRole(roleName);
         
         // Create test user claims
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, "test-user-id"),
-            new Claim(ClaimTypes.Name, "Test User"),
-            new Claim(ClaimTypes.Email, "testuser@test.com"),
+            new Claim(ClaimTypes.NameIdentifier, $"test-user-{roleName.ToLower()}"),
+            new Claim(ClaimTypes.Name, userName),
+            new Claim(ClaimTypes.Email, $"{roleName.ToLower()}@test.com"),
             new Claim("estateId", "11111111-1111-1111-1111-111111111111"),
             new Claim(ClaimTypes.Role, roleName),
             new Claim("role", roleName)
@@ -45,5 +69,18 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         var ticket = new AuthenticationTicket(principal, SchemeName);
 
         return Task.FromResult(AuthenticateResult.Success(ticket));
+    }
+    
+    private string GetUserNameForRole(string roleName)
+    {
+        return roleName switch
+        {
+            "Administrator" => "Admin User",
+            "Estate" => "Estate Manager",
+            "Viewer" => "View Only User",
+            "MerchantManager" => "Merchant Manager",
+            "OperatorManager" => "Operator Manager",
+            _ => "Test User"
+        };
     }
 }

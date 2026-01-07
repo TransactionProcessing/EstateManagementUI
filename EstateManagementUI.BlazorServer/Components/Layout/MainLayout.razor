@@ -47,6 +47,9 @@
                 </div>
                 
                 <div class="flex items-center space-x-2">
+                    <!-- Role Switcher (Test Mode Only) -->
+                    <RoleSwitcher />
+                    
                     <!-- Fullscreen Toggle -->
                     <button onclick="toggleFullscreen()" 
                             class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors duration-150"
@@ -62,7 +65,7 @@
                             <div class="relative flex items-center space-x-3 pl-3 border-l border-gray-200">
                                 <div class="text-right hidden sm:block">
                                     <div class="text-sm font-medium text-gray-900">@context.User.Identity?.Name</div>
-                                    <div class="text-xs text-gray-500">Administrator</div>
+                                    <div class="text-xs text-gray-500">@(currentRole ?? "User")</div>
                                 </div>
                                 <UserProfileDropdown UserName="@context.User.Identity?.Name" />
                             </div>
@@ -147,4 +150,17 @@
 @code {
     [CascadingParameter]
     public string? PageTitle { get; set; }
+    
+    [Inject]
+    private EstateManagementUI.BlazorServer.Permissions.IPermissionService? PermissionService { get; set; }
+    
+    private string? currentRole;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (PermissionService != null)
+        {
+            currentRole = await PermissionService.GetUserRoleAsync();
+        }
+    }
 }
