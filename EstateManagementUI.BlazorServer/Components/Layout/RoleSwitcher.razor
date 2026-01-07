@@ -54,22 +54,19 @@
 
 @code {
     private bool isTestMode;
-    private string currentRole = "Estate";
+    private string currentRole = "Administrator";
     private bool isDropdownOpen = false;
     
     private Dictionary<string, string> availableRoles = new()
     {
-        { "Estate", "Full access (Administrator)" },
-        { "Administrator", "Full access" },
-        { "Viewer", "Read-only access to all sections" },
-        { "MerchantManager", "Full merchant access, view elsewhere" },
-        { "OperatorManager", "Full operator access, view elsewhere" }
+        { "Administrator", "Full access to all features" },
+        { "Viewer", "Read-only access (no edit)" }
     };
     
     protected override void OnInitialized()
     {
         isTestMode = Configuration.GetValue<bool>("AppSettings:TestMode", false);
-        currentRole = Configuration.GetValue<string>("AppSettings:TestUserRole", "Estate") ?? "Estate";
+        currentRole = Configuration.GetValue<string>("AppSettings:TestUserRole", "Administrator") ?? "Administrator";
     }
     
     private void ToggleDropdown()

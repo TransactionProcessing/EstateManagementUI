@@ -47,7 +47,7 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         // Fall back to configuration
         if (string.IsNullOrEmpty(roleName))
         {
-            roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Estate");
+            roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Administrator");
         }
         
         // Get user name based on role
@@ -76,10 +76,7 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         return roleName switch
         {
             "Administrator" => "Admin User",
-            "Estate" => "Estate Manager",
             "Viewer" => "View Only User",
-            "MerchantManager" => "Merchant Manager",
-            "OperatorManager" => "Operator Manager",
             _ => "Test User"
         };
     }

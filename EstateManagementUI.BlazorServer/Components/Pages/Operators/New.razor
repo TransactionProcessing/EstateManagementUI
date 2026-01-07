@@ -1,11 +1,34 @@
 @page "/operators/new"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
+@using EstateManagementUI.BlazorServer.Permissions
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
+@inject IPermissionService PermissionService
 
 <PageTitle>Create New Operator</PageTitle>
 
+@if (!hasPermission)
+{
+    <div class="flex items-center justify-center py-12">
+        <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
+            <div class="flex items-center space-x-3">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+                <div>
+                    <h3 class="text-lg font-semibold text-red-900">Access Denied</h3>
+                    <p class="text-sm text-red-700 mt-1">You don't have permission to create operators.</p>
+                </div>
+            </div>
+            <button class="btn btn-secondary mt-4 w-full" @onclick='() => NavigationManager.NavigateTo("/operators")'>
+                Back to Operators
+            </button>
+        </div>
+    </div>
+}
+else
+{
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex items-center justify-between">
@@ -85,7 +108,13 @@
 @code {
     private CreateOperatorModel model = new();
     private bool isSaving = false;
+    private bool hasPermission = false;
     private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hasPermission = await PermissionService.HasPermissionAsync(PermissionSection.Operator, PermissionFunction.Create);
+    }
 
     private async Task HandleSubmit()
     {

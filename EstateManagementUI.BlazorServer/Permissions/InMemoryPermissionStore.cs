@@ -39,7 +39,6 @@ public class InMemoryPermissionStore : IPermissionStore
             }
         }
         _roles["Administrator"] = new Role("Administrator", administratorPermissions);
-        _roles["Estate"] = new Role("Estate", administratorPermissions); // Estate role has same permissions as Administrator
 
         // Viewer role - can only view, no create/edit/delete
         var viewerPermissions = new List<Permission>();
@@ -48,43 +47,6 @@ public class InMemoryPermissionStore : IPermissionStore
             viewerPermissions.Add(new Permission(section, PermissionFunction.View));
         }
         _roles["Viewer"] = new Role("Viewer", viewerPermissions);
-
-        // Merchant Manager role - full access to merchants, view-only for others
-        var merchantManagerPermissions = new List<Permission>
-        {
-            // Full access to merchants
-            new Permission(PermissionSection.Merchant, PermissionFunction.View),
-            new Permission(PermissionSection.Merchant, PermissionFunction.Create),
-            new Permission(PermissionSection.Merchant, PermissionFunction.Edit),
-            new Permission(PermissionSection.Merchant, PermissionFunction.Delete),
-            new Permission(PermissionSection.Merchant, PermissionFunction.MakeDeposit),
-            
-            // View-only access to other sections
-            new Permission(PermissionSection.Dashboard, PermissionFunction.View),
-            new Permission(PermissionSection.Estate, PermissionFunction.View),
-            new Permission(PermissionSection.Contract, PermissionFunction.View),
-            new Permission(PermissionSection.Operator, PermissionFunction.View),
-            new Permission(PermissionSection.FileProcessing, PermissionFunction.View)
-        };
-        _roles["MerchantManager"] = new Role("MerchantManager", merchantManagerPermissions);
-
-        // Operator Manager role - full access to operators, view-only for others
-        var operatorManagerPermissions = new List<Permission>
-        {
-            // Full access to operators
-            new Permission(PermissionSection.Operator, PermissionFunction.View),
-            new Permission(PermissionSection.Operator, PermissionFunction.Create),
-            new Permission(PermissionSection.Operator, PermissionFunction.Edit),
-            new Permission(PermissionSection.Operator, PermissionFunction.Delete),
-            
-            // View-only access to other sections
-            new Permission(PermissionSection.Dashboard, PermissionFunction.View),
-            new Permission(PermissionSection.Estate, PermissionFunction.View),
-            new Permission(PermissionSection.Contract, PermissionFunction.View),
-            new Permission(PermissionSection.Merchant, PermissionFunction.View),
-            new Permission(PermissionSection.FileProcessing, PermissionFunction.View)
-        };
-        _roles["OperatorManager"] = new Role("OperatorManager", operatorManagerPermissions);
 
         _logger.LogInformation("Initialized {Count} default roles", _roles.Count);
     }
