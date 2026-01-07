@@ -29,15 +29,11 @@ public class InMemoryPermissionStore : IPermissionStore
 
     private void InitializeDefaultRoles()
     {
-        // Administrator role - full access to everything including permission management
-        var administratorPermissions = new List<Permission>();
-        foreach (PermissionSection section in Enum.GetValues(typeof(PermissionSection)))
+        // Administrator role - ONLY has access to permission management screens (Dashboard view only)
+        var administratorPermissions = new List<Permission>
         {
-            foreach (PermissionFunction function in Enum.GetValues(typeof(PermissionFunction)))
-            {
-                administratorPermissions.Add(new Permission(section, function));
-            }
-        }
+            new Permission(PermissionSection.Dashboard, PermissionFunction.View)
+        };
         _roles["Administrator"] = new Role("Administrator", administratorPermissions);
 
         // Estate role - full access to all estate operations but NOT permission management
