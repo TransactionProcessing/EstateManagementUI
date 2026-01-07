@@ -635,16 +635,26 @@ public class BlazorUiHelpers
     {
         await Retry.For(async () =>
         {
-            // The estate page has cards with stats - we need to find the text content
-            var merchantsCard = await this.Page.Locator("text=Total Merchants").Locator("..").Locator("p.text-3xl").TextContentAsync();
-            var operatorsCard = await this.Page.Locator("text=Total Operators").Locator("..").Locator("p.text-3xl").TextContentAsync();
-            var contractsCard = await this.Page.Locator("text=Total Contracts").Locator("..").Locator("p.text-3xl").TextContentAsync();
-            var usersCard = await this.Page.Locator("text=Total Users").Locator("..").Locator("p.text-3xl").TextContentAsync();
+            // Helper method to get stat value
+            async Task<Int32> GetStatValue(String statLabel)
+            {
+                var statText = await this.Page.Locator($"text={statLabel}").Locator("..").Locator("p.text-3xl").TextContentAsync();
+                if (Int32.TryParse(statText?.Trim(), out var value))
+                {
+                    return value;
+                }
+                throw new Exception($"Failed to parse stat value for '{statLabel}': '{statText}'");
+            }
 
-            Int32.Parse(merchantsCard?.Trim() ?? "0").ShouldBe(expectedMerchants);
-            Int32.Parse(operatorsCard?.Trim() ?? "0").ShouldBe(expectedOperators);
-            Int32.Parse(contractsCard?.Trim() ?? "0").ShouldBe(expectedContracts);
-            Int32.Parse(usersCard?.Trim() ?? "0").ShouldBe(expectedUsers);
+            var actualMerchants = await GetStatValue("Total Merchants");
+            var actualOperators = await GetStatValue("Total Operators");
+            var actualContracts = await GetStatValue("Total Contracts");
+            var actualUsers = await GetStatValue("Total Users");
+
+            actualMerchants.ShouldBe(expectedMerchants);
+            actualOperators.ShouldBe(expectedOperators);
+            actualContracts.ShouldBe(expectedContracts);
+            actualUsers.ShouldBe(expectedUsers);
         }, TimeSpan.FromSeconds(30));
     }
 
@@ -652,11 +662,14 @@ public class BlazorUiHelpers
     {
         await Retry.For(async () =>
         {
-            var merchantSection = this.Page.Locator("text=Recent Merchants").Locator("..");
+            // Check if the Recent Merchants heading exists
+            var heading = this.Page.Locator("h2:has-text('Recent Merchants')");
+            await heading.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
             
             foreach (var merchantName in expectedMerchantNames)
             {
-                var merchantElement = merchantSection.Locator($"text={merchantName}");
+                // Look for merchant within the same parent container as the heading
+                var merchantElement = this.Page.Locator($"text={merchantName}");
                 await merchantElement.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
                 var isVisible = await merchantElement.IsVisibleAsync();
                 isVisible.ShouldBeTrue($"Merchant '{merchantName}' should be visible in Recent Merchants section");
@@ -668,11 +681,14 @@ public class BlazorUiHelpers
     {
         await Retry.For(async () =>
         {
-            var operatorSection = this.Page.Locator("h2:has-text('Operators')").Locator("..");
+            // Check if the Operators heading exists
+            var heading = this.Page.Locator("h2:has-text('Operators')");
+            await heading.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
             
             foreach (var operatorName in expectedOperatorNames)
             {
-                var operatorElement = operatorSection.Locator($"text={operatorName}");
+                // Look for operator within the page
+                var operatorElement = this.Page.Locator($"text={operatorName}");
                 await operatorElement.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 10000 });
                 var isVisible = await operatorElement.IsVisibleAsync();
                 isVisible.ShouldBeTrue($"Operator '{operatorName}' should be visible in Operators section");
