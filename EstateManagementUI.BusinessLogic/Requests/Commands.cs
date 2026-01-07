@@ -55,4 +55,12 @@ public record Commands {
                                                   Guid EstateId,
                                                   Guid MerchantId,
                                                   AssignDeviceToMerchantModel AssignDeviceToMerchantModel) : IRequest<Result>;
+
+    public record AssignOperatorToEstateCommand(CorrelationId CorrelationId, String AccessToken,
+                                                  Guid EstateId,
+                                                  AssignOperatorToEstateModel AssignOperatorRequestModel) : IRequest<Result>;
+
+    public record RemoveOperatorFromEstateCommand(CorrelationId CorrelationId, String AccessToken,
+                                                       Guid EstateId,
+                                                       Guid OperatorId) : IRequest<Result>;
 }

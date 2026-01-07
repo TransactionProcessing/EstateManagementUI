@@ -662,4 +662,30 @@ public class ApiClient : IApiClient {
 
         return Result.Success(this.TokenResponse);
     }
+
+    public async Task<Result> AssignOperatorToEstate(String accessToken,
+                                                       Guid actionId,
+                                                       Guid estateId,
+                                                       AssignOperatorToEstateModel assignOperatorToEstateModel,
+                                                       CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod(String token, CancellationToken ct) {
+            AssignOperatorRequest apiRequest = ModelFactory.ConvertFrom(assignOperatorToEstateModel);
+
+            return await this.EstateManagementClient.AssignOperatorToEstate(token, estateId, apiRequest, ct);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
+
+    public async Task<Result> RemoveOperatorFromEstate(String accessToken,
+                                                         Guid actionId,
+                                                         Guid estateId,
+                                                         Guid operatorId,
+                                                         CancellationToken cancellationToken) {
+        async Task<Result> ClientMethod(String token, CancellationToken ct) {
+            return await this.EstateManagementClient.RemoveOperatorFromEstate(token, estateId, operatorId, ct);
+        }
+
+        return await this.CallClientMethod(ClientMethod, cancellationToken);
+    }
 }
