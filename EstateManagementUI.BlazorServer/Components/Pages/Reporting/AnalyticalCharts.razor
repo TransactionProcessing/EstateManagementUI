@@ -200,9 +200,30 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender)
+        {
+            // Give Chart.js time to load from CDN
+            await Task.Delay(100);
+        }
+        
         if (!isLoading && salesCountData != null && salesValueData != null)
         {
-            await UpdateCharts();
+            try
+            {
+                // Check if Chart.js is available
+                var isChartJsLoaded = await JSRuntime.InvokeAsync<bool>("eval", "typeof Chart !== 'undefined'");
+                if (!isChartJsLoaded)
+                {
+                    Logger.LogWarning("Chart.js not loaded yet, will retry on next render");
+                    return;
+                }
+                
+                await UpdateCharts();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error in OnAfterRenderAsync");
+            }
         }
     }
 
@@ -299,7 +320,15 @@
         try
         {
             if (salesCountData == null || salesValueData == null)
+            {
+                Logger.LogWarning("Chart data is null - salesCountData: {SalesCountData}, salesValueData: {SalesValueData}", 
+                    salesCountData == null ? "null" : "not null", 
+                    salesValueData == null ? "null" : "not null");
                 return;
+            }
+
+            Logger.LogInformation("Updating charts with {CountRecords} count records and {ValueRecords} value records", 
+                salesCountData.Count, salesValueData.Count);
 
             // Create labels with date and time context
             var today = DateTime.Today;
@@ -315,6 +344,9 @@
             var comparisonLabel = GetComparisonLabel();
             var todayLabel = today.ToString("MMM dd");
             var comparisonDateLabel = compDate.ToString("MMM dd");
+
+            Logger.LogInformation("Chart labels: {Labels}, Today data points: {TodayCount}, Comparison data points: {CompCount}", 
+                string.Join(", ", labels), todaysCountData.Length, comparisonCountData.Length);
 
             // Update Volume Chart
             await JSRuntime.InvokeVoidAsync("updateOrCreateChart", 
@@ -341,6 +373,8 @@
                 },
                 "Transaction Value ($)"
             );
+            
+            Logger.LogInformation("Charts updated successfully");
         }
         catch (Exception ex)
         {
