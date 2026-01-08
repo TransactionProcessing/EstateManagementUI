@@ -24,7 +24,8 @@ IRequestHandler<GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>
 IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
 IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>>,
 IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransactionSummaryModel>>>,
-IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>>> {
+IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>>>,
+IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransactionSummaryModel>>> {
 
     private readonly IApiClient ApiClient;
     public ReportingRequestHandler(IApiClient apiClient)
@@ -235,5 +236,48 @@ IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>
         products = products.OrderByDescending(p => p.TransactionValue).ToList();
         
         return Result.Success(products);
+    }
+
+    public async Task<Result<List<OperatorTransactionSummaryModel>>> Handle(GetOperatorTransactionSummaryQuery request,
+                                                                             CancellationToken cancellationToken) {
+        // TODO: Replace with actual API call when endpoint is available
+        // For now, return mock data for testing
+        var operators = await this.ApiClient.GetOperators(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        
+        if (!operators.IsSuccess) {
+            return Result.Failure<List<OperatorTransactionSummaryModel>>(operators.Message);
+        }
+
+        var summary = new List<OperatorTransactionSummaryModel>();
+        var random = new Random(42); // Use seed for consistent test data
+        
+        const decimal DefaultSuccessRate = 0.92m; // 92% success rate for mock data
+        const decimal DefaultFeePercentage = 0.015m; // 1.5% fee rate
+        
+        foreach (var op in operators.Data) {
+            var totalCount = random.Next(500, 5000);
+            var successfulCount = (int)(totalCount * DefaultSuccessRate);
+            var failedCount = totalCount - successfulCount;
+            var totalValue = (decimal)(random.NextDouble() * 500000 + 50000);
+            var totalFees = Math.Round(totalValue * DefaultFeePercentage, 2);
+            
+            summary.Add(new OperatorTransactionSummaryModel {
+                OperatorId = op.Id,
+                OperatorName = op.Name,
+                TotalTransactionCount = totalCount,
+                TotalTransactionValue = Math.Round(totalValue, 2),
+                AverageTransactionValue = Math.Round(totalValue / totalCount, 2),
+                SuccessfulTransactionCount = successfulCount,
+                FailedTransactionCount = failedCount,
+                TotalFeesEarned = totalFees
+            });
+        }
+        
+        // Apply filters if specified
+        if (request.OperatorId.HasValue) {
+            summary = summary.Where(s => s.OperatorId == request.OperatorId.Value).ToList();
+        }
+        
+        return Result.Success(summary);
     }
 }
