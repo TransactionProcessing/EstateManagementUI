@@ -43,12 +43,12 @@ public class TestMediatorService : IMediator
             
             // Dashboard Queries - return mock data
             Queries.GetComparisonDatesQuery => Task.FromResult((TResponse)(object)Result<List<ComparisonDateModel>>.Success(GetMockComparisonDates())),
-            Queries.GetTodaysSalesQuery => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysSales())),
+            Queries.GetTodaysSalesQuery query => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysSales(query.ComparisonDate))),
             Queries.GetTodaysSettlementQuery => Task.FromResult((TResponse)(object)Result<TodaysSettlementModel>.Success(GetMockTodaysSettlement())),
             Queries.GetTodaysSalesCountByHourQuery => Task.FromResult((TResponse)(object)Result<List<TodaysSalesCountByHourModel>>.Success(GetMockSalesCountByHour())),
             Queries.GetTodaysSalesValueByHourQuery => Task.FromResult((TResponse)(object)Result<List<TodaysSalesValueByHourModel>>.Success(GetMockSalesValueByHour())),
             Queries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result<MerchantKpiModel>.Success(GetMockMerchantKpi())),
-            Queries.GetTodaysFailedSalesQuery => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysSales())),
+            Queries.GetTodaysFailedSalesQuery query => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysFailedSales(query.ComparisonDate))),
             Queries.GetTopProductDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomProductDataModel>>.Success(GetMockTopProducts())),
             Queries.GetBottomProductDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomProductDataModel>>.Success(GetMockBottomProducts())),
             Queries.GetTopMerchantDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomMerchantDataModel>>.Success(GetMockTopMerchants())),
@@ -416,15 +416,56 @@ public class TestMediatorService : IMediator
         };
     }
 
-    private static TodaysSalesModel GetMockTodaysSales() => new()
+    private static TodaysSalesModel GetMockTodaysSales(DateTime comparisonDate)
     {
-        ComparisonSalesCount = 450,
-        ComparisonSalesValue = 125000.00m,
-        ComparisonAverageValue = 277.78m,
-        TodaysSalesCount = 523,
-        TodaysSalesValue = 145000.00m,
-        TodaysAverageValue = 277.24m
-    };
+        // Generate different data based on how many days ago the comparison date is
+        var daysAgo = (DateTime.Today - comparisonDate.Date).Days;
+        
+        // Use days ago to create variance in the data
+        // The further back, the more the comparison differs
+        var baseComparisonValue = 100000.00m;
+        var baseTodayValue = 145000.00m;
+        
+        // Add some variance based on the comparison date
+        var comparisonMultiplier = 1.0m + (daysAgo * 0.02m); // 2% increase per day back
+        var comparisonValue = baseComparisonValue * comparisonMultiplier;
+        var comparisonCount = (int)(400 + (daysAgo * 5)); // 5 more transactions per day back
+        
+        return new TodaysSalesModel
+        {
+            ComparisonSalesCount = comparisonCount,
+            ComparisonSalesValue = comparisonValue,
+            ComparisonAverageValue = comparisonValue / comparisonCount,
+            TodaysSalesCount = 523,
+            TodaysSalesValue = baseTodayValue,
+            TodaysAverageValue = baseTodayValue / 523
+        };
+    }
+    
+    private static TodaysSalesModel GetMockTodaysFailedSales(DateTime comparisonDate)
+    {
+        // Generate different failed sales data based on comparison date
+        var daysAgo = (DateTime.Today - comparisonDate.Date).Days;
+        
+        // Failed sales should ideally decrease over time (improving)
+        var baseComparisonValue = 5000.00m;
+        var baseTodayValue = 850.00m;
+        
+        // More failures in the past, fewer now (showing improvement)
+        var comparisonMultiplier = 1.0m + (daysAgo * 0.05m); // 5% more failures per day back
+        var comparisonValue = baseComparisonValue * comparisonMultiplier;
+        var comparisonCount = (int)(25 + (daysAgo * 2)); // 2 more failed transactions per day back
+        
+        return new TodaysSalesModel
+        {
+            ComparisonSalesCount = comparisonCount,
+            ComparisonSalesValue = comparisonValue,
+            ComparisonAverageValue = comparisonValue / comparisonCount,
+            TodaysSalesCount = 15,
+            TodaysSalesValue = baseTodayValue,
+            TodaysAverageValue = baseTodayValue / 15
+        };
+    }
 
     private static TodaysSettlementModel GetMockTodaysSettlement() => new()
     {
