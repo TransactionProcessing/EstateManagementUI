@@ -1,0 +1,206 @@
+@page "/permissions/{roleName}"
+@rendermode InteractiveServer
+@using EstateManagementUI.BlazorServer.Permissions
+@inject IPermissionStore PermissionStore
+@inject NavigationManager NavigationManager
+
+<PageTitle>Role Details - @RoleName</PageTitle>
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+            <button class="btn btn-secondary" @onclick="GoBack">
+                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back
+            </button>
+            <h1 class="text-2xl font-bold text-gray-900">Role: @RoleName</h1>
+        </div>
+        @if (role != null && !IsSystemRole(RoleName))
+        {
+            <button class="btn btn-primary" @onclick="EditRole">
+                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                Edit Role
+            </button>
+        }
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (role == null)
+    {
+        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+            <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <p class="text-gray-600 mb-4">Role not found.</p>
+            <button class="btn btn-primary" @onclick="GoBack">Go Back</button>
+        </div>
+    }
+    else
+    {
+        <!-- Role Information -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Role Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="label">Role Name</label>
+                        <p class="text-gray-900 font-medium">@role.Name</p>
+                    </div>
+                    <div>
+                        <label class="label">Role Type</label>
+                        <p class="text-gray-900">
+                            @if (IsSystemRole(role.Name))
+                            {
+                                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">System Role</span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">Custom Role</span>
+                            }
+                        </p>
+                    </div>
+                    <div>
+                        <label class="label">Total Permissions</label>
+                        <p class="text-gray-900 font-medium">@role.Permissions.Count</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions by Section -->
+            <div>
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Permissions</h2>
+                <div class="space-y-4">
+                    @foreach (var section in Enum.GetValues<PermissionSection>())
+                    {
+                        var sectionPermissions = role.Permissions.Where(p => p.Section == section).ToList();
+                        <div class="border rounded-lg p-4">
+                            <h3 class="font-semibold text-gray-900 mb-3">@(section)</h3>
+                            @if (sectionPermissions.Any())
+                            {
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach (var permission in sectionPermissions)
+                                    {
+                                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                                            @permission.Function
+                                        </span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-gray-500 text-sm italic">No permissions</p>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Permission Matrix -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Permission Matrix</h2>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            @foreach (var function in Enum.GetValues<PermissionFunction>())
+                            {
+                                <th class="text-center">@function</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var section in Enum.GetValues<PermissionSection>())
+                        {
+                            <tr>
+                                <td class="font-medium">@(section)</td>
+                                @foreach (var function in Enum.GetValues<PermissionFunction>())
+                                {
+                                    var hasPermission = role.Permissions.Any(p => p.Section == section && p.Function == function);
+                                    <td class="text-center">
+                                        @if (hasPermission)
+                                        {
+                                            <svg class="w-5 h-5 text-green-600 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <svg class="w-5 h-5 text-gray-300 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string RoleName { get; set; } = string.Empty;
+
+    private bool isLoading = true;
+    private Role? role;
+
+    private readonly HashSet<string> systemRoles = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "Administrator",
+        "Estate",
+        "Viewer"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadRole();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadRole();
+    }
+
+    private async Task LoadRole()
+    {
+        try
+        {
+            isLoading = true;
+            role = await PermissionStore.GetRoleAsync(RoleName);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool IsSystemRole(string roleName)
+    {
+        return systemRoles.Contains(roleName);
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/permissions");
+    }
+
+    private void EditRole()
+    {
+        NavigationManager.NavigateTo($"/permissions/{RoleName}/edit");
+    }
+}
