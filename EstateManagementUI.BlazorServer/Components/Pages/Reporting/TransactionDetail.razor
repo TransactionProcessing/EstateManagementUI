@@ -1,5 +1,6 @@
 @page "/reporting/transaction-detail"
 @rendermode InteractiveServer
+@inject NavigationManager Navigation
 
 <PageTitle>Transaction Detail Report</PageTitle>
 
@@ -10,11 +11,11 @@
             <h1 class="text-2xl font-bold text-gray-900">Transaction Detail Report</h1>
             <p class="text-gray-600 mt-1">View detailed transaction information</p>
         </div>
-        <a href="/reporting" class="btn btn-secondary">
+        <a href="@GetBackUrl()" class="btn btn-secondary">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
             </svg>
-            Back to Reporting
+            @GetBackButtonText()
         </a>
     </div>
 
@@ -25,3 +26,32 @@
         </div>
     </div>
 </div>
+
+@code {
+    private string GetBackUrl()
+    {
+        var uri = Navigation.Uri;
+        if (uri.Contains("returnUrl="))
+        {
+            var startIndex = uri.IndexOf("returnUrl=") + "returnUrl=".Length;
+            var endIndex = uri.IndexOf("&", startIndex);
+            var returnUrl = endIndex > 0 
+                ? uri.Substring(startIndex, endIndex - startIndex) 
+                : uri.Substring(startIndex);
+            return Uri.UnescapeDataString(returnUrl);
+        }
+        
+        return "/reporting";
+    }
+
+    private string GetBackButtonText()
+    {
+        var backUrl = GetBackUrl();
+        if (backUrl.Contains("transaction-summary-merchant"))
+        {
+            return "Back to Merchant Summary";
+        }
+        
+        return "Back to Reporting";
+    }
+}
