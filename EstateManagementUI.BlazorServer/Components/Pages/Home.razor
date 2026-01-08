@@ -107,7 +107,7 @@
         <!-- Comparison Date Selection (moved here) -->
         <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow-admin">
             <label class="text-sm font-medium text-gray-700">Compare to:</label>
-            <select @bind="selectedComparisonDate" @bind:after="OnComparisonDateChanged" class="form-control max-w-xs">
+            <select @bind="selectedComparisonDate" @bind:event="onchange" @onchange="OnComparisonDateChanged" class="form-control max-w-xs">
                 @if (comparisonDates != null)
                 {
                     @foreach (var date in comparisonDates)
@@ -318,7 +318,7 @@
         }
     }
 
-    private async Task OnComparisonDateChanged()
+    private async Task OnComparisonDateChanged(ChangeEventArgs e)
     {
         if (!isAdministrator)
         {
