@@ -56,6 +56,7 @@ public class TestMediatorService : IMediator
             Queries.GetTopOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockTopOperators())),
             Queries.GetBottomOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockBottomOperators())),
             Queries.GetLastSettlementQuery => Task.FromResult((TResponse)(object)Result<LastSettlementModel>.Success(GetMockLastSettlement())),
+            Queries.GetMerchantTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantTransactionSummaryModel>>.Success(GetMockMerchantTransactionSummary(query))),
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
@@ -537,6 +538,39 @@ public class TestMediatorService : IMediator
         SalesValue = 125000.00m,
         SettlementValue = 123750.00m
     };
+
+    private List<MerchantTransactionSummaryModel> GetMockMerchantTransactionSummary(Queries.GetMerchantTransactionSummaryQuery query)
+    {
+        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        var random = new Random(42); // Use seed for consistent data
+        
+        var summary = merchants.Select(merchant =>
+        {
+            var totalCount = random.Next(100, 1000);
+            var successfulCount = (int)(totalCount * (0.80 + random.NextDouble() * 0.15)); // 80-95% success rate
+            var failedCount = totalCount - successfulCount;
+            var totalValue = (decimal)(random.NextDouble() * 50000 + 10000);
+            
+            return new MerchantTransactionSummaryModel
+            {
+                MerchantId = merchant.MerchantId,
+                MerchantName = merchant.MerchantName ?? "Unknown Merchant",
+                TotalTransactionCount = totalCount,
+                TotalTransactionValue = Math.Round(totalValue, 2),
+                AverageTransactionValue = Math.Round(totalValue / totalCount, 2),
+                SuccessfulTransactionCount = successfulCount,
+                FailedTransactionCount = failedCount
+            };
+        }).ToList();
+        
+        // Apply filters if specified
+        if (query.MerchantId.HasValue)
+        {
+            summary = summary.Where(s => s.MerchantId == query.MerchantId.Value).ToList();
+        }
+        
+        return summary;
+    }
 
     private Result ExecuteAddOperatorToEstate(Commands.AddOperatorToEstateCommand cmd)
     {
