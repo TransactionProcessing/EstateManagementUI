@@ -179,7 +179,13 @@ IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>
         }
 
         var products = new List<ProductPerformanceModel>();
-        var random = new Random(42); // Use seed for consistent test data
+        
+        // Calculate days in the date range to vary data based on period
+        var daysInRange = (request.EndDate - request.StartDate).Days + 1;
+        
+        // Use date range as seed for consistent but varying data
+        var seed = request.StartDate.GetHashCode() ^ request.EndDate.GetHashCode();
+        var random = new Random(seed);
         
         // Collect all unique products from all contracts
         var productNames = contracts.Data
@@ -191,11 +197,15 @@ IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>
         decimal totalValue = 0;
         
         // Generate mock transaction data for each product
+        // Scale transaction counts based on the date range length
+        var countMultiplier = Math.Max(1, daysInRange / 30.0); // Scale based on 30-day baseline
+        
         foreach (var productName in productNames) {
             if (string.IsNullOrEmpty(productName)) continue;
             
-            var transactionCount = random.Next(50, 500);
-            var transactionValue = Math.Round((decimal)(random.NextDouble() * 30000 + 5000), 2);
+            var baseTransactionCount = random.Next(50, 500);
+            var transactionCount = (int)(baseTransactionCount * countMultiplier);
+            var transactionValue = Math.Round((decimal)(random.NextDouble() * 30000 + 5000) * (decimal)countMultiplier, 2);
             totalValue += transactionValue;
             
             products.Add(new ProductPerformanceModel {
