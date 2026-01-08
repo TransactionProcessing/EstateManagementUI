@@ -72,5 +72,7 @@ namespace EstateManagmentUI.BusinessLogic.Requests {
         public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, String AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null, Guid? ProductId = null) : IRequest<Result<List<MerchantTransactionSummaryModel>>>;
 
         public record GetProductPerformanceQuery(CorrelationId CorrelationId, String AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<ProductPerformanceModel>>>;
+
+        public record GetOperatorTransactionSummaryQuery(CorrelationId CorrelationId, String AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null) : IRequest<Result<List<OperatorTransactionSummaryModel>>>;
     }
 }
