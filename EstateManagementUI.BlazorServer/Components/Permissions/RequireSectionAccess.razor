@@ -4,13 +4,18 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @implements IDisposable
 
-@if (_hasSectionAccess)
+@if (_isChecking)
+{
+    <!-- Render nothing while checking to avoid flicker -->
+}
+else if (_hasSectionAccess)
 {
     @ChildContent
 }
 
 @code {
     private bool _hasSectionAccess;
+    private bool _isChecking = true;
 
     [Parameter]
     public PermissionSection Section { get; set; }
@@ -38,7 +43,10 @@
 
     private async Task CheckAccessAsync()
     {
+        _isChecking = true;
         _hasSectionAccess = await PermissionService.HasSectionAccessAsync(Section);
+        _isChecking = false;
+        Console.WriteLine($"RequireSectionAccess: Section={Section}, HasAccess={_hasSectionAccess}");
         StateHasChanged();
     }
 
