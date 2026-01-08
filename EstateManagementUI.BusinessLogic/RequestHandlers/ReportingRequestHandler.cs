@@ -23,7 +23,8 @@ IRequestHandler<GetBottomMerchantDataQuery, Result<List<TopBottomMerchantDataMod
 IRequestHandler<GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
 IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
 IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>>,
-IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransactionSummaryModel>>> {
+IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransactionSummaryModel>>>,
+IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>>> {
 
     private readonly IApiClient ApiClient;
     public ReportingRequestHandler(IApiClient apiClient)
@@ -165,5 +166,64 @@ IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransact
         }
         
         return Result.Success(summary);
+    }
+
+    public async Task<Result<List<ProductPerformanceModel>>> Handle(GetProductPerformanceQuery request,
+                                                                     CancellationToken cancellationToken) {
+        // TODO: Replace with actual API call when endpoint is available
+        // For now, return mock data for testing
+        var contracts = await this.ApiClient.GetContracts(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        
+        if (!contracts.IsSuccess) {
+            return Result.Failure<List<ProductPerformanceModel>>(contracts.Message);
+        }
+
+        var products = new List<ProductPerformanceModel>();
+        var random = new Random(42); // Use seed for consistent test data
+        
+        // Collect all unique products from all contracts
+        var productNames = contracts.Data
+            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .Select(p => p.ProductName)
+            .Distinct()
+            .ToList();
+        
+        decimal totalValue = 0;
+        
+        // Generate mock transaction data for each product
+        foreach (var productName in productNames) {
+            if (string.IsNullOrEmpty(productName)) continue;
+            
+            var transactionCount = random.Next(50, 500);
+            var transactionValue = Math.Round((decimal)(random.NextDouble() * 30000 + 5000), 2);
+            totalValue += transactionValue;
+            
+            products.Add(new ProductPerformanceModel {
+                ProductName = productName,
+                TransactionCount = transactionCount,
+                TransactionValue = transactionValue,
+                PercentageContribution = 0 // Will be calculated after total is known
+            });
+        }
+        
+        // Calculate percentage contributions (ensure they sum to 100%)
+        if (totalValue > 0) {
+            decimal percentageSum = 0;
+            for (int i = 0; i < products.Count; i++) {
+                if (i == products.Count - 1) {
+                    // Last item gets the remainder to ensure exact 100%
+                    products[i].PercentageContribution = Math.Round(100 - percentageSum, 2);
+                } else {
+                    var percentage = Math.Round((products[i].TransactionValue / totalValue) * 100, 2);
+                    products[i].PercentageContribution = percentage;
+                    percentageSum += percentage;
+                }
+            }
+        }
+        
+        // Sort by transaction value descending
+        products = products.OrderByDescending(p => p.TransactionValue).ToList();
+        
+        return Result.Success(products);
     }
 }

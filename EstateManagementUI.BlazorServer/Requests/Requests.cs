@@ -39,6 +39,7 @@ public static class Queries
     public record GetLastSettlementQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<LastSettlementModel>>;
     public record GetMerchantQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId) : IRequest<Result<MerchantModel>>;
     public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null, Guid? ProductId = null) : IRequest<Result<List<MerchantTransactionSummaryModel>>>;
+    public record GetProductPerformanceQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<ProductPerformanceModel>>>;
 }
 
 public static class Commands

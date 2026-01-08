@@ -57,6 +57,7 @@ public class TestMediatorService : IMediator
             Queries.GetBottomOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockBottomOperators())),
             Queries.GetLastSettlementQuery => Task.FromResult((TResponse)(object)Result<LastSettlementModel>.Success(GetMockLastSettlement())),
             Queries.GetMerchantTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantTransactionSummaryModel>>.Success(GetMockMerchantTransactionSummary(query))),
+            Queries.GetProductPerformanceQuery query => Task.FromResult((TResponse)(object)Result<List<ProductPerformanceModel>>.Success(GetMockProductPerformance(query))),
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
@@ -574,6 +575,64 @@ public class TestMediatorService : IMediator
         }
         
         return summary;
+    }
+
+    private List<ProductPerformanceModel> GetMockProductPerformance(Queries.GetProductPerformanceQuery query)
+    {
+        var contracts = _testDataStore.GetContracts(query.EstateId);
+        var random = new Random(42); // Use seed for consistent data
+        
+        // Collect all unique products from all contracts
+        var productNames = contracts
+            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .Select(p => p.ProductName)
+            .Where(p => !string.IsNullOrEmpty(p))
+            .Distinct()
+            .ToList();
+        
+        var products = new List<ProductPerformanceModel>();
+        decimal totalValue = 0;
+        
+        // Generate mock transaction data for each product
+        foreach (var productName in productNames)
+        {
+            var transactionCount = random.Next(50, 500);
+            var transactionValue = Math.Round((decimal)(random.NextDouble() * 30000 + 5000), 2);
+            totalValue += transactionValue;
+            
+            products.Add(new ProductPerformanceModel
+            {
+                ProductName = productName,
+                TransactionCount = transactionCount,
+                TransactionValue = transactionValue,
+                PercentageContribution = 0 // Will be calculated after total is known
+            });
+        }
+        
+        // Calculate percentage contributions (ensure they sum to 100%)
+        if (totalValue > 0)
+        {
+            decimal percentageSum = 0;
+            for (int i = 0; i < products.Count; i++)
+            {
+                if (i == products.Count - 1)
+                {
+                    // Last item gets the remainder to ensure exact 100%
+                    products[i].PercentageContribution = Math.Round(100 - percentageSum, 2);
+                }
+                else
+                {
+                    var percentage = Math.Round((products[i].TransactionValue / totalValue) * 100, 2);
+                    products[i].PercentageContribution = percentage;
+                    percentageSum += percentage;
+                }
+            }
+        }
+        
+        // Sort by transaction value descending
+        products = products.OrderByDescending(p => p.TransactionValue).ToList();
+        
+        return products;
     }
 
     private Result ExecuteAddOperatorToEstate(Commands.AddOperatorToEstateCommand cmd)

@@ -223,3 +223,11 @@ public class MerchantTransactionSummaryModel
     public int SuccessfulTransactionCount { get; set; }
     public int FailedTransactionCount { get; set; }
 }
+
+public class ProductPerformanceModel
+{
+    public string? ProductName { get; set; }
+    public int TransactionCount { get; set; }
+    public decimal TransactionValue { get; set; }
+    public decimal PercentageContribution { get; set; }
+}
