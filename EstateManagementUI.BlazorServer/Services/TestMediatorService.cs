@@ -370,11 +370,51 @@ public class TestMediatorService : IMediator
         IgnoredLines = 0
     };
 
-    private static List<ComparisonDateModel> GetMockComparisonDates() => new()
+    private static List<ComparisonDateModel> GetMockComparisonDates()
     {
-        new ComparisonDateModel { Date = DateTime.Today, Description = "Today" },
-        new ComparisonDateModel { Date = DateTime.Today.AddDays(-1), Description = "Yesterday" }
-    };
+        var dates = new List<ComparisonDateModel>();
+        var today = DateTime.Today;
+        
+        // Add primary options
+        dates.Add(new ComparisonDateModel { Date = today.AddDays(-1), Description = "Yesterday" });
+        dates.Add(new ComparisonDateModel { Date = today.AddDays(-7), Description = $"Last Week ({today.AddDays(-7).DayOfWeek})" });
+        dates.Add(new ComparisonDateModel { Date = today.AddMonths(-1), Description = $"Last Month ({today.AddMonths(-1).Day}{GetDaySuffix(today.AddMonths(-1).Day)})" });
+        
+        // Add other dates, excluding those already covered (yesterday, last week's exact day, last month's exact day)
+        var excludeDates = new HashSet<DateTime> 
+        { 
+            today.AddDays(-1).Date,  // Yesterday
+            today.AddDays(-7).Date,  // Last week
+            today.AddMonths(-1).Date // Last month
+        };
+        
+        // Add dates from 2-30 days ago (excluding already covered dates)
+        for (int i = 2; i <= 30; i++)
+        {
+            var date = today.AddDays(-i);
+            if (!excludeDates.Contains(date))
+            {
+                dates.Add(new ComparisonDateModel 
+                { 
+                    Date = date, 
+                    Description = $"{i} days ago ({date:MMM d})" 
+                });
+            }
+        }
+        
+        return dates;
+    }
+    
+    private static string GetDaySuffix(int day)
+    {
+        return day switch
+        {
+            1 or 21 or 31 => "st",
+            2 or 22 => "nd",
+            3 or 23 => "rd",
+            _ => "th"
+        };
+    }
 
     private static TodaysSalesModel GetMockTodaysSales() => new()
     {
