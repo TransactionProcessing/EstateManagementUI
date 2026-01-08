@@ -44,6 +44,7 @@ namespace EstateManagementUI.BusinessLogic.Tests {
             this.Requests.Add(TestData.GetTopOperatorDataQuery);
             this.Requests.Add(TestData.GetBottomOperatorDataQuery);
             this.Requests.Add(TestData.GetLastSettlementQuery);
+            this.Requests.Add(TestData.GetProductPerformanceQuery);
 
             // Commands
             this.Requests.Add(TestData.AddNewOperatorCommand);
