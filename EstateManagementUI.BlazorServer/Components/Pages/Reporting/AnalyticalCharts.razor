@@ -301,6 +301,10 @@
             if (salesCountData == null || salesValueData == null)
                 return;
 
+            // Create labels with date and time context
+            var today = DateTime.Today;
+            var comparisonDateParsed = DateTime.TryParse(_selectedComparisonDate, out var compDate) ? compDate : DateTime.Today.AddDays(-7);
+            
             var labels = salesCountData.Select(d => $"{d.Hour:00}:00").ToArray();
             var todaysCountData = salesCountData.Select(d => d.TodaysSalesCount).ToArray();
             var comparisonCountData = salesCountData.Select(d => d.ComparisonSalesCount).ToArray();
@@ -309,6 +313,8 @@
             var comparisonValueData = salesValueData.Select(d => (double)d.ComparisonSalesValue).ToArray();
 
             var comparisonLabel = GetComparisonLabel();
+            var todayLabel = today.ToString("MMM dd");
+            var comparisonDateLabel = compDate.ToString("MMM dd");
 
             // Update Volume Chart
             await JSRuntime.InvokeVoidAsync("updateOrCreateChart", 
@@ -317,8 +323,8 @@
                 labels,
                 new object[] 
                 {
-                    new { label = "Today's Volume", data = todaysCountData, borderColor = "rgb(59, 130, 246)", backgroundColor = "rgba(59, 130, 246, 0.1)", tension = 0.4 },
-                    new { label = $"{comparisonLabel} Volume", data = comparisonCountData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
+                    new { label = $"Today ({todayLabel}) Volume", data = todaysCountData, borderColor = "rgb(59, 130, 246)", backgroundColor = "rgba(59, 130, 246, 0.1)", tension = 0.4 },
+                    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Volume", data = comparisonCountData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
                 },
                 "Transaction Count"
             );
@@ -330,8 +336,8 @@
                 labels,
                 new object[] 
                 {
-                    new { label = "Today's Value", data = todaysValueData, borderColor = "rgb(16, 185, 129)", backgroundColor = "rgba(16, 185, 129, 0.1)", tension = 0.4 },
-                    new { label = $"{comparisonLabel} Value", data = comparisonValueData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
+                    new { label = $"Today ({todayLabel}) Value", data = todaysValueData, borderColor = "rgb(16, 185, 129)", backgroundColor = "rgba(16, 185, 129, 0.1)", tension = 0.4 },
+                    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Value", data = comparisonValueData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
                 },
                 "Transaction Value ($)"
             );
