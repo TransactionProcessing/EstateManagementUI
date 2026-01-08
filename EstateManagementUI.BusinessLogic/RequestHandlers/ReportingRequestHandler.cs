@@ -22,7 +22,8 @@ IRequestHandler<GetTopMerchantDataQuery, Result<List<TopBottomMerchantDataModel>
 IRequestHandler<GetBottomMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>,
 IRequestHandler<GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
 IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
-IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>> {
+IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>>,
+IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransactionSummaryModel>>> {
 
     private readonly IApiClient ApiClient;
     public ReportingRequestHandler(IApiClient apiClient)
@@ -124,5 +125,43 @@ IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>> {
         Result<LastSettlementModel> model = await this.ApiClient.GetLastSettlement(request.AccessToken, request.EstateId, null, null,
             cancellationToken);
         return model;
+    }
+
+    public async Task<Result<List<MerchantTransactionSummaryModel>>> Handle(GetMerchantTransactionSummaryQuery request,
+                                                                             CancellationToken cancellationToken) {
+        // TODO: Replace with actual API call when endpoint is available
+        // For now, return mock data for testing
+        var merchants = await this.ApiClient.GetMerchants(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        
+        if (!merchants.IsSuccess) {
+            return Result.Failure<List<MerchantTransactionSummaryModel>>(merchants.Message);
+        }
+
+        var summary = new List<MerchantTransactionSummaryModel>();
+        var random = new Random(42); // Use seed for consistent test data
+        
+        foreach (var merchant in merchants.Data) {
+            var totalCount = random.Next(100, 1000);
+            var successfulCount = (int)(totalCount * 0.85); // 85% success rate
+            var failedCount = totalCount - successfulCount;
+            var totalValue = (decimal)(random.NextDouble() * 50000 + 10000);
+            
+            summary.Add(new MerchantTransactionSummaryModel {
+                MerchantId = merchant.Id,
+                MerchantName = merchant.Name,
+                TotalTransactionCount = totalCount,
+                TotalTransactionValue = Math.Round(totalValue, 2),
+                AverageTransactionValue = Math.Round(totalValue / totalCount, 2),
+                SuccessfulTransactionCount = successfulCount,
+                FailedTransactionCount = failedCount
+            });
+        }
+        
+        // Apply filters if specified
+        if (request.MerchantId.HasValue) {
+            summary = summary.Where(s => s.MerchantId == request.MerchantId.Value).ToList();
+        }
+        
+        return Result.Success(summary);
     }
 }
