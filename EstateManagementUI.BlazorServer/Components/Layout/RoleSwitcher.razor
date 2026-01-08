@@ -3,6 +3,7 @@
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService
+@inject IPermissionKeyProvider PermissionKeyProvider
 
 @if (isTestMode)
 {
@@ -95,6 +96,9 @@
     
     private void SwitchRole(string role)
     {
+        // Refresh the permission key to force component recreation
+        PermissionKeyProvider.RefreshKey();
+        
         // Store the selected role in session storage or cookie for persistence
         // For now, we'll just reload with a query parameter
         var uri = new Uri(NavigationManager.Uri);
