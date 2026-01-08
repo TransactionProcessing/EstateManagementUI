@@ -541,13 +541,17 @@ public class TestMediatorService : IMediator
 
     private List<MerchantTransactionSummaryModel> GetMockMerchantTransactionSummary(Queries.GetMerchantTransactionSummaryQuery query)
     {
+        const double MinSuccessRate = 0.80; // 80% minimum success rate for test data
+        const double SuccessRateRange = 0.15; // Range up to 95% success rate
+        
         var merchants = _testDataStore.GetMerchants(query.EstateId);
         var random = new Random(42); // Use seed for consistent data
         
         var summary = merchants.Select(merchant =>
         {
             var totalCount = random.Next(100, 1000);
-            var successfulCount = (int)(totalCount * (0.80 + random.NextDouble() * 0.15)); // 80-95% success rate
+            var successRate = MinSuccessRate + random.NextDouble() * SuccessRateRange;
+            var successfulCount = (int)(totalCount * successRate);
             var failedCount = totalCount - successfulCount;
             var totalValue = (decimal)(random.NextDouble() * 50000 + 10000);
             

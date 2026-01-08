@@ -140,9 +140,11 @@ IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransact
         var summary = new List<MerchantTransactionSummaryModel>();
         var random = new Random(42); // Use seed for consistent test data
         
+        const decimal DefaultSuccessRate = 0.85m; // 85% success rate for mock data
+        
         foreach (var merchant in merchants.Data) {
             var totalCount = random.Next(100, 1000);
-            var successfulCount = (int)(totalCount * 0.85); // 85% success rate
+            var successfulCount = (int)(totalCount * DefaultSuccessRate);
             var failedCount = totalCount - successfulCount;
             var totalValue = (decimal)(random.NextDouble() * 50000 + 10000);
             
