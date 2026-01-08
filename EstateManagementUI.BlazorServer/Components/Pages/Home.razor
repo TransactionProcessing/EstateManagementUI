@@ -108,7 +108,7 @@
         <!-- Comparison Date Selection (moved here) -->
         <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow-admin">
             <label class="text-sm font-medium text-gray-700">Compare to:</label>
-            <select @bind="selectedComparisonDate" @bind:after="HandleComparisonDateChanged" class="form-control max-w-xs">
+            <select value="@SelectedComparisonDate" @onchange="@((ChangeEventArgs e) => { SelectedComparisonDate = e.Value?.ToString() ?? SelectedComparisonDate; })" class="form-control max-w-xs">
                 @if (comparisonDates != null)
                 {
                     @foreach (var date in comparisonDates)
@@ -219,7 +219,28 @@
     private List<ComparisonDateModel>? comparisonDates;
     private List<MerchantModel>? recentMerchants;
     
-    private string selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+    private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+    
+    private string SelectedComparisonDate
+    {
+        get => _selectedComparisonDate;
+        set
+        {
+            if (_selectedComparisonDate != value)
+            {
+                _selectedComparisonDate = value;
+                // Trigger reload when value changes
+                InvokeAsync(async () =>
+                {
+                    if (!isAdministrator)
+                    {
+                        await LoadDashboardData();
+                        StateHasChanged();
+                    }
+                });
+            }
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -274,12 +295,12 @@
                     if (comparisonDates != null && comparisonDates.Any())
                     {
                         // Set default comparison date to the first one only on initial load
-                        selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
+                        _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
                     }
                 }
             }
 
-            if (!DateTime.TryParse(selectedComparisonDate, out var comparisonDate))
+            if (!DateTime.TryParse(_selectedComparisonDate, out var comparisonDate))
             {
                 // Fallback to a week ago if parse fails
                 comparisonDate = DateTime.Now.AddDays(-7);
@@ -318,28 +339,11 @@
             StateHasChanged();
         }
     }
-    private async Task HandleComparisonDateChanged()
-    {
-        if (!isAdministrator)
-        {
-            await LoadDashboardData();
-        }
-    }
-
-
-    private async Task OnComparisonDateChanged(ChangeEventArgs e)
-    {
-        if (!isAdministrator && e.Value != null)
-        {
-            selectedComparisonDate = e.Value.ToString()!;
-            await LoadDashboardData();
-        }
-    }
 
     private string GetComparisonLabel()
     {
         if (comparisonDates == null) return "Comparison";
-        if (!DateTime.TryParse(selectedComparisonDate, out var date))
+        if (!DateTime.TryParse(_selectedComparisonDate, out var date))
             return "Comparison";
         var comparisonDate = comparisonDates.FirstOrDefault(d => d.Date.Date == date.Date);
         return comparisonDate?.Description ?? date.ToString("MMM dd");
