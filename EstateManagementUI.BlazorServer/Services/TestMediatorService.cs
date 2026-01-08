@@ -617,8 +617,8 @@ public class TestMediatorService : IMediator
             {
                 if (i == products.Count - 1)
                 {
-                    // Last item gets the remainder to ensure exact 100%
-                    products[i].PercentageContribution = Math.Round(100 - percentageSum, 2);
+                    // Last item gets the remainder to ensure exact 100% (protected against negative values)
+                    products[i].PercentageContribution = Math.Max(0, Math.Round(100 - percentageSum, 2));
                 }
                 else
                 {

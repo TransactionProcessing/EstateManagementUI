@@ -211,8 +211,8 @@ IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>
             decimal percentageSum = 0;
             for (int i = 0; i < products.Count; i++) {
                 if (i == products.Count - 1) {
-                    // Last item gets the remainder to ensure exact 100%
-                    products[i].PercentageContribution = Math.Round(100 - percentageSum, 2);
+                    // Last item gets the remainder to ensure exact 100% (protected against negative values)
+                    products[i].PercentageContribution = Math.Max(0, Math.Round(100 - percentageSum, 2));
                 } else {
                     var percentage = Math.Round((products[i].TransactionValue / totalValue) * 100, 2);
                     products[i].PercentageContribution = percentage;
