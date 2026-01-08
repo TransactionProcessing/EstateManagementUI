@@ -25,7 +25,8 @@ IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataMod
 IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>>,
 IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransactionSummaryModel>>>,
 IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>>>,
-IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransactionSummaryModel>>> {
+IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransactionSummaryModel>>>,
+IRequestHandler<GetSettlementSummaryQuery, Result<List<SettlementSummaryModel>>> {
 
     private readonly IApiClient ApiClient;
     public ReportingRequestHandler(IApiClient apiClient)
@@ -276,6 +277,56 @@ IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransact
         // Apply filters if specified
         if (request.OperatorId.HasValue) {
             summary = summary.Where(s => s.OperatorId == request.OperatorId.Value).ToList();
+        }
+        
+        return Result.Success(summary);
+    }
+
+    public async Task<Result<List<SettlementSummaryModel>>> Handle(GetSettlementSummaryQuery request,
+                                                                     CancellationToken cancellationToken) {
+        // TODO: Replace with actual API call when endpoint is available
+        // For now, return mock data for testing
+        var merchants = await this.ApiClient.GetMerchants(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        
+        if (!merchants.IsSuccess) {
+            return Result.Failure<List<SettlementSummaryModel>>(merchants.Message);
+        }
+
+        var summary = new List<SettlementSummaryModel>();
+        
+        // Use date range as seed for consistent but varying data
+        var seed = request.StartDate.GetHashCode() ^ request.EndDate.GetHashCode();
+        var random = new Random(seed);
+        
+        // Settlement statuses to distribute
+        var statuses = new[] { "settled", "settled", "settled", "pending", "failed" };
+        const decimal DefaultFeePercentage = 0.025m; // 2.5% fee rate
+        
+        foreach (var merchant in merchants.Data) {
+            var grossValue = (decimal)(random.NextDouble() * 100000 + 10000);
+            var totalFees = Math.Round(grossValue * DefaultFeePercentage, 2);
+            var netAmount = Math.Round(grossValue - totalFees, 2);
+            var status = statuses[random.Next(statuses.Length)];
+            
+            summary.Add(new SettlementSummaryModel {
+                SettlementPeriodStart = request.StartDate,
+                SettlementPeriodEnd = request.EndDate,
+                MerchantId = merchant.Id,
+                MerchantName = merchant.Name,
+                GrossTransactionValue = Math.Round(grossValue, 2),
+                TotalFees = totalFees,
+                NetSettlementAmount = netAmount,
+                SettlementStatus = status
+            });
+        }
+        
+        // Apply filters if specified
+        if (request.MerchantId.HasValue) {
+            summary = summary.Where(s => s.MerchantId == request.MerchantId.Value).ToList();
+        }
+        
+        if (!string.IsNullOrEmpty(request.Status)) {
+            summary = summary.Where(s => s.SettlementStatus.Equals(request.Status, StringComparison.OrdinalIgnoreCase)).ToList();
         }
         
         return Result.Success(summary);
