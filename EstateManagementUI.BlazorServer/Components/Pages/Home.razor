@@ -9,6 +9,7 @@
 @inject IMediator Mediator
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @inject IPermissionService PermissionService
 
 <PageTitle>Dashboard</PageTitle>
@@ -109,7 +110,7 @@
         <!-- Comparison Date Selection (moved here) -->
         <div class="flex items-center gap-4 bg-white p-4 rounded-lg shadow-admin">
             <label class="text-sm font-medium text-gray-700">Compare to:</label>
-            <InputSelect @bind-Value="_selectedComparisonDate" @bind-Value:after="OnComparisonDateChanged" class="form-control max-w-xs">
+            <InputSelect @bind-Value="_selectedComparisonDate" @bind-Value:after="OnComparisonDateChanged" class="form-control max-w-xs" id="comparisonDateSelector">
                 @if (comparisonDates != null)
                 {
                     @foreach (var date in comparisonDates)
@@ -118,6 +119,7 @@
                     }
                 }
             </InputSelect>
+            <span class="text-xs text-gray-500">Current: @_selectedComparisonDate</span>
         </div>
 
         <!-- Comparison Cards Row 2 - Sales Data -->
@@ -220,9 +222,11 @@
     private List<ComparisonDateModel>? comparisonDates;
     private List<MerchantModel>? recentMerchants;
     private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+    private int changeEventCounter = 0;
     
     protected override async Task OnInitializedAsync()
     {
+        await LogToConsole("OnInitializedAsync START");
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
         
@@ -236,6 +240,7 @@
         // Check if user is Administrator
         var role = await PermissionService.GetUserRoleAsync();
         isAdministrator = role == "Administrator";
+        await LogToConsole($"User role: {role}, isAdministrator: {isAdministrator}");
 
         // Only load data if not administrator
         if (!isAdministrator)
@@ -252,6 +257,7 @@
 
     private async Task LoadDashboardData()
     {
+        await LogToConsole($"LoadDashboardData START - selectedDate: {_selectedComparisonDate}");
         try
         {
             isLoading = true;
@@ -316,15 +322,37 @@
         {
             isLoading = false;
             StateHasChanged();
+            await LogToConsole("LoadDashboardData END");
         }
     }
     private async Task OnComparisonDateChanged()
     {
+        changeEventCounter++;
+        await LogToConsole($"🔥 OnComparisonDateChanged FIRED! Count: {changeEventCounter}, New value: {_selectedComparisonDate}");
+        
         // This is called after _selectedComparisonDate is updated by @bind-Value
         if (!isAdministrator)
         {
+            await LogToConsole($"Loading dashboard data for date: {_selectedComparisonDate}");
             await LoadDashboardData();
             StateHasChanged();
+            await LogToConsole("Dashboard data reload complete");
+        }
+        else
+        {
+            await LogToConsole("User is administrator - skipping data reload");
+        }
+    }
+    
+    private async Task LogToConsole(string message)
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("console.log", $"[Home.razor {DateTime.Now:HH:mm:ss.fff}] {message}");
+        }
+        catch
+        {
+            // Ignore JS interop errors during prerendering
         }
     }
 
