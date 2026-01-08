@@ -199,10 +199,8 @@
                                         <td class="text-right text-red-600">@item.FailedTransactionCount.ToString("N0")</td>
                                         <td class="text-right">
                                             @{
-                                                var failureRate = item.TotalTransactionCount > 0 
-                                                    ? (item.FailedTransactionCount * 100.0 / item.TotalTransactionCount) 
-                                                    : 0;
-                                                var rateClass = failureRate <= 5 ? "text-green-600" : failureRate <= 10 ? "text-yellow-600" : "text-red-600";
+                                                var failureRate = CalculateFailureRate(item.FailedTransactionCount, item.TotalTransactionCount);
+                                                var rateClass = GetFailureRateClass(failureRate);
                                             }
                                             <span class="@rateClass font-medium">@failureRate.ToString("F1")%</span>
                                         </td>
@@ -220,8 +218,8 @@
                                     <td class="text-right text-red-600">@totalFailed.ToString("N0")</td>
                                     <td class="text-right">
                                         @{
-                                            var overallFailureRate = totalTransactions > 0 ? (totalFailed * 100.0 / totalTransactions) : 0;
-                                            var overallRateClass = overallFailureRate <= 5 ? "text-green-600" : overallFailureRate <= 10 ? "text-yellow-600" : "text-red-600";
+                                            var overallFailureRate = CalculateFailureRate(totalFailed, totalTransactions);
+                                            var overallRateClass = GetFailureRateClass(overallFailureRate);
                                         }
                                         <span class="@overallRateClass">@overallFailureRate.ToString("F1")%</span>
                                     </td>
@@ -371,6 +369,16 @@
         totalFees = summaryData.Sum(s => s.TotalFeesEarned);
         totalSuccessful = summaryData.Sum(s => s.SuccessfulTransactionCount);
         totalFailed = summaryData.Sum(s => s.FailedTransactionCount);
+    }
+    
+    private double CalculateFailureRate(int failed, int total)
+    {
+        return total > 0 ? (failed * 100.0 / total) : 0;
+    }
+    
+    private string GetFailureRateClass(double failureRate)
+    {
+        return failureRate <= 5 ? "text-green-600" : failureRate <= 10 ? "text-yellow-600" : "text-red-600";
     }
     
     private async Task ApplyFilters()

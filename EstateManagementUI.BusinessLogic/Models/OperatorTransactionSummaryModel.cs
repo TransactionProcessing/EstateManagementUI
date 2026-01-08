@@ -6,7 +6,7 @@ namespace EstateManagementUI.BusinessLogic.Models;
 public class OperatorTransactionSummaryModel
 {
     public Guid OperatorId { get; set; }
-    public string OperatorName { get; set; }
+    public string? OperatorName { get; set; }
     public int TotalTransactionCount { get; set; }
     public decimal TotalTransactionValue { get; set; }
     public decimal AverageTransactionValue { get; set; }
