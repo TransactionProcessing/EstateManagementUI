@@ -26,8 +26,14 @@ else if (_hasPermission)
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
+    public RequirePermission()
+    {
+        Console.WriteLine("RequirePermission component created");
+    }
+
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine($"RequirePermission OnInitializedAsync: Section={Section}, Function={Function}");
         // Subscribe to authentication state changes
         AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
         await CheckPermissionAsync();
