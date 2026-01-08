@@ -196,6 +196,7 @@ builder.Services.AddHttpContextAccessor();
 // Register Permission services
 builder.Services.AddSingleton<IPermissionStore, InMemoryPermissionStore>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IPermissionKeyProvider, PermissionKeyProvider>();
 Console.WriteLine("Registered Permission services");
 
 // Register MediatR service based on test mode
