@@ -58,6 +58,7 @@ public class TestMediatorService : IMediator
             Queries.GetLastSettlementQuery => Task.FromResult((TResponse)(object)Result<LastSettlementModel>.Success(GetMockLastSettlement())),
             Queries.GetMerchantTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantTransactionSummaryModel>>.Success(GetMockMerchantTransactionSummary(query))),
             Queries.GetProductPerformanceQuery query => Task.FromResult((TResponse)(object)Result<List<ProductPerformanceModel>>.Success(GetMockProductPerformance(query))),
+            Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<OperatorTransactionSummaryModel>>.Success(GetMockOperatorTransactionSummary(query))),
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
@@ -665,5 +666,42 @@ public class TestMediatorService : IMediator
         // In a real implementation, we would remove the operator from the estate
         // For now, we just return success
         return Result.Success();
+    }
+
+    private List<OperatorTransactionSummaryModel> GetMockOperatorTransactionSummary(Queries.GetOperatorTransactionSummaryQuery query)
+    {
+        var operators = _testDataStore.GetOperators(query.EstateId);
+        var summary = new List<OperatorTransactionSummaryModel>();
+        var random = new Random(42); // Use seed for consistent test data
+        
+        const decimal DefaultSuccessRate = 0.92m; // 92% success rate for mock data
+        const decimal DefaultFeePercentage = 0.015m; // 1.5% fee rate
+        
+        foreach (var op in operators)
+        {
+            // Apply operator filter if specified
+            if (query.OperatorId.HasValue && op.OperatorId != query.OperatorId.Value)
+                continue;
+                
+            var totalCount = random.Next(500, 5000);
+            var successfulCount = (int)(totalCount * DefaultSuccessRate);
+            var failedCount = totalCount - successfulCount;
+            var totalValue = (decimal)(random.NextDouble() * 500000 + 50000);
+            var totalFees = Math.Round(totalValue * DefaultFeePercentage, 2);
+            
+            summary.Add(new OperatorTransactionSummaryModel
+            {
+                OperatorId = op.OperatorId,
+                OperatorName = op.Name,
+                TotalTransactionCount = totalCount,
+                TotalTransactionValue = Math.Round(totalValue, 2),
+                AverageTransactionValue = Math.Round(totalValue / totalCount, 2),
+                SuccessfulTransactionCount = successfulCount,
+                FailedTransactionCount = failedCount,
+                TotalFeesEarned = totalFees
+            });
+        }
+        
+        return summary;
     }
 }
