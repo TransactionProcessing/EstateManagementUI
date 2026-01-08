@@ -59,6 +59,7 @@ public class TestMediatorService : IMediator
             Queries.GetMerchantTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantTransactionSummaryModel>>.Success(GetMockMerchantTransactionSummary(query))),
             Queries.GetProductPerformanceQuery query => Task.FromResult((TResponse)(object)Result<List<ProductPerformanceModel>>.Success(GetMockProductPerformance(query))),
             Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<OperatorTransactionSummaryModel>>.Success(GetMockOperatorTransactionSummary(query))),
+            Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantSettlementHistoryModel>>.Success(GetMockMerchantSettlementHistory(query))),
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
@@ -576,6 +577,71 @@ public class TestMediatorService : IMediator
         }
         
         return summary;
+    }
+
+    private List<MerchantSettlementHistoryModel> GetMockMerchantSettlementHistory(Queries.GetMerchantSettlementHistoryQuery query)
+    {
+        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        
+        // Filter by merchant if specified
+        if (query.MerchantId.HasValue)
+        {
+            merchants = merchants.Where(m => m.MerchantId == query.MerchantId.Value).ToList();
+        }
+        
+        // Generate settlement history data
+        var settlements = new List<MerchantSettlementHistoryModel>();
+        var random = new Random(42); // Use seed for consistent data
+        
+        // Calculate the number of weeks in the date range
+        var startDate = query.StartDate.Date;
+        var endDate = query.EndDate.Date;
+        var currentDate = startDate;
+        
+        // Generate weekly settlements (every Monday)
+        int settlementCounter = 1;
+        while (currentDate <= endDate)
+        {
+            // Find the next Monday or use current date if it's already Monday
+            var daysUntilMonday = ((int)DayOfWeek.Monday - (int)currentDate.DayOfWeek + 7) % 7;
+            if (daysUntilMonday > 0)
+            {
+                currentDate = currentDate.AddDays(daysUntilMonday);
+            }
+            
+            if (currentDate > endDate)
+                break;
+            
+            foreach (var merchant in merchants)
+            {
+                // Generate unique settlement reference
+                var settlementRef = $"STL-{currentDate:yyyyMMdd}-{merchant.MerchantReference ?? merchant.MerchantId.ToString().Substring(0, 8)}-{settlementCounter:D4}";
+                
+                // Generate realistic transaction counts and amounts
+                var transactionCount = random.Next(50, 500);
+                var averageTransactionValue = (decimal)(random.NextDouble() * 50 + 10); // $10-$60 average
+                var grossAmount = transactionCount * averageTransactionValue;
+                var feePercentage = 0.015m + (decimal)(random.NextDouble() * 0.01); // 1.5%-2.5% fee
+                var fees = grossAmount * feePercentage;
+                var netAmount = grossAmount - fees;
+                
+                settlements.Add(new MerchantSettlementHistoryModel
+                {
+                    SettlementDate = currentDate,
+                    SettlementReference = settlementRef,
+                    TransactionCount = transactionCount,
+                    NetAmountPaid = Math.Round(netAmount, 2)
+                });
+                
+                settlementCounter++;
+            }
+            
+            // Move to next week
+            currentDate = currentDate.AddDays(7);
+        }
+        
+        // Sort by date descending (most recent first)
+        return settlements.OrderByDescending(s => s.SettlementDate).ToList();
     }
 
     private List<ProductPerformanceModel> GetMockProductPerformance(Queries.GetProductPerformanceQuery query)

@@ -243,3 +243,12 @@ public class ProductPerformanceModel
     public decimal TransactionValue { get; set; }
     public decimal PercentageContribution { get; set; }
 }
+
+// Settlement History Models
+public class MerchantSettlementHistoryModel
+{
+    public DateTime SettlementDate { get; set; }
+    public string? SettlementReference { get; set; }
+    public int TransactionCount { get; set; }
+    public decimal NetAmountPaid { get; set; }
+}
