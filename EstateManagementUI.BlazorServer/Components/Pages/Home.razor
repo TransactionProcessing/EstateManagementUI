@@ -1,8 +1,13 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
+@using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagmentUI.BusinessLogic.Requests
+@using EstateManagementUI.BusinessLogic.Models
+@using static EstateManagmentUI.BusinessLogic.Requests.Queries
 @inject IMediator Mediator
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
+@inject IPermissionService PermissionService
 
 <PageTitle>Dashboard</PageTitle>
 
@@ -18,125 +23,204 @@
         </div>
     </div>
 
-    <!-- Info Boxes (AdminLTE-style) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <!-- Total Estates -->
-        <div class="info-box">
-            <div class="info-box-icon bg-admin-info">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                </svg>
-            </div>
-            <div class="info-box-content">
-                <span class="info-box-text">Total Estates</span>
-                <span class="info-box-number">1</span>
-            </div>
-        </div>
-
-        <!-- Total Merchants -->
-        <div class="info-box">
-            <div class="info-box-icon bg-admin-success">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                </svg>
-            </div>
-            <div class="info-box-content">
-                <span class="info-box-text">Total Merchants</span>
-                <span class="info-box-number">24</span>
-            </div>
-        </div>
-
-        <!-- Total Contracts -->
-        <div class="info-box">
-            <div class="info-box-icon bg-admin-warning">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-            </div>
-            <div class="info-box-content">
-                <span class="info-box-text">Total Contracts</span>
-                <span class="info-box-number">48</span>
-            </div>
-        </div>
-
-        <!-- Total Operators -->
-        <div class="info-box">
-            <div class="info-box-icon bg-admin-danger">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                </svg>
-            </div>
-            <div class="info-box-content">
-                <span class="info-box-text">Total Operators</span>
-                <span class="info-box-number">12</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Recent Activity -->
+    @if (isAdministrator)
+    {
+        <!-- Administrator Welcome Message -->
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Quick Links</h3>
-            </div>
-            <div class="card-body">
-                <div class="space-y-2">
-                    <a href="/contracts" class="flex items-center p-3 rounded hover:bg-gray-50 transition-colors group">
-                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors">
-                            <svg class="w-5 h-5 text-admin-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-gray-700 font-medium">Contract Management</span>
-                    </a>
-                    <a href="/operators" class="flex items-center p-3 rounded hover:bg-gray-50 transition-colors group">
-                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors">
-                            <svg class="w-5 h-5 text-admin-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                            </svg>
-                        </div>
-                        <span class="text-gray-700 font-medium">Operator Management</span>
-                    </a>
-                </div>
+            <div class="card-body text-center py-12">
+                <svg class="w-20 h-20 mx-auto mb-4 text-admin-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome, Administrator</h2>
+                <p class="text-gray-600">You have administrative access to manage system permissions and settings.</p>
             </div>
         </div>
-
-        <!-- System Status -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">System Status</h3>
-            </div>
+    }
+    else if (isLoading)
+    {
+        <!-- Loading State -->
+        <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-primary"></div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <!-- Error State -->
+        <div class="card bg-red-50 border border-red-200">
             <div class="card-body">
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-                            <span class="text-gray-700 font-medium">Estate Management</span>
-                        </div>
-                        <span class="badge badge-success">Active</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-                            <span class="text-gray-700 font-medium">Transaction Processing</span>
-                        </div>
-                        <span class="badge badge-success">Active</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
-                            <span class="text-gray-700 font-medium">File Processing</span>
-                        </div>
-                        <span class="badge badge-success">Active</span>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-red-800 font-semibold">Error Loading Dashboard</h3>
+                        <p class="text-red-700 text-sm mt-1">@errorMessage</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <!-- Comparison Date Selection -->
+        <div class="card">
+            <div class="card-body">
+                <div class="flex items-center gap-4">
+                    <label class="text-sm font-medium text-gray-700">Compare to:</label>
+                    <select @bind="selectedComparisonDate" @bind:after="OnComparisonDateChanged" class="form-control max-w-xs">
+                        @if (comparisonDates != null)
+                        {
+                            @foreach (var date in comparisonDates)
+                            {
+                                <option value="@date.Date.ToString("yyyy-MM-dd")">@date.Description</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Cards Row 1 - Merchant Activity -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Merchants with sales in last hour -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-success">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Merchants with Sales (Last Hour)</span>
+                    <span class="info-box-number">@(merchantKpi?.MerchantsWithSaleInLastHour ?? 0)</span>
+                </div>
+            </div>
+
+            <!-- Merchants with no sales today -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-warning">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Merchants with No Sales Today</span>
+                    <span class="info-box-number">@(merchantKpi?.MerchantsWithNoSaleToday ?? 0)</span>
+                </div>
+            </div>
+
+            <!-- Merchants with no sales in last 7 days -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-danger">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Merchants with No Sales (7 Days)</span>
+                    <span class="info-box-number">@(merchantKpi?.MerchantsWithNoSaleInLast7Days ?? 0)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Cards Row 2 - Sales Data -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Today's Sales vs Comparison -->
+            <div class="card @GetSalesBackgroundClass()">
+                <div class="card-body">
+                    <h3 class="text-lg font-semibold mb-4 @GetSalesTextClass()">Today's Sales</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm @GetSalesTextClass(0.7) uppercase font-medium">Today</p>
+                            <p class="text-2xl font-bold @GetSalesTextClass()">@((todaysSales?.TodaysSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @GetSalesTextClass(0.7)">@(todaysSales?.TodaysSalesCount ?? 0) transactions</p>
+                        </div>
+                        <div>
+                            <p class="text-sm @GetSalesTextClass(0.7) uppercase font-medium">@GetComparisonLabel()</p>
+                            <p class="text-2xl font-bold @GetSalesTextClass()">@((todaysSales?.ComparisonSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @GetSalesTextClass(0.7)">@(todaysSales?.ComparisonSalesCount ?? 0) transactions</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t @GetSalesBorderClass()">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm @GetSalesTextClass(0.7) font-medium">Variance:</span>
+                            <span class="text-lg font-bold @GetSalesTextClass()">@GetSalesVarianceDisplay()</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Failed Sales vs Comparison -->
+            <div class="card @GetFailedSalesBackgroundClass()">
+                <div class="card-body">
+                    <h3 class="text-lg font-semibold mb-4 @GetFailedSalesTextClass()">Failed Sales (Low Credit)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm @GetFailedSalesTextClass(0.7) uppercase font-medium">Today</p>
+                            <p class="text-2xl font-bold @GetFailedSalesTextClass()">@((todaysFailedSales?.TodaysSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @GetFailedSalesTextClass(0.7)">@(todaysFailedSales?.TodaysSalesCount ?? 0) transactions</p>
+                        </div>
+                        <div>
+                            <p class="text-sm @GetFailedSalesTextClass(0.7) uppercase font-medium">@GetComparisonLabel()</p>
+                            <p class="text-2xl font-bold @GetFailedSalesTextClass()">@((todaysFailedSales?.ComparisonSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @GetFailedSalesTextClass(0.7)">@(todaysFailedSales?.ComparisonSalesCount ?? 0) transactions</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t @GetFailedSalesBorderClass()">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm @GetFailedSalesTextClass(0.7) font-medium">Variance:</span>
+                            <span class="text-lg font-bold @GetFailedSalesTextClass()">@GetFailedSalesVarianceDisplay()</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recently Created Merchants -->
+        @if (recentMerchants != null && recentMerchants.Any())
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Recently Created Merchants</h3>
+                </div>
+                <div class="card-body">
+                    <div class="space-y-3">
+                        @foreach (var merchant in recentMerchants.Take(5))
+                        {
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
+                                        <svg class="w-5 h-5 text-admin-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-900 font-medium">@merchant.MerchantName</p>
+                                        <p class="text-sm text-gray-500">@merchant.MerchantReference</p>
+                                    </div>
+                                </div>
+                                <a href="/merchants/view/@merchant.MerchantId" class="btn btn-sm btn-primary">View</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
 </div>
 
 @code {
+    private bool isLoading = true;
+    private bool isAdministrator = false;
+    private string? errorMessage;
+    
+    private MerchantKpiModel? merchantKpi;
+    private TodaysSalesModel? todaysSales;
+    private TodaysSalesModel? todaysFailedSales;
+    private List<ComparisonDateModel>? comparisonDates;
+    private List<MerchantModel>? recentMerchants;
+    
+    private string selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -148,7 +232,195 @@
             NavigationManager.NavigateTo("/entry", replace: true);
             return;
         }
+
+        // Check if user is Administrator
+        var role = await PermissionService.GetUserRoleAsync();
+        isAdministrator = role == "Administrator";
+
+        // Only load data if not administrator
+        if (!isAdministrator)
+        {
+            await LoadDashboardData();
+        }
+        else
+        {
+            isLoading = false;
+        }
         
         await base.OnInitializedAsync();
+    }
+
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+            StateHasChanged();
+
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            // Load comparison dates first
+            var comparisonDatesResult = await Mediator.Send(new GetComparisonDatesQuery(correlationId, accessToken, estateId));
+            if (comparisonDatesResult.IsSuccess)
+            {
+                comparisonDates = comparisonDatesResult.Data;
+                if (comparisonDates != null && comparisonDates.Any())
+                {
+                    // Set default comparison date to the first one
+                    selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
+                }
+            }
+
+            var comparisonDate = DateTime.Parse(selectedComparisonDate);
+
+            // Load all dashboard data in parallel
+            var kpiTask = Mediator.Send(new GetMerchantKpiQuery(correlationId, accessToken, estateId));
+            var salesTask = Mediator.Send(new GetTodaysSalesQuery(correlationId, accessToken, estateId, comparisonDate));
+            var failedSalesTask = Mediator.Send(new GetTodaysFailedSalesQuery(correlationId, accessToken, estateId, "1008", comparisonDate)); // 1008 = Low Credit
+            var merchantsTask = Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
+
+            await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
+
+            // Process results
+            if (kpiTask.Result.IsSuccess)
+                merchantKpi = kpiTask.Result.Data;
+
+            if (salesTask.Result.IsSuccess)
+                todaysSales = salesTask.Result.Data;
+
+            if (failedSalesTask.Result.IsSuccess)
+                todaysFailedSales = failedSalesTask.Result.Data;
+
+            if (merchantsTask.Result.IsSuccess)
+                recentMerchants = merchantsTask.Result.Data?.OrderByDescending(m => m.MerchantId).ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load dashboard data: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnComparisonDateChanged()
+    {
+        if (!isAdministrator)
+        {
+            await LoadDashboardData();
+        }
+    }
+
+    private string GetComparisonLabel()
+    {
+        if (comparisonDates == null) return "Comparison";
+        var date = DateTime.Parse(selectedComparisonDate);
+        var comparisonDate = comparisonDates.FirstOrDefault(d => d.Date.Date == date.Date);
+        return comparisonDate?.Description ?? date.ToString("MMM dd");
+    }
+
+    // Sales comparison color methods
+    private decimal GetSalesVariance()
+    {
+        if (todaysSales == null) return 0;
+        if (todaysSales.ComparisonSalesValue == 0) return todaysSales.TodaysSalesValue > 0 ? 1 : 0;
+        return (todaysSales.TodaysSalesValue - todaysSales.ComparisonSalesValue) / todaysSales.ComparisonSalesValue;
+    }
+
+    private string GetSalesBackgroundClass()
+    {
+        var variance = GetSalesVariance();
+        if (variance < 0) return "bg-red-50"; // Worse
+        if (variance == 0) return "bg-blue-50"; // Same
+        if (variance > 0 && variance < 0.2m) return "bg-yellow-50"; // Slightly better
+        return "bg-green-50"; // Much better
+    }
+
+    private string GetSalesTextClass(double opacity = 1.0)
+    {
+        var variance = GetSalesVariance();
+        if (opacity < 1.0)
+        {
+            if (variance < 0) return "text-red-700";
+            if (variance == 0) return "text-blue-700";
+            if (variance > 0 && variance < 0.2m) return "text-yellow-700";
+            return "text-green-700";
+        }
+        if (variance < 0) return "text-red-900";
+        if (variance == 0) return "text-blue-900";
+        if (variance > 0 && variance < 0.2m) return "text-yellow-900";
+        return "text-green-900";
+    }
+
+    private string GetSalesBorderClass()
+    {
+        var variance = GetSalesVariance();
+        if (variance < 0) return "border-red-200";
+        if (variance == 0) return "border-blue-200";
+        if (variance > 0 && variance < 0.2m) return "border-yellow-200";
+        return "border-green-200";
+    }
+
+    private string GetSalesVarianceDisplay()
+    {
+        var variance = GetSalesVariance();
+        var percentageChange = variance * 100;
+        var sign = variance > 0 ? "+" : "";
+        return $"{sign}{percentageChange:F1}%";
+    }
+
+    // Failed sales comparison color methods (reversed logic)
+    private decimal GetFailedSalesVariance()
+    {
+        if (todaysFailedSales == null) return 0;
+        if (todaysFailedSales.ComparisonSalesValue == 0) return todaysFailedSales.TodaysSalesValue > 0 ? 1 : 0;
+        return (todaysFailedSales.TodaysSalesValue - todaysFailedSales.ComparisonSalesValue) / todaysFailedSales.ComparisonSalesValue;
+    }
+
+    private string GetFailedSalesBackgroundClass()
+    {
+        var variance = GetFailedSalesVariance();
+        if (variance < 0) return "bg-green-50"; // Good - fewer failures
+        if (variance == 0) return "bg-blue-50"; // Same
+        if (variance > 0 && variance < 0.2m) return "bg-yellow-50"; // Slightly worse
+        return "bg-red-50"; // Much worse
+    }
+
+    private string GetFailedSalesTextClass(double opacity = 1.0)
+    {
+        var variance = GetFailedSalesVariance();
+        if (opacity < 1.0)
+        {
+            if (variance < 0) return "text-green-700";
+            if (variance == 0) return "text-blue-700";
+            if (variance > 0 && variance < 0.2m) return "text-yellow-700";
+            return "text-red-700";
+        }
+        if (variance < 0) return "text-green-900";
+        if (variance == 0) return "text-blue-900";
+        if (variance > 0 && variance < 0.2m) return "text-yellow-900";
+        return "text-red-900";
+    }
+
+    private string GetFailedSalesBorderClass()
+    {
+        var variance = GetFailedSalesVariance();
+        if (variance < 0) return "border-green-200";
+        if (variance == 0) return "border-blue-200";
+        if (variance > 0 && variance < 0.2m) return "border-yellow-200";
+        return "border-red-200";
+    }
+
+    private string GetFailedSalesVarianceDisplay()
+    {
+        var variance = GetFailedSalesVariance();
+        var percentageChange = variance * 100;
+        var sign = variance > 0 ? "+" : "";
+        return $"{sign}{percentageChange:F1}%";
     }
 }
