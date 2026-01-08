@@ -375,9 +375,9 @@
     
     private void DrillDownToDetail(Guid merchantId)
     {
-        // Navigate to transaction detail page with merchant filter
+        // Navigate to transaction detail page with merchant filter and return URL
         var startDate = _startDate.ToString("yyyy-MM-dd");
         var endDate = _endDate.ToString("yyyy-MM-dd");
-        Navigation.NavigateTo($"/reporting/transaction-detail?merchantId={merchantId}&startDate={startDate}&endDate={endDate}");
+        Navigation.NavigateTo($"/reporting/transaction-detail?merchantId={merchantId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-merchant");
     }
 }
