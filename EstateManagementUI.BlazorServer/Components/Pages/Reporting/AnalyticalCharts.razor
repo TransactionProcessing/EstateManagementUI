@@ -71,15 +71,6 @@
                         </InputSelect>
                     </div>
 
-                    <!-- Aggregation Period Selection -->
-                    <div class="flex-1 min-w-[200px]">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Time Period</label>
-                        <select @bind="_selectedPeriod" @bind:after="OnFiltersChanged" class="form-control">
-                            <option value="Hour">Hour</option>
-                            <option value="Day">Day</option>
-                        </select>
-                    </div>
-
                     <!-- Chart Type Selection -->
                     <div class="flex-1 min-w-[200px]">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Chart Type</label>
@@ -179,7 +170,6 @@
 
     private List<ComparisonDateModel>? comparisonDates;
     private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
-    private string _selectedPeriod = "Hour";
     private string _selectedChartType = "line";
 
     private decimal totalValue = 0;
