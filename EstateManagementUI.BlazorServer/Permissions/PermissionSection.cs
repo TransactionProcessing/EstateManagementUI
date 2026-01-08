@@ -10,5 +10,6 @@ public enum PermissionSection
     Merchant,
     Contract,
     Operator,
-    FileProcessing
+    FileProcessing,
+    Reporting
 }
