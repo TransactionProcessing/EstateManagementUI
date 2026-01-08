@@ -298,9 +298,10 @@ IRequestHandler<GetSettlementSummaryQuery, Result<List<SettlementSummaryModel>>>
         var seed = request.StartDate.GetHashCode() ^ request.EndDate.GetHashCode();
         var random = new Random(seed);
         
-        // Settlement statuses to distribute
+        // Settlement statuses to distribute (mock data for testing)
         var statuses = new[] { "settled", "settled", "settled", "pending", "failed" };
-        const decimal DefaultFeePercentage = 0.025m; // 2.5% fee rate
+        // Mock fee percentage - in production this would come from the settlement engine API
+        const decimal DefaultFeePercentage = 0.025m; // 2.5% fee rate for mock data
         
         foreach (var merchant in merchants.Data) {
             var grossValue = (decimal)(random.NextDouble() * 100000 + 10000);
