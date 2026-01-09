@@ -246,7 +246,7 @@
                                 @foreach (var item in detailData)
                                 {
                                     <tr>
-                                        <td class="font-mono text-xs">@item.TransactionId.ToString().Substring(0, 8)...</td>
+                                        <td class="font-mono text-xs">@GetShortId(item.TransactionId)</td>
                                         <td class="text-sm">@item.TransactionDateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                                         <td class="font-medium">@item.MerchantName</td>
                                         <td>@item.OperatorName</td>
@@ -286,6 +286,9 @@
 </div>
 
 @code {
+    private const string DEFAULT_ESTATE_ID = "11111111-1111-1111-1111-111111111111";
+    private const string DEFAULT_ACCESS_TOKEN = "stubbed-token";
+    
     private bool isLoading = true;
     private string? errorMessage;
     
@@ -351,8 +354,8 @@
             StateHasChanged();
             
             var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
+            var estateId = Guid.Parse(DEFAULT_ESTATE_ID);
+            var accessToken = DEFAULT_ACCESS_TOKEN;
             
             // Load filter options
             var merchantsTask = Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
@@ -397,8 +400,8 @@
         try
         {
             var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
+            var estateId = Guid.Parse(DEFAULT_ESTATE_ID);
+            var accessToken = DEFAULT_ACCESS_TOKEN;
             
             var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
             var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
@@ -526,6 +529,12 @@
             return "↕";
         
         return _sortAscending ? "↑" : "↓";
+    }
+    
+    private string GetShortId(Guid transactionId)
+    {
+        var idString = transactionId.ToString();
+        return idString.Length >= 8 ? $"{idString.Substring(0, 8)}..." : idString;
     }
     
     private string GetTypeBadgeClass(string? type)

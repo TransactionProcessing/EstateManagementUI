@@ -403,8 +403,9 @@ IRequestHandler<GetTransactionDetailQuery, Result<List<TransactionDetailModel>>>
         }
         
         if (request.ProductId.HasValue) {
-            // Note: ProductId filter would need product lookup, but for mock data we can skip
-            // In real implementation, would filter by product
+            // TODO: Implement product filtering when real API is available
+            // For mock data, product filtering by ProductName would require product lookup
+            // Currently skipped for simplicity
         }
         
         // Sort by transaction date descending (most recent first)
