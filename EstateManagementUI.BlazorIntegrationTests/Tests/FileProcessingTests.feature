@@ -9,12 +9,12 @@ Background:
 
 	Given I create the following api scopes
 	| Name                 | DisplayName                  | Description                        |
-	| estateManagement | Estate Managememt REST Scope | A scope for Estate Managememt REST |
+	| estateManagement | Estate Management REST Scope | A scope for Estate Management REST |
 	| fileProcessor | File Processor REST Scope | Scope for File Processor REST |
 
 	Given I create the following api resources
 	| Name             | DisplayName            | Secret  | Scopes           | UserClaims               |
-	| estateManagement | Estate Managememt REST | Secret1 | estateManagement | merchantId,estateId,role |
+	| estateManagement | Estate Management REST | Secret1 | estateManagement | merchantId,estateId,role |
 	| fileProcessor | File Processor REST | Secret1 | fileProcessor | merchantId,estateId,role |
 
 	Given I create the following identity resources
