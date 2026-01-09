@@ -131,6 +131,24 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
             await this.Page.ClickButtonByText("Add New Merchant");
         }
 
+        [When(@"I click the Create Merchant button")]
+        public async Task WhenIClickTheCreateMerchantButton()
+        {
+            // Wait a moment for form validation
+            await Task.Delay(300);
+            
+            // Try using button ID first (more reliable than text match)
+            try
+            {
+                await this.Page.Locator("#createMerchantButton").ClickAsync();
+            }
+            catch
+            {
+                // Fallback to text match
+                await this.Page.ClickButtonByText("Create Merchant");
+            }
+        }
+
         [When(@"I click the Create (.*) button")]
         [When(@"I click the Add (.*) button")]
         public async Task WhenIClickTheCreateButton(string entityType)
