@@ -92,8 +92,6 @@ namespace EstateManagementUI.Testing
 
         public static Queries.GetProductPerformanceQuery GetProductPerformanceQuery => new(CorrelationId, AccessToken, EstateId, DateTime.Now.AddDays(-30), DateTime.Now);
 
-        public static Queries.GetSettlementSummaryQuery GetSettlementSummaryQuery => new(CorrelationId, AccessToken, EstateId, DateTime.Now.AddDays(-30), DateTime.Now, null, null);
-
         public static Commands.AddMerchantCommand AddNewMerchantCommand => new(CorrelationId, AccessToken, EstateId, CreateMerchantModel(BusinessLogic.Models.SettlementSchedule.Immediate));
 
         public static Commands.UpdateMerchantCommand UpdateMerchantCommand => new(CorrelationId, AccessToken, EstateId, Merchant1Id, new UpdateMerchantModel {
