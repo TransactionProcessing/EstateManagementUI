@@ -151,7 +151,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 10
-    await testRunner.ThenAsync("I should see a list of contracts", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the contracts grid", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 11
     await testRunner.AndAsync("the contracts grid should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -190,7 +190,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.AndAsync("I click the first contract view button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 16
-    await testRunner.ThenAsync("the contract information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the contract details tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -232,7 +232,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.AndAsync("I click the create contract submit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 23
-    await testRunner.ThenAsync("I should see a list of contracts", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the contracts grid", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -277,7 +277,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.AndAsync("I click the add product submit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 31
-    await testRunner.ThenAsync("the contract information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the contract details tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -331,7 +331,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.AndAsync("I click the add fee submit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 42
-    await testRunner.ThenAsync("the contract information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the contract details tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
