@@ -50,13 +50,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
             detailsTab.ShouldBeTrue("Merchant details tab should be visible");
         }
 
-        [Then(@"the merchant information should be displayed")]
-        public async Task ThenTheMerchantInformationShouldBeDisplayed()
-        {
-            // Verify merchant information is displayed (check for presence of info)
-            var pageContent = await this.Page.Locator("body").TextContentAsync();
-            pageContent.ShouldNotBeNullOrEmpty();
-        }
+
 
         #endregion
 
