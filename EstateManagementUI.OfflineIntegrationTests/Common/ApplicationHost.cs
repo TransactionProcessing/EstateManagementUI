@@ -32,12 +32,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
 
             // Find the Blazor Server project directory
             var testProjectDirectory = Directory.GetCurrentDirectory();
-            var solutionDirectory = Directory.GetParent(testProjectDirectory)?.FullName;
+            Console.WriteLine($"Current directory: {testProjectDirectory}");
+            
+            // Find the solution directory by looking for .sln file
+            var solutionDirectory = FindSolutionDirectory(testProjectDirectory);
             
             if (solutionDirectory == null)
             {
-                throw new InvalidOperationException("Could not find solution directory");
+                throw new InvalidOperationException($"Could not find solution directory from: {testProjectDirectory}");
             }
+
+            Console.WriteLine($"Solution directory found: {solutionDirectory}");
 
             var blazorProjectPath = Path.Combine(solutionDirectory, "EstateManagementUI.BlazorServer");
             
@@ -95,6 +100,30 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
             await WaitForApplicationReadyAsync();
 
             Console.WriteLine("Blazor application is ready!");
+        }
+
+        /// <summary>
+        /// Finds the solution directory by traversing up the directory tree
+        /// </summary>
+        private string? FindSolutionDirectory(string startPath)
+        {
+            var directory = new DirectoryInfo(startPath);
+            
+            // Traverse up the directory tree looking for a .sln file
+            while (directory != null)
+            {
+                // Check if this directory contains a .sln file
+                var solutionFiles = directory.GetFiles("*.sln");
+                if (solutionFiles.Length > 0)
+                {
+                    return directory.FullName;
+                }
+                
+                // Move up to parent directory
+                directory = directory.Parent;
+            }
+            
+            return null;
         }
 
         /// <summary>
