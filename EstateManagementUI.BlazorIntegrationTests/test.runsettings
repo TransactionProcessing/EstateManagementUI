@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <!-- Parameters used by tests at runtime -->
+  <TestRunParameters>
+    <!-- Browser to use: Chrome, Firefox, or WebKit (Edge/Safari) -->
+    <Parameter name="Browser" value="Chrome" />
+    
+    <!-- Set to true for headless mode (useful for CI/CD) -->
+    <Parameter name="IsCI" value="false" />
+    
+    <!-- Skip remote API calls for offline testing -->
+    <Parameter name="SkipRemoteCalls" value="true" />
+    
+    <!-- Enable test mode in the application -->
+    <Parameter name="EnableTestMode" value="true" />
+  </TestRunParameters>
+
+  <!-- NUnit configuration -->
+  <NUnit>
+    <!-- Number of worker threads for parallel execution -->
+    <NumberOfTestWorkers>3</NumberOfTestWorkers>
+    
+    <!-- Where to run tests in parallel -->
+    <!-- Options: none, fixtures, all -->
+    <DefaultTestNamePattern>{m}{a}</DefaultTestNamePattern>
+  </NUnit>
+
+  <!-- Logging configuration -->
+  <LoggerRunSettings>
+    <Loggers>
+      <Logger friendlyName="console" enabled="True">
+        <Configuration>
+          <Verbosity>normal</Verbosity>
+        </Configuration>
+      </Logger>
+      <Logger friendlyName="trx" enabled="True">
+        <Configuration>
+          <LogFileName>test-results.trx</LogFileName>
+        </Configuration>
+      </Logger>
+      <Logger friendlyName="html" enabled="True">
+        <Configuration>
+          <LogFileName>test-results.html</LogFileName>
+        </Configuration>
+      </Logger>
+    </Loggers>
+  </LoggerRunSettings>
+
+  <!-- Data collection -->
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage" enabled="False" />
+      <DataCollector friendlyName="Screenshot" enabled="True" />
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>
