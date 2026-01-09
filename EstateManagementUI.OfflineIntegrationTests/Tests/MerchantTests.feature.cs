@@ -190,7 +190,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.AndAsync("I click the view button for the first merchant", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 16
-    await testRunner.ThenAsync("I should see the merchant details page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the merchant details tab", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 17
     await testRunner.AndAsync("the merchant information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");

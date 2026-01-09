@@ -42,8 +42,8 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
             await this.Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
-        [Then(@"I should see the merchant details page")]
-        public async Task ThenIShouldSeeTheMerchantDetailsPage()
+        [Then(@"I should see the merchant details tab")]
+        public async Task ThenIShouldSeeTheMerchantDetailsTab()
         {
             // Verify we're on the merchant details page by checking for tabs
             var detailsTab = await this.Page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { Name = "Merchant Details" }).IsVisibleAsync();

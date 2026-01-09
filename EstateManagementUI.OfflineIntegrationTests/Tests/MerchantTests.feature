@@ -13,7 +13,7 @@ Feature: Merchant Management
   Scenario: View Single Merchant Details
     When I navigate to the Merchants page
     And I click the view button for the first merchant
-    Then I should see the merchant details page
+    Then I should see the merchant details tab
     And the merchant information should be displayed
 
   Scenario: Edit Single Merchant
