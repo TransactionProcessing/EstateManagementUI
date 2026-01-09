@@ -107,6 +107,18 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             await testRunner.CollectScenarioErrorsAsync();
         }
         
+        public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
+        {
+#line 4
+  #line hidden
+#line 5
+    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 6
+    await testRunner.ThenAsync("I should see the application dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+        }
+        
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
             return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Tests/MerchantTests.feature.ndjson", 7);
@@ -122,7 +134,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Merchants List", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 4
+#line 8
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -132,30 +144,33 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 5
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 9
     await testRunner.WhenAsync("I navigate to the Merchants page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 6
-    await testRunner.ThenAsync("I should see a list of merchants", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 10
+    await testRunner.ThenAsync("I should see the merchants table", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 7
-    await testRunner.AndAsync("the merchants table should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 11
+    await testRunner.AndAsync("the merchant list table should be visible", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
         [global::NUnit.Framework.TestAttribute()]
-        [global::NUnit.Framework.DescriptionAttribute("View Merchant Details")]
-        public async global::System.Threading.Tasks.Task ViewMerchantDetails()
+        [global::NUnit.Framework.DescriptionAttribute("View Single Merchant Details")]
+        public async global::System.Threading.Tasks.Task ViewSingleMerchantDetails()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "1";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Merchant Details", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Single Merchant Details", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 9
+#line 13
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -165,16 +180,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 10
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 14
     await testRunner.WhenAsync("I navigate to the Merchants page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 11
-    await testRunner.AndAsync("I click on a merchant in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 15
+    await testRunner.AndAsync("I click the view button for the first merchant", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 12
+#line 16
     await testRunner.ThenAsync("I should see the merchant details page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 13
+#line 17
     await testRunner.AndAsync("the merchant information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -182,16 +200,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
         }
         
         [global::NUnit.Framework.TestAttribute()]
-        [global::NUnit.Framework.DescriptionAttribute("Create New Merchant")]
-        public async global::System.Threading.Tasks.Task CreateNewMerchant()
+        [global::NUnit.Framework.DescriptionAttribute("Edit Single Merchant")]
+        public async global::System.Threading.Tasks.Task EditSingleMerchant()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "2";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Create New Merchant", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Edit Single Merchant", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 15
+#line 19
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -201,89 +219,26 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 16
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 20
     await testRunner.WhenAsync("I navigate to the Merchants page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 17
-    await testRunner.AndAsync("I click the Create Merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 21
+    await testRunner.AndAsync("I click the edit button for the first merchant in the table", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
-                            "Field",
-                            "Value"});
-                table5.AddRow(new string[] {
-                            "Name",
-                            "Test Merchant"});
-                table5.AddRow(new string[] {
-                            "Contact Name",
-                            "John Smith"});
-                table5.AddRow(new string[] {
-                            "Contact Email",
-                            "john@testmerchant.com"});
-                table5.AddRow(new string[] {
-                            "Address Line 1",
-                            "123 Test Street"});
-                table5.AddRow(new string[] {
-                            "Town",
-                            "Test Town"});
-                table5.AddRow(new string[] {
-                            "Postcode",
-                            "TS1 1TS"});
-#line 18
-    await testRunner.AndAsync("I fill in the merchant details", ((string)(null)), table5, "And ");
+#line 22
+    await testRunner.ThenAsync("I should see the merchant edit page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 26
-    await testRunner.AndAsync("I click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 23
+    await testRunner.WhenAsync("I update the merchant name field", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 27
-    await testRunner.ThenAsync("the merchant should be created successfully", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 24
+    await testRunner.AndAsync("I click the save changes button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 28
-    await testRunner.AndAsync("I should see the new merchant in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::NUnit.Framework.TestAttribute()]
-        [global::NUnit.Framework.DescriptionAttribute("Edit Merchant Details")]
-        public async global::System.Threading.Tasks.Task EditMerchantDetails()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "3";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Edit Merchant Details", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = null;
-#line 30
-  this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 31
-    await testRunner.WhenAsync("I navigate to the Merchants page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 32
-    await testRunner.AndAsync("I click on a merchant in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 33
-    await testRunner.AndAsync("I click the Edit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 34
-    await testRunner.AndAsync("I update the merchant name to \"Updated Merchant Name\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 35
-    await testRunner.AndAsync("I click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 36
-    await testRunner.ThenAsync("the merchant details should be updated", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 37
-    await testRunner.AndAsync("the updated name should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 25
+    await testRunner.ThenAsync("the merchant should be updated successfully", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -295,11 +250,11 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "4";
+            string pickleIndex = "3";
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Make Merchant Deposit", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 39
+#line 27
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -309,26 +264,104 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 40
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 28
     await testRunner.WhenAsync("I navigate to the Merchants page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
+#line 29
+    await testRunner.AndAsync("I click the make deposit button for the first merchant in the table", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 30
+    await testRunner.ThenAsync("I should see the deposit page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 31
+    await testRunner.WhenAsync("I enter deposit amount \"100\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 32
+    await testRunner.AndAsync("I enter deposit date \"2026-01-09\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 33
+    await testRunner.AndAsync("I enter deposit reference \"TEST-DEP-001\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 34
+    await testRunner.AndAsync("I click the submit deposit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 35
+    await testRunner.ThenAsync("the deposit should be processed successfully", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Create New Merchant Record")]
+        public async global::System.Threading.Tasks.Task CreateNewMerchantRecord()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "4";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Create New Merchant Record", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 37
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 38
+    await testRunner.WhenAsync("I navigate to the Merchants page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 39
+    await testRunner.AndAsync("I click the new merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 40
+    await testRunner.ThenAsync("I should see the create merchant page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
 #line 41
-    await testRunner.AndAsync("I click on a merchant in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.WhenAsync("I enter merchant name \"Test Merchant\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 42
-    await testRunner.AndAsync("I click the Make Deposit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("I select settlement schedule \"Immediate\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 43
-    await testRunner.AndAsync("I enter the deposit amount \"100.00\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("I enter address line 1 \"123 Test Street\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 44
-    await testRunner.AndAsync("I click the Confirm Deposit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("I enter town \"Test Town\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 45
-    await testRunner.ThenAsync("the deposit should be processed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.AndAsync("I enter region \"Test Region\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 46
-    await testRunner.AndAsync("the merchant balance should be updated", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("I enter postcode \"TS1 1TS\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 47
+    await testRunner.AndAsync("I enter country \"United Kingdom\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 48
+    await testRunner.AndAsync("I enter contact name \"John Smith\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 49
+    await testRunner.AndAsync("I enter email address \"john@testmerchant.com\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 50
+    await testRunner.AndAsync("I enter phone number \"01234567890\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 51
+    await testRunner.AndAsync("I click the submit create merchant button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 52
+    await testRunner.ThenAsync("the merchant should be created successfully", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

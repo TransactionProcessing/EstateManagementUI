@@ -107,6 +107,18 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             await testRunner.CollectScenarioErrorsAsync();
         }
         
+        public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
+        {
+#line 4
+  #line hidden
+#line 5
+    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 6
+    await testRunner.ThenAsync("I should see the application dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+        }
+        
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
             return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Tests/FileProcessingTests.feature.ndjson", 6);
@@ -122,7 +134,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View File Processing List", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 4
+#line 8
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -132,13 +144,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 5
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 9
     await testRunner.WhenAsync("I navigate to the File Processing page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 6
+#line 10
     await testRunner.ThenAsync("I should see a list of processed files", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 7
+#line 11
     await testRunner.AndAsync("the file processing table should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -155,7 +170,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View File Details", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 9
+#line 13
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -165,16 +180,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 10
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 14
     await testRunner.WhenAsync("I navigate to the File Processing page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 11
+#line 15
     await testRunner.AndAsync("I click on a file in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 12
+#line 16
     await testRunner.ThenAsync("I should see the file processing details", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 13
+#line 17
     await testRunner.AndAsync("the file information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -191,7 +209,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Files by Date Range", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 15
+#line 19
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -201,7 +219,10 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 16
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 20
     await testRunner.WhenAsync("I navigate to the File Processing page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
                 global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
@@ -213,16 +234,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
                 table4.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 17
+#line 21
     await testRunner.AndAsync("I set the date range filter", ((string)(null)), table4, "And ");
 #line hidden
-#line 21
+#line 25
     await testRunner.AndAsync("I click the Filter button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 22
+#line 26
     await testRunner.ThenAsync("the file list should be filtered by date range", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 23
+#line 27
     await testRunner.AndAsync("only files within the date range should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -239,7 +260,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Search Files by Name", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 25
+#line 29
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -249,19 +270,22 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 26
-    await testRunner.WhenAsync("I navigate to the File Processing page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 27
-    await testRunner.AndAsync("I enter \"test-file\" in the search box", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 28
-    await testRunner.AndAsync("I click the Search button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 29
-    await testRunner.ThenAsync("the file list should be filtered by name", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 4
+  await this.FeatureBackgroundAsync();
 #line hidden
 #line 30
+    await testRunner.WhenAsync("I navigate to the File Processing page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 31
+    await testRunner.AndAsync("I enter \"test-file\" in the search box", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 32
+    await testRunner.AndAsync("I click the Search button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 33
+    await testRunner.ThenAsync("the file list should be filtered by name", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 34
     await testRunner.AndAsync("only matching files should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }

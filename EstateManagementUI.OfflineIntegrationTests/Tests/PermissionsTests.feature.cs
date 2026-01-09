@@ -107,6 +107,18 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             await testRunner.CollectScenarioErrorsAsync();
         }
         
+        public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
+        {
+#line 4
+  #line hidden
+#line 5
+    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 6
+    await testRunner.ThenAsync("I should see the application dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+        }
+        
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
             return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Tests/PermissionsTests.feature.ndjson", 7);
@@ -122,7 +134,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Permissions List", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 4
+#line 8
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -132,13 +144,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 5
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 9
     await testRunner.WhenAsync("I navigate to the Permissions page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 6
+#line 10
     await testRunner.ThenAsync("I should see a list of permissions", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 7
+#line 11
     await testRunner.AndAsync("the permissions table should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -155,7 +170,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Permission Details", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 9
+#line 13
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -165,16 +180,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 10
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 14
     await testRunner.WhenAsync("I navigate to the Permissions page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 11
+#line 15
     await testRunner.AndAsync("I click on a permission in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 12
+#line 16
     await testRunner.ThenAsync("I should see the permission details page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 13
+#line 17
     await testRunner.AndAsync("the permission information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -191,7 +209,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Edit Permission", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 15
+#line 19
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -201,34 +219,37 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 16
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 20
     await testRunner.WhenAsync("I navigate to the Permissions page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 17
+#line 21
     await testRunner.AndAsync("I click on a permission in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 18
+#line 22
     await testRunner.AndAsync("I click the Edit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table7.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Name",
                             "Updated Permission"});
-                table7.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Description",
                             "Updated description text"});
-#line 19
-    await testRunner.AndAsync("I update the permission details", ((string)(null)), table7, "And ");
-#line hidden
 #line 23
+    await testRunner.AndAsync("I update the permission details", ((string)(null)), table6, "And ");
+#line hidden
+#line 27
     await testRunner.AndAsync("I click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 24
+#line 28
     await testRunner.ThenAsync("the permission should be updated successfully", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 25
+#line 29
     await testRunner.AndAsync("the updated details should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -245,7 +266,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Permissions by Role", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 27
+#line 31
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -255,16 +276,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 28
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 32
     await testRunner.WhenAsync("I navigate to the Permissions page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 29
+#line 33
     await testRunner.AndAsync("I select \"Estate\" from the role filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 30
+#line 34
     await testRunner.AndAsync("I click the Filter button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 31
+#line 35
     await testRunner.ThenAsync("only permissions for the Estate role should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -281,7 +305,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Search Permissions by Name", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 33
+#line 37
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -291,16 +315,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 34
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 38
     await testRunner.WhenAsync("I navigate to the Permissions page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 35
+#line 39
     await testRunner.AndAsync("I enter \"Merchant\" in the search box", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 36
+#line 40
     await testRunner.AndAsync("I click the Search button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 37
+#line 41
     await testRunner.ThenAsync("only permissions matching \"Merchant\" should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }

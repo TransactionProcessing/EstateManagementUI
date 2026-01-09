@@ -107,6 +107,18 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             await testRunner.CollectScenarioErrorsAsync();
         }
         
+        public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
+        {
+#line 4
+  #line hidden
+#line 5
+    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 6
+    await testRunner.ThenAsync("I should see the application dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+        }
+        
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
             return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Tests/ReportingTests.feature.ndjson", 23);
@@ -122,7 +134,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Transaction Detail Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 4
+#line 8
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -132,13 +144,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 5
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 9
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 6
+#line 10
     await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 7
+#line 11
     await testRunner.ThenAsync("the Transaction Detail report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -155,7 +170,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Transaction Detail Report by Date Range", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 9
+#line 13
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -165,28 +180,31 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 10
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 14
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 11
+#line 15
     await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table8.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table8.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 12
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table8, "And ");
-#line hidden
 #line 16
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table7, "And ");
+#line hidden
+#line 20
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 17
+#line 21
     await testRunner.ThenAsync("the report should display transactions for the date range", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -203,7 +221,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Transaction Detail Report by Merchant", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 19
+#line 23
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -213,19 +231,22 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 20
-    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 21
-    await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 22
-    await testRunner.AndAsync("I select \"Test Merchant\" from the merchant filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 23
-    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 4
+  await this.FeatureBackgroundAsync();
 #line hidden
 #line 24
+    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 25
+    await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 26
+    await testRunner.AndAsync("I select \"Test Merchant\" from the merchant filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 27
+    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 28
     await testRunner.ThenAsync("the report should display transactions for the selected merchant", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -242,7 +263,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Transaction Detail Report by Operator", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 26
+#line 30
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -252,19 +273,22 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 27
-    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 28
-    await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 29
-    await testRunner.AndAsync("I select \"Test Operator\" from the operator filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 30
-    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 4
+  await this.FeatureBackgroundAsync();
 #line hidden
 #line 31
+    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 32
+    await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 33
+    await testRunner.AndAsync("I select \"Test Operator\" from the operator filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 34
+    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 35
     await testRunner.ThenAsync("the report should display transactions for the selected operator", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -281,7 +305,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Transaction Detail Report by Status", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 33
+#line 37
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -291,19 +315,22 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 34
-    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 35
-    await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 36
-    await testRunner.AndAsync("I select \"Successful\" from the status filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 37
-    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 4
+  await this.FeatureBackgroundAsync();
 #line hidden
 #line 38
+    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 39
+    await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 40
+    await testRunner.AndAsync("I select \"Successful\" from the status filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 41
+    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 42
     await testRunner.ThenAsync("the report should display only successful transactions", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -320,7 +347,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Transaction Summary Merchant Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 40
+#line 44
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -330,13 +357,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 41
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 45
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 42
+#line 46
     await testRunner.AndAsync("I select the \"Transaction Summary (Merchant)\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 43
+#line 47
     await testRunner.ThenAsync("the Transaction Summary Merchant report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -353,7 +383,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Transaction Summary Merchant Report with Grouping", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 45
+#line 49
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -363,34 +393,37 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 46
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 50
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 47
+#line 51
     await testRunner.AndAsync("I select the \"Transaction Summary (Merchant)\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table9.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table9.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-                table9.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Merchant",
                             "Test Merchant"});
-                table9.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Group By",
                             "Day"});
-#line 48
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table9, "And ");
+#line 52
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table8, "And ");
 #line hidden
-#line 54
+#line 58
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 55
+#line 59
     await testRunner.ThenAsync("the report should display aggregated merchant transaction data", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -407,7 +440,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Transaction Summary Operator Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 57
+#line 61
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -417,13 +450,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 58
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 62
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 59
+#line 63
     await testRunner.AndAsync("I select the \"Transaction Summary (Operator)\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 60
+#line 64
     await testRunner.ThenAsync("the Transaction Summary Operator report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -440,7 +476,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Transaction Summary Operator Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 62
+#line 66
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -450,31 +486,34 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 63
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 67
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 64
+#line 68
     await testRunner.AndAsync("I select the \"Transaction Summary (Operator)\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table10.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table10.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-                table10.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "Operator",
                             "Test Operator"});
-#line 65
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table10, "And ");
+#line 69
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table9, "And ");
 #line hidden
-#line 70
+#line 74
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 71
+#line 75
     await testRunner.ThenAsync("the report should display aggregated operator transaction data", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -491,7 +530,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Settlement Summary Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 73
+#line 77
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -501,13 +540,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 74
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 78
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 75
+#line 79
     await testRunner.AndAsync("I select the \"Settlement Summary\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 76
+#line 80
     await testRunner.ThenAsync("the Settlement Summary report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -524,7 +566,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Settlement Summary Report by Date Range", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 78
+#line 82
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -534,28 +576,31 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 79
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 83
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 80
+#line 84
     await testRunner.AndAsync("I select the \"Settlement Summary\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table11.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table11.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 81
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table11, "And ");
-#line hidden
 #line 85
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table10, "And ");
+#line hidden
+#line 89
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 86
+#line 90
     await testRunner.ThenAsync("the report should display settlement data for the date range", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -572,7 +617,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Settlement Reconciliation Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 88
+#line 92
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -582,13 +627,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 89
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 93
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 90
+#line 94
     await testRunner.AndAsync("I select the \"Settlement Reconciliation\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 91
+#line 95
     await testRunner.ThenAsync("the Settlement Reconciliation report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -605,7 +653,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Settlement Reconciliation Report by Merchant", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 93
+#line 97
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -615,19 +663,22 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 94
-    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 95
-    await testRunner.AndAsync("I select the \"Settlement Reconciliation\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 96
-    await testRunner.AndAsync("I select \"Test Merchant\" from the merchant filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 97
-    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 4
+  await this.FeatureBackgroundAsync();
 #line hidden
 #line 98
+    await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 99
+    await testRunner.AndAsync("I select the \"Settlement Reconciliation\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 100
+    await testRunner.AndAsync("I select \"Test Merchant\" from the merchant filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 101
+    await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 102
     await testRunner.ThenAsync("the report should display reconciliation data for the selected merchant", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -644,7 +695,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Merchant Settlement History Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 100
+#line 104
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -654,13 +705,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 101
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 105
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 102
+#line 106
     await testRunner.AndAsync("I select the \"Merchant Settlement History\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 103
+#line 107
     await testRunner.ThenAsync("the Merchant Settlement History report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -677,7 +731,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Merchant Settlement History Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 105
+#line 109
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -687,31 +741,34 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 106
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 110
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 107
+#line 111
     await testRunner.AndAsync("I select the \"Merchant Settlement History\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table12.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "Merchant",
                             "Test Merchant"});
-                table12.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table12.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 108
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table12, "And ");
+#line 112
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table11, "And ");
 #line hidden
-#line 113
+#line 117
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 114
+#line 118
     await testRunner.ThenAsync("the report should display settlement history for the merchant", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -728,7 +785,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Product Performance Report", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 116
+#line 120
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -738,13 +795,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 117
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 121
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 118
+#line 122
     await testRunner.AndAsync("I select the \"Product Performance\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 119
+#line 123
     await testRunner.ThenAsync("the Product Performance report page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -761,7 +821,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Product Performance Report by Product Type", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 121
+#line 125
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -771,31 +831,34 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 122
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 126
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 123
+#line 127
     await testRunner.AndAsync("I select the \"Product Performance\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table13.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "Product Type",
                             "Mobile Topup"});
-                table13.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table13.AddRow(new string[] {
+                table12.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 124
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table13, "And ");
+#line 128
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table12, "And ");
 #line hidden
-#line 129
+#line 133
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 130
+#line 134
     await testRunner.ThenAsync("the report should display performance data for the product type", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -812,7 +875,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Analytical Charts", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 132
+#line 136
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -822,16 +885,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 133
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 137
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 134
+#line 138
     await testRunner.AndAsync("I select the \"Analytical Charts\" option", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 135
+#line 139
     await testRunner.ThenAsync("the analytical charts page should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 136
+#line 140
     await testRunner.AndAsync("charts should be visible", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -848,7 +914,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Filter Analytical Charts by Time Period", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 138
+#line 142
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -858,16 +924,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 139
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 143
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 140
+#line 144
     await testRunner.AndAsync("I select the \"Analytical Charts\" option", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 141
+#line 145
     await testRunner.AndAsync("I select \"Last 7 Days\" from the time period filter", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 142
+#line 146
     await testRunner.ThenAsync("the charts should update to show data for the last 7 days", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -884,7 +953,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Export Report to CSV", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 144
+#line 148
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -894,31 +963,34 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 145
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 149
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 146
+#line 150
     await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table14.AddRow(new string[] {
+                table13.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table14.AddRow(new string[] {
+                table13.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 147
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table14, "And ");
-#line hidden
 #line 151
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table13, "And ");
+#line hidden
+#line 155
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 152
+#line 156
     await testRunner.AndAsync("I click the Export to CSV button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 153
+#line 157
     await testRunner.ThenAsync("the report should be prepared for download as CSV", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -935,7 +1007,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Export Report to Excel", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 155
+#line 159
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -945,31 +1017,34 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 156
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 160
     await testRunner.WhenAsync("I navigate to the Reporting page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 157
+#line 161
     await testRunner.AndAsync("I select the \"Settlement Summary\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table15.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table15.AddRow(new string[] {
+                table14.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-#line 158
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table15, "And ");
-#line hidden
 #line 162
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table14, "And ");
+#line hidden
+#line 166
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 163
+#line 167
     await testRunner.AndAsync("I click the Export to Excel button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 164
+#line 168
     await testRunner.ThenAsync("the report should be prepared for download as Excel", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }

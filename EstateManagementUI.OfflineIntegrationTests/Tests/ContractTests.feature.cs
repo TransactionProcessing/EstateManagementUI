@@ -107,6 +107,18 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             await testRunner.CollectScenarioErrorsAsync();
         }
         
+        public virtual async global::System.Threading.Tasks.Task FeatureBackgroundAsync()
+        {
+#line 4
+  #line hidden
+#line 5
+    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 6
+    await testRunner.ThenAsync("I should see the application dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+        }
+        
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
             return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Tests/ContractTests.feature.ndjson", 7);
@@ -122,7 +134,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Contracts List", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 4
+#line 8
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -132,13 +144,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 5
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 9
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 6
+#line 10
     await testRunner.ThenAsync("I should see a list of contracts", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 7
+#line 11
     await testRunner.AndAsync("the contracts table should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -155,7 +170,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Contract Details", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 9
+#line 13
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -165,16 +180,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 10
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 14
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 11
+#line 15
     await testRunner.AndAsync("I click on a contract in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 12
+#line 16
     await testRunner.ThenAsync("I should see the contract details page", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 13
+#line 17
     await testRunner.AndAsync("the contract information should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -191,7 +209,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Create New Contract", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 15
+#line 19
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -201,10 +219,13 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 16
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 20
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 17
+#line 21
     await testRunner.AndAsync("I click the Create Contract button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
                 global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
@@ -216,16 +237,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
                 table1.AddRow(new string[] {
                             "Operator",
                             "Test Operator"});
-#line 18
+#line 22
     await testRunner.AndAsync("I fill in the contract details", ((string)(null)), table1, "And ");
 #line hidden
-#line 22
+#line 26
     await testRunner.AndAsync("I click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 23
+#line 27
     await testRunner.ThenAsync("the contract should be created successfully", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 24
+#line 28
     await testRunner.AndAsync("I should see the new contract in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -242,7 +263,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Add Product to Contract", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 26
+#line 30
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -252,13 +273,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 27
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 31
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 28
+#line 32
     await testRunner.AndAsync("I click on a contract in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 29
+#line 33
     await testRunner.AndAsync("I click the Add Product button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
                 global::Reqnroll.Table table2 = new global::Reqnroll.Table(new string[] {
@@ -273,16 +297,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
                 table2.AddRow(new string[] {
                             "Value",
                             "100.00"});
-#line 30
+#line 34
     await testRunner.AndAsync("I fill in the product details", ((string)(null)), table2, "And ");
 #line hidden
-#line 35
+#line 39
     await testRunner.AndAsync("I click the Save Product button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 36
+#line 40
     await testRunner.ThenAsync("the product should be added to the contract", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 37
+#line 41
     await testRunner.AndAsync("I should see the product in the contract", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -299,7 +323,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Add Transaction Fee to Product", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
-#line 39
+#line 43
   this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -309,16 +333,19 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             else
             {
                 await this.ScenarioStartAsync();
-#line 40
+#line 4
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 44
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 41
+#line 45
     await testRunner.AndAsync("I click on a contract in the list", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 42
+#line 46
     await testRunner.AndAsync("I click on a product in the contract", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 43
+#line 47
     await testRunner.AndAsync("I click the Add Transaction Fee button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
                 global::Reqnroll.Table table3 = new global::Reqnroll.Table(new string[] {
@@ -333,13 +360,13 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
                 table3.AddRow(new string[] {
                             "Fee Value",
                             "5.00"});
-#line 44
+#line 48
     await testRunner.AndAsync("I fill in the transaction fee details", ((string)(null)), table3, "And ");
 #line hidden
-#line 49
+#line 53
     await testRunner.AndAsync("I click the Save Fee button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 50
+#line 54
     await testRunner.ThenAsync("the transaction fee should be added to the product", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
