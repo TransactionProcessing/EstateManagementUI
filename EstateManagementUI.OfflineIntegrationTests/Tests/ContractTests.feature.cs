@@ -265,7 +265,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 27
-    await testRunner.AndAsync("I click the first contract view button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("I click the first contract edit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 28
     await testRunner.AndAsync("I click the add product button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -310,7 +310,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
     await testRunner.WhenAsync("I navigate to the Contracts page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 35
-    await testRunner.AndAsync("I click the first contract view button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("I click the first contract edit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
 #line 36
     await testRunner.AndAsync("I click the add product button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");

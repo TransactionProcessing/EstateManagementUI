@@ -49,6 +49,14 @@ public class ContractSteps
         await this.Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
+    [When(@"I click the first contract edit button")]
+    public async Task WhenIClickTheFirstContractEditButton()
+    {
+        // Click the first "Edit" button in contract cards to enter edit mode
+        await this.Page.Locator("button:has-text('Edit')").First.ClickAsync();
+        await this.Page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
+
     [When(@"I click the create new contract button")]
     public async Task WhenIClickTheCreateNewContractButton()
     {

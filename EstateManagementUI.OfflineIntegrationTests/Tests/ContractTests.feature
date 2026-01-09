@@ -24,7 +24,7 @@ Feature: Contract Management
 
   Scenario: Add Product to Contract
     When I navigate to the Contracts page
-    And I click the first contract view button
+    And I click the first contract edit button
     And I click the add product button
     And I fill in the product details form
     And I click the add product submit button
@@ -32,7 +32,7 @@ Feature: Contract Management
 
   Scenario: Add Transaction Fee to Product
     When I navigate to the Contracts page
-    And I click the first contract view button
+    And I click the first contract edit button
     And I click the add product button
     And I fill in the product details form
     And I click the add product submit button
