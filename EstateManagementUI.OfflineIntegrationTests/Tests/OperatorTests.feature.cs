@@ -228,20 +228,20 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 21
     await testRunner.AndAsync("I click the Create Operator button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table2 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table5.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "Name",
                             "Test Operator"});
-                table5.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "Require Custom Merchant Number",
                             "Yes"});
-                table5.AddRow(new string[] {
+                table2.AddRow(new string[] {
                             "Require Custom Terminal Number",
                             "No"});
 #line 22
-    await testRunner.AndAsync("I fill in the operator details", ((string)(null)), table5, "And ");
+    await testRunner.AndAsync("I fill in the operator details", ((string)(null)), table2, "And ");
 #line hidden
 #line 27
     await testRunner.AndAsync("I click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");

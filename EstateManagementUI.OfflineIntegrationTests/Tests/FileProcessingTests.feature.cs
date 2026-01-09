@@ -225,17 +225,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 20
     await testRunner.WhenAsync("I navigate to the File Processing page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-                global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table4.AddRow(new string[] {
+                table1.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table4.AddRow(new string[] {
+                table1.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 21
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table4, "And ");
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table1, "And ");
 #line hidden
 #line 25
     await testRunner.AndAsync("I click the Filter button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");

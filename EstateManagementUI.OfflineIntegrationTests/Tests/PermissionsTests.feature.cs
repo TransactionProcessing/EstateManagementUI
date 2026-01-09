@@ -231,17 +231,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 22
     await testRunner.AndAsync("I click the Edit button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table3 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table6.AddRow(new string[] {
+                table3.AddRow(new string[] {
                             "Name",
                             "Updated Permission"});
-                table6.AddRow(new string[] {
+                table3.AddRow(new string[] {
                             "Description",
                             "Updated description text"});
 #line 23
-    await testRunner.AndAsync("I update the permission details", ((string)(null)), table6, "And ");
+    await testRunner.AndAsync("I update the permission details", ((string)(null)), table3, "And ");
 #line hidden
 #line 27
     await testRunner.AndAsync("I click the Save button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");

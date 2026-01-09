@@ -189,17 +189,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 15
     await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table7.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table7.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 16
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table7, "And ");
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table4, "And ");
 #line hidden
 #line 20
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -402,23 +402,23 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 51
     await testRunner.AndAsync("I select the \"Transaction Summary (Merchant)\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table8.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table8.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-                table8.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Merchant",
                             "Test Merchant"});
-                table8.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Group By",
                             "Day"});
 #line 52
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table8, "And ");
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table5, "And ");
 #line hidden
 #line 58
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -495,20 +495,20 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 68
     await testRunner.AndAsync("I select the \"Transaction Summary (Operator)\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table9.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table9.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
-                table9.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Operator",
                             "Test Operator"});
 #line 69
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table9, "And ");
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table6, "And ");
 #line hidden
 #line 74
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -585,17 +585,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 84
     await testRunner.AndAsync("I select the \"Settlement Summary\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table10.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table10.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 85
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table10, "And ");
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table7, "And ");
 #line hidden
 #line 89
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -750,20 +750,20 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 111
     await testRunner.AndAsync("I select the \"Merchant Settlement History\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table11.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Merchant",
                             "Test Merchant"});
-                table11.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table11.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 112
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table11, "And ");
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table8, "And ");
 #line hidden
 #line 117
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -840,20 +840,20 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 127
     await testRunner.AndAsync("I select the \"Product Performance\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table12.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "Product Type",
                             "Mobile Topup"});
-                table12.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table12.AddRow(new string[] {
+                table9.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 128
-    await testRunner.AndAsync("I set the report filters", ((string)(null)), table12, "And ");
+    await testRunner.AndAsync("I set the report filters", ((string)(null)), table9, "And ");
 #line hidden
 #line 133
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -972,17 +972,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 150
     await testRunner.AndAsync("I select the \"Transaction Detail\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table13.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table13.AddRow(new string[] {
+                table10.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 151
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table13, "And ");
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table10, "And ");
 #line hidden
 #line 155
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -1026,17 +1026,17 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
 #line 161
     await testRunner.AndAsync("I select the \"Settlement Summary\" report", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-                global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
                             "Field",
                             "Value"});
-                table14.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "Start Date",
                             "2024-01-01"});
-                table14.AddRow(new string[] {
+                table11.AddRow(new string[] {
                             "End Date",
                             "2024-12-31"});
 #line 162
-    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table14, "And ");
+    await testRunner.AndAsync("I set the date range filter", ((string)(null)), table11, "And ");
 #line hidden
 #line 166
     await testRunner.AndAsync("I click the Generate Report button", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
