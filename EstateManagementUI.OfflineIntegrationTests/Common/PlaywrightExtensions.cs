@@ -1,10 +1,9 @@
 using Microsoft.Playwright;
-using Shared.IntegrationTesting;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Common
+namespace EstateManagementUI.OfflineIntegrationTests.Common
 {
     public static class PlaywrightExtensions
     {

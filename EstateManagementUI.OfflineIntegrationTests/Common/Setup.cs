@@ -1,20 +1,16 @@
 ﻿using System;
-using Ductus.FluentDocker.Services;
-using Ductus.FluentDocker.Services.Extensions;
 using Reqnroll;
 using Shouldly;
 
-namespace EstateManagementUI.IntegrationTests.Common
+namespace EstateManagementUI.OfflineIntegrationTests.Common
 {
     [Binding]
     public class Setup
     {
-        public static (String usename, String password) SqlCredentials = ("sa", "thisisalongpassword123!");
-        public static (String url, String username, String password) DockerCredentials = ("https://www.docker.com", "stuartferguson", "Sc0tland");
-
-        public static async Task GlobalSetup(DockerHelper dockerHelper)
+        public static async Task GlobalSetup()
         {
             ShouldlyConfiguration.DefaultTaskTimeout = TimeSpan.FromMinutes(1);
+            await Task.CompletedTask;
         }
     }
 }

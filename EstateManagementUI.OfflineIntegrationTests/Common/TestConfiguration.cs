@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Common;
+namespace EstateManagementUI.OfflineIntegrationTests.Common;
 
 /// <summary>
 /// Configuration for test execution mode

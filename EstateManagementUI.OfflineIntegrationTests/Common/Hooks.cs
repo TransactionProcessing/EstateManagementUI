@@ -1,9 +1,8 @@
 using Microsoft.Playwright;
 using Reqnroll;
 using Reqnroll.BoDi;
-using Shared.IntegrationTesting;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Common
+namespace EstateManagementUI.OfflineIntegrationTests.Common
 {
     [Binding]
     public class Hooks

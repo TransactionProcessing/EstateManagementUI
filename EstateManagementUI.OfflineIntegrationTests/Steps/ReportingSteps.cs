@@ -1,27 +1,26 @@
 using Reqnroll;
 using System;
 using System.Threading.Tasks;
-using EstateManagementUI.BlazorIntegrationTests.Common;
-using EstateManagementUI.IntegrationTests.Common;
+using EstateManagementUI.OfflineIntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll.BoDi;
 using Shouldly;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Steps
+namespace EstateManagementUI.OfflineIntegrationTests.Steps
 {
     [Binding]
     [Scope(Tag = "reporting")]
     public class ReportingSteps
     {
-        private readonly TestingContext TestingContext;
+        private readonly int EstateManagementUiPort = 5001;
         private readonly BlazorUiHelpers UiHelpers;
         private readonly IPage Page;
 
-        public ReportingSteps(ScenarioContext scenarioContext, TestingContext testingContext, IObjectContainer container)
+        public ReportingSteps(ScenarioContext scenarioContext, IObjectContainer container)
         {
             this.Page = scenarioContext.ScenarioContainer.Resolve<IPage>(scenarioContext.ScenarioInfo.Title.Replace(" ", ""));
-            this.TestingContext = testingContext;
-            this.UiHelpers = new BlazorUiHelpers(this.Page, this.TestingContext.DockerHelper.EstateManagementUiPort);
+            
+            this.UiHelpers = new BlazorUiHelpers(this.Page, this.EstateManagementUiPort);
         }
 
         #region Navigation Steps

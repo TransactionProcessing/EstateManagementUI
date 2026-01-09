@@ -1,7 +1,7 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Services;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Common;
+namespace EstateManagementUI.OfflineIntegrationTests.Common;
 
 /// <summary>
 /// Helper class for accessing and manipulating test data during integration tests

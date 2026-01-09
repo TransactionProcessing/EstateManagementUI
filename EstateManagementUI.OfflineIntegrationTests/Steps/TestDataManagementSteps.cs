@@ -3,7 +3,7 @@ using EstateManagementUI.BlazorServer.Services;
 using Reqnroll;
 using Shouldly;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Steps;
+namespace EstateManagementUI.OfflineIntegrationTests.Steps;
 
 /// <summary>
 /// Example step definitions showing how to use the test data store

@@ -1,13 +1,50 @@
 using Microsoft.Playwright;
 using Reqnroll;
-using Shared.IntegrationTesting;
 using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EstateManagementUI.BlazorIntegrationTests.Common;
+namespace EstateManagementUI.OfflineIntegrationTests.Common;
+
+// Simple retry helper for offline testing
+internal static class Retry
+{
+    public static async Task For(Func<Task> action, int maxAttempts = 10)
+    {
+        await For(action, maxAttempts, 500);
+    }
+
+    public static async Task For(Func<Task> action, int maxAttempts, int delayMs)
+    {
+        Exception lastException = null;
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            try
+            {
+                await action();
+                return;
+            }
+            catch (Exception ex)
+            {
+                lastException = ex;
+                if (i < maxAttempts - 1)
+                {
+                    await Task.Delay(delayMs);
+                }
+            }
+        }
+        throw lastException ?? new Exception("Retry failed");
+    }
+
+    // Overload to accept TimeSpan (convert to milliseconds)
+    public static async Task For(Func<Task> action, TimeSpan? timeout)
+    {
+        int maxAttempts = timeout.HasValue ? Math.Max(1, (int)(timeout.Value.TotalSeconds / 0.5)) : 10;
+        await For(action, maxAttempts, 500);
+    }
+}
 
 public class BlazorUiHelpers
 {
