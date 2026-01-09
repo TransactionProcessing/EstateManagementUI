@@ -73,7 +73,35 @@ EstateManagementUI.OfflineIntegrationTests/
 
 ## Getting Started
 
-### Installation
+### Prerequisites
+
+Before running the tests, ensure you have:
+- .NET 10.0 SDK
+- Node.js (for Playwright browser installation)
+- **The Blazor application must be running with TestMode enabled**
+
+### Step 1: Start the Blazor Application
+
+The tests require the Blazor Server application to be running. Open a **separate terminal** and start the application:
+
+```bash
+# Navigate to the Blazor Server project
+cd EstateManagementUI.BlazorServer
+
+# Set the application to test mode
+export TestMode=true  # On Linux/Mac
+# OR on Windows PowerShell:
+# $env:TestMode="true"
+
+# Start the application (it will run on https://localhost:5004)
+dotnet run
+```
+
+**Important**: The application must be running with `TestMode=true` to use the TestDataStore instead of real backend APIs. Leave this terminal running while you execute tests.
+
+### Step 2: Install Test Dependencies
+
+In a **new terminal**, navigate to the test project:
 
 ```bash
 # Navigate to the test project
@@ -88,7 +116,7 @@ pwsh bin/Debug/net10.0/playwright.ps1 install
 # playwright install
 ```
 
-### Running Tests
+### Step 3: Running Tests
 
 **Run all tests:**
 ```bash

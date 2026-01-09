@@ -62,13 +62,33 @@ This document provides a comprehensive guide to the offline integration testing 
 - .NET 10.0 SDK
 - Node.js (for Playwright browser installation)
 - Git
+- **The Blazor application running with TestMode enabled**
 
 ### Initial Setup
 
+**Step 1: Start the Blazor Application**
+
+The offline integration tests require the Blazor Server application to be running. Open a terminal and start it:
+
 ```bash
-# Clone the repository
-git clone https://github.com/TransactionProcessing/EstateManagementUI.git
-cd EstateManagementUI/EstateManagementUI.BlazorIntegrationTests
+# Navigate to the Blazor Server project
+cd EstateManagementUI/EstateManagementUI.BlazorServer
+
+# Set the application to test mode to use TestDataStore
+export TestMode=true  # On Linux/Mac
+# OR on Windows PowerShell: $env:TestMode="true"
+
+# Start the application (runs on https://localhost:5004)
+dotnet run
+```
+
+Keep this terminal running. The application must be accessible at `https://localhost:5004` for tests to work.
+
+**Step 2: Setup Test Project (in a new terminal)**
+
+```bash
+# Navigate to the test project
+cd EstateManagementUI/EstateManagementUI.OfflineIntegrationTests
 
 # Restore NuGet packages
 dotnet restore
@@ -96,6 +116,8 @@ The framework uses `appsettings.json` for configuration:
 ## Running Tests
 
 ### Basic Test Execution
+
+**Important**: Ensure the Blazor application is running on https://localhost:5004 before running tests.
 
 **Run all tests:**
 ```bash

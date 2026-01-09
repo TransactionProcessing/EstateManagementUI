@@ -12,7 +12,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
     [Scope(Tag = "reporting")]
     public class ReportingSteps
     {
-        private readonly int EstateManagementUiPort = 5001;
+        private readonly int EstateManagementUiPort = 5004; // Port from launchSettings.json
         private readonly BlazorUiHelpers UiHelpers;
         private readonly IPage Page;
 

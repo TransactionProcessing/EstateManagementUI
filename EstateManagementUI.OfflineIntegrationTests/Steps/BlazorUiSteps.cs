@@ -14,7 +14,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
     {
         private readonly BlazorUiHelpers UiHelpers;
         private readonly IPage Page;
-        private readonly int EstateManagementUiPort = 5001;
+        private readonly int EstateManagementUiPort = 5004; // Port from launchSettings.json
 
         public BlazorUiSteps(ScenarioContext scenarioContext, IObjectContainer container)
         {
