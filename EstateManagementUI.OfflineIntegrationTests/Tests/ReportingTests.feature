@@ -1,6 +1,10 @@
 @reporting @offline
 Feature: Reporting
 
+  Background: 
+    When I navigate to the home page
+    Then I should see the application dashboard
+
   Scenario: View Transaction Detail Report
     When I navigate to the Reporting page
     And I select the "Transaction Detail" report

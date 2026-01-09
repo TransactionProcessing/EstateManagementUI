@@ -125,11 +125,31 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
             isVisible.ShouldBeTrue();
         }
 
+        [When(@"I click the Add New Merchant button")]
+        public async Task WhenIClickTheAddNewMerchantButton()
+        {
+            await this.Page.ClickButtonByText("Add New Merchant");
+        }
+
         [When(@"I click the Create (.*) button")]
         [When(@"I click the Add (.*) button")]
         public async Task WhenIClickTheCreateButton(string entityType)
         {
             await this.Page.ClickButtonByText($"Create {entityType}");
+        }
+
+        [When(@"I click the edit button for a merchant")]
+        public async Task WhenIClickTheEditButtonForAMerchant()
+        {
+            // Click the edit icon button (green edit icon) in the first table row
+            await this.Page.Locator("#editMerchantLink").First.ClickAsync();
+        }
+
+        [When(@"I click the make deposit button for a merchant")]
+        public async Task WhenIClickTheMakeDepositButtonForAMerchant()
+        {
+            // Click the deposit icon button (purple deposit icon) in the first table row
+            await this.Page.Locator("#makeDepositLink").First.ClickAsync();
         }
 
         [When(@"I click the Edit button")]
@@ -225,6 +245,33 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
                 var value = row["Value"];
                 await this.Page.FillIn(field, value);
             }
+        }
+
+        [When(@"I enter the deposit amount ""(.*)""")]
+        public async Task WhenIEnterTheDepositAmount(string amount)
+        {
+            await this.Page.Locator("#depositAmount").FillAsync(amount);
+        }
+
+        [When(@"I enter the deposit reference ""(.*)""")]
+        public async Task WhenIEnterTheDepositReference(string reference)
+        {
+            await this.Page.Locator("#depositReference").FillAsync(reference);
+        }
+
+        [When(@"I click the Make Deposit button")]
+        public async Task WhenIClickTheMakeDepositButton()
+        {
+            await this.Page.Locator("#makeDepositButton").ClickAsync();
+        }
+
+        [Then(@"the deposit should be processed")]
+        public async Task ThenTheDepositShouldBeProcessed()
+        {
+            await Task.Delay(500);
+            // Check we're back on merchants page or see success
+            var url = this.Page.Url;
+            url.ShouldContain("/merchants");
         }
 
         [When(@"I enter ""(.*)"" in the search box")]

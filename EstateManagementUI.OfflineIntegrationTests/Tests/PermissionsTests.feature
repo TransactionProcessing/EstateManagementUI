@@ -1,6 +1,10 @@
 @permissions @offline
 Feature: Permissions Management
 
+  Background: 
+    When I navigate to the home page
+    Then I should see the application dashboard
+
   Scenario: View Permissions List
     When I navigate to the Permissions page
     Then I should see a list of permissions

@@ -1,6 +1,10 @@
 @fileprocessing @offline
 Feature: File Processing
 
+  Background: 
+    When I navigate to the home page
+    Then I should see the application dashboard
+
   Scenario: View File Processing List
     When I navigate to the File Processing page
     Then I should see a list of processed files

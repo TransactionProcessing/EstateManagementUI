@@ -1,6 +1,10 @@
 @operator @offline
 Feature: Operator Management
 
+  Background: 
+    When I navigate to the home page
+    Then I should see the application dashboard
+
   Scenario: View Operators List
     When I navigate to the Operators page
     Then I should see a list of operators

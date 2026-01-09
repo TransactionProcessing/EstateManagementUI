@@ -1,6 +1,10 @@
 @contract @offline
 Feature: Contract Management
 
+  Background: 
+    When I navigate to the home page
+    Then I should see the application dashboard
+
   Scenario: View Contracts List
     When I navigate to the Contracts page
     Then I should see a list of contracts
