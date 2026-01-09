@@ -1,6 +1,6 @@
 # Quick Start Guide - Offline Integration Tests
 
-This guide will get you running tests in 5 minutes.
+This guide will get you running tests in 3 minutes.
 
 ## Prerequisites
 
@@ -9,29 +9,9 @@ This guide will get you running tests in 5 minutes.
 
 ## Step-by-Step Instructions
 
-### 1. Start the Blazor Application (Terminal 1)
+### 1. Run Tests
 
-Open a terminal and run:
-
-```bash
-cd EstateManagementUI.BlazorServer
-
-# Enable TestMode (uses in-memory test data instead of real APIs)
-export TestMode=true     # Linux/Mac
-# OR
-$env:TestMode="true"     # Windows PowerShell
-
-# Start the application
-dotnet run
-```
-
-**Wait** until you see: `Now listening on: https://localhost:5004`
-
-Leave this terminal running. The application must stay running for tests to work.
-
-### 2. Run Tests (Terminal 2)
-
-Open a **new terminal** and run:
+The tests will **automatically start and stop** the Blazor application for you!
 
 ```bash
 cd EstateManagementUI.OfflineIntegrationTests
@@ -40,31 +20,61 @@ cd EstateManagementUI.OfflineIntegrationTests
 pwsh bin/Debug/net10.0/playwright.ps1 install
 # OR on Linux/Mac: playwright install
 
-# Run all tests
+# Run all tests - application starts automatically!
 dotnet test
 ```
 
-That's it! The tests will now run against the running Blazor application.
+That's it! The framework will:
+1. ✅ Build the Blazor application
+2. ✅ Start it with TestMode enabled on port 5004
+3. ✅ Wait for it to be ready
+4. ✅ Run your tests
+5. ✅ Stop the application when done
+
+### 2. Manual Application Start (Optional)
+
+If you prefer to start the application manually (e.g., for debugging), you can still do that:
+
+```bash
+# Terminal 1 (Optional - only if you want manual control)
+cd EstateManagementUI.BlazorServer
+export TestMode=true     # Linux/Mac
+# OR
+$env:TestMode="true"     # Windows PowerShell
+dotnet run
+
+# Terminal 2
+cd EstateManagementUI.OfflineIntegrationTests
+dotnet test
+```
+
+The framework detects if the application is already running and uses it instead of starting a new instance.
 
 ## Common Issues
 
-### ❌ Error: `net::ERR_CONNECTION_REFUSED at https://localhost:5004/`
+### ❌ Error: `Could not find solution directory`
 
-**Problem**: The Blazor application is not running.
+**Problem**: Running from wrong directory.
 
-**Solution**: Make sure you completed Step 1 above and the application is running on port 5004.
+**Solution**: Make sure you run `dotnet test` from the `EstateManagementUI.OfflineIntegrationTests` directory.
 
 ### ❌ Error: Tests fail with authentication errors
 
 **Problem**: TestMode is not enabled.
 
-**Solution**: Restart the Blazor application with `TestMode=true` environment variable.
+**Solution**: The framework automatically sets TestMode=true. If you're running the app manually, make sure to set the environment variable.
 
 ### ❌ Error: Playwright browsers not found
 
 **Problem**: Playwright browsers not installed.
 
 **Solution**: Run `playwright install` or `pwsh bin/Debug/net10.0/playwright.ps1 install`
+
+### ❌ Error: Port 5004 already in use
+
+**Problem**: Another instance of the application is already running.
+
+**Solution**: Stop the other instance or the tests will detect and use the running instance.
 
 ## Test Options
 
@@ -97,10 +107,17 @@ dotnet test -- NUnit.NumberOfTestWorkers=5
 
 ## What's Happening?
 
-1. **Terminal 1**: Runs the Blazor application with TestDataStore (no real APIs needed)
-2. **Terminal 2**: Playwright launches a browser and automates UI interactions
-3. **Tests**: Execute scenarios defined in `.feature` files against the running app
-4. **Results**: See test results in the console
+1. **BeforeTestRun**: Framework builds and starts the Blazor app with TestMode=true
+2. **Test Execution**: Playwright automates browser interactions against the running app
+3. **AfterTestRun**: Framework stops the application and cleans up
+
+## Advantages of Automatic Startup
+
+✅ **No manual steps** - Just run `dotnet test`  
+✅ **Consistent environment** - TestMode always enabled  
+✅ **Clean state** - Fresh application for each test run  
+✅ **CI/CD friendly** - Works in automated pipelines  
+✅ **Faster development** - No context switching between terminals
 
 ## Next Steps
 

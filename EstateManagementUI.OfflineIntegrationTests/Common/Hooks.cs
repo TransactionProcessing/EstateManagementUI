@@ -11,6 +11,7 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
         private ScenarioContext ScenarioContext;
         private static IPlaywright? playwright;
         private static IBrowser? browser;
+        private static ApplicationHost? applicationHost;
 
         public Hooks(IObjectContainer objectContainer)
         {
@@ -20,6 +21,10 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
         [BeforeTestRun]
         public static async Task BeforeTestRun()
         {
+            // Start the Blazor application
+            applicationHost = new ApplicationHost();
+            await applicationHost.StartApplicationAsync();
+
             // Install Playwright browsers if needed
             var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
             if (exitCode != 0)
@@ -76,6 +81,13 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
             {
                 playwright.Dispose();
                 playwright = null;
+            }
+
+            // Stop the Blazor application
+            if (applicationHost != null)
+            {
+                applicationHost.Dispose();
+                applicationHost = null;
             }
         }
 

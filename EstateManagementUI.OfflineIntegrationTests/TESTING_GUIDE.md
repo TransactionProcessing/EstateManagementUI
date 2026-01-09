@@ -62,29 +62,12 @@ This document provides a comprehensive guide to the offline integration testing 
 - .NET 10.0 SDK
 - Node.js (for Playwright browser installation)
 - Git
-- **The Blazor application running with TestMode enabled**
 
-### Initial Setup
+### Initial Setup and Running Tests
 
-**Step 1: Start the Blazor Application**
+The framework includes **automatic application lifecycle management** - you don't need to manually start the Blazor application!
 
-The offline integration tests require the Blazor Server application to be running. Open a terminal and start it:
-
-```bash
-# Navigate to the Blazor Server project
-cd EstateManagementUI/EstateManagementUI.BlazorServer
-
-# Set the application to test mode to use TestDataStore
-export TestMode=true  # On Linux/Mac
-# OR on Windows PowerShell: $env:TestMode="true"
-
-# Start the application (runs on https://localhost:5004)
-dotnet run
-```
-
-Keep this terminal running. The application must be accessible at `https://localhost:5004` for tests to work.
-
-**Step 2: Setup Test Project (in a new terminal)**
+**Step 1: Install and Run Tests**
 
 ```bash
 # Navigate to the test project
@@ -96,9 +79,38 @@ dotnet restore
 # Install Playwright browsers (first time only)
 pwsh bin/Debug/net10.0/playwright.ps1 install
 # OR on Linux/Mac:
-# dotnet tool install --global Microsoft.Playwright.CLI
 # playwright install
+
+# Run tests - application starts automatically!
+dotnet test
 ```
+
+**What Happens Automatically:**
+1. Framework builds the Blazor application
+2. Starts it with TestMode=true on https://localhost:5004
+3. Waits for the application to be ready
+4. Runs your tests
+5. Stops the application when done
+
+### Manual Application Control (Optional)
+
+For debugging or development, you can manually control the application:
+
+**Terminal 1 - Manual Start:**
+```bash
+cd EstateManagementUI/EstateManagementUI.BlazorServer
+export TestMode=true  # Linux/Mac
+# OR: $env:TestMode="true"  # Windows PowerShell
+dotnet run  # Runs on https://localhost:5004
+```
+
+**Terminal 2 - Run Tests:**
+```bash
+cd EstateManagementUI/EstateManagementUI.OfflineIntegrationTests
+dotnet test
+```
+
+The framework will detect if the application is already running and use it.
 
 ### Configuration
 
@@ -116,8 +128,6 @@ The framework uses `appsettings.json` for configuration:
 ## Running Tests
 
 ### Basic Test Execution
-
-**Important**: Ensure the Blazor application is running on https://localhost:5004 before running tests.
 
 **Run all tests:**
 ```bash

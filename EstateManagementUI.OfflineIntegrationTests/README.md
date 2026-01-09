@@ -78,45 +78,51 @@ EstateManagementUI.OfflineIntegrationTests/
 Before running the tests, ensure you have:
 - .NET 10.0 SDK
 - Node.js (for Playwright browser installation)
-- **The Blazor application must be running with TestMode enabled**
 
-### Step 1: Start the Blazor Application
+### Quick Start
 
-The tests require the Blazor Server application to be running. Open a **separate terminal** and start the application:
-
-```bash
-# Navigate to the Blazor Server project
-cd EstateManagementUI.BlazorServer
-
-# Set the application to test mode
-export TestMode=true  # On Linux/Mac
-# OR on Windows PowerShell:
-# $env:TestMode="true"
-
-# Start the application (it will run on https://localhost:5004)
-dotnet run
-```
-
-**Important**: The application must be running with `TestMode=true` to use the TestDataStore instead of real backend APIs. Leave this terminal running while you execute tests.
-
-### Step 2: Install Test Dependencies
-
-In a **new terminal**, navigate to the test project:
+The framework **automatically starts and stops** the Blazor application for you!
 
 ```bash
 # Navigate to the test project
 cd EstateManagementUI.OfflineIntegrationTests
 
-# Restore NuGet packages
-dotnet restore
-
 # Install Playwright browsers (first time only)
 pwsh bin/Debug/net10.0/playwright.ps1 install
-# OR on Linux/Mac:
-# playwright install
+# OR on Linux/Mac: playwright install
+
+# Run all tests - application starts automatically!
+dotnet test
 ```
 
-### Step 3: Running Tests
+The framework will:
+1. ✅ Build the Blazor application
+2. ✅ Start it with TestMode enabled (uses TestDataStore)
+3. ✅ Wait for the application to be ready
+4. ✅ Execute your tests
+5. ✅ Stop the application and clean up
+
+### Manual Application Start (Optional)
+
+If you prefer to control the application manually (e.g., for debugging):
+
+**Terminal 1 - Start Application:**
+```bash
+cd EstateManagementUI.BlazorServer
+export TestMode=true  # Linux/Mac
+# OR: $env:TestMode="true"  # Windows PowerShell
+dotnet run  # Runs on https://localhost:5004
+```
+
+**Terminal 2 - Run Tests:**
+```bash
+cd EstateManagementUI.OfflineIntegrationTests
+dotnet test
+```
+
+The framework will detect the running application and use it instead of starting a new instance.
+
+### Running Tests
 
 **Run all tests:**
 ```bash
