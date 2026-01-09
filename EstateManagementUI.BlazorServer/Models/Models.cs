@@ -265,3 +265,21 @@ public class SettlementSummaryModel
     public decimal NetSettlementAmount { get; set; }
     public string? SettlementStatus { get; set; }
 }
+
+// Transaction Detail Models
+public class TransactionDetailModel
+{
+    public Guid TransactionId { get; set; }
+    public DateTime TransactionDateTime { get; set; }
+    public string? MerchantName { get; set; }
+    public Guid MerchantId { get; set; }
+    public string? OperatorName { get; set; }
+    public Guid OperatorId { get; set; }
+    public string? ProductName { get; set; }
+    public string? TransactionType { get; set; } // sale, refund, reversal
+    public string? TransactionStatus { get; set; } // successful, failed, reversed
+    public decimal GrossAmount { get; set; }
+    public decimal FeesCommission { get; set; }
+    public decimal NetAmount { get; set; }
+    public string? SettlementReference { get; set; }
+}

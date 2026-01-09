@@ -25,7 +25,8 @@ IRequestHandler<GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataMod
 IRequestHandler<GetLastSettlementQuery, Result<LastSettlementModel>>,
 IRequestHandler<GetMerchantTransactionSummaryQuery, Result<List<MerchantTransactionSummaryModel>>>,
 IRequestHandler<GetProductPerformanceQuery, Result<List<ProductPerformanceModel>>>,
-IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransactionSummaryModel>>> {
+IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransactionSummaryModel>>>,
+IRequestHandler<GetTransactionDetailQuery, Result<List<TransactionDetailModel>>> {
 
     private readonly IApiClient ApiClient;
     public ReportingRequestHandler(IApiClient apiClient)
@@ -279,5 +280,136 @@ IRequestHandler<GetOperatorTransactionSummaryQuery, Result<List<OperatorTransact
         }
         
         return Result.Success(summary);
+    }
+
+    public async Task<Result<List<TransactionDetailModel>>> Handle(GetTransactionDetailQuery request,
+                                                                     CancellationToken cancellationToken) {
+        // TODO: Replace with actual API call when endpoint is available
+        // For now, return mock data for testing
+        var merchants = await this.ApiClient.GetMerchants(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        var operators = await this.ApiClient.GetOperators(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        var contracts = await this.ApiClient.GetContracts(request.AccessToken, Guid.Empty, request.EstateId, cancellationToken);
+        
+        if (!merchants.IsSuccess) {
+            return Result.Failure<List<TransactionDetailModel>>(merchants.Message);
+        }
+        
+        if (!operators.IsSuccess) {
+            return Result.Failure<List<TransactionDetailModel>>(operators.Message);
+        }
+        
+        if (!contracts.IsSuccess) {
+            return Result.Failure<List<TransactionDetailModel>>(contracts.Message);
+        }
+
+        var transactions = new List<TransactionDetailModel>();
+        
+        // Calculate days in the date range to vary data based on period
+        var daysInRange = (request.EndDate - request.StartDate).Days + 1;
+        
+        // Use date range as seed for consistent but varying data
+        var seed = request.StartDate.GetHashCode() ^ request.EndDate.GetHashCode();
+        var random = new Random(seed);
+        
+        // Transaction types and statuses
+        var transactionTypes = new[] { "Sale", "Refund", "Reversal" };
+        var transactionStatuses = new[] { "Successful", "Failed", "Reversed" };
+        
+        // Collect all products
+        var products = contracts.Data
+            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .Where(p => !string.IsNullOrEmpty(p.ProductName))
+            .ToList();
+        
+        // Generate mock transaction data
+        // Scale transaction counts based on the date range length
+        var transactionsPerDay = 50; // Base transactions per day
+        var totalTransactions = daysInRange * transactionsPerDay;
+        
+        for (int i = 0; i < totalTransactions; i++) {
+            // Random date within range
+            var randomDays = random.Next(0, daysInRange);
+            var randomHours = random.Next(0, 24);
+            var randomMinutes = random.Next(0, 60);
+            var randomSeconds = random.Next(0, 60);
+            var transactionDate = request.StartDate.AddDays(randomDays)
+                .AddHours(randomHours)
+                .AddMinutes(randomMinutes)
+                .AddSeconds(randomSeconds);
+            
+            // Random merchant
+            var merchant = merchants.Data[random.Next(merchants.Data.Count)];
+            
+            // Random operator
+            var op = operators.Data[random.Next(operators.Data.Count)];
+            
+            // Random product
+            var product = products[random.Next(products.Count)];
+            
+            // Random type and status (90% successful sales, some refunds/reversals/failures)
+            var typeRoll = random.NextDouble();
+            var statusRoll = random.NextDouble();
+            
+            string transactionType;
+            string transactionStatus;
+            
+            if (typeRoll < 0.85) {
+                transactionType = "Sale";
+                transactionStatus = statusRoll < 0.95 ? "Successful" : "Failed";
+            } else if (typeRoll < 0.95) {
+                transactionType = "Refund";
+                transactionStatus = "Successful";
+            } else {
+                transactionType = "Reversal";
+                transactionStatus = "Reversed";
+            }
+            
+            // Random amounts
+            var grossAmount = Math.Round((decimal)(random.NextDouble() * 200 + 10), 2);
+            var feePercentage = 0.015m; // 1.5%
+            var feesCommission = Math.Round(grossAmount * feePercentage, 2);
+            var netAmount = grossAmount - feesCommission;
+            
+            // Settlement reference (70% have one)
+            string? settlementReference = null;
+            if (transactionStatus == "Successful" && random.NextDouble() < 0.7) {
+                settlementReference = $"STL-{transactionDate:yyyyMMdd}-{random.Next(1000, 9999)}";
+            }
+            
+            transactions.Add(new TransactionDetailModel {
+                TransactionId = Guid.NewGuid(),
+                TransactionDateTime = transactionDate,
+                MerchantName = merchant.Name,
+                MerchantId = merchant.Id,
+                OperatorName = op.Name,
+                OperatorId = op.Id,
+                ProductName = product.ProductName,
+                TransactionType = transactionType,
+                TransactionStatus = transactionStatus,
+                GrossAmount = grossAmount,
+                FeesCommission = feesCommission,
+                NetAmount = netAmount,
+                SettlementReference = settlementReference
+            });
+        }
+        
+        // Apply filters if specified
+        if (request.MerchantId.HasValue) {
+            transactions = transactions.Where(t => t.MerchantId == request.MerchantId.Value).ToList();
+        }
+        
+        if (request.OperatorId.HasValue) {
+            transactions = transactions.Where(t => t.OperatorId == request.OperatorId.Value).ToList();
+        }
+        
+        if (request.ProductId.HasValue) {
+            // Note: ProductId filter would need product lookup, but for mock data we can skip
+            // In real implementation, would filter by product
+        }
+        
+        // Sort by transaction date descending (most recent first)
+        transactions = transactions.OrderByDescending(t => t.TransactionDateTime).ToList();
+        
+        return Result.Success(transactions);
     }
 }
