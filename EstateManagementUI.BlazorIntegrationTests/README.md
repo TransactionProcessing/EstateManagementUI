@@ -105,147 +105,28 @@ dotnet test
 - `Browser`: Browser type (`Chrome`, `Firefox`, `WebKit`) - defaults to Chrome
 - `IsCI`: Set to `true` for headless mode in CI/CD
 
-### Multi-Browser Testing
-
-The framework supports testing across multiple browsers:
-
-**Chrome (Default):**
-```bash
-dotnet test
-# OR
-Browser=Chrome dotnet test
-```
-
-**Firefox:**
-```bash
-Browser=Firefox dotnet test
-```
-
-**Microsoft Edge/Safari (WebKit):**
-```bash
-Browser=WebKit dotnet test
-```
-
-### Parallel Test Execution
-
-Tests are configured to run in parallel for faster execution:
-
-**Using Default Settings (3 parallel workers):**
-```bash
-dotnet test
-```
-
-**Using Custom Run Settings:**
-```bash
-dotnet test --settings test.runsettings
-```
-
-**Custom Number of Workers:**
-```bash
-dotnet test -- NUnit.NumberOfTestWorkers=5
-```
-
-**Disable Parallel Execution:**
-```bash
-dotnet test -- NUnit.NumberOfTestWorkers=0
-```
-
-The parallel execution is configured at the fixture level, meaning:
-- Each feature file runs as a separate fixture
-- Multiple feature files can run in parallel
-- Scenarios within a feature file run sequentially
-- Each test gets its own browser context for isolation
-
-### Running Specific Test Categories
-
-Tests are organized by tags matching application sections:
-
-**Run all tests:**
-```bash
-dotnet test
-```
-
-**Run only Contract tests:**
-```bash
-dotnet test --filter "TestCategory=shared|TestCategory=uigeneral"
-```
-
-**Run specific feature file:**
-```bash
-dotnet test --filter "FullyQualifiedName~ContractTests"
-```
-
-**Run only PR tests:**
-```bash
-dotnet test --filter "TestCategory=PRTest"
-```
-
-## Test Organization
-
-### Feature Files by Application Section
-
-The tests are organized into separate feature files for each major application section:
-
-1. **EstateTests.feature** - Estate management functionality
-2. **MerchantTests.feature** - Merchant creation, editing, and management
-3. **OperatorTests.feature** - Operator management
-4. **ContractTests.feature** - Contract and product management
-5. **FileProcessingTests.feature** - File upload and processing
-6. **PermissionsTests.feature** - User permissions and role management
-7. **ReportingTests.feature** - All reporting features with query filters:
-   - Transaction Detail Report (with filters: date, merchant, operator, status)
-   - Transaction Summary by Merchant (with grouping options)
-   - Transaction Summary by Operator
-   - Settlement Summary
-   - Settlement Reconciliation
-   - Merchant Settlement History
-   - Product Performance
-   - Analytical Charts
-   - Export functionality (CSV, Excel)
-
-### Test Data Management
-
-The framework uses an in-memory TestDataStore when running in offline mode:
-
-- **Default Test Data**: Pre-populated with estates, merchants, operators, contracts
-- **CRUD Operations**: Full support for Create, Read, Update, Delete
-- **Test Isolation**: Reset between scenarios for clean state
-- **Thread-Safe**: Concurrent dictionary implementation
-
-See [TEST_INFRASTRUCTURE.md](./TEST_INFRASTRUCTURE.md) for details on test data management.
-
 ## Current Status
 
 ### ✅ Completed
 - Project structure created
-- Playwright dependencies added (supports Chrome, Firefox, WebKit)
+- Playwright dependencies added
 - Core Playwright extension methods implemented
-- UI helper methods implemented
+- Basic UI helper methods implemented
 - Docker infrastructure adapted for Blazor
 - Test hooks implemented with Playwright lifecycle management
-- Feature files for all application sections:
-  - Estate, Merchant, Operator, Contract tests (existing)
-  - FileProcessing tests (new)
-  - Permissions tests (new)
-  - Reporting tests with comprehensive query filters (new)
-- Parallel test execution configured (NUnit)
-- Multi-browser support enabled
-- Test data infrastructure with TestDataStore
-- Offline testing mode (no backend dependencies)
-- Extensibility framework for future online mode
-- Documentation complete
+- Feature files copied from original tests
 
-### 🎯 Framework Capabilities
+### 🚧 In Progress
+- Additional UI helper methods need implementation
+- More step definitions needed to cover all scenarios
+- Build and test execution validation
 
-✅ **Multi-Browser Support**: Chrome, Firefox, Edge/Safari (WebKit)  
-✅ **Parallel Execution**: Configurable worker threads (default: 3)  
-✅ **Reqnroll/SpecFlow**: BDD-style feature files  
-✅ **Offline Testing**: No backend API required  
-✅ **NUnit Test Backend**: Industry-standard test framework  
-✅ **Feature Files by Section**: Organized by application area  
-✅ **Extensible Architecture**: Ready for real auth/backend integration  
-
-See [EXTENSIBILITY_GUIDE.md](./EXTENSIBILITY_GUIDE.md) for information on extending the framework to use real authentication endpoints and backend APIs.
+### 📝 Next Steps
+1. Complete all UI helper methods in `BlazorUiHelpers.cs`
+2. Implement all step definitions in `BlazorUiSteps.cs`
+3. Ensure all feature files are compatible with Blazor UI
+4. Build and run tests to verify functionality
+5. Add CI/CD integration
 
 ## Differences from Selenium Tests
 

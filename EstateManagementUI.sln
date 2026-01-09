@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.BlazorSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.BlazorServer.Tests", "EstateManagementUI.BlazorServer.Tests\EstateManagementUI.BlazorServer.Tests.csproj", "{55431CBE-C879-47B9-9607-A5822DE9B856}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EstateManagementUI.OfflineIntegrationTests", "EstateManagementUI.OfflineIntegrationTests\EstateManagementUI.OfflineIntegrationTests.csproj", "{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,18 @@ Global
 		{55431CBE-C879-47B9-9607-A5822DE9B856}.Release|x64.Build.0 = Release|Any CPU
 		{55431CBE-C879-47B9-9607-A5822DE9B856}.Release|x86.ActiveCfg = Release|Any CPU
 		{55431CBE-C879-47B9-9607-A5822DE9B856}.Release|x86.Build.0 = Release|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Debug|x64.Build.0 = Debug|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Debug|x86.Build.0 = Debug|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Release|x64.ActiveCfg = Release|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Release|x64.Build.0 = Release|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Release|x86.ActiveCfg = Release|Any CPU
+		{1D9EA6BF-5E7E-469E-9161-8326B6EF53BF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

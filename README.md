@@ -12,32 +12,29 @@ This repository contains the Estate Management User Interface applications and a
 ### Test Projects
 
 - **EstateManagementUI.IntegrationTests**: Integration tests for the legacy UI using Selenium WebDriver
-- **EstateManagementUI.BlazorIntegrationTests**: Integration tests for the Blazor UI using Playwright (NEW!)
+- **EstateManagementUI.BlazorIntegrationTests**: Integration tests for the Blazor UI using Playwright with Docker infrastructure
+- **EstateManagementUI.OfflineIntegrationTests**: Offline integration tests for Blazor UI without backend dependencies (NEW!)
 - **EstateManagementUI.UITests**: Unit tests for UI components
 - **EstateManagementUI.BusinessLogic.Tests**: Unit tests for business logic
 
 ## Integration Testing
 
-### Blazor Integration Tests (NEW)
+### Offline Integration Tests (NEW!)
 
-The `EstateManagementUI.BlazorIntegrationTests` project provides comprehensive integration tests for the Blazor Server UI using **Microsoft Playwright** for browser automation.
+The `EstateManagementUI.OfflineIntegrationTests` project provides **offline integration tests** for the Blazor Server UI using **Microsoft Playwright** for browser automation.
 
 **Key Features:**
-- ✅ **Multi-Browser Support**: Chrome, Firefox, Edge/Safari (WebKit)
-- ✅ **Parallel Test Execution**: Configurable NUnit parallel execution (default: 3 workers)
+- ✅ **Multi-Browser Support**: Chrome, Firefox, WebKit (Edge/Safari)
+- ✅ **Parallel Execution**: Configurable NUnit parallel execution (default: 3 workers)
 - ✅ **Reqnroll/SpecFlow**: BDD-style feature files organized by application section
 - ✅ **Offline Testing**: No backend API required - uses in-memory test data
 - ✅ **NUnit Test Backend**: Industry-standard test framework
-- ✅ **Comprehensive Coverage**: Feature files for all application sections
-  - Estate, Merchant, Operator, Contract management
-  - File Processing
-  - Permissions management
-  - Reporting (with query filters for all report types)
+- ✅ **Comprehensive Coverage**: 61+ scenarios across 7 application sections
 - ✅ **Extensible Architecture**: Ready for future integration with real auth/backend APIs
 
 **Quick Start:**
 ```bash
-cd EstateManagementUI.BlazorIntegrationTests
+cd EstateManagementUI.OfflineIntegrationTests
 
 # Run tests with default browser (Chrome)
 dotnet test
@@ -47,12 +44,21 @@ Browser=Firefox dotnet test
 
 # Run tests with custom parallel workers
 dotnet test -- NUnit.NumberOfTestWorkers=5
-
-# Run with settings file
-dotnet test --settings test.runsettings
 ```
 
-See [EstateManagementUI.BlazorIntegrationTests/README.md](EstateManagementUI.BlazorIntegrationTests/README.md) for detailed documentation and [EXTENSIBILITY_GUIDE.md](EstateManagementUI.BlazorIntegrationTests/EXTENSIBILITY_GUIDE.md) for extending the framework.
+See [EstateManagementUI.OfflineIntegrationTests/README.md](EstateManagementUI.OfflineIntegrationTests/README.md) for detailed documentation.
+
+### Blazor Integration Tests
+
+The `EstateManagementUI.BlazorIntegrationTests` project provides comprehensive integration tests for the Blazor Server UI using **Microsoft Playwright** for browser automation with full Docker infrastructure support.
+
+**Key Features:**
+- Targets the Blazor Server UI (`EstateManagementUI.BlazorServer`)
+- Uses Playwright for modern, reliable browser automation
+- Full Docker infrastructure support for testing
+- BDD-style tests using Reqnroll (SpecFlow successor)
+
+See [EstateManagementUI.BlazorIntegrationTests/README.md](EstateManagementUI.BlazorIntegrationTests/README.md) for detailed documentation.
 
 ### Legacy Integration Tests
 
