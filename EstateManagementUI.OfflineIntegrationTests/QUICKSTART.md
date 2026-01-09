@@ -59,6 +59,12 @@ The framework detects if the application is already running and uses it instead 
 
 **Solution**: Make sure you run `dotnet test` from the `EstateManagementUI.OfflineIntegrationTests` directory.
 
+### ❌ Tests failing? Check the screenshots!
+
+**Solution**: When tests fail, screenshots are automatically saved to the `Screenshots/` subfolder in the test project. Check these screenshots to see what state the application was in when the test failed.
+
+Example: `EstateManagementUI.OfflineIntegrationTests/Screenshots/screenshot-ViewEstateDashboard-20260109153000.png`
+
 ### ❌ Error: Tests fail with authentication errors
 
 **Problem**: TestMode is not enabled.

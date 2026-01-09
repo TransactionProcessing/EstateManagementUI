@@ -282,6 +282,22 @@ See **EXTENSIBILITY_GUIDE.md** for detailed information on extending the framewo
 
 ## Troubleshooting
 
+### Test failures? Check screenshots!
+
+When tests fail, screenshots are **automatically captured** to help you debug what went wrong.
+
+**Screenshot location:** `EstateManagementUI.OfflineIntegrationTests/Screenshots/`
+
+**File naming:** `screenshot-{ScenarioName}-{Timestamp}.png`
+
+**Example:** `Screenshots/screenshot-ViewEstateDashboard-20260109153000.png`
+
+**What to check:**
+- Is the application on the expected page?
+- Are there any visible errors or warnings?
+- Is the page fully loaded?
+- Are the expected UI elements visible?
+
 ### Playwright browsers not installed
 ```
 Error: Executable doesn't exist at [path]

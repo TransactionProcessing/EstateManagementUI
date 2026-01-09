@@ -59,7 +59,13 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
                 // Take screenshot on failure
                 if (this.ScenarioContext.TestError != null)
                 {
-                    var screenshotPath = $"screenshot-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.png";
+                    // Create Screenshots folder if it doesn't exist
+                    var screenshotsFolder = Path.Combine(Directory.GetCurrentDirectory(), "Screenshots");
+                    Directory.CreateDirectory(screenshotsFolder);
+                    
+                    var screenshotFileName = $"screenshot-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.png";
+                    var screenshotPath = Path.Combine(screenshotsFolder, screenshotFileName);
+                    
                     await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
                     Console.WriteLine($"Screenshot saved to: {screenshotPath}");
                 }

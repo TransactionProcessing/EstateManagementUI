@@ -402,4 +402,5 @@ FodyWeavers.xsd
 playwright-report/
 test-results/
 screenshot-*.png
+Screenshots/
 *.har

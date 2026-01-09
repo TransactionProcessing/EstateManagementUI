@@ -443,6 +443,22 @@ Error: Executable doesn't exist at [path]
 pwsh bin/Debug/net10.0/playwright.ps1 install
 ```
 
+**Issue: Tests failing? Check screenshots!**
+
+When a test fails, a screenshot is automatically captured and saved to help you debug.
+
+**Location:** `EstateManagementUI.OfflineIntegrationTests/Screenshots/`
+
+**Naming format:** `screenshot-{ScenarioName}-{Timestamp}.png`
+
+**Example:** `Screenshots/screenshot-ViewEstateDashboard-20260109153000.png`
+
+**What to look for in screenshots:**
+- Is the page fully loaded?
+- Are there any error messages visible?
+- Is the user on the expected page?
+- Are the expected elements visible on the page?
+
 **Issue: Tests timing out**
 ```
 Error: Timeout 30000ms exceeded
