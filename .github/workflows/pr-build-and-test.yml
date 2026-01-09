@@ -1,0 +1,64 @@
+name: PR Build and Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'EstateManagementUI.BlazorServer/**'
+      - 'EstateManagementUI.BlazorServer.Tests/**'
+      - 'EstateManagementUI.BusinessLogic/**'
+      - 'EstateManagementUI.BusinessLogic.Tests/**'
+      - 'EstateManagementUI.ViewModels/**'
+      - '*.sln'
+      - '.github/workflows/pr-build-and-test.yml'
+
+jobs:
+  build-and-test:
+    name: "Build Blazor Server and Run Unit Tests"
+    
+    env:
+      ASPNETCORE_ENVIRONMENT: "Production"
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+    
+    - name: Restore NuGet packages
+      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+    
+    - name: Build Blazor Server project
+      run: dotnet build EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj --configuration Release --no-restore
+    
+    - name: Build solution
+      run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
+    
+    - name: Run Blazor Server unit tests
+      run: dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=blazor-test-results.trx"
+    
+    - name: Run Business Logic unit tests
+      run: dotnet test EstateManagementUI.BusinessLogic.Tests/EstateManagementUI.BusinessLogic.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=business-test-results.trx"
+    
+    - name: Publish test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Unit Test Results
+        path: '**/TestResults/*.trx'
+        reporter: dotnet-trx
+        fail-on-error: true
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: '**/TestResults/*.trx'
+        retention-days: 30
