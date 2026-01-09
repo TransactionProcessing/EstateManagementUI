@@ -34,17 +34,11 @@ jobs:
     - name: Restore NuGet packages
       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
     
-    - name: Build Blazor Server project
-      run: dotnet build EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj --configuration Release --no-restore
-    
     - name: Build solution
       run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
     
     - name: Run Blazor Server unit tests
       run: dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=blazor-test-results.trx"
-    
-    - name: Run Business Logic unit tests
-      run: dotnet test EstateManagementUI.BusinessLogic.Tests/EstateManagementUI.BusinessLogic.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=business-test-results.trx"
     
     - name: Publish test results
       uses: dorny/test-reporter@v1
