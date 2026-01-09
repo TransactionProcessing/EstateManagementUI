@@ -1,6 +1,15 @@
 @page "/reporting/transaction-detail"
 @rendermode InteractiveServer
+@using MediatR
+@using Microsoft.AspNetCore.Components.Forms
+@using EstateManagementUI.BlazorServer.Requests
+@using EstateManagementUI.BlazorServer.Models
+@using System.Text
+@using static EstateManagementUI.BlazorServer.Requests.Queries
+@inject IMediator Mediator
 @inject NavigationManager Navigation
+@inject ILogger<TransactionDetail> Logger
+@inject IJSRuntime JSRuntime
 
 <PageTitle>Transaction Detail Report</PageTitle>
 
@@ -9,7 +18,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Transaction Detail Report</h1>
-            <p class="text-gray-600 mt-1">View detailed transaction information</p>
+            <p class="text-gray-600 mt-1">View detailed, transaction-level audit report for all merchant activity</p>
         </div>
         <a href="@GetBackUrl()" class="btn btn-secondary">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -19,15 +28,648 @@
         </a>
     </div>
 
-    <!-- Report Content -->
-    <div class="card">
-        <div class="card-body">
-            <p class="text-gray-600">Transaction detail report functionality will be implemented here.</p>
+    @if (isLoading)
+    {
+        <!-- Loading State -->
+        <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-primary"></div>
         </div>
-    </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <!-- Error State -->
+        <div class="card bg-red-50 border border-red-200">
+            <div class="card-body">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-red-800 font-semibold">Error Loading Data</h3>
+                        <p class="text-red-700 text-sm mt-1">@errorMessage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Filters Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Filters</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Date Range -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" @bind="_startDate" @bind:format="yyyy-MM-dd" class="form-control" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input type="date" @bind="_endDate" @bind:format="yyyy-MM-dd" class="form-control" />
+                    </div>
+                    
+                    <!-- Merchant Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
+                        <select @bind="_selectedMerchantId" class="form-control">
+                            <option value="">All Merchants</option>
+                            @if (merchants != null)
+                            {
+                                @foreach (var merchant in merchants)
+                                {
+                                    <option value="@merchant.MerchantId">@merchant.MerchantName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    
+                    <!-- Operator Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
+                        <select @bind="_selectedOperatorId" class="form-control">
+                            <option value="">All Operators</option>
+                            @if (operators != null)
+                            {
+                                @foreach (var op in operators)
+                                {
+                                    <option value="@op.OperatorId">@op.Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Product Filter (second row) -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Product</label>
+                        <select @bind="_selectedProductId" class="form-control">
+                            <option value="">All Products</option>
+                            @if (products != null)
+                            {
+                                @foreach (var product in products)
+                                {
+                                    <option value="@product.ContractProductId">@product.ProductName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex items-center gap-2">
+                    <button @onclick="ApplyFilters" class="btn btn-primary">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                        Apply Filters
+                    </button>
+                    <button @onclick="ClearFilters" class="btn btn-secondary">
+                        Clear Filters
+                    </button>
+                    @if (detailData != null && detailData.Any())
+                    {
+                        <button @onclick="ExportToCSV" class="btn btn-success ml-auto">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Export to CSV
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-primary">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Transactions</span>
+                    <span class="info-box-number">@totalTransactions.ToString("N0")</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-success">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Gross Amount</span>
+                    <span class="info-box-number">@totalGrossAmount.ToString("C")</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-warning">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Fees</span>
+                    <span class="info-box-number">@totalFees.ToString("C")</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-info">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Net Amount</span>
+                    <span class="info-box-number">@totalNetAmount.ToString("C")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Grid -->
+        <div class="card">
+            <div class="card-header flex justify-between items-center">
+                <h3 class="card-title">Transaction Details</h3>
+                @if (detailData != null && detailData.Any())
+                {
+                    var pagedData = GetPagedData();
+                    var startRecord = (_currentPage - 1) * _pageSize + 1;
+                    var endRecord = Math.Min(_currentPage * _pageSize, detailData.Count);
+                    <span class="text-sm text-gray-600">Showing @startRecord-@endRecord of @detailData.Count transaction(s)</span>
+                }
+            </div>
+            <div class="card-body">
+                @if (detailData != null && detailData.Any())
+                {
+                    var pagedData = GetPagedData();
+                    <div class="overflow-x-auto">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionId))" class="cursor-pointer hover:bg-gray-50">
+                                        Transaction ID @GetSortIcon(nameof(TransactionDetailModel.TransactionId))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionDateTime))" class="cursor-pointer hover:bg-gray-50">
+                                        Date & Time @GetSortIcon(nameof(TransactionDetailModel.TransactionDateTime))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.MerchantName))" class="cursor-pointer hover:bg-gray-50">
+                                        Merchant @GetSortIcon(nameof(TransactionDetailModel.MerchantName))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.OperatorName))" class="cursor-pointer hover:bg-gray-50">
+                                        Operator @GetSortIcon(nameof(TransactionDetailModel.OperatorName))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.ProductName))" class="cursor-pointer hover:bg-gray-50">
+                                        Product @GetSortIcon(nameof(TransactionDetailModel.ProductName))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionType))" class="cursor-pointer hover:bg-gray-50">
+                                        Type @GetSortIcon(nameof(TransactionDetailModel.TransactionType))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionStatus))" class="cursor-pointer hover:bg-gray-50">
+                                        Status @GetSortIcon(nameof(TransactionDetailModel.TransactionStatus))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.GrossAmount))" class="text-right cursor-pointer hover:bg-gray-50">
+                                        Gross Amount @GetSortIcon(nameof(TransactionDetailModel.GrossAmount))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.FeesCommission))" class="text-right cursor-pointer hover:bg-gray-50">
+                                        Fees @GetSortIcon(nameof(TransactionDetailModel.FeesCommission))
+                                    </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.NetAmount))" class="text-right cursor-pointer hover:bg-gray-50">
+                                        Net Amount @GetSortIcon(nameof(TransactionDetailModel.NetAmount))
+                                    </th>
+                                    <th>Settlement Ref</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in pagedData)
+                                {
+                                    <tr>
+                                        <td class="font-mono text-xs">@GetShortId(item.TransactionId)</td>
+                                        <td class="text-sm">@item.TransactionDateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        <td class="font-medium">@item.MerchantName</td>
+                                        <td>@item.OperatorName</td>
+                                        <td>@item.ProductName</td>
+                                        <td>
+                                            <span class="badge @GetTypeBadgeClass(item.TransactionType)">
+                                                @item.TransactionType
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge @GetStatusBadgeClass(item.TransactionStatus)">
+                                                @item.TransactionStatus
+                                            </span>
+                                        </td>
+                                        <td class="text-right">@item.GrossAmount.ToString("C")</td>
+                                        <td class="text-right text-red-600">@item.FeesCommission.ToString("C")</td>
+                                        <td class="text-right font-medium">@item.NetAmount.ToString("C")</td>
+                                        <td class="text-sm text-gray-600">@(item.SettlementReference ?? "-")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination Controls -->
+                    @if (_totalPages > 1)
+                    {
+                        <div class="mt-4 flex items-center justify-between border-t pt-4">
+                            <div class="flex items-center gap-2">
+                                <label class="text-sm text-gray-700">Rows per page:</label>
+                                <select @bind="_pageSize" @bind:after="() => { _currentPage = 1; }" class="form-control w-20">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-center gap-2">
+                                <button @onclick="PreviousPage" disabled="@(_currentPage == 1)" class="btn btn-sm btn-secondary" title="Previous page">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                
+                                <span class="text-sm text-gray-700">
+                                    Page @_currentPage of @_totalPages
+                                </span>
+                                
+                                <button @onclick="NextPage" disabled="@(_currentPage == _totalPages)" class="btn btn-sm btn-secondary" title="Next page">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                        </svg>
+                        <p class="text-lg">No transaction data available for the selected period</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
 
 @code {
+    private const string DEFAULT_ESTATE_ID = "11111111-1111-1111-1111-111111111111";
+    private const string DEFAULT_ACCESS_TOKEN = "stubbed-token";
+    
+    private bool isLoading = true;
+    private string? errorMessage;
+    
+    // Filter states
+    private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
+    private string _selectedMerchantId = "";
+    private string _selectedOperatorId = "";
+    private string _selectedProductId = "";
+    
+    // Data
+    private List<TransactionDetailModel>? detailData;
+    private List<MerchantModel>? merchants;
+    private List<OperatorModel>? operators;
+    private List<ContractProductModel>? products;
+    
+    // KPIs
+    private int totalTransactions = 0;
+    private decimal totalGrossAmount = 0;
+    private decimal totalFees = 0;
+    private decimal totalNetAmount = 0;
+    
+    // Sorting
+    private string? _currentSortColumn;
+    private bool _sortAscending = true;
+    
+    // Paging
+    private int _currentPage = 1;
+    private int _pageSize = 25;
+    private int _totalPages = 0;
+    
+    private List<TransactionDetailModel> GetPagedData()
+    {
+        if (detailData == null || !detailData.Any())
+            return new List<TransactionDetailModel>();
+        
+        _totalPages = (int)Math.Ceiling(detailData.Count / (double)_pageSize);
+        
+        return detailData
+            .Skip((_currentPage - 1) * _pageSize)
+            .Take(_pageSize)
+            .ToList();
+    }
+    
+    private void GoToPage(int page)
+    {
+        if (page < 1 || page > _totalPages)
+            return;
+        
+        _currentPage = page;
+    }
+    
+    private void NextPage()
+    {
+        if (_currentPage < _totalPages)
+            _currentPage++;
+    }
+    
+    private void PreviousPage()
+    {
+        if (_currentPage > 1)
+            _currentPage--;
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        // Check for query parameters (from drill-down)
+        var uri = new Uri(Navigation.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        
+        if (!string.IsNullOrEmpty(query["merchantId"]))
+        {
+            _selectedMerchantId = query["merchantId"];
+        }
+        
+        if (!string.IsNullOrEmpty(query["startDate"]))
+        {
+            if (DateOnly.TryParse(query["startDate"], out var startDate))
+            {
+                _startDate = startDate;
+            }
+        }
+        
+        if (!string.IsNullOrEmpty(query["endDate"]))
+        {
+            if (DateOnly.TryParse(query["endDate"], out var endDate))
+            {
+                _endDate = endDate;
+            }
+        }
+        
+        await LoadData();
+    }
+    
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+            StateHasChanged();
+            
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse(DEFAULT_ESTATE_ID);
+            var accessToken = DEFAULT_ACCESS_TOKEN;
+            
+            // Load filter options
+            var merchantsTask = Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
+            var operatorsTask = Mediator.Send(new GetOperatorsQuery(correlationId, accessToken, estateId));
+            var contractsTask = Mediator.Send(new GetContractsQuery(correlationId, accessToken, estateId));
+            
+            await Task.WhenAll(merchantsTask, operatorsTask, contractsTask);
+            
+            if (merchantsTask.Result.IsSuccess)
+                merchants = merchantsTask.Result.Data;
+            
+            if (operatorsTask.Result.IsSuccess)
+                operators = operatorsTask.Result.Data;
+            
+            if (contractsTask.Result.IsSuccess)
+            {
+                // Extract all products from all contracts
+                products = contractsTask.Result.Data
+                    ?.SelectMany(c => c.Products ?? new List<ContractProductModel>())
+                    .Where(p => !string.IsNullOrEmpty(p.ProductName))
+                    .DistinctBy(p => p.ProductName)
+                    .ToList();
+            }
+            
+            // Load detail data
+            await LoadDetailData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load data: {ex.Message}";
+            Logger.LogError(ex, "Error loading transaction detail data");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task LoadDetailData()
+    {
+        try
+        {
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse(DEFAULT_ESTATE_ID);
+            var accessToken = DEFAULT_ACCESS_TOKEN;
+            
+            var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
+            var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
+            
+            Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
+            Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
+            Guid? productId = string.IsNullOrEmpty(_selectedProductId) ? null : Guid.Parse(_selectedProductId);
+            
+            var result = await Mediator.Send(new GetTransactionDetailQuery(
+                correlationId, 
+                accessToken, 
+                estateId, 
+                startDate, 
+                endDate, 
+                merchantId, 
+                operatorId, 
+                productId
+            ));
+            
+            if (result.IsSuccess && result.Data != null)
+            {
+                detailData = result.Data;
+                CalculateKPIs();
+            }
+            else
+            {
+                errorMessage = result.Message ?? "Failed to load transaction detail data";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load transaction detail data: {ex.Message}";
+            Logger.LogError(ex, "Error loading transaction detail data");
+        }
+    }
+    
+    private void CalculateKPIs()
+    {
+        if (detailData == null || !detailData.Any())
+        {
+            totalTransactions = 0;
+            totalGrossAmount = 0;
+            totalFees = 0;
+            totalNetAmount = 0;
+            return;
+        }
+        
+        totalTransactions = detailData.Count;
+        totalGrossAmount = detailData.Sum(t => t.GrossAmount);
+        totalFees = detailData.Sum(t => t.FeesCommission);
+        totalNetAmount = detailData.Sum(t => t.NetAmount);
+    }
+    
+    private async Task ApplyFilters()
+    {
+        _currentPage = 1; // Reset to first page when filters are applied
+        await LoadDetailData();
+    }
+    
+    private async Task ClearFilters()
+    {
+        _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
+        _endDate = DateOnly.FromDateTime(DateTime.Now);
+        _selectedMerchantId = "";
+        _selectedOperatorId = "";
+        _selectedProductId = "";
+        _currentPage = 1; // Reset to first page when filters are cleared
+        await LoadDetailData();
+    }
+    
+    private void SortBy(string columnName)
+    {
+        if (detailData == null || !detailData.Any())
+            return;
+        
+        if (_currentSortColumn == columnName)
+        {
+            _sortAscending = !_sortAscending;
+        }
+        else
+        {
+            _currentSortColumn = columnName;
+            _sortAscending = true;
+        }
+        
+        _currentPage = 1; // Reset to first page when sorting changes
+        
+        detailData = columnName switch
+        {
+            nameof(TransactionDetailModel.TransactionId) => _sortAscending 
+                ? detailData.OrderBy(t => t.TransactionId).ToList()
+                : detailData.OrderByDescending(t => t.TransactionId).ToList(),
+            nameof(TransactionDetailModel.TransactionDateTime) => _sortAscending 
+                ? detailData.OrderBy(t => t.TransactionDateTime).ToList()
+                : detailData.OrderByDescending(t => t.TransactionDateTime).ToList(),
+            nameof(TransactionDetailModel.MerchantName) => _sortAscending 
+                ? detailData.OrderBy(t => t.MerchantName).ToList()
+                : detailData.OrderByDescending(t => t.MerchantName).ToList(),
+            nameof(TransactionDetailModel.OperatorName) => _sortAscending 
+                ? detailData.OrderBy(t => t.OperatorName).ToList()
+                : detailData.OrderByDescending(t => t.OperatorName).ToList(),
+            nameof(TransactionDetailModel.ProductName) => _sortAscending 
+                ? detailData.OrderBy(t => t.ProductName).ToList()
+                : detailData.OrderByDescending(t => t.ProductName).ToList(),
+            nameof(TransactionDetailModel.TransactionType) => _sortAscending 
+                ? detailData.OrderBy(t => t.TransactionType).ToList()
+                : detailData.OrderByDescending(t => t.TransactionType).ToList(),
+            nameof(TransactionDetailModel.TransactionStatus) => _sortAscending 
+                ? detailData.OrderBy(t => t.TransactionStatus).ToList()
+                : detailData.OrderByDescending(t => t.TransactionStatus).ToList(),
+            nameof(TransactionDetailModel.GrossAmount) => _sortAscending 
+                ? detailData.OrderBy(t => t.GrossAmount).ToList()
+                : detailData.OrderByDescending(t => t.GrossAmount).ToList(),
+            nameof(TransactionDetailModel.FeesCommission) => _sortAscending 
+                ? detailData.OrderBy(t => t.FeesCommission).ToList()
+                : detailData.OrderByDescending(t => t.FeesCommission).ToList(),
+            nameof(TransactionDetailModel.NetAmount) => _sortAscending 
+                ? detailData.OrderBy(t => t.NetAmount).ToList()
+                : detailData.OrderByDescending(t => t.NetAmount).ToList(),
+            _ => detailData
+        };
+        
+        CalculateKPIs();
+    }
+    
+    private string GetSortIcon(string columnName)
+    {
+        if (_currentSortColumn != columnName)
+            return "↕";
+        
+        return _sortAscending ? "↑" : "↓";
+    }
+    
+    private string GetShortId(Guid transactionId)
+    {
+        var idString = transactionId.ToString();
+        return idString.Length >= 8 ? $"{idString.Substring(0, 8)}..." : idString;
+    }
+    
+    private string GetTypeBadgeClass(string? type)
+    {
+        return type switch
+        {
+            "Sale" => "badge-primary",
+            "Refund" => "badge-warning",
+            "Reversal" => "badge-secondary",
+            _ => "badge-default"
+        };
+    }
+    
+    private string GetStatusBadgeClass(string? status)
+    {
+        return status switch
+        {
+            "Successful" => "badge-success",
+            "Failed" => "badge-danger",
+            "Reversed" => "badge-warning",
+            _ => "badge-default"
+        };
+    }
+    
+    private async Task ExportToCSV()
+    {
+        if (detailData == null || !detailData.Any())
+            return;
+        
+        try
+        {
+            var csv = new StringBuilder();
+            
+            // Header
+            csv.AppendLine("Transaction ID,Transaction Date & Time,Merchant,Operator,Product,Transaction Type,Transaction Status,Gross Amount,Fees/Commission,Net Amount,Settlement Reference");
+            
+            // Data rows
+            foreach (var item in detailData)
+            {
+                csv.AppendLine($"\"{item.TransactionId}\",\"{item.TransactionDateTime:yyyy-MM-dd HH:mm:ss}\",\"{item.MerchantName}\",\"{item.OperatorName}\",\"{item.ProductName}\",\"{item.TransactionType}\",\"{item.TransactionStatus}\",{item.GrossAmount},{item.FeesCommission},{item.NetAmount},\"{item.SettlementReference ?? ""}\"");
+            }
+            
+            var fileName = $"transaction-detail-{DateTime.Now:yyyyMMdd-HHmmss}.csv";
+            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+            var base64 = Convert.ToBase64String(bytes);
+            
+            await JSRuntime.InvokeVoidAsync("downloadFile", fileName, base64);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error exporting to CSV");
+            errorMessage = "Failed to export data to CSV";
+        }
+    }
+    
     private string GetBackUrl()
     {
         var uri = Navigation.Uri;
