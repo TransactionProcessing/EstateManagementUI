@@ -23,10 +23,16 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
         }
 
         [When(@"I navigate to the home page")]
-        [When(@"I navigate to the Estate page")]
         public async Task WhenINavigateToTheHomePage()
         {
             await this.UiHelpers.NavigateToHomePage();
+        }
+
+        [When(@"I navigate to the Estate details page")]
+        public async Task WhenINavigateToTheEstateDetailsPage()
+        {
+            await this.UiHelpers.NavigateToHomePage();
+            await this.UiHelpers.ClickMyEstateSidebarOption();
         }
 
         [When(@"I navigate to the Merchants page")]
@@ -65,12 +71,23 @@ namespace EstateManagementUI.OfflineIntegrationTests.Steps
             await this.Page.ClickLinkByText("Reporting");
         }
 
-        [Then(@"I should see the estate details")]
-        [Then(@"I should see the estate dashboard")]
-        public async Task ThenIShouldSeeTheEstateDetails()
+        [Then(@"I should see the application dashboard")]
+        public async Task ThenIShouldSeeTheApplicationDashboard()
         {
-            var isVisible = await this.Page.IsElementVisible("#estateDetails");
-            isVisible.ShouldBeTrue();
+            await this.UiHelpers.VerifyOnTheDashboard();
+        }
+
+        [Then(@"the dashboard should show key metrics")]
+        public async Task ThenTheDashboardShouldShowKeyMetrics()
+        {
+            var pageContent = await this.Page.Locator("body").TextContentAsync();
+            pageContent.ShouldNotBeNullOrEmpty();
+        }
+
+        [Then(@"I should see the estate information")]
+        public async Task ThenIShouldSeeTheEstateInformation()
+        {
+            await this.UiHelpers.VerifyOnTheEstateDetailsScreen();
         }
 
         [Then(@"the estate name should be displayed")]

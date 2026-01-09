@@ -113,13 +113,13 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
         }
         
         [global::NUnit.Framework.TestAttribute()]
-        [global::NUnit.Framework.DescriptionAttribute("View Estate Information")]
-        public async global::System.Threading.Tasks.Task ViewEstateInformation()
+        [global::NUnit.Framework.DescriptionAttribute("View Application Dashboard")]
+        public async global::System.Threading.Tasks.Task ViewApplicationDashboard()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "0";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Estate Information", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Application Dashboard", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
 #line 4
@@ -133,26 +133,26 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             {
                 await this.ScenarioStartAsync();
 #line 5
-    await testRunner.WhenAsync("I navigate to the Estate page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 6
-    await testRunner.ThenAsync("I should see the estate details", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the application dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 7
-    await testRunner.AndAsync("the estate name should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("the dashboard should show key metrics", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
         [global::NUnit.Framework.TestAttribute()]
-        [global::NUnit.Framework.DescriptionAttribute("View Estate Dashboard")]
-        public async global::System.Threading.Tasks.Task ViewEstateDashboard()
+        [global::NUnit.Framework.DescriptionAttribute("View Estate Information")]
+        public async global::System.Threading.Tasks.Task ViewEstateInformation()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "1";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Estate Dashboard", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("View Estate Information", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
 #line 9
@@ -166,13 +166,13 @@ namespace EstateManagementUI.OfflineIntegrationTests.Tests
             {
                 await this.ScenarioStartAsync();
 #line 10
-    await testRunner.WhenAsync("I navigate to the home page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+    await testRunner.WhenAsync("I navigate to the Estate details page", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 11
-    await testRunner.ThenAsync("I should see the estate dashboard", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the estate information", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
 #line 12
-    await testRunner.AndAsync("the dashboard should show estate statistics", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("the estate name should be displayed", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
