@@ -1,5 +1,13 @@
 @page "/reporting/settlement-summary"
 @rendermode InteractiveServer
+@using MediatR
+@using Microsoft.AspNetCore.Components.Forms
+@using EstateManagementUI.BlazorServer.Requests
+@using EstateManagementUI.BlazorServer.Models
+@using static EstateManagementUI.BlazorServer.Requests.Queries
+@inject IMediator Mediator
+@inject NavigationManager Navigation
+@inject ILogger<SettlementSummary> Logger
 
 <PageTitle>Settlement Summary Report</PageTitle>
 
@@ -8,7 +16,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Settlement Summary Report</h1>
-            <p class="text-gray-600 mt-1">View settlement summary information</p>
+            <p class="text-gray-600 mt-1">View settlement outcomes per merchant with net settlement calculations</p>
         </div>
         <a href="/reporting" class="btn btn-secondary">
             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,10 +26,343 @@
         </a>
     </div>
 
-    <!-- Report Content -->
-    <div class="card">
-        <div class="card-body">
-            <p class="text-gray-600">Settlement summary report functionality will be implemented here.</p>
+    @if (isLoading)
+    {
+        <!-- Loading State -->
+        <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-primary"></div>
         </div>
-    </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <!-- Error State -->
+        <div class="card bg-red-50 border border-red-200">
+            <div class="card-body">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-red-800 font-semibold">Error Loading Data</h3>
+                        <p class="text-red-700 text-sm mt-1">@errorMessage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Filters Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Filters</h3>
+            </div>
+            <div class="card-body">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Date Range -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" @bind="_startDate" @bind:format="yyyy-MM-dd" class="form-control" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input type="date" @bind="_endDate" @bind:format="yyyy-MM-dd" class="form-control" />
+                    </div>
+                    
+                    <!-- Merchant Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
+                        <select @bind="_selectedMerchantId" class="form-control">
+                            <option value="">All Merchants</option>
+                            @if (merchants != null)
+                            {
+                                @foreach (var merchant in merchants)
+                                {
+                                    <option value="@merchant.MerchantId">@merchant.MerchantName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                    <!-- Settlement Status Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Settlement Status</label>
+                        <select @bind="_selectedStatus" class="form-control">
+                            <option value="">All Statuses</option>
+                            <option value="settled">Settled</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button @onclick="ApplyFilters" class="btn btn-primary">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                        Apply Filters
+                    </button>
+                    <button @onclick="ClearFilters" class="btn btn-secondary ml-2">
+                        Clear Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-primary">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Merchants</span>
+                    <span class="info-box-number">@totalMerchants</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-success">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Gross Value</span>
+                    <span class="info-box-number">@totalGrossValue.ToString("C")</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-warning">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Fees</span>
+                    <span class="info-box-number">@totalFees.ToString("C")</span>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-info">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Net Settlement</span>
+                    <span class="info-box-number">@totalNetSettlement.ToString("C")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Grid -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Settlement Summary</h3>
+            </div>
+            <div class="card-body">
+                @if (summaryData != null && summaryData.Any())
+                {
+                    <div class="overflow-x-auto">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Merchant Name</th>
+                                    <th>Settlement Period</th>
+                                    <th class="text-right">Gross Value</th>
+                                    <th class="text-right">Total Fees</th>
+                                    <th class="text-right">Net Settlement</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in summaryData)
+                                {
+                                    <tr>
+                                        <td class="font-medium">@item.MerchantName</td>
+                                        <td>
+                                            <div class="text-sm">
+                                                <div>@item.SettlementPeriodStart.ToString("yyyy-MM-dd")</div>
+                                                <div class="text-gray-500">to @item.SettlementPeriodEnd.ToString("yyyy-MM-dd")</div>
+                                            </div>
+                                        </td>
+                                        <td class="text-right">@item.GrossTransactionValue.ToString("C")</td>
+                                        <td class="text-right text-red-600">-@item.TotalFees.ToString("C")</td>
+                                        <td class="text-right font-semibold">@item.NetSettlementAmount.ToString("C")</td>
+                                        <td class="text-center">
+                                            @{
+                                                var statusClass = item.SettlementStatus?.ToLower() switch
+                                                {
+                                                    "settled" => "badge-success",
+                                                    "pending" => "badge-warning",
+                                                    "failed" => "badge-danger",
+                                                    _ => "badge-secondary"
+                                                };
+                                            }
+                                            <span class="badge @statusClass">
+                                                @(item.SettlementStatus?.ToUpper() ?? "UNKNOWN")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                        <p class="text-sm text-gray-600">
+                            <strong>Note:</strong> Net Settlement Amount is calculated as: Gross Transaction Value - Total Fees. 
+                            Settlement status reflects the current state from the settlement engine.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-8 text-gray-500">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                        </svg>
+                        <p class="text-lg">No settlement data available for the selected period</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>
+
+@code {
+    private bool isLoading = true;
+    private string? errorMessage;
+    
+    // Filter states
+    private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
+    private string _selectedMerchantId = "";
+    private string _selectedStatus = "";
+    
+    // Data
+    private List<SettlementSummaryModel>? summaryData;
+    private List<MerchantModel>? merchants;
+    
+    // KPIs
+    private int totalMerchants = 0;
+    private decimal totalGrossValue = 0;
+    private decimal totalFees = 0;
+    private decimal totalNetSettlement = 0;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+    
+    private async Task LoadData()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+            StateHasChanged();
+            
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+            
+            // Load filter options
+            var merchantsResult = await Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
+            
+            if (merchantsResult.IsSuccess)
+                merchants = merchantsResult.Data;
+            
+            // Load summary data
+            await LoadSummaryData();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load data: {ex.Message}";
+            Logger.LogError(ex, "Error loading settlement summary data");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+    
+    private async Task LoadSummaryData()
+    {
+        try
+        {
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+            
+            var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
+            var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
+            
+            Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
+            string? status = string.IsNullOrEmpty(_selectedStatus) ? null : _selectedStatus;
+            
+            var result = await Mediator.Send(new GetSettlementSummaryQuery(
+                correlationId, 
+                accessToken, 
+                estateId, 
+                startDate, 
+                endDate, 
+                merchantId, 
+                status
+            ));
+            
+            if (result.IsSuccess && result.Data != null)
+            {
+                summaryData = result.Data;
+                CalculateKPIs();
+            }
+            else
+            {
+                errorMessage = result.Message ?? "Failed to load settlement summary data";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load settlement summary data: {ex.Message}";
+            Logger.LogError(ex, "Error loading settlement summary data");
+        }
+    }
+    
+    private void CalculateKPIs()
+    {
+        if (summaryData == null || !summaryData.Any())
+        {
+            totalMerchants = 0;
+            totalGrossValue = 0;
+            totalFees = 0;
+            totalNetSettlement = 0;
+            return;
+        }
+        
+        totalMerchants = summaryData.Count;
+        totalGrossValue = summaryData.Sum(s => s.GrossTransactionValue);
+        totalFees = summaryData.Sum(s => s.TotalFees);
+        totalNetSettlement = summaryData.Sum(s => s.NetSettlementAmount);
+    }
+    
+    private async Task ApplyFilters()
+    {
+        await LoadSummaryData();
+    }
+    
+    private async Task ClearFilters()
+    {
+        _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+        _endDate = DateOnly.FromDateTime(DateTime.Now);
+        _selectedMerchantId = "";
+        _selectedStatus = "";
+        await LoadSummaryData();
+    }
+}
+

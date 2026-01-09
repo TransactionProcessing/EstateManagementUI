@@ -60,6 +60,7 @@ public class TestMediatorService : IMediator
             Queries.GetProductPerformanceQuery query => Task.FromResult((TResponse)(object)Result<List<ProductPerformanceModel>>.Success(GetMockProductPerformance(query))),
             Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<OperatorTransactionSummaryModel>>.Success(GetMockOperatorTransactionSummary(query))),
             Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantSettlementHistoryModel>>.Success(GetMockMerchantSettlementHistory(query))),
+            Queries.GetSettlementSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<SettlementSummaryModel>>.Success(GetMockSettlementSummary(query))),
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
@@ -732,6 +733,54 @@ public class TestMediatorService : IMediator
         // In a real implementation, we would remove the operator from the estate
         // For now, we just return success
         return Result.Success();
+    }
+
+    private List<SettlementSummaryModel> GetMockSettlementSummary(Queries.GetSettlementSummaryQuery query)
+    {
+        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        
+        // Use date range as seed for consistent but varying data
+        var seed = query.StartDate.GetHashCode() ^ query.EndDate.GetHashCode();
+        var random = new Random(seed);
+        
+        // Settlement statuses to distribute (mock data for testing)
+        var statuses = new[] { "settled", "settled", "settled", "pending", "failed" };
+        // Mock fee percentage - in production this would come from the settlement engine API
+        const decimal DefaultFeePercentage = 0.025m; // 2.5% fee rate for mock data
+        
+        var summary = merchants.Select(merchant =>
+        {
+            var grossValue = (decimal)(random.NextDouble() * 100000 + 10000);
+            var totalFees = Math.Round(grossValue * DefaultFeePercentage, 2);
+            var netAmount = Math.Round(grossValue - totalFees, 2);
+            var status = statuses[random.Next(statuses.Length)];
+            
+            return new SettlementSummaryModel
+            {
+                SettlementPeriodStart = query.StartDate,
+                SettlementPeriodEnd = query.EndDate,
+                MerchantId = merchant.MerchantId,
+                MerchantName = merchant.MerchantName ?? "Unknown Merchant",
+                GrossTransactionValue = Math.Round(grossValue, 2),
+                TotalFees = totalFees,
+                NetSettlementAmount = netAmount,
+                SettlementStatus = status
+            };
+        }).ToList();
+        
+        // Apply filters if specified
+        if (query.MerchantId.HasValue)
+        {
+            summary = summary.Where(s => s.MerchantId == query.MerchantId.Value).ToList();
+        }
+        
+        if (!string.IsNullOrEmpty(query.Status))
+        {
+            summary = summary.Where(s => s.SettlementStatus != null && 
+                                         s.SettlementStatus.Equals(query.Status, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        
+        return summary;
     }
 
     private List<OperatorTransactionSummaryModel> GetMockOperatorTransactionSummary(Queries.GetOperatorTransactionSummaryQuery query)
