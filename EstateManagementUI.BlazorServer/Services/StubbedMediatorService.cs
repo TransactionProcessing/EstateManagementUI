@@ -437,7 +437,14 @@ public class StubbedMediatorService : IMediator
     {
         var merchants = GetMockMerchants();
         var operators = GetMockOperators();
-        var products = new[] { "Airtime", "Data Bundle", "Voucher", "Bill Payment" };
+        var contracts = GetMockContracts();
+        
+        // Get all products with their IDs from contracts
+        var productList = contracts
+            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .Where(p => !string.IsNullOrEmpty(p.ProductName))
+            .ToList();
+        
         var transactionTypes = new[] { "Sale", "Refund", "Reversal" };
         var transactionStatuses = new[] { "Successful", "Failed", "Reversed" };
         
@@ -459,10 +466,10 @@ public class StubbedMediatorService : IMediator
                 .AddHours(randomHours)
                 .AddMinutes(randomMinutes);
             
-            // Random merchant and operator
+            // Random merchant, operator, and product
             var merchant = merchants[random.Next(merchants.Count)];
             var op = operators[random.Next(operators.Count)];
-            var product = products[random.Next(products.Length)];
+            var product = productList[random.Next(productList.Count)];
             
             // Random type and status (90% successful sales)
             var typeRoll = random.NextDouble();
@@ -508,7 +515,8 @@ public class StubbedMediatorService : IMediator
                 MerchantId = merchant.MerchantId,
                 OperatorName = op.Name,
                 OperatorId = op.OperatorId,
-                ProductName = product,
+                ProductName = product.ProductName,
+                ProductId = product.ContractProductId,
                 TransactionType = transactionType,
                 TransactionStatus = transactionStatus,
                 GrossAmount = grossAmount,
@@ -527,6 +535,11 @@ public class StubbedMediatorService : IMediator
         if (query.OperatorId.HasValue)
         {
             transactions = transactions.Where(t => t.OperatorId == query.OperatorId.Value).ToList();
+        }
+        
+        if (query.ProductId.HasValue)
+        {
+            transactions = transactions.Where(t => t.ProductId == query.ProductId.Value).ToList();
         }
         
         // Sort by transaction date descending (most recent first)

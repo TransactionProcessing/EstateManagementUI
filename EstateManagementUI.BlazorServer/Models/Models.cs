@@ -276,6 +276,7 @@ public class TransactionDetailModel
     public string? OperatorName { get; set; }
     public Guid OperatorId { get; set; }
     public string? ProductName { get; set; }
+    public Guid ProductId { get; set; }
     public string? TransactionType { get; set; } // sale, refund, reversal
     public string? TransactionStatus { get; set; } // successful, failed, reversed
     public decimal GrossAmount { get; set; }

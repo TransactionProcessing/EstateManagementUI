@@ -826,12 +826,12 @@ public class TestMediatorService : IMediator
         var merchants = _testDataStore.GetMerchants(query.EstateId);
         var operators = _testDataStore.GetOperators(query.EstateId);
         var contracts = _testDataStore.GetContracts(query.EstateId);
-        var products = contracts
+        
+        // Get all products with their IDs from contracts
+        var productList = contracts
             .SelectMany(c => c.Products ?? new List<ContractProductModel>())
             .Where(p => !string.IsNullOrEmpty(p.ProductName))
-            .Select(p => p.ProductName!)
-            .Distinct()
-            .ToArray();
+            .ToList();
         
         var random = new Random(42); // Use seed for consistent data
         var transactions = new List<TransactionDetailModel>();
@@ -851,10 +851,10 @@ public class TestMediatorService : IMediator
                 .AddHours(randomHours)
                 .AddMinutes(randomMinutes);
             
-            // Random merchant and operator
+            // Random merchant, operator, and product
             var merchant = merchants[random.Next(merchants.Count)];
             var op = operators[random.Next(operators.Count)];
-            var product = products.Length > 0 ? products[random.Next(products.Length)] : "Default Product";
+            var product = productList.Count > 0 ? productList[random.Next(productList.Count)] : null;
             
             // Random type and status (90% successful sales)
             var typeRoll = random.NextDouble();
@@ -900,7 +900,8 @@ public class TestMediatorService : IMediator
                 MerchantId = merchant.MerchantId,
                 OperatorName = op.Name,
                 OperatorId = op.OperatorId,
-                ProductName = product,
+                ProductName = product?.ProductName ?? "Default Product",
+                ProductId = product?.ContractProductId ?? Guid.Empty,
                 TransactionType = transactionType,
                 TransactionStatus = transactionStatus,
                 GrossAmount = grossAmount,
@@ -919,6 +920,11 @@ public class TestMediatorService : IMediator
         if (query.OperatorId.HasValue)
         {
             transactions = transactions.Where(t => t.OperatorId == query.OperatorId.Value).ToList();
+        }
+        
+        if (query.ProductId.HasValue)
+        {
+            transactions = transactions.Where(t => t.ProductId == query.ProductId.Value).ToList();
         }
         
         // Sort by transaction date descending (most recent first)
