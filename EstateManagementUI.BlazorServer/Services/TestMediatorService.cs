@@ -61,6 +61,7 @@ public class TestMediatorService : IMediator
             Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<OperatorTransactionSummaryModel>>.Success(GetMockOperatorTransactionSummary(query))),
             Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantSettlementHistoryModel>>.Success(GetMockMerchantSettlementHistory(query))),
             Queries.GetSettlementSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<SettlementSummaryModel>>.Success(GetMockSettlementSummary(query))),
+            Queries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result<List<TransactionDetailModel>>.Success(GetMockTransactionDetails(q))),
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
@@ -818,5 +819,109 @@ public class TestMediatorService : IMediator
         }
         
         return summary;
+    }
+
+    private List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
+    {
+        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        var operators = _testDataStore.GetOperators(query.EstateId);
+        var contracts = _testDataStore.GetContracts(query.EstateId);
+        var products = contracts
+            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .Where(p => !string.IsNullOrEmpty(p.ProductName))
+            .Select(p => p.ProductName!)
+            .Distinct()
+            .ToArray();
+        
+        var random = new Random(42); // Use seed for consistent data
+        var transactions = new List<TransactionDetailModel>();
+        
+        // Calculate days in date range
+        var daysInRange = (query.EndDate - query.StartDate).Days + 1;
+        var transactionsPerDay = 50;
+        var totalTransactions = daysInRange * transactionsPerDay;
+        
+        for (int i = 0; i < totalTransactions; i++)
+        {
+            // Random date within range
+            var randomDays = random.Next(0, daysInRange);
+            var randomHours = random.Next(0, 24);
+            var randomMinutes = random.Next(0, 60);
+            var transactionDate = query.StartDate.AddDays(randomDays)
+                .AddHours(randomHours)
+                .AddMinutes(randomMinutes);
+            
+            // Random merchant and operator
+            var merchant = merchants[random.Next(merchants.Count)];
+            var op = operators[random.Next(operators.Count)];
+            var product = products.Length > 0 ? products[random.Next(products.Length)] : "Default Product";
+            
+            // Random type and status (90% successful sales)
+            var typeRoll = random.NextDouble();
+            var statusRoll = random.NextDouble();
+            
+            string transactionType;
+            string transactionStatus;
+            
+            if (typeRoll < 0.85)
+            {
+                transactionType = "Sale";
+                transactionStatus = statusRoll < 0.95 ? "Successful" : "Failed";
+            }
+            else if (typeRoll < 0.95)
+            {
+                transactionType = "Refund";
+                transactionStatus = "Successful";
+            }
+            else
+            {
+                transactionType = "Reversal";
+                transactionStatus = "Reversed";
+            }
+            
+            // Random amounts
+            var grossAmount = Math.Round((decimal)(random.NextDouble() * 200 + 10), 2);
+            var feePercentage = 0.015m; // 1.5%
+            var feesCommission = Math.Round(grossAmount * feePercentage, 2);
+            var netAmount = grossAmount - feesCommission;
+            
+            // Settlement reference (70% have one for successful transactions)
+            string? settlementReference = null;
+            if (transactionStatus == "Successful" && random.NextDouble() < 0.7)
+            {
+                settlementReference = $"STL-{transactionDate:yyyyMMdd}-{random.Next(1000, 9999)}";
+            }
+            
+            transactions.Add(new TransactionDetailModel
+            {
+                TransactionId = Guid.NewGuid(),
+                TransactionDateTime = transactionDate,
+                MerchantName = merchant.MerchantName,
+                MerchantId = merchant.MerchantId,
+                OperatorName = op.Name,
+                OperatorId = op.OperatorId,
+                ProductName = product,
+                TransactionType = transactionType,
+                TransactionStatus = transactionStatus,
+                GrossAmount = grossAmount,
+                FeesCommission = feesCommission,
+                NetAmount = netAmount,
+                SettlementReference = settlementReference
+            });
+        }
+        
+        // Apply filters
+        if (query.MerchantId.HasValue)
+        {
+            transactions = transactions.Where(t => t.MerchantId == query.MerchantId.Value).ToList();
+        }
+        
+        if (query.OperatorId.HasValue)
+        {
+            transactions = transactions.Where(t => t.OperatorId == query.OperatorId.Value).ToList();
+        }
+        
+        // Sort by transaction date descending (most recent first)
+        return transactions.OrderByDescending(t => t.TransactionDateTime).ToList();
     }
 }
