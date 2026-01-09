@@ -1,33 +1,54 @@
-#name: Build and Test Pull Requests
+name: Build and Test Pull Requests
 
-# on:
-#   pull_request:
-#     branches:
-#     - main
+on:
+   pull_request:
+     branches:
+     - main
 
-# jobs:
-#   unittests:
-#     name: "Build and Unit Test"
+jobs:
+   unittests:
+     name: "Build and Unit Test"
 
-#     env:
-#         ASPNETCORE_ENVIRONMENT: "Production"
+     env:
+         ASPNETCORE_ENVIRONMENT: "Production"
 
-#     runs-on: ubuntu-latest
+     runs-on: ubuntu-latest
+    
+     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+    
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+    
+      - name: Restore NuGet packages
+        run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+    
+      - name: Build solution
+        run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
+    
+      - name: Run Blazor Server unit tests
+        run: dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=blazor-test-results.trx"
+    
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Test Results
+          path: '**/TestResults/*.trx'
+          reporter: dotnet-trx
+          fail-on-error: true
+    
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
+          retention-days: 30
 
-#     steps:
-#     - uses: actions/checkout@v2.3.4
-
-#     - name: Restore Nuget Packages
-#       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
-
-#     - name: Build Code
-#       run: |
-#         dotnet build EstateManagementUI.sln --configuration Release
-
-#     - name: Run Unit Tests
-#       run: |        
-#         dotnet test "EstateManagementUI.BusinessLogic.Tests\EstateManagementUI.BusinessLogic.Tests.csproj"  
-#         dotnet test "EstateManagementUI.UITests\EstateManagementUI.UITests.csproj"  
 
 #   chrometests:
 #     name: "Build and Test UI - Chrome"
