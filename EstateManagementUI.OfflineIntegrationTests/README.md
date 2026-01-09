@@ -98,9 +98,10 @@ dotnet test
 The framework will:
 1. ✅ Build the Blazor application
 2. ✅ Start it with TestMode enabled (uses TestDataStore)
-3. ✅ Wait for the application to be ready
-4. ✅ Execute your tests
-5. ✅ Stop the application and clean up
+3. ✅ Configure test user with **Estate** role (full Estate access)
+4. ✅ Wait for the application to be ready
+5. ✅ Execute your tests
+6. ✅ Stop the application and clean up
 
 ### Manual Application Start (Optional)
 

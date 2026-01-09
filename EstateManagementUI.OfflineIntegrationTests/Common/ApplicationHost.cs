@@ -67,9 +67,10 @@ namespace EstateManagementUI.OfflineIntegrationTests.Common
                 CreateNoWindow = true,
             };
 
-            // Set TestMode environment variable
+            // Set TestMode environment variable and use Test environment to load appsettings.Test.json
             startInfo.Environment["TestMode"] = "true";
-            startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";
+            startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Test";
+            startInfo.Environment["AppSettings__TestUserRole"] = "Estate"; // Default to Estate role for testing
 
             applicationProcess = new Process { StartInfo = startInfo };
             

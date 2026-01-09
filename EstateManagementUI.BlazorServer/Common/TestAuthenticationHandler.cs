@@ -44,10 +44,10 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
             roleName = _httpContextAccessor.HttpContext?.Session.GetString("TestUserRole");
         }
         
-        // Fall back to configuration
+        // Fall back to configuration (default to Estate role for testing)
         if (string.IsNullOrEmpty(roleName))
         {
-            roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Administrator");
+            roleName = _configuration.GetValue<string>("AppSettings:TestUserRole", "Estate");
         }
         
         // Get user name based on role

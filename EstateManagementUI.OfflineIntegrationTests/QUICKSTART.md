@@ -27,9 +27,10 @@ dotnet test
 That's it! The framework will:
 1. ✅ Build the Blazor application
 2. ✅ Start it with TestMode enabled on port 5004
-3. ✅ Wait for it to be ready
-4. ✅ Run your tests
-5. ✅ Stop the application when done
+3. ✅ Set default test user to **Estate** role (can view Estate information)
+4. ✅ Wait for it to be ready
+5. ✅ Run your tests
+6. ✅ Stop the application when done
 
 ### 2. Manual Application Start (Optional)
 
