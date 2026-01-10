@@ -10,7 +10,7 @@ namespace EstateManagementUI.BlazorServer.Tests.Integration.Support;
 /// </summary>
 public class DockerHelper : IAsyncDisposable
 {
-    private IImage? _blazorServerImage;
+    private string? _blazorServerImageName;
     private IContainer? _blazorServerContainer;
     
     /// <summary>
@@ -70,19 +70,11 @@ public class DockerHelper : IAsyncDisposable
             }
         }
 
-        if (_blazorServerImage != null)
+        // Image cleanup is handled automatically by WithCleanUp(true)
+        if (_blazorServerImageName != null)
         {
-            try
-            {
-                await _blazorServerImage.DisposeAsync();
-                Console.WriteLine("✓ Image cleaned up successfully");
-                
-                _blazorServerImage = null;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"⚠ Error cleaning up image: {ex.Message}");
-            }
+            Console.WriteLine("✓ Image cleanup handled automatically by Testcontainers");
+            _blazorServerImageName = null;
         }
         
         Console.WriteLine("═══════════════════════════════════════════════════════════");
@@ -107,22 +99,26 @@ public class DockerHelper : IAsyncDisposable
             throw new FileNotFoundException($"Dockerfile not found at: {dockerfilePath}");
         }
         
+        // Generate unique image name
+        _blazorServerImageName = $"estatemanagementuiblazor-test:{Guid.NewGuid():N}";
+        
         // Build the image using ImageFromDockerfileBuilder
-        var imageBuilder = new ImageFromDockerfileBuilder()
+        var imageBuildTask = new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(repoRoot)
             .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
-            .WithName($"estatemanagementuiblazor-test:{Guid.NewGuid():N}")
-            .WithCleanUp(true);  // Clean up intermediate images after build
+            .WithName(_blazorServerImageName)
+            .WithCleanUp(true)  // Clean up intermediate images after build
+            .Build();
 
         Console.WriteLine("  Building image (this may take a few minutes on first run)...");
-        _blazorServerImage = await imageBuilder.Build();
+        await imageBuildTask.ConfigureAwait(false);
         
-        Console.WriteLine($"✓ Image built successfully: {_blazorServerImage.FullName}");
+        Console.WriteLine($"✓ Image built successfully: {_blazorServerImageName}");
     }
 
     private async Task StartBlazorServerContainerAsync()
     {
-        if (_blazorServerImage == null)
+        if (_blazorServerImageName == null)
         {
             throw new InvalidOperationException("Image must be built before starting container");
         }
@@ -150,7 +146,7 @@ public class DockerHelper : IAsyncDisposable
 
         // Build the container
         var containerBuilder = new ContainerBuilder()
-            .WithImage(_blazorServerImage)
+            .WithImage(_blazorServerImageName)
             .WithName($"blazorserver-test-{Guid.NewGuid():N}")
             .WithPortBinding(5004, true)  // Map container port 5004 to random host port
             .WithEnvironment(environmentVariables)
