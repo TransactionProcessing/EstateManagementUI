@@ -17,41 +17,71 @@ This project provides a "zero-process" testing environment where the Blazor appl
 
 ## Technical Architecture
 
-### Container Management (Testcontainers)
+### Container Management (Clean DockerHelper)
 
-The test framework uses **ImageFromDockerfileBuilder** to build the application image on-the-fly from the existing `EstateManagementUI.BlazorServer/Dockerfile`. This ensures tests always run against the latest code changes.
+The test framework uses a **clean, minimal DockerHelper** class that:
+
+1. **Builds the Docker image** from `EstateManagementUI.BlazorServer/Dockerfile` using `ImageFromDockerfileBuilder`
+2. **Starts a container** with Test environment configuration
+3. **Manages the lifecycle** from setup to teardown
+4. **No external dependencies** - pure Testcontainers implementation
+
+**Key Features:**
+- Automatic image building from Dockerfile
+- Clean resource disposal (implements `IAsyncDisposable`)
+- Comprehensive logging for debugging
+- Test-specific environment configuration
 
 ```csharp
+// Build image from Dockerfile
 var imageBuilder = new ImageFromDockerfileBuilder()
     .WithDockerfileDirectory(repoRoot)
     .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
-    .WithName($"estatemanagementuiblazorserver-test:{this.TestId:N}")
+    .WithName($"estatemanagementuiblazor-test:{Guid.NewGuid():N}")
     .WithCleanUp(true);
 
 IImage image = await imageBuilder.Build();
+
+// Start container with Test environment
+var container = new ContainerBuilder()
+    .WithImage(image)
+    .WithPortBinding(5004, true)
+    .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Test")
+    .WithEnvironment("AppSettings:TestMode", "true")
+    .Build();
+
+await container.StartAsync();
 ```
 
 ### Test Lifecycle (Hooks)
 
-Tests use Reqnroll hooks to manage the complete lifecycle:
+Tests use Reqnroll hooks to manage the complete lifecycle with proper ordering:
 
-- **BeforeTestRun**: 
+- **BeforeTestRun (Order 0)**: 
+  - Builds Docker image from Dockerfile
+  - Starts the Blazor Server container
+  - Exposes mapped port for testing
+  
+- **BeforeTestRun (Order 100)**: 
   - Installs Playwright browsers
   - Initializes Playwright runtime
-  - Starts Docker containers (via DockerHelper)
   
 - **BeforeScenario**: 
   - Creates a new browser context and page
-  - Registers the page for the scenario
+  - Registers the page and DockerHelper for the scenario
   
 - **AfterScenario**: 
   - Takes screenshot on test failure
   - Closes browser page
   
-- **AfterTestRun**: 
+- **AfterTestRun (Order 0)**: 
   - Closes browser
-  - Stops and cleans up Docker containers
   - Disposes Playwright runtime
+  
+- **AfterTestRun (Order 100)**: 
+  - Stops the container
+  - Cleans up Docker resources
+  - Removes test images
 
 ### Parallel Execution
 
@@ -147,22 +177,41 @@ Manages Playwright browser lifecycle:
 
 ### Docker Helper (`DockerHelper.cs`)
 
-Manages Docker containers using Testcontainers:
-- **Builds** the Blazor UI image from Dockerfile on-the-fly
-- **Starts** the container with proper environment variables
-- **Configures** the app for Test environment (ASPNETCORE_ENVIRONMENT=Test)
-- **Enables** TestMode for isolated testing (no external API calls)
-- **Sets up** authentication with Security Service
-- **Cleans up** containers after test run
+**Clean, minimal Docker helper** for Testcontainers-based testing. This is a from-scratch implementation with zero dependencies on legacy Docker infrastructure.
 
-## Environment Configuration
+**Key Features:**
+- **Image Building**: Automatically builds from `EstateManagementUI.BlazorServer/Dockerfile`
+- **Container Management**: Starts, monitors, and stops the Blazor container
+- **Test Configuration**: Configures app for Test environment with isolated data
+- **Resource Cleanup**: Implements `IAsyncDisposable` for proper cleanup
+- **Comprehensive Logging**: Detailed console output for debugging
 
-The Blazor container is configured for isolated testing:
+**API:**
+```csharp
+public class DockerHelper : IAsyncDisposable
+{
+    public int EstateManagementUiPort { get; }      // Mapped host port
+    public bool IsRunning { get; }                   // Container status
+    
+    public Task StartContainerAsync();               // Build & start
+    public Task StopContainerAsync();                // Stop & cleanup
+    public ValueTask DisposeAsync();                 // IAsyncDisposable
+}
+```
+
+**Environment Configuration:**
 - **ASPNETCORE_ENVIRONMENT**: `Test` (uses appsettings.Test.json)
 - **AppSettings:TestMode**: `true` (enables in-memory test data)
-- **Authentication**: OIDC with Security Service container
-- **API Client**: Backend service credentials
-- **Database**: Transaction Processor Read Model connection
+- **AppSettings:TestUserRole**: `Estate` (default test user role)
+- **AppSettings:HttpClientIgnoreCertificateErrors**: `true` (for testing)
+
+## Test Environment
+
+The Blazor container runs in Test mode with the following characteristics:
+- **Isolated Data**: Uses in-memory test data, no external API calls
+- **No Dependencies**: Doesn't require backend services (Security, Transaction Processor, etc.)
+- **Fast Startup**: Minimal configuration for quick test execution
+- **SSL Support**: Runs on HTTPS with certificate validation disabled for testing
 
 ## Running Tests
 

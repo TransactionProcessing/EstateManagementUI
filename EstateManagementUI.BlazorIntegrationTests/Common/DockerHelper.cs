@@ -1,502 +1,181 @@
-﻿using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using DotNet.Testcontainers.Images;
-using DotNet.Testcontainers.Networks;
-using EstateManagementUI.BlazorIntegrationTests.Common;
-using EstateManagementUI.BusinessLogic.PermissionService;
-using EstateManagementUI.BusinessLogic.PermissionService.Database;
-using EstateManagementUI.BusinessLogic.PermissionService.Database.Entities;
-//using EstateManagementUI.Controllers;
-using EventStore.Client;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using SecurityService.Client;
-using Shared.Exceptions;
-using Shared.IntegrationTesting;
-using Shared.IntegrationTesting.TestContainers;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using TransactionProcessor.Client;
 
-namespace EstateManagementUI.IntegrationTests.Common
+namespace EstateManagementUI.IntegrationTests.Common;
+
+/// <summary>
+/// Clean, minimal Docker helper for Testcontainers-based integration testing.
+/// Builds and manages the BlazorServer container lifecycle.
+/// </summary>
+public class DockerHelper : IAsyncDisposable
 {
-    public class DockerHelper : global::Shared.IntegrationTesting.TestContainers.DockerHelper
+    private IImage? _blazorServerImage;
+    private IContainer? _blazorServerContainer;
+    
+    /// <summary>
+    /// Gets the mapped public port for the Blazor Server application.
+    /// </summary>
+    public int EstateManagementUiPort { get; private set; }
+    
+    /// <summary>
+    /// Gets whether the container is currently running.
+    /// </summary>
+    public bool IsRunning => _blazorServerContainer != null;
+
+    /// <summary>
+    /// Builds the Docker image from the BlazorServer Dockerfile and starts the container.
+    /// </summary>
+    public async Task StartContainerAsync()
     {
-        #region Fields
-
-        public ITransactionProcessorClient TransactionProcessorClient;
-
-        public HttpClient HttpClient;
-
-        public ISecurityServiceClient SecurityServiceClient;
-
-        public EventStoreProjectionManagementClient ProjectionManagementClient;
-
-        public HttpClient TestHostHttpClient;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DockerHelper"/> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        public DockerHelper()
-        {
-            this.TestingContext = new TestingContext();
-        }
-
-        #endregion
-
-        #region Methods
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("  Starting Testcontainers-based Integration Test Setup");
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
         
-        public Int32 EstateManagementUiPort;
+        // Build the Docker image from Dockerfile
+        await BuildBlazorServerImageAsync();
         
-        protected String EstateManagementUiContainerName;
-
-        private readonly TestingContext TestingContext;
-
-        public override void SetupContainerNames() {
-            base.SetupContainerNames();
-            this.SecurityServiceContainerName = $"identity-server{this.TestId:N}";
-            this.EstateManagementUiContainerName = $"estateadministrationui{this.TestId:N}";
-        }
-
-        private static void AddEntryToHostsFile(String ipaddress,
-                                                String hostname)
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                var hostsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
-                using (StreamWriter w = File.AppendText(hostsPath))
-                {
-                    w.WriteLine($"{ipaddress} {hostname}");
-                }
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                DockerHelper.ExecuteBashCommand($"echo {ipaddress} {hostname} | sudo tee -a /etc/hosts");
-            }
-        }
-
-        /// <summary>
-        /// Executes the bash command.
-        /// </summary>
-        /// <param name="command">The command.</param>
-        /// <returns></returns>
-        private static void ExecuteBashCommand(String command)
-        {
-            // according to: https://stackoverflow.com/a/15262019/637142
-            // thans to this we will pass everything as one command
-            command = command.Replace("\"", "\"\"");
-
-            var proc = new Process
-                       {
-                           StartInfo = new ProcessStartInfo
-                                       {
-                                           FileName = "/bin/bash",
-                                           Arguments = "-c \"" + command + "\"",
-                                           UseShellExecute = false,
-                                           RedirectStandardOutput = true,
-                                           CreateNoWindow = true
-                                       }
-                       };
-            Console.WriteLine(proc.StartInfo.Arguments);
-
-            proc.Start();
-            proc.WaitForExit();
-        }
-
-        public override async Task CreateSubscriptions() {
-            if (TestConfiguration.IsUIOnlyTestMode)
-                return;
-
-            List<(String streamName, String groupName, Int32 maxRetries)> subscriptions = new();
-            subscriptions.AddRange(MessagingService.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
-            subscriptions.AddRange(TransactionProcessor.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
-
-            // TODO: Add File Processor Subscriptions
-
-            foreach ((String streamName, String groupName, Int32 maxRetries) subscription in subscriptions)
-            {
-                var x = subscription;
-                x.maxRetries = 2;
-                await this.CreatePersistentSubscription(x);
-            }
-        }
-
-        protected override List<String> GetRequiredProjections()
-        {
-            if (TestConfiguration.IsUIOnlyTestMode)
-                return new List<String>();
-
-            List<String> requiredProjections = new List<String>();
-
-            requiredProjections.Add("EstateAggregator.js");
-            requiredProjections.Add("MerchantAggregator.js");
-            requiredProjections.Add("MerchantBalanceCalculator.js");
-            requiredProjections.Add("MerchantBalanceProjection.js");
-
-            return requiredProjections;
-        }
-
-        public override ContainerBuilder SetupTransactionProcessorContainer()
-        {
-
-            Dictionary<String, String> variables = new Dictionary<String, String>();
-            variables.Add($"OperatorConfiguration:PataPawaPrePay:Url",$"http://{this.TestHostContainerName}:{DockerPorts.TestHostPort}/api/patapawaprepay");
-
-            this.AdditionalVariables.Add(ContainerType.FileProcessor, variables);
-            
-            return base.SetupTransactionProcessorContainer();
-        }
-
-        /// <summary>
-        /// Starts the containers for scenario run.
-        /// </summary>
-        /// <param name="scenarioName">Name of the scenario.</param>
-        public override async Task StartContainersForScenarioRun(String scenarioName, DockerServices dockerServices)
-        {
-            await base.StartContainersForScenarioRun(scenarioName, dockerServices);
-
-            await this.StartEstateManagementUiContainer(this.TestNetworks, this.SecurityServicePort, DockerPorts.SecurityServiceDockerPort);
-            
-            // Setup the base address resolvers
-            String TransactionProcessorBaseAddressResolver(String api) => $"http://127.0.0.1:{this.TransactionProcessorPort}";
-
-            HttpClientHandler clientHandler = new HttpClientHandler
-                                              {
-                                                  ServerCertificateCustomValidationCallback = (message,
-                                                                                               certificate2,
-                                                                                               arg3,
-                                                                                               arg4) =>             
-                                                  {
-                                                    return true;
-                                                  }
-
-                                              };
-            HttpClient httpClient = new HttpClient(clientHandler);
-            this.TransactionProcessorClient = new TransactionProcessorClient(TransactionProcessorBaseAddressResolver, httpClient);
-            Func<String, String> securityServiceBaseAddressResolver = api => $"https://127.0.0.1:{this.SecurityServicePort}";
-            this.SecurityServiceClient = new SecurityServiceClient(securityServiceBaseAddressResolver, httpClient);
-            this.TestHostHttpClient = new HttpClient(clientHandler);
-            this.TestHostHttpClient.BaseAddress = new Uri($"http://127.0.0.1:{this.TestHostServicePort}");
-            this.ProjectionManagementClient = new EventStoreProjectionManagementClient(ConfigureEventStoreSettings());
-        }
+        // Start the container
+        await StartBlazorServerContainerAsync();
         
-        private async Task<IContainer> StartEstateManagementUiContainer(List<INetwork> networkServices,
-                                                                               Int32 securityServiceContainerPort,
-                                                                               Int32 securityServiceLocalPort)
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine($"  Blazor Server ready at: https://localhost:{EstateManagementUiPort}");
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
+    }
+
+    /// <summary>
+    /// Stops and cleans up the container and image.
+    /// </summary>
+    public async Task StopContainerAsync()
+    {
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        Console.WriteLine("  Stopping Testcontainers and cleaning up resources");
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
+        
+        if (_blazorServerContainer != null)
         {
-            TraceX("About to Start Estate Management UI Container");
-
-           var environmentVariables = this.GetCommonEnvironmentVariables();
-
-           environmentVariables.Remove("AppSettings:ClientId");
-           environmentVariables.Remove("AppSettings:ClientSecret");
-
-            // Blazor Server uses Authentication: prefix for OIDC settings
-            environmentVariables.Add("Authentication:Authority",$"https://{this.SecurityServiceContainerName}:0");  // The port is set to 0 to stop defaulting to 443
-            environmentVariables.Add("Authentication:ClientId","estateUIClient");
-            environmentVariables.Add("Authentication:ClientSecret","Secret1");
-            
-            // Backend API client credentials
-            environmentVariables.Add("ApiClient:ClientId", "serviceClient");
-            environmentVariables.Add("ApiClient:ClientSecret", "Secret1");
-            environmentVariables.Add("ApiClient:Scope", "estateManagement transactionProcessor");
-            
-            // Other settings - Set to Test environment for isolated testing
-            environmentVariables.Add("AppSettings:SecurityServiceLocalPort",$"{securityServiceLocalPort}");
-            environmentVariables.Add("AppSettings:SecurityServicePort",$"{securityServiceContainerPort}");
-            environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors",$"true");
-            environmentVariables.Add("AppSettings:IsIntegrationTest","true");
-            environmentVariables.Add("AppSettings:TestMode","true");
-            environmentVariables.Add("ASPNETCORE_ENVIRONMENT","Test");
-            environmentVariables.Add("urls","https://*:5004");
-            environmentVariables.Add($"DataReloadConfig:DefaultInSeconds","1");
-            environmentVariables.Add("ConnectionStrings:TransactionProcessorReadModel", this.SetConnectionString( "TransactionProcessorReadModel", this.UseSecureSqlServerDatabase));
-
-            // Build the Docker image from Dockerfile
-            TraceX("Building Estate Management UI Blazor image from Dockerfile...");
-            
-            // Get the path to the repository root and BlazorServer project
-            string repoRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../../"));
-            string blazorServerPath = Path.Combine(repoRoot, "EstateManagementUI.BlazorServer");
-            string dockerfilePath = Path.Combine(blazorServerPath, "Dockerfile");
-            
-            TraceX($"Repository root: {repoRoot}");
-            TraceX($"BlazorServer path: {blazorServerPath}");
-            TraceX($"Dockerfile path: {dockerfilePath}");
-
-            // Build the image from Dockerfile with proper build context
-            var imageBuilder = new ImageFromDockerfileBuilder()
-                .WithDockerfileDirectory(repoRoot)
-                .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
-                .WithName($"estatemanagementuiblazorserver-test:{this.TestId:N}")
-                .WithCleanUp(true);
-
-            TraceX("Creating image from Dockerfile...");
-            IImage image = await imageBuilder.Build();
-            TraceX($"Image built successfully: {image.FullName}");
-
-            TraceX("Creating container from built image...");
-            ContainerBuilder containerBuilder = new ContainerBuilder()
-                .WithName(this.EstateManagementUiContainerName)
-                .WithImage(image)
-                .WithEnvironment(environmentVariables)
-                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                .WithPortBinding(5004);
-                                                             
-            TraceX("Attaching networks to container...");
-            foreach (INetwork networkService in networkServices) {
-                containerBuilder = containerBuilder.WithNetwork(networkService);
-            }
-
-            IContainer? builtContainer = containerBuilder.Build();
-            
-            try{
-
-                TraceX("Starting Estate Management UI container...");
-                await builtContainer.StartAsync();
-                //builtContainer.WaitForPort("5004/tcp", 30000);
-                this.EstateManagementUiPort = builtContainer.GetMappedPublicPort($"5004");
-
-                await Task.Delay(5000);
-
-                TraceX("Estate Management UI Started");
-
-                /*HttpClientHandler handler = new HttpClientHandler();
-                handler.ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-                // TODO: Refactor this code once it works...
-                using (HttpClient client = new HttpClient(handler)) {
-                    HttpRequestMessage createRolesRequest = new (HttpMethod.Post,
-                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/createRoles");
-
-                    List<String> roles = ["Administrator"];
-
-                    createRolesRequest.Content = new StringContent(JsonConvert.SerializeObject(roles), Encoding.UTF8,
-                        "application/json");
-
-                    var response = await client.SendAsync(createRolesRequest, CancellationToken.None);
-
-                    if (response.IsSuccessStatusCode == false) {
-                        TraceX($"createRolesRequest failed [{response.StatusCode}]");
-                    }
-                    TraceX($"Create Role Response is [{response.StatusCode}]");
-
-                    HttpRequestMessage addUserToRoleRequest = new(HttpMethod.Post,
-                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/addUserToRole");
-                    List<AddUserToRole> userRolesList = new List<AddUserToRole> {
-                        new AddUserToRole { UserName = "estateuser@testestate1.co.uk", RoleName = "Administrator" }
-                    };
-
-                    addUserToRoleRequest.Content = new StringContent(JsonConvert.SerializeObject(userRolesList), Encoding.UTF8,
-                        "application/json");
-
-                    response = await client.SendAsync(addUserToRoleRequest, CancellationToken.None);
-                    if (response.IsSuccessStatusCode == false)
-                    {
-                        TraceX($"addUserToRoleRequest failed [{response.StatusCode}]");
-                    }
-
-                    TraceX($"Add User to Role Response is [{response.StatusCode}]");
-
-                    HttpRequestMessage getRolePermissionsRequest = new(HttpMethod.Get,
-                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/getRolePermissions?roleName=Administrator");
-                    
-                    response = await client.SendAsync(getRolePermissionsRequest, CancellationToken.None);
-
-                    if (response.IsSuccessStatusCode == false)
-                    {
-                        TraceX($"getRolePermissionsRequest failed [{response.StatusCode}]");
-                    }
-
-                    var x = await response.Content.ReadAsStringAsync(CancellationToken.None);
-
-                    RolePermissionsObject rolePermissionsObject = JsonConvert.DeserializeObject<RolePermissionsObject>(x);
-
-                    List<(int, string, int, string, bool)> Permissions = new();
-                    foreach (ApplicationSection applicationSection in rolePermissionsObject.ApplicationSections)
-                    {
-                        List<(Function, bool)> functionAccess = rolePermissionsObject.PermissionsList.Where(p =>
-                            p.ApplicationSection.ApplicationSectionId == applicationSection.ApplicationSectionId).Select(x => (x.Function, x.HasAccess)).ToList();
-
-                        foreach ((Function, bool) function in functionAccess)
-                        {
-                            Permissions.Add((applicationSection.ApplicationSectionId, applicationSection.Name, function.Item1.FunctionId, function.Item1.Name, function.Item2));
-                        }
-                    }
-
-                    List<(int, int, bool)> newPermissions = Permissions.Select(p => (p.Item1, p.Item3, true)).ToList();
-
-                    HttpRequestMessage addRolePermissionsRequest = new(HttpMethod.Post,
-                        $"https://localhost:{this.EstateManagementUiPort}/api/Permissions/addRolePermissions");
-
-                    List<RolePermissions> rolePermissions = new() {
-                        new RolePermissions { NewPermissions = newPermissions, RoleName = "Administrator" }
-                    };
-
-                    addRolePermissionsRequest.Content = new StringContent(JsonConvert.SerializeObject(rolePermissions), Encoding.UTF8,
-                        "application/json");
-
-                    response = await client.SendAsync(addRolePermissionsRequest, CancellationToken.None);
-                    if (response.IsSuccessStatusCode == false)
-                    {
-                        TraceX($"addRolePermissionsRequest failed [{response.StatusCode}]");
-                    }
-                }*/
-            }
-            catch(Exception ex){
-                TraceX(ex.GetCombinedExceptionMessages());
+            try
+            {
+                await _blazorServerContainer.StopAsync();
+                Console.WriteLine("✓ Container stopped successfully");
                 
+                await _blazorServerContainer.DisposeAsync();
+                Console.WriteLine("✓ Container disposed successfully");
+                
+                _blazorServerContainer = null;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠ Error stopping container: {ex.Message}");
+            }
+        }
 
-            TraceX("About to attach networkServices");
-            //foreach (INetwork networkService in networkServices)
-            //{
-            //    //networkService..Attach(builtContainer, false);
-            //    builtContainer.
-            //}
-
-            //Trace("About to get port");
-            ////  Do a health check here
-            //var x = builtContainer.ToHostExposedEndpoint($"5004/tcp");
-            //if (x == null){
-            //    Trace("x is null");
-            //}
-
-            
-
-            
-            this.Containers.Add(((DockerServices)1024, builtContainer));
-            //await Retry.For(async () =>
-            //{
-            //    String healthCheck =
-            //    await this.HealthCheckClient.PerformHealthCheck("http", "127.0.0.1", this.EstateManagementUiPort, CancellationToken.None);
-
-            //    var result = JsonConvert.DeserializeObject<HealthCheckResult>(healthCheck);
-            //    result.Status.ShouldBe(HealthCheckStatus.Healthy.ToString(), $"Details {healthCheck}");
-            //});
-
-            return builtContainer;
+        if (_blazorServerImage != null)
+        {
+            try
+            {
+                await _blazorServerImage.DisposeAsync();
+                Console.WriteLine("✓ Image cleaned up successfully");
+                
+                _blazorServerImage = null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠ Error cleaning up image: {ex.Message}");
+            }
         }
         
-        public override ContainerBuilder SetupSecurityServiceContainer()
+        Console.WriteLine("═══════════════════════════════════════════════════════════");
+    }
+
+    private async Task BuildBlazorServerImageAsync()
+    {
+        Console.WriteLine("Building Docker image from Dockerfile...");
+        
+        // Get the path to the repository root (from test bin directory up to repo root)
+        // Typical path: /path/to/repo/EstateManagementUI.BlazorIntegrationTests/bin/Debug/net10.0
+        string currentDirectory = Directory.GetCurrentDirectory();
+        string repoRoot = Path.GetFullPath(Path.Combine(currentDirectory, "../../../.."));
+        
+        Console.WriteLine($"  Repository root: {repoRoot}");
+        Console.WriteLine($"  Dockerfile: EstateManagementUI.BlazorServer/Dockerfile");
+        
+        // Verify the Dockerfile exists
+        string dockerfilePath = Path.Combine(repoRoot, "EstateManagementUI.BlazorServer", "Dockerfile");
+        if (!File.Exists(dockerfilePath))
         {
-            this.TraceX("About to Start Security Container");
+            throw new FileNotFoundException($"Dockerfile not found at: {dockerfilePath}");
+        }
+        
+        // Build the image using ImageFromDockerfileBuilder
+        var imageBuilder = new ImageFromDockerfileBuilder()
+            .WithDockerfileDirectory(repoRoot)
+            .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
+            .WithName($"estatemanagementuiblazor-test:{Guid.NewGuid():N}")
+            .WithCleanUp(true);  // Clean up intermediate images after build
 
-            Retry.For(() => {
-                          DockerHelper.AddEntryToHostsFile("127.0.0.1", SecurityServiceContainerName);
-                          return Task.CompletedTask;
-                      });
+        Console.WriteLine("  Building image (this may take a few minutes on first run)...");
+        _blazorServerImage = await imageBuilder.Build();
+        
+        Console.WriteLine($"✓ Image built successfully: {_blazorServerImage.FullName}");
+    }
 
-            Retry.For(() => {
-                DockerHelper.AddEntryToHostsFile("localhost", SecurityServiceContainerName);
-                return Task.CompletedTask;
-            });
-
+    private async Task StartBlazorServerContainerAsync()
+    {
+        if (_blazorServerImage == null)
+        {
+            throw new InvalidOperationException("Image must be built before starting container");
+        }
+        
+        Console.WriteLine("Starting Blazor Server container...");
+        
+        // Configure environment variables for Test mode
+        var environmentVariables = new Dictionary<string, string>
+        {
+            // Set to Test environment to use appsettings.Test.json
+            ["ASPNETCORE_ENVIRONMENT"] = "Test",
             
+            // Enable test mode (uses in-memory test data, no external API calls)
+            ["AppSettings:TestMode"] = "true",
+            
+            // Test user configuration
+            ["AppSettings:TestUserRole"] = "Estate",
+            
+            // HTTPS URL binding
+            ["urls"] = "https://*:5004",
+            
+            // Ignore certificate errors for testing
+            ["AppSettings:HttpClientIgnoreCertificateErrors"] = "true"
+        };
 
-            var environmentVariables = this.GetCommonEnvironmentVariables();
-            environmentVariables.Add($"ServiceOptions:PublicOrigin",$"https://{this.SecurityServiceContainerName}:{DockerPorts.SecurityServiceDockerPort}");
-            environmentVariables.Add($"ServiceOptions:IssuerUrl",$"https://{this.SecurityServiceContainerName}:{DockerPorts.SecurityServiceDockerPort}");
-            environmentVariables.Add("ASPNETCORE_ENVIRONMENT",$"IntegrationTest");
-            environmentVariables.Add($"urls",$"https://*:{DockerPorts.SecurityServiceDockerPort}");
+        // Build the container
+        var containerBuilder = new ContainerBuilder()
+            .WithImage(_blazorServerImage)
+            .WithName($"blazorserver-test-{Guid.NewGuid():N}")
+            .WithPortBinding(5004, true)  // Map container port 5004 to random host port
+            .WithEnvironment(environmentVariables)
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(5004));
 
-            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequiredLength","6");
-            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireDigit","false");
-            environmentVariables.Add($"ServiceOptions:PasswordOptions:RequireUpperCase","false");
-            environmentVariables.Add($"ServiceOptions:UserOptions:RequireUniqueEmail","false");
-            environmentVariables.Add($"ServiceOptions:SignInOptions:RequireConfirmedEmail","false");
+        _blazorServerContainer = containerBuilder.Build();
+        
+        Console.WriteLine("  Starting container...");
+        await _blazorServerContainer.StartAsync();
+        
+        // Get the mapped public port
+        EstateManagementUiPort = _blazorServerContainer.GetMappedPublicPort(5004);
+        
+        Console.WriteLine($"✓ Container started successfully");
+        Console.WriteLine($"  Container ID: {_blazorServerContainer.Id[..12]}");
+        Console.WriteLine($"  Host Port: {EstateManagementUiPort}");
+        
+        // Give the application a moment to fully start
+        Console.WriteLine("  Waiting for application to initialize...");
+        await Task.Delay(3000);
+        Console.WriteLine("✓ Application ready");
+    }
 
-            environmentVariables.Add("ConnectionStrings:PersistedGrantDbContext",this.SetConnectionString($"PersistedGrantStore-{this.TestId}", this.UseSecureSqlServerDatabase));
-            environmentVariables.Add("ConnectionStrings:ConfigurationDbContext", this.SetConnectionString($"Configuration-{this.TestId}", this.UseSecureSqlServerDatabase));
-            environmentVariables.Add("ConnectionStrings:AuthenticationDbContext",this.SetConnectionString($"Authentication-{this.TestId}", this.UseSecureSqlServerDatabase));
-
-            environmentVariables.Add("Logging:LogLevel:Microsoft","Information");
-            environmentVariables.Add("Logging:LogLevel:Default","Information");
-            environmentVariables.Add("Logging:EventLog:LogLevel:Default","None");
-
-            var imageDetailsResult = this.GetImageDetails(ContainerType.SecurityService);
-
-            ContainerBuilder securityServiceContainer = new ContainerBuilder()
-                .WithName(this.SecurityServiceContainerName)
-                .WithEnvironment(environmentVariables)
-                .WithImage(imageDetailsResult.Data.imageName)
-                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                .WithPortBinding(DockerPorts.SecurityServiceDockerPort);
-                                                                     //.MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                                                                     //.SetDockerCredentials(this.DockerCredentials);
-
-                                                                 
-            // Now build and return the container                
-            return securityServiceContainer;
-        }
-
-        /// <summary>
-        /// Stops the containers for scenario run.
-        /// </summary>
-        public override async Task StopContainersForScenarioRun(DockerServices sharedDockerServices)
-        {
-            await this.RemoveEstateReadModel().ConfigureAwait(false);
-
-            await base.StopContainersForScenarioRun(sharedDockerServices);
-        }
-
-        private async Task RemoveEstateReadModel()
-        {
-            //List<Guid> estateIdList = this.TestingContext.GetAllEstateIds();
-
-            //foreach (Guid estateId in estateIdList)
-            //{
-            //    String databaseName = $"EstateReportingReadModel{estateId}";
-
-            //    // Build the connection string (to master)
-            //    String connectionString = Setup.GetLocalConnectionString(databaseName);
-            //    await Retry.For(async () =>
-            //                    {
-            //                        EstateReportingSqlServerContext context = new EstateReportingSqlServerContext(connectionString);
-            //                        await context.Database.EnsureDeletedAsync(CancellationToken.None);
-            //                    },
-            //                    retryFor: TimeSpan.FromMinutes(2),
-            //                    retryInterval: TimeSpan.FromSeconds(30));
-            //}
-        }
-
-        private async Task<IPermissionsRepository> CreatePermissionsRepository(String dbConnString, CancellationToken cancellationToken) {
-            var optionsBuilder = new DbContextOptionsBuilder<PermissionsContext>();
-            optionsBuilder.UseSqlite(dbConnString); // Configure for your database provider
-
-            var serviceProvider = new ServiceCollection()
-                .AddLogging(config => config.AddConsole())  // Add logging if needed
-                .BuildServiceProvider();
-
-            // Create the DbContextFactory instance
-            var contextFactory = new DbContextFactory<PermissionsContext>(serviceProvider, optionsBuilder.Options, new DbContextFactorySource<PermissionsContext>());
-
-            //var ctx = await contextFactory.CreateDbContextAsync(cancellationToken);
-
-            return new PermissionsRepository(contextFactory);
-        }
-
-        public void TraceX(String msg) {
-            Trace(msg);
-            Console.WriteLine(msg);
-        }
-
-        #endregion
+    public async ValueTask DisposeAsync()
+    {
+        await StopContainerAsync();
     }
 }

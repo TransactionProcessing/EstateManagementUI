@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Reqnroll;
 using Reqnroll.BoDi;
-using Shared.IntegrationTesting;
+using EstateManagementUI.IntegrationTests.Common;
 
 namespace EstateManagementUI.BlazorIntegrationTests.Common
 {
@@ -12,16 +12,33 @@ namespace EstateManagementUI.BlazorIntegrationTests.Common
         private ScenarioContext ScenarioContext;
         private static IPlaywright? playwright;
         private static IBrowser? browser;
+        private static DockerHelper? dockerHelper;
 
         public Hooks(IObjectContainer objectContainer)
         {
             this.ObjectContainer = objectContainer;
         }
 
-        [BeforeTestRun]
-        public static async Task BeforeTestRun()
+        [BeforeTestRun(Order = 0)]
+        public static async Task BeforeTestRun_StartContainers()
+        {
+            Console.WriteLine();
+            Console.WriteLine("═══════════════════════════════════════════════════════════");
+            Console.WriteLine("  TESTCONTAINERS INTEGRATION TEST FRAMEWORK");
+            Console.WriteLine("═══════════════════════════════════════════════════════════");
+            Console.WriteLine();
+            
+            // Start Docker containers first
+            dockerHelper = new DockerHelper();
+            await dockerHelper.StartContainerAsync();
+        }
+
+        [BeforeTestRun(Order = 100)]
+        public static async Task BeforeTestRun_SetupPlaywright()
         {
             // Install Playwright browsers if needed
+            Console.WriteLine();
+            Console.WriteLine("Setting up Playwright browsers...");
             var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
             if (exitCode != 0)
             {
@@ -30,6 +47,8 @@ namespace EstateManagementUI.BlazorIntegrationTests.Common
 
             // Initialize Playwright
             playwright = await Playwright.CreateAsync();
+            Console.WriteLine("✓ Playwright initialized");
+            Console.WriteLine();
         }
 
         [BeforeScenario(Order = 0)]
@@ -38,10 +57,17 @@ namespace EstateManagementUI.BlazorIntegrationTests.Common
             this.ScenarioContext = scenarioContext;
             String scenarioName = scenarioContext.ScenarioInfo.Title.Replace(" ", "");
             
+            // Create browser page for this scenario
             var page = await this.CreateBrowserPage();
             
-            // Register the page for this scenario
+            // Register the page and DockerHelper for this scenario
             scenarioContext.ScenarioContainer.RegisterInstanceAs(page, scenarioName);
+            
+            // Register DockerHelper so steps can access container information
+            if (dockerHelper != null)
+            {
+                scenarioContext.ScenarioContainer.RegisterInstanceAs(dockerHelper);
+            }
         }
 
         [AfterScenario(Order = 0)]
@@ -57,27 +83,50 @@ namespace EstateManagementUI.BlazorIntegrationTests.Common
                 {
                     var screenshotPath = $"screenshot-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.png";
                     await page.ScreenshotAsync(new PageScreenshotOptions { Path = screenshotPath, FullPage = true });
-                    Console.WriteLine($"Screenshot saved to: {screenshotPath}");
+                    Console.WriteLine($"📸 Screenshot saved to: {screenshotPath}");
                 }
 
                 await page.CloseAsync();
             }
         }
 
-        [AfterTestRun]
-        public static async Task AfterTestRun()
+        [AfterTestRun(Order = 0)]
+        public static async Task AfterTestRun_ClosePlaywright()
         {
+            Console.WriteLine();
+            Console.WriteLine("Closing Playwright...");
+            
             if (browser != null)
             {
                 await browser.CloseAsync();
                 browser = null;
+                Console.WriteLine("✓ Browser closed");
             }
 
             if (playwright != null)
             {
                 playwright.Dispose();
                 playwright = null;
+                Console.WriteLine("✓ Playwright disposed");
             }
+        }
+
+        [AfterTestRun(Order = 100)]
+        public static async Task AfterTestRun_StopContainers()
+        {
+            // Stop Docker containers last
+            if (dockerHelper != null)
+            {
+                await dockerHelper.StopContainerAsync();
+                await dockerHelper.DisposeAsync();
+                dockerHelper = null;
+            }
+            
+            Console.WriteLine();
+            Console.WriteLine("═══════════════════════════════════════════════════════════");
+            Console.WriteLine("  Test run completed - All resources cleaned up");
+            Console.WriteLine("═══════════════════════════════════════════════════════════");
+            Console.WriteLine();
         }
 
         private async Task<IPage> CreateBrowserPage()

@@ -1,7 +1,6 @@
 using Reqnroll;
 using System;
 using System.Threading.Tasks;
-using Shared.IntegrationTesting;
 using EstateManagementUI.BlazorIntegrationTests.Common;
 using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
@@ -14,24 +13,27 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
     [Scope(Tag = "framework")]
     public class FrameworkCheckSteps
     {
-        private readonly TestingContext TestingContext;
+        private readonly DockerHelper DockerHelper;
         private readonly BlazorUiHelpers UiHelpers;
         private readonly IPage Page;
 
-        public FrameworkCheckSteps(ScenarioContext scenarioContext, TestingContext testingContext, IObjectContainer container)
+        public FrameworkCheckSteps(ScenarioContext scenarioContext, DockerHelper dockerHelper)
         {
             this.Page = scenarioContext.ScenarioContainer.Resolve<IPage>(scenarioContext.ScenarioInfo.Title.Replace(" ", ""));
-            this.TestingContext = testingContext;
-            this.UiHelpers = new BlazorUiHelpers(this.Page, this.TestingContext.DockerHelper.EstateManagementUiPort);
+            this.DockerHelper = dockerHelper;
+            this.UiHelpers = new BlazorUiHelpers(this.Page, this.DockerHelper.EstateManagementUiPort);
         }
 
         [Given(@"the application is running in a container")]
         public void GivenTheApplicationIsRunningInAContainer()
         {
             // This step is declarative - the container should already be running
-            // via the Hooks setup. We just verify that the port is set.
-            this.TestingContext.DockerHelper.EstateManagementUiPort.ShouldBeGreaterThan(0, 
+            // via the Hooks setup. We just verify that the container is running.
+            this.DockerHelper.IsRunning.ShouldBeTrue("Container should be running");
+            this.DockerHelper.EstateManagementUiPort.ShouldBeGreaterThan(0, 
                 "Container port should be set, indicating the container is running");
+            
+            Console.WriteLine($"✓ Container verified - Running on port {this.DockerHelper.EstateManagementUiPort}");
         }
 
         [When(@"I navigate to the home page")]
@@ -51,7 +53,7 @@ namespace EstateManagementUI.BlazorIntegrationTests.Steps
             var title = await this.Page.TitleAsync();
             title.ShouldNotBeNullOrEmpty("Page title should be present");
             
-            Console.WriteLine($"✓ Framework check passed - Page title: {title}");
+            Console.WriteLine($"✓ Framework check passed - Page title: '{title}'");
         }
     }
 }
