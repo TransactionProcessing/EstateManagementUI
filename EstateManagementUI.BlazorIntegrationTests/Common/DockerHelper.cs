@@ -1,6 +1,6 @@
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Images;
+using Testcontainers.Builders;
+using Testcontainers.Containers;
+using Testcontainers.Images;
 
 namespace EstateManagementUI.IntegrationTests.Common;
 

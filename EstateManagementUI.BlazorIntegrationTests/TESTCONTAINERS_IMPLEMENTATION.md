@@ -11,7 +11,7 @@ This document summarizes the implementation of a clean, Testcontainers-based int
 Created a **brand new, minimal DockerHelper** (`Common/DockerHelper.cs`) with:
 
 - **Zero dependencies** on legacy Docker infrastructure
-- **Pure Testcontainers** implementation using `DotNet.Testcontainers`
+- **Pure Testcontainers** implementation using `Testcontainers` (official Testcontainers for .NET)
 - **Image building** from Dockerfile using `ImageFromDockerfileBuilder`
 - **Container lifecycle management** (start, stop, cleanup)
 - **IAsyncDisposable** pattern for proper resource cleanup
@@ -122,7 +122,7 @@ Updated `README.md` with:
 ### Modified Files
 1. `Common/Hooks.cs` - Integrated DockerHelper lifecycle
 2. `README.md` - Comprehensive framework documentation
-3. `EstateManagementUI.BlazorIntegrationTests.csproj` - Added DotNet.Testcontainers package
+3. `EstateManagementUI.BlazorIntegrationTests.csproj` - Added Testcontainers package
 
 ## How It Works
 
@@ -231,7 +231,7 @@ This will:
 ## Success Criteria Met
 
 ✅ **Zero-Process Testing**: Application builds and runs automatically
-✅ **Testcontainers Integration**: Clean implementation using DotNet.Testcontainers
+✅ **Testcontainers Integration**: Clean implementation using Testcontainers for .NET
 ✅ **Dockerfile Build**: Image built from existing Dockerfile on-the-fly
 ✅ **Playwright Integration**: Multi-browser support configured
 ✅ **BDD Framework**: Reqnroll + NUnit with feature files

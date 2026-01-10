@@ -9,7 +9,7 @@ This project provides a "zero-process" testing environment where the Blazor appl
 ### Key Features
 
 1. **Zero-Process Testing**: The application is automatically built from the Dockerfile and deployed in a container - no manual setup required
-2. **Testcontainers Integration**: Uses DotNet.Testcontainers to manage the full container lifecycle
+2. **Testcontainers Integration**: Uses Testcontainers for .NET to manage the full container lifecycle
 3. **Browser Automation**: Uses **Microsoft Playwright** for cross-browser testing (Chromium, Firefox, WebKit)
 4. **BDD Framework**: **Reqnroll** (modern SpecFlow successor) with **NUnit** test runner
 5. **Parallel Execution**: Tests run in parallel at the Children level for faster execution
