@@ -1,5 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using DotNet.Testcontainers.Images;
 using DotNet.Testcontainers.Networks;
 using EstateManagementUI.BlazorIntegrationTests.Common;
 using EstateManagementUI.BusinessLogic.PermissionService;
@@ -216,27 +217,49 @@ namespace EstateManagementUI.IntegrationTests.Common
             environmentVariables.Add("ApiClient:ClientSecret", "Secret1");
             environmentVariables.Add("ApiClient:Scope", "estateManagement transactionProcessor");
             
-            // Other settings
+            // Other settings - Set to Test environment for isolated testing
             environmentVariables.Add("AppSettings:SecurityServiceLocalPort",$"{securityServiceLocalPort}");
             environmentVariables.Add("AppSettings:SecurityServicePort",$"{securityServiceContainerPort}");
             environmentVariables.Add("AppSettings:HttpClientIgnoreCertificateErrors",$"true");
             environmentVariables.Add("AppSettings:IsIntegrationTest","true");
-            environmentVariables.Add("ASPNETCORE_ENVIRONMENT","Development");
+            environmentVariables.Add("AppSettings:TestMode","true");
+            environmentVariables.Add("ASPNETCORE_ENVIRONMENT","Test");
             environmentVariables.Add("urls","https://*:5004");
             environmentVariables.Add($"DataReloadConfig:DefaultInSeconds","1");
             environmentVariables.Add("ConnectionStrings:TransactionProcessorReadModel", this.SetConnectionString( "TransactionProcessorReadModel", this.UseSecureSqlServerDatabase));
 
-            TraceX("About to Built Estate Management UI Blazor Container");
+            // Build the Docker image from Dockerfile
+            TraceX("Building Estate Management UI Blazor image from Dockerfile...");
+            
+            // Get the path to the repository root and BlazorServer project
+            string repoRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../../"));
+            string blazorServerPath = Path.Combine(repoRoot, "EstateManagementUI.BlazorServer");
+            string dockerfilePath = Path.Combine(blazorServerPath, "Dockerfile");
+            
+            TraceX($"Repository root: {repoRoot}");
+            TraceX($"BlazorServer path: {blazorServerPath}");
+            TraceX($"Dockerfile path: {dockerfilePath}");
+
+            // Build the image from Dockerfile with proper build context
+            var imageBuilder = new ImageFromDockerfileBuilder()
+                .WithDockerfileDirectory(repoRoot)
+                .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
+                .WithName($"estatemanagementuiblazorserver-test:{this.TestId:N}")
+                .WithCleanUp(true);
+
+            TraceX("Creating image from Dockerfile...");
+            IImage image = await imageBuilder.Build();
+            TraceX($"Image built successfully: {image.FullName}");
+
+            TraceX("Creating container from built image...");
             ContainerBuilder containerBuilder = new ContainerBuilder()
                 .WithName(this.EstateManagementUiContainerName)
-                .WithImage("estatemanagementuiblazorserver")
+                .WithImage(image)
                 .WithEnvironment(environmentVariables)
                 .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                //.UseNetwork(networkServices.ToArray())
                 .WithPortBinding(5004);
-                                                             //.MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
-                                                             //.SetDockerCredentials(this.DockerCredentials);
-            TraceX("About to Call .Start()");
+                                                             
+            TraceX("Attaching networks to container...");
             foreach (INetwork networkService in networkServices) {
                 containerBuilder = containerBuilder.WithNetwork(networkService);
             }
@@ -245,7 +268,7 @@ namespace EstateManagementUI.IntegrationTests.Common
             
             try{
 
-                
+                TraceX("Starting Estate Management UI container...");
                 await builtContainer.StartAsync();
                 //builtContainer.WaitForPort("5004/tcp", 30000);
                 this.EstateManagementUiPort = builtContainer.GetMappedPublicPort($"5004");
