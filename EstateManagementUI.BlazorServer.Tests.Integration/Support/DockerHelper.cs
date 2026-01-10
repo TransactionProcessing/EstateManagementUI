@@ -111,7 +111,7 @@ public class DockerHelper : IAsyncDisposable
             .Build();
 
         Console.WriteLine("  Building image (this may take a few minutes on first run)...");
-        await imageBuildTask.ConfigureAwait(false);
+        await imageBuildTask;
         
         Console.WriteLine($"✓ Image built successfully: {_blazorServerImageName}");
     }
