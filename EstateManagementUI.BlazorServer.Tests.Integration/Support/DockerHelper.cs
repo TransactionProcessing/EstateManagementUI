@@ -103,7 +103,7 @@ public class DockerHelper : IAsyncDisposable
         _blazorServerImageName = $"estatemanagementuiblazor-test:{Guid.NewGuid():N}";
         
         // Build the image using ImageFromDockerfileBuilder
-        var imageBuildTask = new ImageFromDockerfileBuilder()
+        var futureImage = new ImageFromDockerfileBuilder()
             .WithDockerfileDirectory(repoRoot)
             .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
             .WithName(_blazorServerImageName)
@@ -111,7 +111,7 @@ public class DockerHelper : IAsyncDisposable
             .Build();
 
         Console.WriteLine("  Building image (this may take a few minutes on first run)...");
-        await imageBuildTask;
+        await futureImage.CreateAsync();
         
         Console.WriteLine($"✓ Image built successfully: {_blazorServerImageName}");
     }
