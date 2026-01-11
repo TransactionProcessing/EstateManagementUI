@@ -4,35 +4,42 @@
 
 ## Overview
 
-This project provides a "zero-process" testing environment where the Blazor application is automatically built from its Dockerfile, deployed in a Docker container, and tested using BDD-style scenarios.
+This project provides a "zero-process" testing environment where the Blazor application runs in a Docker container and is tested using BDD-style scenarios.
 
 ### Key Features
 
-1. **Zero-Process Testing**: Application automatically built from Dockerfile and deployed in container - no manual setup
+1. **Pre-built Image Testing**: Uses a pre-built Docker image (`estatemanagementui-blazor`) for fast test execution
 2. **Testcontainers Integration**: Uses official Testcontainers for .NET to manage full container lifecycle
 3. **Browser Automation**: Microsoft Playwright for cross-browser testing (Chromium, Firefox, WebKit)
 4. **BDD Framework**: Reqnroll (modern SpecFlow successor) with NUnit test runner
 5. **Parallel Execution**: Tests run in parallel at Children level (4 concurrent scenarios)
 6. **Test Environment**: Application runs in "Test" mode with isolated data (no external API calls)
 
+## Prerequisites
+
+Before running tests, build the Docker image locally:
+
+```bash
+cd EstateManagementUI.BlazorServer
+docker build -t estatemanagementui-blazor .
+```
+
 ## Technical Architecture
 
 ### Container Management
 
 The `DockerHelper` class:
-- Builds Docker image from `EstateManagementUI.BlazorServer/Dockerfile` using `ImageFromDockerfileBuilder`
+- Uses pre-built Docker image `estatemanagementui-blazor`
 - Starts container with Test environment configuration
 - Manages lifecycle from setup to teardown
 - Implements `IAsyncDisposable` for proper resource cleanup
 
 ```csharp
-var imageBuilder = new ImageFromDockerfileBuilder()
-    .WithDockerfileDirectory(repoRoot)
-    .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
-    .WithCleanUp(true);
+// Uses pre-built image
+_blazorServerImageName = "estatemanagementui-blazor";
 
 var container = new ContainerBuilder()
-    .WithImage(await imageBuilder.Build())
+    .WithImage(_blazorServerImageName)
     .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Test")
     .WithEnvironment("AppSettings:TestMode", "true")
     .Build();
@@ -42,7 +49,7 @@ var container = new ContainerBuilder()
 
 Reqnroll hooks manage the complete test lifecycle:
 
-- **BeforeTestRun (Order 0)**: Start Docker containers
+- **BeforeTestRun (Order 0)**: Start Docker containers from pre-built image
 - **BeforeTestRun (Order 100)**: Initialize Playwright  
 - **BeforeScenario**: Create browser page, register DockerHelper
 - **AfterScenario**: Take screenshots on failure, close page
@@ -80,14 +87,22 @@ EstateManagementUI.BlazorServer.Tests.Integration/
 
 1. **.NET 10.0 SDK** or later
 2. **Docker** (Docker Desktop on Windows/Mac, Docker Engine on Linux)
+3. **Pre-built Docker image**: Build the image before running tests:
+   ```bash
+   cd EstateManagementUI.BlazorServer
+   docker build -t estatemanagementui-blazor .
+   ```
 
 ### Quick Start
 
 ```bash
+# Ensure the Docker image is built first
+docker images | grep estatemanagementui-blazor
+
 # Navigate to the test project
 cd EstateManagementUI.BlazorServer.Tests.Integration
 
-# Run all tests (builds container automatically)
+# Run all tests (uses pre-built image)
 dotnet test
 
 # Run only framework smoke tests
@@ -102,8 +117,8 @@ IsCI=true dotnet test
 
 ### Test Execution Flow
 
-1. **Build Phase**: Testcontainers builds Docker image from Dockerfile
-2. **Container Start**: Built image started with test-specific configuration
+1. **Image Check**: Tests use pre-built `estatemanagementui-blazor` image
+2. **Container Start**: Container started with test-specific configuration
 3. **Browser Setup**: Playwright initializes configured browser(s)
 4. **Test Run**: Tests execute in parallel (up to 4 scenarios)
 5. **Cleanup**: Containers stopped, browsers closed, Docker resources cleaned up
@@ -129,7 +144,7 @@ Scenario: Home page is accessible
 ```
 
 This test validates:
-- ✓ Docker image builds from Dockerfile
+- ✓ Pre-built Docker image exists and can be used
 - ✓ Container starts with proper configuration
 - ✓ Playwright connects to containerized application
 - ✓ Basic navigation works
@@ -144,17 +159,21 @@ This test validates:
 
 ## Troubleshooting
 
-### Docker Build Fails
+### Image Not Found
 
-1. Check Docker is running: `docker ps`
-2. Verify Dockerfile exists: `ls ../EstateManagementUI.BlazorServer/Dockerfile`
-3. Ensure Node.js available in Docker build (required for Tailwind CSS)
+1. Build the Docker image first:
+   ```bash
+   cd EstateManagementUI.BlazorServer
+   docker build -t estatemanagementui-blazor .
+   ```
+2. Verify image exists: `docker images | grep estatemanagementui-blazor`
 
 ### Container Won't Start
 
-1. Check Docker logs: `docker logs <container-name>`
-2. Verify port 5004 not already in use
-3. Check Docker has sufficient resources
+1. Check Docker is running: `docker ps`
+2. Check Docker logs: `docker logs <container-name>`
+3. Verify port 5004 not already in use
+4. Check Docker has sufficient resources
 
 ### Playwright Issues
 

@@ -1,12 +1,11 @@
 using Testcontainers.Builders;
 using Testcontainers.Containers;
-using Testcontainers.Images;
 
 namespace EstateManagementUI.BlazorServer.Tests.Integration.Support;
 
 /// <summary>
 /// Clean, minimal Docker helper for Testcontainers-based integration testing.
-/// Builds and manages the BlazorServer container lifecycle.
+/// Manages the BlazorServer container lifecycle using a pre-built Docker image.
 /// </summary>
 public class DockerHelper : IAsyncDisposable
 {
@@ -24,7 +23,7 @@ public class DockerHelper : IAsyncDisposable
     public bool IsRunning => _blazorServerContainer != null;
 
     /// <summary>
-    /// Builds the Docker image from the BlazorServer Dockerfile and starts the container.
+    /// Starts the container using a pre-built Docker image.
     /// </summary>
     public async Task StartContainerAsync()
     {
@@ -32,8 +31,9 @@ public class DockerHelper : IAsyncDisposable
         Console.WriteLine("  Starting Testcontainers-based Integration Test Setup");
         Console.WriteLine("═══════════════════════════════════════════════════════════");
         
-        // Build the Docker image from Dockerfile
-        await BuildBlazorServerImageAsync();
+        // Use pre-built image
+        _blazorServerImageName = "estatemanagementui-blazor";
+        Console.WriteLine($"  Using pre-built image: {_blazorServerImageName}");
         
         // Start the container
         await StartBlazorServerContainerAsync();
@@ -70,60 +70,24 @@ public class DockerHelper : IAsyncDisposable
             }
         }
 
-        // Image cleanup is handled automatically by WithCleanUp(true)
+        // Image cleanup is handled by pre-built image - no cleanup needed
         if (_blazorServerImageName != null)
         {
-            Console.WriteLine("✓ Image cleanup handled automatically by Testcontainers");
+            Console.WriteLine($"✓ Using pre-built image: {_blazorServerImageName}");
             _blazorServerImageName = null;
         }
         
         Console.WriteLine("═══════════════════════════════════════════════════════════");
     }
 
-    private async Task BuildBlazorServerImageAsync()
-    {
-        Console.WriteLine("Building Docker image from Dockerfile...");
-        
-        // Get the path to the repository root (from test bin directory up to repo root)
-        // Typical path: /path/to/repo/EstateManagementUI.BlazorServer.Tests.Integration/bin/Debug/net10.0
-        string currentDirectory = Directory.GetCurrentDirectory();
-        string repoRoot = Path.GetFullPath(Path.Combine(currentDirectory, "../../../.."));
-        
-        Console.WriteLine($"  Repository root: {repoRoot}");
-        Console.WriteLine($"  Dockerfile: EstateManagementUI.BlazorServer/Dockerfile");
-        
-        // Verify the Dockerfile exists
-        string dockerfilePath = Path.Combine(repoRoot, "EstateManagementUI.BlazorServer", "Dockerfile");
-        if (!File.Exists(dockerfilePath))
-        {
-            throw new FileNotFoundException($"Dockerfile not found at: {dockerfilePath}");
-        }
-        
-        // Generate unique image name
-        _blazorServerImageName = $"estatemanagementuiblazor-test:{Guid.NewGuid():N}";
-        
-        // Build the image using ImageFromDockerfileBuilder
-        var futureImage = new ImageFromDockerfileBuilder()
-            .WithDockerfileDirectory(repoRoot)
-            .WithDockerfile("EstateManagementUI.BlazorServer/Dockerfile")
-            .WithName(_blazorServerImageName)
-            .WithCleanUp(true)  // Clean up intermediate images after build
-            .Build();
-
-        Console.WriteLine("  Building image (this may take a few minutes on first run)...");
-        await futureImage.CreateAsync();
-        
-        Console.WriteLine($"✓ Image built successfully: {_blazorServerImageName}");
-    }
-
     private async Task StartBlazorServerContainerAsync()
     {
         if (_blazorServerImageName == null)
         {
-            throw new InvalidOperationException("Image must be built before starting container");
+            throw new InvalidOperationException("Image name must be set before starting container");
         }
         
-        Console.WriteLine("Starting Blazor Server container...");
+        Console.WriteLine($"Starting Blazor Server container from image: {_blazorServerImageName}...");
         
         // Configure environment variables for Test mode
         var environmentVariables = new Dictionary<string, string>
