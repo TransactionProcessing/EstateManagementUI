@@ -1,6 +1,5 @@
-using Testcontainers.Builders;
-using Testcontainers.Containers;
-using Testcontainers.Images;
+using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Containers;
 
 namespace EstateManagementUI.BlazorServer.Tests.Integration.Support;
 
