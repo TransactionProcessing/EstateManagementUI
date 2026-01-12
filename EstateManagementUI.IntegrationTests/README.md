@@ -9,17 +9,23 @@ EstateManagementUI.IntegrationTests/
 ├── Features/                          # Reqnroll feature files (Gherkin scenarios)
 │   ├── Dashboard.feature              # Dashboard test scenarios for all roles
 │   ├── EstateManagement.feature       # Estate Management test scenarios
-│   └── MerchantManagement.feature     # Merchant Management test scenarios
+│   ├── MerchantManagement.feature     # Merchant Management test scenarios
+│   ├── ContractManagement.feature     # Contract Management test scenarios
+│   └── OperatorManagement.feature     # Operator Management test scenarios
 ├── Steps/                             # Step definitions (links features to code)
 │   ├── DashboardSteps.cs              # Dashboard step implementations
 │   ├── EstateManagementSteps.cs       # Estate Management step implementations
-│   └── MerchantManagementSteps.cs     # Merchant Management step implementations
+│   ├── MerchantManagementSteps.cs     # Merchant Management step implementations
+│   ├── ContractManagementSteps.cs     # Contract Management step implementations
+│   └── OperatorManagementSteps.cs     # Operator Management step implementations
 ├── Hooks/                             # Test lifecycle hooks
 │   └── BrowserHooks.cs                # Playwright browser management
 ├── Common/                            # Helper classes and utilities
 │   ├── DashboardPageHelper.cs         # Page object for Dashboard interactions
 │   ├── EstateManagementPageHelper.cs  # Page object for Estate Management interactions
-│   └── MerchantManagementPageHelper.cs # Page object for Merchant Management interactions
+│   ├── MerchantManagementPageHelper.cs # Page object for Merchant Management interactions
+│   ├── ContractManagementPageHelper.cs # Page object for Contract Management interactions
+│   └── OperatorManagementPageHelper.cs # Page object for Operator Management interactions
 └── appsettings.json                   # Test configuration and hardcoded test data
 ```
 
@@ -41,6 +47,16 @@ Feature files define test scenarios in Gherkin syntax (Given/When/Then) and cove
 - Covers merchant viewing, creation, editing, and deposit operations
 - Tests role-based permissions for different operations
 
+#### `Features/ContractManagement.feature`
+- Tests Contract Management functionality including contract list and details
+- Tests role-based access controls for contracts
+
+#### `Features/OperatorManagement.feature`
+- Tests Operator Management functionality including operator list, details, and CRUD operations
+- Covers operator viewing, creation, and editing
+- Tests role-based permissions for different operations
+- Uses hardcoded test data (Safaricom, Voucher)
+
 ### 2. Hooks File (`Hooks/BrowserHooks.cs`)
 - Manages Playwright browser lifecycle
 - `BeforeTestRun`: Installs Playwright browsers and initializes Playwright
@@ -54,6 +70,8 @@ Step definitions link Gherkin steps from feature files to C# code and use Page H
 - `Steps/DashboardSteps.cs` - Dashboard scenarios
 - `Steps/EstateManagementSteps.cs` - Estate Management scenarios
 - `Steps/MerchantManagementSteps.cs` - Merchant Management scenarios
+- `Steps/ContractManagementSteps.cs` - Contract Management scenarios
+- `Steps/OperatorManagementSteps.cs` - Operator Management scenarios
 
 ### 4. Page Helpers
 Page Helpers encapsulate all page interactions using Playwright and use Shouldly for assertions.
@@ -61,6 +79,8 @@ Page Helpers encapsulate all page interactions using Playwright and use Shouldly
 - `Common/DashboardPageHelper.cs` - Dashboard page interactions
 - `Common/EstateManagementPageHelper.cs` - Estate Management page interactions
 - `Common/MerchantManagementPageHelper.cs` - Merchant Management page interactions
+- `Common/ContractManagementPageHelper.cs` - Contract Management page interactions
+- `Common/OperatorManagementPageHelper.cs` - Operator Management page interactions
 
 ## Test Data
 
@@ -92,8 +112,12 @@ The tests are designed to assert against hardcoded test data in the application'
 - Total Users: **5**
 
 #### Operators
-- **Safaricom** (requires custom merchant number)
-- **Voucher**
+- **Safaricom** (ID: 33333333-3333-3333-3333-333333333333)
+  - Requires Custom Merchant Number: Yes
+  - Requires Custom Terminal Number: No
+- **Voucher** (ID: 33333333-3333-3333-3333-333333333334)
+  - Requires Custom Merchant Number: No
+  - Requires Custom Terminal Number: No
 
 #### Contracts
 - **Standard Transaction Contract** (Safaricom)
@@ -183,6 +207,12 @@ dotnet test --filter "Category=EstateManagementTests"
 
 # Run only Merchant Management tests
 dotnet test --filter "Category=MerchantManagementTests"
+
+# Run only Contract Management tests
+dotnet test --filter "Category=ContractManagementTests"
+
+# Run only Operator Management tests
+dotnet test --filter "Category=OperatorManagementTests"
 ```
 
 ## Notes
