@@ -221,3 +221,147 @@ Scenario: Viewer user cannot see Make Deposit button
     When the user navigates to Merchant Management
     Then the Merchant Management page is displayed
     And the Make Deposit button is not visible for merchant "Test Merchant 1"
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can update merchant details
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user updates the merchant name to "Updated Merchant Name"
+    And the user updates the settlement schedule to "Weekly"
+    And the user clicks the Save Changes button
+    Then a success message is displayed
+    And the success message contains "Merchant details updated successfully"
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can update merchant address
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "address" tab
+    And the user updates the address line 1 to "456 Updated Street"
+    And the user updates the town to "New Town"
+    And the user updates the region to "New Region"
+    And the user clicks the Save Changes button
+    Then a success message is displayed
+    And the success message contains "Merchant address updated successfully"
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can update merchant contact details
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "contact" tab
+    And the user updates the contact name to "Jane Doe"
+    And the user updates the contact email to "jane@updated.com"
+    And the user updates the contact phone to "555-9999"
+    And the user clicks the Save Changes button
+    Then a success message is displayed
+    And the success message contains "Merchant contact updated successfully"
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can add an operator to a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "operators" tab
+    And the user clicks the Add Operator button
+    And the user selects "Safaricom" from the operator dropdown
+    And the user enters "12345" as the merchant number
+    And the user clicks the Add button in the operator form
+    Then a success message is displayed
+    And the success message contains "Operator added successfully"
+    And the operator "Safaricom" is listed in assigned operators
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can remove an operator from a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "operators" tab
+    And the user clicks the Add Operator button
+    And the user selects "Voucher" from the operator dropdown
+    And the user clicks the Add button in the operator form
+    Then a success message is displayed
+    When the user removes the operator "Voucher"
+    Then a success message is displayed
+    And the success message contains "Operator removed successfully"
+    And the operator "Voucher" is not listed in assigned operators
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can assign a contract to a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "contracts" tab
+    And the user clicks the Assign Contract button
+    And the user selects "Standard Transaction Contract" from the contract dropdown
+    And the user clicks the Assign button in the contract form
+    Then a success message is displayed
+    And the success message contains "Contract assigned successfully"
+    And the contract "Standard Transaction Contract" is listed in assigned contracts
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can remove a contract from a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "contracts" tab
+    And the user clicks the Assign Contract button
+    And the user selects "Voucher Sales Contract" from the contract dropdown
+    And the user clicks the Assign button in the contract form
+    Then a success message is displayed
+    When the user removes the contract "Voucher Sales Contract"
+    Then a success message is displayed
+    And the success message contains "Contract removed successfully"
+    And the contract "Voucher Sales Contract" is not listed in assigned contracts
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can add a device to a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "devices" tab
+    And the user clicks the Add Device button
+    And the user enters "DEVICE123" as the device identifier
+    And the user clicks the Add button in the device form
+    Then a success message is displayed
+    And the success message contains "Device added successfully"
+    And the device "DEVICE123" is listed in assigned devices
+
+@MerchantManagementTests @EstateRole @EditOperations
+Scenario: Estate user can remove a device from a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks edit for merchant "Test Merchant 1"
+    Then the Edit Merchant page is displayed
+    When the user clicks on the "devices" tab
+    And the user clicks the Add Device button
+    And the user enters "DEVICE999" as the device identifier
+    And the user clicks the Add button in the device form
+    Then a success message is displayed
+    When the user removes the device "DEVICE999"
+    Then a success message is displayed
+    And the success message contains "Device removed successfully"
+    And the device "DEVICE999" is not listed in assigned devices
+
+@MerchantManagementTests @EstateRole @DepositOperations
+Scenario: Estate user can make a deposit to a merchant
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Merchant Management
+    And the user clicks make deposit for merchant "Test Merchant 1"
+    Then the Make Deposit page is displayed
+    When the user enters "1000" as the deposit amount
+    And the user selects today as the deposit date
+    And the user enters "TEST-DEPOSIT-001" as the deposit reference
+    And the user clicks the Make Deposit button
+    Then a success message is displayed
+    And the success message contains "Deposit completed successfully"

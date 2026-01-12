@@ -691,4 +691,405 @@ public class MerchantManagementPageHelper
     }
 
     #endregion
+
+    #region Edit Operations
+
+    /// <summary>
+    /// Update merchant name in the edit form
+    /// </summary>
+    public async Task UpdateMerchantName(string newName)
+    {
+        var nameField = _page.Locator("input[name='MerchantName']");
+        await nameField.WaitForAsync();
+        await nameField.ClearAsync();
+        await nameField.FillAsync(newName);
+    }
+
+    /// <summary>
+    /// Update settlement schedule in the edit form
+    /// </summary>
+    public async Task UpdateSettlementSchedule(string newSchedule)
+    {
+        var scheduleField = _page.Locator("select").Filter(new LocatorFilterOptions { HasText = newSchedule });
+        await scheduleField.First.SelectOptionAsync(new[] { newSchedule });
+    }
+
+    /// <summary>
+    /// Click the Save Changes button
+    /// </summary>
+    public async Task ClickSaveChangesButton()
+    {
+        var saveButton = _page.Locator("button:has-text('Save Changes')");
+        await saveButton.ClickAsync();
+        await Task.Delay(1000); // Wait for save operation
+    }
+
+    /// <summary>
+    /// Verify success message is displayed
+    /// </summary>
+    public async Task VerifySuccessMessageIsDisplayed()
+    {
+        await _page.Locator(".bg-green-50").WaitForAsync();
+        var successMessageCount = await _page.Locator(".bg-green-50").CountAsync();
+        successMessageCount.ShouldBeGreaterThan(0, "Success message should be displayed");
+    }
+
+    /// <summary>
+    /// Verify success message contains specific text
+    /// </summary>
+    public async Task VerifySuccessMessageContains(string expectedMessage)
+    {
+        var successMessage = _page.Locator(".bg-green-50");
+        await successMessage.WaitForAsync();
+        var messageText = await successMessage.TextContentAsync();
+        messageText.ShouldNotBeNull();
+        messageText.ShouldContain(expectedMessage);
+    }
+
+    /// <summary>
+    /// Update address line 1
+    /// </summary>
+    public async Task UpdateAddressLine1(string newAddress)
+    {
+        var addressField = _page.Locator("input[name='AddressLine1']");
+        await addressField.WaitForAsync();
+        await addressField.ClearAsync();
+        await addressField.FillAsync(newAddress);
+    }
+
+    /// <summary>
+    /// Update town
+    /// </summary>
+    public async Task UpdateTown(string newTown)
+    {
+        var townField = _page.Locator("input[name='Town']");
+        await townField.WaitForAsync();
+        await townField.ClearAsync();
+        await townField.FillAsync(newTown);
+    }
+
+    /// <summary>
+    /// Update region
+    /// </summary>
+    public async Task UpdateRegion(string newRegion)
+    {
+        var regionField = _page.Locator("input[name='Region']");
+        await regionField.WaitForAsync();
+        await regionField.ClearAsync();
+        await regionField.FillAsync(newRegion);
+    }
+
+    /// <summary>
+    /// Update contact name
+    /// </summary>
+    public async Task UpdateContactName(string newContactName)
+    {
+        var contactNameField = _page.Locator("input[name='ContactName']");
+        await contactNameField.WaitForAsync();
+        await contactNameField.ClearAsync();
+        await contactNameField.FillAsync(newContactName);
+    }
+
+    /// <summary>
+    /// Update contact email
+    /// </summary>
+    public async Task UpdateContactEmail(string newEmail)
+    {
+        var emailField = _page.Locator("input[name='EmailAddress']");
+        await emailField.WaitForAsync();
+        await emailField.ClearAsync();
+        await emailField.FillAsync(newEmail);
+    }
+
+    /// <summary>
+    /// Update contact phone
+    /// </summary>
+    public async Task UpdateContactPhone(string newPhone)
+    {
+        var phoneField = _page.Locator("input[name='PhoneNumber']");
+        await phoneField.WaitForAsync();
+        await phoneField.ClearAsync();
+        await phoneField.FillAsync(newPhone);
+    }
+
+    #endregion
+
+    #region Operator Management
+
+    /// <summary>
+    /// Click the Add Operator button in edit page
+    /// </summary>
+    public async Task ClickAddOperatorButton()
+    {
+        var addButton = _page.Locator("#addOperatorButton");
+        await addButton.WaitForAsync();
+        await addButton.ClickAsync();
+        await Task.Delay(500); // Wait for form to appear
+    }
+
+    /// <summary>
+    /// Select operator from dropdown
+    /// </summary>
+    public async Task SelectOperatorFromDropdown(string operatorName)
+    {
+        var operatorDropdown = _page.Locator("select").Filter(new LocatorFilterOptions { HasText = "Select an operator" });
+        await operatorDropdown.First.SelectOptionAsync(new[] { operatorName });
+        await Task.Delay(500); // Wait for operator selection to process
+    }
+
+    /// <summary>
+    /// Enter merchant number
+    /// </summary>
+    public async Task EnterMerchantNumber(string merchantNumber)
+    {
+        var merchantNumberField = _page.Locator("input[placeholder='Enter merchant number']");
+        await merchantNumberField.WaitForAsync();
+        await merchantNumberField.FillAsync(merchantNumber);
+    }
+
+    /// <summary>
+    /// Click Add button in operator form
+    /// </summary>
+    public async Task ClickAddButtonInOperatorForm()
+    {
+        var addButton = _page.Locator(".bg-gray-50 button:has-text('Add')").First;
+        await addButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    /// <summary>
+    /// Verify operator is listed in assigned operators
+    /// </summary>
+    public async Task VerifyOperatorIsListedInAssignedOperators(string operatorName)
+    {
+        await Task.Delay(500); // Wait for list to update
+        var operatorElement = _page.Locator($".bg-gray-50:has-text('{operatorName}')");
+        var operatorCount = await operatorElement.CountAsync();
+        operatorCount.ShouldBeGreaterThan(0, $"Operator '{operatorName}' should be listed in assigned operators");
+    }
+
+    /// <summary>
+    /// Remove operator from merchant
+    /// </summary>
+    public async Task RemoveOperatorFromMerchant(string operatorName)
+    {
+        var operatorRow = _page.Locator($".bg-gray-50:has-text('{operatorName}')");
+        await operatorRow.WaitForAsync();
+        var removeButton = operatorRow.Locator("button:has-text('Remove')");
+        await removeButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    /// <summary>
+    /// Verify operator is not listed in assigned operators
+    /// </summary>
+    public async Task VerifyOperatorIsNotListedInAssignedOperators(string operatorName)
+    {
+        await Task.Delay(500); // Wait for list to update
+        var operatorElement = _page.Locator($".bg-gray-50 span:has-text('{operatorName}')");
+        var operatorCount = await operatorElement.CountAsync();
+        operatorCount.ShouldBe(0, $"Operator '{operatorName}' should not be listed in assigned operators");
+    }
+
+    #endregion
+
+    #region Contract Management
+
+    /// <summary>
+    /// Click the Assign Contract button in edit page
+    /// </summary>
+    public async Task ClickAssignContractButton()
+    {
+        var assignButton = _page.Locator("#addContractButton");
+        await assignButton.WaitForAsync();
+        await assignButton.ClickAsync();
+        await Task.Delay(500); // Wait for form to appear
+    }
+
+    /// <summary>
+    /// Select contract from dropdown
+    /// </summary>
+    public async Task SelectContractFromDropdown(string contractDescription)
+    {
+        var contractDropdown = _page.Locator("select").Filter(new LocatorFilterOptions { HasText = "Select a contract" });
+        await contractDropdown.First.WaitForAsync();
+        
+        // Select by visible text that contains the contract description
+        var options = await contractDropdown.First.Locator("option").AllAsync();
+        foreach (var option in options)
+        {
+            var optionText = await option.TextContentAsync();
+            if (optionText != null && optionText.Contains(contractDescription))
+            {
+                var value = await option.GetAttributeAsync("value");
+                if (!string.IsNullOrEmpty(value))
+                {
+                    await contractDropdown.First.SelectOptionAsync(new[] { value });
+                    break;
+                }
+            }
+        }
+        await Task.Delay(500);
+    }
+
+    /// <summary>
+    /// Click Assign button in contract form
+    /// </summary>
+    public async Task ClickAssignButtonInContractForm()
+    {
+        var assignButton = _page.Locator(".bg-gray-50 button:has-text('Assign')").First;
+        await assignButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    /// <summary>
+    /// Verify contract is listed in assigned contracts
+    /// </summary>
+    public async Task VerifyContractIsListedInAssignedContracts(string contractDescription)
+    {
+        await Task.Delay(500); // Wait for list to update
+        var contractElement = _page.Locator($".bg-gray-50:has-text('{contractDescription}')");
+        var contractCount = await contractElement.CountAsync();
+        contractCount.ShouldBeGreaterThan(0, $"Contract '{contractDescription}' should be listed in assigned contracts");
+    }
+
+    /// <summary>
+    /// Remove contract from merchant
+    /// </summary>
+    public async Task RemoveContractFromMerchant(string contractDescription)
+    {
+        var contractRow = _page.Locator($".bg-gray-50:has-text('{contractDescription}')");
+        await contractRow.WaitForAsync();
+        var removeButton = contractRow.Locator("button:has-text('Remove')");
+        await removeButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    /// <summary>
+    /// Verify contract is not listed in assigned contracts
+    /// </summary>
+    public async Task VerifyContractIsNotListedInAssignedContracts(string contractDescription)
+    {
+        await Task.Delay(500); // Wait for list to update
+        var contractElement = _page.Locator($".bg-gray-50 p:has-text('{contractDescription}')");
+        var contractCount = await contractElement.CountAsync();
+        contractCount.ShouldBe(0, $"Contract '{contractDescription}' should not be listed in assigned contracts");
+    }
+
+    #endregion
+
+    #region Device Management
+
+    /// <summary>
+    /// Click the Add Device button in edit page
+    /// </summary>
+    public async Task ClickAddDeviceButton()
+    {
+        var addButton = _page.Locator("#addDeviceButton");
+        await addButton.WaitForAsync();
+        await addButton.ClickAsync();
+        await Task.Delay(500); // Wait for form to appear
+    }
+
+    /// <summary>
+    /// Enter device identifier
+    /// </summary>
+    public async Task EnterDeviceIdentifier(string deviceIdentifier)
+    {
+        var deviceField = _page.Locator("input[placeholder='Enter device identifier']");
+        await deviceField.WaitForAsync();
+        await deviceField.FillAsync(deviceIdentifier);
+    }
+
+    /// <summary>
+    /// Click Add button in device form
+    /// </summary>
+    public async Task ClickAddButtonInDeviceForm()
+    {
+        var addButton = _page.Locator(".bg-gray-50 button:has-text('Add')").Last;
+        await addButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    /// <summary>
+    /// Verify device is listed in assigned devices
+    /// </summary>
+    public async Task VerifyDeviceIsListedInAssignedDevices(string deviceIdentifier)
+    {
+        await Task.Delay(500); // Wait for list to update
+        var deviceElement = _page.Locator($".font-mono:has-text('{deviceIdentifier}')");
+        var deviceCount = await deviceElement.CountAsync();
+        deviceCount.ShouldBeGreaterThan(0, $"Device '{deviceIdentifier}' should be listed in assigned devices");
+    }
+
+    /// <summary>
+    /// Remove device from merchant
+    /// </summary>
+    public async Task RemoveDeviceFromMerchant(string deviceIdentifier)
+    {
+        var deviceRow = _page.Locator($".bg-gray-50:has-text('{deviceIdentifier}')");
+        await deviceRow.WaitForAsync();
+        var removeButton = deviceRow.Locator("button:has-text('Remove')");
+        await removeButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    /// <summary>
+    /// Verify device is not listed in assigned devices
+    /// </summary>
+    public async Task VerifyDeviceIsNotListedInAssignedDevices(string deviceIdentifier)
+    {
+        await Task.Delay(500); // Wait for list to update
+        var deviceElement = _page.Locator($".font-mono:has-text('{deviceIdentifier}')");
+        var deviceCount = await deviceElement.CountAsync();
+        deviceCount.ShouldBe(0, $"Device '{deviceIdentifier}' should not be listed in assigned devices");
+    }
+
+    #endregion
+
+    #region Deposit Operations
+
+    /// <summary>
+    /// Enter deposit amount
+    /// </summary>
+    public async Task EnterDepositAmount(string amount)
+    {
+        var amountField = _page.Locator("#depositAmount");
+        await amountField.WaitForAsync();
+        await amountField.FillAsync(amount);
+    }
+
+    /// <summary>
+    /// Select today as deposit date
+    /// </summary>
+    public async Task SelectTodayAsDepositDate()
+    {
+        var dateField = _page.Locator("#depositDate");
+        await dateField.WaitForAsync();
+        var today = DateTime.Now.ToString("yyyy-MM-dd");
+        await dateField.FillAsync(today);
+    }
+
+    /// <summary>
+    /// Enter deposit reference
+    /// </summary>
+    public async Task EnterDepositReference(string reference)
+    {
+        var referenceField = _page.Locator("#depositReference");
+        await referenceField.WaitForAsync();
+        await referenceField.FillAsync(reference);
+    }
+
+    /// <summary>
+    /// Click the Make Deposit button on deposit page
+    /// </summary>
+    public async Task ClickMakeDepositButton()
+    {
+        var depositButton = _page.Locator("#makeDepositButton");
+        await depositButton.WaitForAsync();
+        await depositButton.ClickAsync();
+        await Task.Delay(1000); // Wait for operation to complete
+    }
+
+    #endregion
 }

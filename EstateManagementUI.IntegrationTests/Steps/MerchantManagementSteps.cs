@@ -411,4 +411,228 @@ public class MerchantManagementSteps
     }
 
     #endregion
+
+    #region Edit Operations Steps
+
+    [When(@"the user updates the merchant name to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheMerchantNameTo(string newName)
+    {
+        await _merchantManagementHelper.UpdateMerchantName(newName);
+    }
+
+    [When(@"the user updates the settlement schedule to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheSettlementScheduleTo(string newSchedule)
+    {
+        await _merchantManagementHelper.UpdateSettlementSchedule(newSchedule);
+    }
+
+    [When(@"the user clicks the Save Changes button")]
+    public async Task WhenTheUserClicksTheSaveChangesButton()
+    {
+        await _merchantManagementHelper.ClickSaveChangesButton();
+    }
+
+    [Then(@"a success message is displayed")]
+    public async Task ThenASuccessMessageIsDisplayed()
+    {
+        await _merchantManagementHelper.VerifySuccessMessageIsDisplayed();
+    }
+
+    [Then(@"the success message contains ""(.*)""")]
+    public async Task ThenTheSuccessMessageContains(string expectedMessage)
+    {
+        await _merchantManagementHelper.VerifySuccessMessageContains(expectedMessage);
+    }
+
+    [When(@"the user updates the address line 1 to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheAddressLine1To(string newAddress)
+    {
+        await _merchantManagementHelper.UpdateAddressLine1(newAddress);
+    }
+
+    [When(@"the user updates the town to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheTownTo(string newTown)
+    {
+        await _merchantManagementHelper.UpdateTown(newTown);
+    }
+
+    [When(@"the user updates the region to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheRegionTo(string newRegion)
+    {
+        await _merchantManagementHelper.UpdateRegion(newRegion);
+    }
+
+    [When(@"the user updates the contact name to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheContactNameTo(string newContactName)
+    {
+        await _merchantManagementHelper.UpdateContactName(newContactName);
+    }
+
+    [When(@"the user updates the contact email to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheContactEmailTo(string newEmail)
+    {
+        await _merchantManagementHelper.UpdateContactEmail(newEmail);
+    }
+
+    [When(@"the user updates the contact phone to ""(.*)""")]
+    public async Task WhenTheUserUpdatesTheContactPhoneTo(string newPhone)
+    {
+        await _merchantManagementHelper.UpdateContactPhone(newPhone);
+    }
+
+    #endregion
+
+    #region Operator Management Steps
+
+    [When(@"the user clicks the Add Operator button")]
+    public async Task WhenTheUserClicksTheAddOperatorButton()
+    {
+        await _merchantManagementHelper.ClickAddOperatorButton();
+    }
+
+    [When(@"the user selects ""(.*)"" from the operator dropdown")]
+    public async Task WhenTheUserSelectsFromTheOperatorDropdown(string operatorName)
+    {
+        await _merchantManagementHelper.SelectOperatorFromDropdown(operatorName);
+    }
+
+    [When(@"the user enters ""(.*)"" as the merchant number")]
+    public async Task WhenTheUserEntersAsTheMerchantNumber(string merchantNumber)
+    {
+        await _merchantManagementHelper.EnterMerchantNumber(merchantNumber);
+    }
+
+    [When(@"the user clicks the Add button in the operator form")]
+    public async Task WhenTheUserClicksTheAddButtonInTheOperatorForm()
+    {
+        await _merchantManagementHelper.ClickAddButtonInOperatorForm();
+    }
+
+    [Then(@"the operator ""(.*)"" is listed in assigned operators")]
+    public async Task ThenTheOperatorIsListedInAssignedOperators(string operatorName)
+    {
+        await _merchantManagementHelper.VerifyOperatorIsListedInAssignedOperators(operatorName);
+    }
+
+    [When(@"the user removes the operator ""(.*)""")]
+    public async Task WhenTheUserRemovesTheOperator(string operatorName)
+    {
+        await _merchantManagementHelper.RemoveOperatorFromMerchant(operatorName);
+    }
+
+    [Then(@"the operator ""(.*)"" is not listed in assigned operators")]
+    public async Task ThenTheOperatorIsNotListedInAssignedOperators(string operatorName)
+    {
+        await _merchantManagementHelper.VerifyOperatorIsNotListedInAssignedOperators(operatorName);
+    }
+
+    #endregion
+
+    #region Contract Management Steps
+
+    [When(@"the user clicks the Assign Contract button")]
+    public async Task WhenTheUserClicksTheAssignContractButton()
+    {
+        await _merchantManagementHelper.ClickAssignContractButton();
+    }
+
+    [When(@"the user selects ""(.*)"" from the contract dropdown")]
+    public async Task WhenTheUserSelectsFromTheContractDropdown(string contractDescription)
+    {
+        await _merchantManagementHelper.SelectContractFromDropdown(contractDescription);
+    }
+
+    [When(@"the user clicks the Assign button in the contract form")]
+    public async Task WhenTheUserClicksTheAssignButtonInTheContractForm()
+    {
+        await _merchantManagementHelper.ClickAssignButtonInContractForm();
+    }
+
+    [Then(@"the contract ""(.*)"" is listed in assigned contracts")]
+    public async Task ThenTheContractIsListedInAssignedContracts(string contractDescription)
+    {
+        await _merchantManagementHelper.VerifyContractIsListedInAssignedContracts(contractDescription);
+    }
+
+    [When(@"the user removes the contract ""(.*)""")]
+    public async Task WhenTheUserRemovesTheContract(string contractDescription)
+    {
+        await _merchantManagementHelper.RemoveContractFromMerchant(contractDescription);
+    }
+
+    [Then(@"the contract ""(.*)"" is not listed in assigned contracts")]
+    public async Task ThenTheContractIsNotListedInAssignedContracts(string contractDescription)
+    {
+        await _merchantManagementHelper.VerifyContractIsNotListedInAssignedContracts(contractDescription);
+    }
+
+    #endregion
+
+    #region Device Management Steps
+
+    [When(@"the user clicks the Add Device button")]
+    public async Task WhenTheUserClicksTheAddDeviceButton()
+    {
+        await _merchantManagementHelper.ClickAddDeviceButton();
+    }
+
+    [When(@"the user enters ""(.*)"" as the device identifier")]
+    public async Task WhenTheUserEntersAsTheDeviceIdentifier(string deviceIdentifier)
+    {
+        await _merchantManagementHelper.EnterDeviceIdentifier(deviceIdentifier);
+    }
+
+    [When(@"the user clicks the Add button in the device form")]
+    public async Task WhenTheUserClicksTheAddButtonInTheDeviceForm()
+    {
+        await _merchantManagementHelper.ClickAddButtonInDeviceForm();
+    }
+
+    [Then(@"the device ""(.*)"" is listed in assigned devices")]
+    public async Task ThenTheDeviceIsListedInAssignedDevices(string deviceIdentifier)
+    {
+        await _merchantManagementHelper.VerifyDeviceIsListedInAssignedDevices(deviceIdentifier);
+    }
+
+    [When(@"the user removes the device ""(.*)""")]
+    public async Task WhenTheUserRemovesTheDevice(string deviceIdentifier)
+    {
+        await _merchantManagementHelper.RemoveDeviceFromMerchant(deviceIdentifier);
+    }
+
+    [Then(@"the device ""(.*)"" is not listed in assigned devices")]
+    public async Task ThenTheDeviceIsNotListedInAssignedDevices(string deviceIdentifier)
+    {
+        await _merchantManagementHelper.VerifyDeviceIsNotListedInAssignedDevices(deviceIdentifier);
+    }
+
+    #endregion
+
+    #region Deposit Steps
+
+    [When(@"the user enters ""(.*)"" as the deposit amount")]
+    public async Task WhenTheUserEntersAsTheDepositAmount(string amount)
+    {
+        await _merchantManagementHelper.EnterDepositAmount(amount);
+    }
+
+    [When(@"the user selects today as the deposit date")]
+    public async Task WhenTheUserSelectsTodayAsTheDepositDate()
+    {
+        await _merchantManagementHelper.SelectTodayAsDepositDate();
+    }
+
+    [When(@"the user enters ""(.*)"" as the deposit reference")]
+    public async Task WhenTheUserEntersAsTheDepositReference(string reference)
+    {
+        await _merchantManagementHelper.EnterDepositReference(reference);
+    }
+
+    [When(@"the user clicks the Make Deposit button")]
+    public async Task WhenTheUserClicksTheMakeDepositButton()
+    {
+        await _merchantManagementHelper.ClickMakeDepositButton();
+    }
+
+    #endregion
 }
