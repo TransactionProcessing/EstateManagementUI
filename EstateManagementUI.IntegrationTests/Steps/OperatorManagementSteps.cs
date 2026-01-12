@@ -318,9 +318,10 @@ public class OperatorManagementSteps
         {
             await _operatorManagementHelper.VerifySuccessMessageIsDisplayed();
         }
-        catch
+        catch (Exception)
         {
-            // If no success message, check if redirected to list
+            // If no success message found, check if user was redirected to the list page instead
+            // This handles the case where the app navigates away after successful creation
             await _operatorManagementHelper.VerifyRedirectedToOperatorList();
         }
     }

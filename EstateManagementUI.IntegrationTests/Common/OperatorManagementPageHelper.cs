@@ -288,11 +288,11 @@ public class OperatorManagementPageHelper
     /// </summary>
     public async Task VerifyOperatorCustomMerchantNumberRequirementDetail(string expectedStatus)
     {
-        var labelLocator = _page.Locator("label:has-text('Require Custom Merchant Number')");
-        await labelLocator.WaitForAsync();
+        // Find the div containing the label, then look for the status badge within it
+        var sectionDiv = _page.Locator("div:has(label:has-text('Require Custom Merchant Number'))");
+        await sectionDiv.WaitForAsync();
         
-        // Look for the status badge after the label
-        var statusBadge = _page.Locator($"span:has-text('{expectedStatus}')").First;
+        var statusBadge = sectionDiv.Locator($"span:has-text('{expectedStatus}')");
         await statusBadge.WaitForAsync();
         var isVisible = await statusBadge.IsVisibleAsync();
         isVisible.ShouldBeTrue($"Custom merchant number requirement should show '{expectedStatus}'");
@@ -303,11 +303,11 @@ public class OperatorManagementPageHelper
     /// </summary>
     public async Task VerifyOperatorCustomTerminalNumberRequirementDetail(string expectedStatus)
     {
-        var labelLocator = _page.Locator("label:has-text('Require Custom Terminal Number')");
-        await labelLocator.WaitForAsync();
+        // Find the div containing the label, then look for the status badge within it
+        var sectionDiv = _page.Locator("div:has(label:has-text('Require Custom Terminal Number'))");
+        await sectionDiv.WaitForAsync();
         
-        // Look for the status badge after the label
-        var statusBadge = _page.Locator($"span:has-text('{expectedStatus}')").Nth(1); // Get second occurrence
+        var statusBadge = sectionDiv.Locator($"span:has-text('{expectedStatus}')");
         await statusBadge.WaitForAsync();
         var isVisible = await statusBadge.IsVisibleAsync();
         isVisible.ShouldBeTrue($"Custom terminal number requirement should show '{expectedStatus}'");
@@ -344,8 +344,9 @@ public class OperatorManagementPageHelper
     /// </summary>
     public async Task VerifyCustomMerchantNumberCheckboxIsVisible()
     {
-        var checkbox = _page.Locator("input[type='checkbox']").First;
-        await checkbox.WaitForAsync();
+        var label = _page.Locator("label:has-text('Require Custom Merchant Number')");
+        await label.WaitForAsync();
+        var checkbox = label.Locator("input[type='checkbox']");
         var isVisible = await checkbox.IsVisibleAsync();
         isVisible.ShouldBeTrue("Custom merchant number checkbox should be visible");
     }
@@ -355,8 +356,9 @@ public class OperatorManagementPageHelper
     /// </summary>
     public async Task VerifyCustomTerminalNumberCheckboxIsVisible()
     {
-        var checkbox = _page.Locator("input[type='checkbox']").Nth(1);
-        await checkbox.WaitForAsync();
+        var label = _page.Locator("label:has-text('Require Custom Terminal Number')");
+        await label.WaitForAsync();
+        var checkbox = label.Locator("input[type='checkbox']");
         var isVisible = await checkbox.IsVisibleAsync();
         isVisible.ShouldBeTrue("Custom terminal number checkbox should be visible");
     }
@@ -432,8 +434,9 @@ public class OperatorManagementPageHelper
     /// </summary>
     public async Task UpdateCustomMerchantNumberRequirement(bool isChecked)
     {
-        var checkbox = _page.Locator("input[type='checkbox']").First;
-        await checkbox.WaitForAsync();
+        var label = _page.Locator("label:has-text('Require Custom Merchant Number')");
+        await label.WaitForAsync();
+        var checkbox = label.Locator("input[type='checkbox']");
         
         var currentState = await checkbox.IsCheckedAsync();
         if (currentState != isChecked)
@@ -447,8 +450,9 @@ public class OperatorManagementPageHelper
     /// </summary>
     public async Task UpdateCustomTerminalNumberRequirement(bool isChecked)
     {
-        var checkbox = _page.Locator("input[type='checkbox']").Nth(1);
-        await checkbox.WaitForAsync();
+        var label = _page.Locator("label:has-text('Require Custom Terminal Number')");
+        await label.WaitForAsync();
+        var checkbox = label.Locator("input[type='checkbox']");
         
         var currentState = await checkbox.IsCheckedAsync();
         if (currentState != isChecked)
