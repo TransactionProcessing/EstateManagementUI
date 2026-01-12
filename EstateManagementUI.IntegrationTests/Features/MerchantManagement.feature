@@ -3,9 +3,6 @@ Feature: Merchant Management Integration Tests
     I want to access Merchant Management functionality based on my role
     So that I can view and manage merchant information according to my permissions
 
-Background:
-    Given the user navigates to Merchant Management
-
 @MerchantManagementTests @AdminRole
 Scenario: Administrator user cannot access Merchant Management
     Given the user is authenticated as an "Administrator" user

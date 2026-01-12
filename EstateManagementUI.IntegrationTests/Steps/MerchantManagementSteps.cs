@@ -38,20 +38,8 @@ public class MerchantManagementSteps
 
     #region Authentication/Role Steps
 
-    [Given(@"the user is authenticated as an ""(.*)"" user")]
+    [Given(@"the user is authenticated as an? ""(.*)"" user")]
     public async Task GivenTheUserIsAuthenticatedAsAUser(string role)
-    {
-        // Store the role in scenario context for reference
-        _scenarioContext["UserRole"] = role;
-        
-        // Note: This step assumes the application will be started in test mode
-        // with the appropriate role already configured. The actual authentication
-        // setup will be handled when the application startup is implemented.
-        await Task.CompletedTask;
-    }
-
-    [Given(@"the user is authenticated as a ""(.*)"" user")]
-    public async Task GivenTheUserIsAuthenticatedAsAViewerUser(string role)
     {
         // Store the role in scenario context for reference
         _scenarioContext["UserRole"] = role;
