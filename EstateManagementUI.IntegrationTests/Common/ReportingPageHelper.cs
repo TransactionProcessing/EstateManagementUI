@@ -10,12 +10,29 @@ public class ReportingPageHelper
 {
     private readonly IPage _page;
     private readonly string _baseUrl;
+    private const int DefaultChartWaitTimeoutMs = 5000;
 
     public ReportingPageHelper(IPage page, string baseUrl)
     {
         _page = page;
         _baseUrl = baseUrl;
     }
+
+    #region Private Helpers
+
+    /// <summary>
+    /// Wait for a canvas element to be visible (used for chart rendering)
+    /// </summary>
+    private async Task WaitForCanvasAsync()
+    {
+        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions 
+        { 
+            State = WaitForSelectorState.Visible, 
+            Timeout = DefaultChartWaitTimeoutMs 
+        });
+    }
+
+    #endregion
 
     #region Navigation
 
@@ -259,7 +276,7 @@ public class ReportingPageHelper
     public async Task VerifyAnalyticalChartsAreDisplayed()
     {
         // Wait for canvas elements to be present and visible
-        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
+        await WaitForCanvasAsync();
         var chartCanvas = await _page.Locator("canvas").CountAsync();
         chartCanvas.ShouldBeGreaterThan(0, "At least one chart should be displayed");
     }
@@ -567,7 +584,7 @@ public class ReportingPageHelper
     {
         await _page.Locator("button:has-text('Chart View')").ClickAsync();
         // Wait for chart to be rendered
-        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
+        await WaitForCanvasAsync();
     }
 
     /// <summary>
@@ -586,7 +603,7 @@ public class ReportingPageHelper
     public async Task VerifyProductPerformanceChartIsDisplayed()
     {
         // Wait for canvas elements to be present and visible
-        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
+        await WaitForCanvasAsync();
         var chartCanvas = await _page.Locator("canvas").CountAsync();
         chartCanvas.ShouldBeGreaterThan(0, "Chart should be displayed");
     }
@@ -608,7 +625,7 @@ public class ReportingPageHelper
         {
             await chartTypeButton.ClickAsync();
             // Wait for canvas to update
-            await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
+            await WaitForCanvasAsync();
         }
     }
 
