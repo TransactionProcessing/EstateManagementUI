@@ -710,7 +710,8 @@ public class MerchantManagementPageHelper
     /// </summary>
     public async Task UpdateSettlementSchedule(string newSchedule)
     {
-        var scheduleField = _page.Locator("select").Filter(new LocatorFilterOptions { HasText = newSchedule });
+        var scheduleField = _page.Locator("select.input");
+        await scheduleField.First.WaitForAsync();
         await scheduleField.First.SelectOptionAsync(new[] { newSchedule });
     }
 
@@ -832,8 +833,24 @@ public class MerchantManagementPageHelper
     /// </summary>
     public async Task SelectOperatorFromDropdown(string operatorName)
     {
-        var operatorDropdown = _page.Locator("select").Filter(new LocatorFilterOptions { HasText = "Select an operator" });
-        await operatorDropdown.First.SelectOptionAsync(new[] { operatorName });
+        var operatorDropdown = _page.Locator("select").First;
+        await operatorDropdown.WaitForAsync();
+        
+        // Find the option by text and select it
+        var options = await operatorDropdown.Locator("option").AllAsync();
+        foreach (var option in options)
+        {
+            var optionText = await option.TextContentAsync();
+            if (optionText != null && optionText.Trim() == operatorName)
+            {
+                var value = await option.GetAttributeAsync("value");
+                if (!string.IsNullOrEmpty(value))
+                {
+                    await operatorDropdown.SelectOptionAsync(new[] { value });
+                    break;
+                }
+            }
+        }
         await Task.Delay(500); // Wait for operator selection to process
     }
 
@@ -852,7 +869,8 @@ public class MerchantManagementPageHelper
     /// </summary>
     public async Task ClickAddButtonInOperatorForm()
     {
-        var addButton = _page.Locator(".bg-gray-50 button:has-text('Add')").First;
+        // More specific selector for the Add button in the operator form
+        var addButton = _page.Locator("div.bg-gray-50:has-text('Select Operator') button:has-text('Add')");
         await addButton.ClickAsync();
         await Task.Delay(1000); // Wait for operation to complete
     }
@@ -1006,7 +1024,8 @@ public class MerchantManagementPageHelper
     /// </summary>
     public async Task ClickAddButtonInDeviceForm()
     {
-        var addButton = _page.Locator(".bg-gray-50 button:has-text('Add')").Last;
+        // More specific selector for the Add button in the device form
+        var addButton = _page.Locator("div.bg-gray-50:has-text('Device Identifier') button:has-text('Add')");
         await addButton.ClickAsync();
         await Task.Delay(1000); // Wait for operation to complete
     }
