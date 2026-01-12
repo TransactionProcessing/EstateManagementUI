@@ -190,7 +190,7 @@ public class OperatorManagementPageHelper
         
         var statusText = await operatorRow.Locator("td:nth-child(2)").TextContentAsync();
         statusText.ShouldNotBeNull();
-        statusText.ShouldContain(expectedStatus, $"Operator '{operatorName}' custom merchant number should be '{expectedStatus}'");
+        statusText.ShouldContain(expectedStatus);
     }
 
     /// <summary>
@@ -203,7 +203,7 @@ public class OperatorManagementPageHelper
         
         var statusText = await operatorRow.Locator("td:nth-child(3)").TextContentAsync();
         statusText.ShouldNotBeNull();
-        statusText.ShouldContain(expectedStatus, $"Operator '{operatorName}' custom terminal number should be '{expectedStatus}'");
+        statusText.ShouldContain(expectedStatus);
     }
 
     #endregion
@@ -513,7 +513,7 @@ public class OperatorManagementPageHelper
         await successMessage.WaitForAsync();
         var messageText = await successMessage.TextContentAsync();
         messageText.ShouldNotBeNull();
-        messageText.ShouldContain(expectedMessage, $"Success message should contain '{expectedMessage}'");
+        messageText.ShouldContain(expectedMessage);
     }
 
     /// <summary>
@@ -523,7 +523,7 @@ public class OperatorManagementPageHelper
     {
         await Task.Delay(1000);
         var currentUrl = _page.Url;
-        currentUrl.ShouldEndWith("/operators", "User should be redirected to operator list");
+        currentUrl.ShouldEndWith("/operators");
     }
 
     /// <summary>
