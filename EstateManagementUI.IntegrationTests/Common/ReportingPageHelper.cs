@@ -258,7 +258,8 @@ public class ReportingPageHelper
     /// </summary>
     public async Task VerifyAnalyticalChartsAreDisplayed()
     {
-        await Task.Delay(1000); // Wait for charts to render
+        // Wait for canvas elements to be present and visible
+        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
         var chartCanvas = await _page.Locator("canvas").CountAsync();
         chartCanvas.ShouldBeGreaterThan(0, "At least one chart should be displayed");
     }
@@ -410,7 +411,6 @@ public class ReportingPageHelper
     {
         await _page.Locator("button:has-text('Apply Filters')").ClickAsync();
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await Task.Delay(500); // Allow time for data to load
     }
 
     /// <summary>
@@ -420,7 +420,6 @@ public class ReportingPageHelper
     {
         await _page.Locator("button:has-text('Clear Filters')").ClickAsync();
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await Task.Delay(500); // Allow time for data to reload
     }
 
     /// <summary>
@@ -430,7 +429,6 @@ public class ReportingPageHelper
     {
         await _page.Locator("button:has-text('Refresh')").ClickAsync();
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await Task.Delay(500); // Allow time for data to load
     }
 
     #endregion
@@ -512,7 +510,8 @@ public class ReportingPageHelper
     public async Task ClickColumnHeader(string columnName)
     {
         await _page.Locator($"th:has-text('{columnName}')").ClickAsync();
-        await Task.Delay(300); // Allow time for sorting to complete
+        // Wait for the sort icon to update or the table to reload
+        await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
     }
 
     /// <summary>
@@ -542,7 +541,8 @@ public class ReportingPageHelper
     public async Task ClickNextPageButton()
     {
         await _page.Locator("button[title='Next page']").ClickAsync();
-        await Task.Delay(300); // Allow time for page change
+        // Wait for the page to update
+        await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
     }
 
     /// <summary>
@@ -566,7 +566,8 @@ public class ReportingPageHelper
     public async Task ClickChartViewButton()
     {
         await _page.Locator("button:has-text('Chart View')").ClickAsync();
-        await Task.Delay(1000); // Allow time for chart to render
+        // Wait for chart to be rendered
+        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
     }
 
     /// <summary>
@@ -575,7 +576,8 @@ public class ReportingPageHelper
     public async Task ClickGridViewButton()
     {
         await _page.Locator("button:has-text('Grid View')").ClickAsync();
-        await Task.Delay(300); // Allow time for grid to render
+        // Wait for the table to be rendered
+        await _page.Locator("table.table").WaitForAsync();
     }
 
     /// <summary>
@@ -583,7 +585,8 @@ public class ReportingPageHelper
     /// </summary>
     public async Task VerifyProductPerformanceChartIsDisplayed()
     {
-        await Task.Delay(1000); // Wait for chart to render
+        // Wait for canvas elements to be present and visible
+        await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
         var chartCanvas = await _page.Locator("canvas").CountAsync();
         chartCanvas.ShouldBeGreaterThan(0, "Chart should be displayed");
     }
@@ -604,7 +607,8 @@ public class ReportingPageHelper
         if (buttonExists > 0)
         {
             await chartTypeButton.ClickAsync();
-            await Task.Delay(1000); // Allow time for chart to update
+            // Wait for canvas to update
+            await _page.Locator("canvas").First.WaitForAsync(new LocatorWaitForOptions { State = WaitForSelectorState.Visible, Timeout = 5000 });
         }
     }
 
