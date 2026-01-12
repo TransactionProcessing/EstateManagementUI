@@ -1,8 +1,8 @@
 using Microsoft.Playwright;
 using Reqnroll;
-using EstateManagementUI.DashboardTests.Common;
+using EstateManagementUI.IntegrationTests.Common;
 
-namespace EstateManagementUI.DashboardTests.Steps;
+namespace EstateManagementUI.IntegrationTests.Steps;
 
 /// <summary>
 /// Step definitions for Dashboard integration tests

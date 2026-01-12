@@ -5,7 +5,7 @@ This project contains integration tests for the Dashboard functionality of the E
 ## Project Structure
 
 ```
-EstateManagementUI.DashboardTests/
+EstateManagementUI.IntegrationTests/
 ├── Features/              # Reqnroll feature files (Gherkin scenarios)
 │   └── Dashboard.feature  # Dashboard test scenarios for all roles
 ├── Steps/                 # Step definitions (links features to code)
@@ -98,7 +98,7 @@ Set the following environment variables before running tests:
 
 ### Execute Tests
 ```bash
-dotnet test EstateManagementUI.DashboardTests.csproj
+dotnet test EstateManagementUI.IntegrationTests.csproj
 ```
 
 ### Filter by Role

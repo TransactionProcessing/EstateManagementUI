@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Shouldly;
 
-namespace EstateManagementUI.DashboardTests.Common;
+namespace EstateManagementUI.IntegrationTests.Common;
 
 /// <summary>
 /// Helper class for interacting with the Dashboard page using Playwright

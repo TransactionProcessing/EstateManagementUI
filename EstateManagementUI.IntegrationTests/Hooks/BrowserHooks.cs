@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using Reqnroll;
 
-namespace EstateManagementUI.DashboardTests.Hooks;
+namespace EstateManagementUI.IntegrationTests.Hooks;
 
 /// <summary>
 /// Hooks for managing browser lifecycle using Playwright
