@@ -73,8 +73,8 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyContractManagementMenuIsNotVisible()
     {
-        // Wait a moment for the page to fully load
-        await Task.Delay(1000);
+        // Wait for page to be in stable state
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         
         var menuLinkCount = await _page.Locator("text=Contract Management").CountAsync();
         menuLinkCount.ShouldBe(0, "Contract Management menu should not be visible for Administrator role");
@@ -183,8 +183,8 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyContractCount(int expectedCount)
     {
-        // Wait for contracts to load
-        await Task.Delay(500);
+        // Wait for contracts grid to be present
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         
         var contractCards = _page.Locator(".bg-white.rounded-lg.shadow-md.p-6.hover\\:shadow-lg");
         var count = await contractCards.CountAsync();
@@ -206,7 +206,7 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyAddNewContractButtonIsNotVisible()
     {
-        await Task.Delay(500);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         var buttonCount = await _page.Locator("#newContractButton").CountAsync();
         buttonCount.ShouldBe(0, "Add New Contract button should not be visible");
     }
@@ -216,7 +216,7 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyEditButtonIsNotVisibleForContracts()
     {
-        await Task.Delay(500);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         var editButtonCount = await _page.Locator("button:has-text('Edit')").CountAsync();
         editButtonCount.ShouldBe(0, "Edit button should not be visible for contracts");
     }
@@ -543,8 +543,8 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyProductAddedSuccessfully()
     {
-        // Check for success message or that modal is closed
-        await Task.Delay(500);
+        // Wait for modal to close
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         var modalCount = await _page.Locator("h3:has-text('Add New Product')").CountAsync();
         modalCount.ShouldBe(0, "Add Product modal should be closed after successful addition");
     }
@@ -554,7 +554,6 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyAddProductModalIsClosed()
     {
-        await Task.Delay(300);
         var modalCount = await _page.Locator("h3:has-text('Add New Product')").CountAsync();
         modalCount.ShouldBe(0, "Add Product modal should be closed");
     }
@@ -593,8 +592,13 @@ public class ContractManagementPageHelper
     {
         var select = _page.Locator("label:has-text('Calculation Type')").Locator("..").Locator("select");
         
-        // Map text to value
-        var value = calculationType.ToLower() == "fixed" ? "0" : "1";
+        // Map text to value with proper error handling
+        var value = calculationType.ToLower() switch
+        {
+            "fixed" => "0",
+            "percentage" => "1",
+            _ => throw new ArgumentException($"Unknown calculation type: {calculationType}. Expected 'Fixed' or 'Percentage'.")
+        };
         await select.SelectOptionAsync(new[] { value });
     }
 
@@ -605,8 +609,13 @@ public class ContractManagementPageHelper
     {
         var select = _page.Locator("label:has-text('Fee Type')").Locator("..").Locator("select");
         
-        // Map text to value
-        var value = feeType.ToLower() == "merchant" ? "0" : "1";
+        // Map text to value with proper error handling
+        var value = feeType.ToLower() switch
+        {
+            "merchant" => "0",
+            "service provider" => "1",
+            _ => throw new ArgumentException($"Unknown fee type: {feeType}. Expected 'Merchant' or 'Service Provider'.")
+        };
         await select.SelectOptionAsync(new[] { value });
     }
 
@@ -634,7 +643,7 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyTransactionFeeAddedSuccessfully()
     {
-        await Task.Delay(500);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         var modalCount = await _page.Locator("h3:has-text('Add Transaction Fee')").CountAsync();
         modalCount.ShouldBe(0, "Add Transaction Fee modal should be closed after successful addition");
     }
@@ -644,7 +653,6 @@ public class ContractManagementPageHelper
     /// </summary>
     public async Task VerifyAddTransactionFeeModalIsClosed()
     {
-        await Task.Delay(300);
         var modalCount = await _page.Locator("h3:has-text('Add Transaction Fee')").CountAsync();
         modalCount.ShouldBe(0, "Add Transaction Fee modal should be closed");
     }
