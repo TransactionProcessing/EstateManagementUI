@@ -53,7 +53,7 @@ Scenario: Estate user sees recently created merchants
 
 @DashboardTests @ViewerRole
 Scenario: Viewer user sees full dashboard with merchant KPIs
-    Given the user is authenticated as an "Viewer" user
+    Given the user is authenticated as a "Viewer" user
     When the user navigates to the Dashboard
     Then the Dashboard page is displayed
     And the merchant KPI cards are displayed
@@ -63,7 +63,7 @@ Scenario: Viewer user sees full dashboard with merchant KPIs
 
 @DashboardTests @ViewerRole
 Scenario: Viewer user sees sales data on dashboard
-    Given the user is authenticated as an "Viewer" user
+    Given the user is authenticated as a "Viewer" user
     When the user navigates to the Dashboard
     Then the Dashboard page is displayed
     And the Today's Sales card is displayed
@@ -74,14 +74,14 @@ Scenario: Viewer user sees sales data on dashboard
 
 @DashboardTests @ViewerRole
 Scenario: Viewer user sees comparison date selector
-    Given the user is authenticated as an "Viewer" user
+    Given the user is authenticated as a "Viewer" user
     When the user navigates to the Dashboard
     Then the Dashboard page is displayed
     And the comparison date selector is displayed
 
 @DashboardTests @ViewerRole
 Scenario: Viewer user sees recently created merchants
-    Given the user is authenticated as an "Viewer" user
+    Given the user is authenticated as a "Viewer" user
     When the user navigates to the Dashboard
     Then the Dashboard page is displayed
     And the Recently Created Merchants section is displayed
