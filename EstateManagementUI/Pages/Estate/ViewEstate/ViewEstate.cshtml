@@ -1,27 +1,109 @@
-﻿@model EstateManagementUI.Pages.Estate.ViewEstate.ViewEstate
+@using EstateManagementUI.BusinessLogic.PermissionService.Constants
+@using EstateManagementUI.Pages.Components
+@using EstateManagementUI.Pages.Shared
+@using Hydro.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model EstateManagementUI.Pages.Estate.ViewEstate.ViewEstate
 
-    <div class="card o-hidden border-0 shadow-sm my-5">
-        <div class="card-body p-0">
-            <!-- Nested Row within Card Body -->
-            <div class="row">
-                <div class="col-lg-7">
-                    <div class="p-5">
-                        <div class="text-center">
-                            <h1 class="h4 text-gray-900 mb-4">My Estate</h1>
-                        </div>
-                        <form id="estateForm">
-                            <div class="form-group">
-                                <label asp-for="Estate.Name" class="control-label">Name</label>
-                                <input asp-for="Estate.Name" hydro-bind readonly="true" class="form-control form-control-user" placeholder="Estate Name" required autofocus />
-                                <label asp-for="Estate.Reference" class="control-label">Reference</label>
-                                <input asp-for="Estate.Reference" hydro-bind readonly="true" class="form-control form-control-user" placeholder="Estate Reference" required autofocus />
+@{
+    string IsActiveTab(string tab) {
+        return Model.ActiveTab == tab ? "nav-link active" : "nav-link";
+    }
+
+    string IsActiveTabPane(string tab) {
+        return Model.ActiveTab == tab ? "tab-pane fade show active" : "tab-pane fade";
+    }
+}
+
+<div class="card o-hidden border-0 shadow-sm my-5">
+    <div class="card-body p-0">
+        <h1 class="h4 text-gray-900 mb-4">My Estate</h1>
+        
+        <!-- Nested Row within Card Body -->
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="p-5">
+                    <form>
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <button id="nav-estatedetails-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#estatedetails"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("estatedetails")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("estatedetails"))">
+                                Details
+                            </button>
+
+                            <button id="nav-operators-tab"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#operators"
+                                    type="button"
+                                    role="tab"
+                                    class="@IsActiveTab("operators")"
+                                    hydro-on:click="@(() => Model.SetActiveTab("operators"))">
+                                Operators
+                            </button>
+                        </ul>
+
+                        <div class="tab-content" id="myTabContent">
+                            <!-- Details Tab -->
+                            <div class="@IsActiveTabPane("estatedetails")" id="estatedetails" role="tabpanel" aria-labelledby="nav-estatedetails-tab">
+                                <div class="form-group">
+                                    <label asp-for="Estate.Name" class="control-label">Name</label>
+                                    <input asp-for="Estate.Name" hydro-bind readonly="true" class="form-control form-control-user" placeholder="Estate Name" required autofocus />
+                                    <label asp-for="Estate.Reference" class="control-label">Reference</label>
+                                    <input asp-for="Estate.Reference" hydro-bind readonly="true" class="form-control form-control-user" placeholder="Estate Reference" required autofocus />
+                                </div>
                             </div>
-                        </form>
-                    </div>
+
+                            <!-- Operators Tab -->
+                            <div class="@IsActiveTabPane("operators")" id="operators" role="tabpanel" aria-labelledby="nav-operators-tab">
+                                @if(await Model.CanRenderButton(ApplicationSections.Estate, EstateFunctions.AddOperator))
+                                {
+                                    <button class="btn btn-primary btn-sm" id="addOperatorButton" hydro-on:click="@(() => Model.AddOperator())">Add Operator</button>
+                                }
+                                <table class="table table-sm" id="estateOperatorList">
+                                    <thead class="thead-light">
+                                    <tr class="d-flex">
+                                        <th class="col-3">Name</th>
+                                        <th class="col-3">Requires Merchant Number</th>
+                                        <th class="col-3">Requires Terminal Number</th>
+                                        <th class="col-1"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var estateOperatorModel in Model.Operators) {
+                                        <tr class="hover d-flex">
+                                            <td class="col-3">@estateOperatorModel.Name</td>
+                                            <td class="col-3">@estateOperatorModel.RequireCustomMerchantNumber</td>
+                                            <td class="col-3">@estateOperatorModel.RequireCustomTerminalNumber</td>
+                                            <td class="align-middle text-end">
+                                                @{
+                                                    TableDropdownItem[] menuItems = new TableDropdownItem[]
+                                                    {
+                                                        new("Remove", () => Model.RemoveOperator(estateOperatorModel.OperatorId), (ApplicationSections.Estate, EstateFunctions.RemoveOperator), $"{estateOperatorModel.Name}Remove"),
+                                                    };
+                                                }
+
+                                                <partial name="TableDropdown" model="@menuItems" />
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+
+                    @if (Model.ShowOperatorDialog) {
+                        <hydro name="AddOperatorDialog" />
+                    }
                 </div>
-                <div class="col-lg-5" align="center">
-                    <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
-                </div>
-                </div>
+            </div>
+            <div class="col-lg-5" align="center">
+                <img src="~/img/applicationimages/network-image.jpg" width="250px" height="250px"/>
+            </div>
         </div>
     </div>
+</div>

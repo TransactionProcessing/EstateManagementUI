@@ -6,6 +6,15 @@ public class EstateModel
     public Guid EstateId { get; set; }
     public string? EstateName { get; set; }
     public string? Reference { get; set; }
+    public List<EstateOperatorModel>? Operators { get; set; }
+}
+
+public class EstateOperatorModel
+{
+    public Guid OperatorId { get; set; }
+    public string? Name { get; set; }
+    public bool RequireCustomMerchantNumber { get; set; }
+    public bool RequireCustomTerminalNumber { get; set; }
 }
 
 // Merchant Models
@@ -201,4 +210,77 @@ public class Result
 
     public static Result Success() => new(true);
     public static Result Failure(string message) => new(false, message);
+}
+
+// Transaction Summary Models
+public class MerchantTransactionSummaryModel
+{
+    public Guid MerchantId { get; set; }
+    public string? MerchantName { get; set; }
+    public int TotalTransactionCount { get; set; }
+    public decimal TotalTransactionValue { get; set; }
+    public decimal AverageTransactionValue { get; set; }
+    public int SuccessfulTransactionCount { get; set; }
+    public int FailedTransactionCount { get; set; }
+}
+
+public class OperatorTransactionSummaryModel
+{
+    public Guid OperatorId { get; set; }
+    public string? OperatorName { get; set; }
+    public int TotalTransactionCount { get; set; }
+    public decimal TotalTransactionValue { get; set; }
+    public decimal AverageTransactionValue { get; set; }
+    public int SuccessfulTransactionCount { get; set; }
+    public int FailedTransactionCount { get; set; }
+    public decimal TotalFeesEarned { get; set; }
+}
+
+public class ProductPerformanceModel
+{
+    public string? ProductName { get; set; }
+    public int TransactionCount { get; set; }
+    public decimal TransactionValue { get; set; }
+    public decimal PercentageContribution { get; set; }
+}
+
+// Settlement History Models
+public class MerchantSettlementHistoryModel
+{
+    public DateTime SettlementDate { get; set; }
+    public string? SettlementReference { get; set; }
+    public int TransactionCount { get; set; }
+    public decimal NetAmountPaid { get; set; }
+}
+
+// Settlement Summary Models
+public class SettlementSummaryModel
+{
+    public DateTime SettlementPeriodStart { get; set; }
+    public DateTime SettlementPeriodEnd { get; set; }
+    public Guid MerchantId { get; set; }
+    public string? MerchantName { get; set; }
+    public decimal GrossTransactionValue { get; set; }
+    public decimal TotalFees { get; set; }
+    public decimal NetSettlementAmount { get; set; }
+    public string? SettlementStatus { get; set; }
+}
+
+// Transaction Detail Models
+public class TransactionDetailModel
+{
+    public Guid TransactionId { get; set; }
+    public DateTime TransactionDateTime { get; set; }
+    public string? MerchantName { get; set; }
+    public Guid MerchantId { get; set; }
+    public string? OperatorName { get; set; }
+    public Guid OperatorId { get; set; }
+    public string? ProductName { get; set; }
+    public Guid ProductId { get; set; }
+    public string? TransactionType { get; set; } // sale, refund, reversal
+    public string? TransactionStatus { get; set; } // successful, failed, reversed
+    public decimal GrossAmount { get; set; }
+    public decimal FeesCommission { get; set; }
+    public decimal NetAmount { get; set; }
+    public string? SettlementReference { get; set; }
 }

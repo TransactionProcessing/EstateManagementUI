@@ -243,5 +243,17 @@ namespace EstateManagementUI.BusinessLogic.Clients
                                                          CreateContractProductTransactionFeeModel createContractProductTransactionFeeModel,
                                                          CancellationToken cancellationToken);
 
+        Task<Result> AssignOperatorToEstate(String accessToken,
+                                              Guid actionId,
+                                              Guid estateId,
+                                              AssignOperatorToEstateModel assignOperatorToEstateModel,
+                                              CancellationToken cancellationToken);
+
+        Task<Result> RemoveOperatorFromEstate(String accessToken,
+                                                Guid actionId,
+                                                Guid estateId,
+                                                Guid operatorId,
+                                                CancellationToken cancellationToken);
+
     }
 }

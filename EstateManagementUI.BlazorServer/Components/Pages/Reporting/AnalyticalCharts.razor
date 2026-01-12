@@ -1,0 +1,383 @@
+@page "/reporting/analytical-charts"
+@rendermode InteractiveServer
+@using MediatR
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using EstateManagementUI.BlazorServer.Requests
+@using EstateManagementUI.BlazorServer.Models
+@using static EstateManagementUI.BlazorServer.Requests.Queries
+@inject IMediator Mediator
+@inject IJSRuntime JSRuntime
+@inject ILogger<AnalyticalCharts> Logger
+
+<PageTitle>Analytical Charts (Volume &amp; Value)</PageTitle>
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Analytical Charts (Volume &amp; Value)</h1>
+            <p class="text-gray-600 mt-1">Visual trends for Transaction Volume and Value over time</p>
+        </div>
+        <a href="/reporting" class="btn btn-secondary">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Reporting
+        </a>
+    </div>
+
+    @if (isLoading)
+    {
+        <!-- Loading State -->
+        <div class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-admin-primary"></div>
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <!-- Error State -->
+        <div class="card bg-red-50 border border-red-200">
+            <div class="card-body">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 class="text-red-800 font-semibold">Error Loading Data</h3>
+                        <p class="text-red-700 text-sm mt-1">@errorMessage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Filters Card -->
+        <div class="card">
+            <div class="card-body">
+                <div class="flex flex-wrap items-end gap-4">
+                    <!-- Date Range Selection -->
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Comparison Date</label>
+                        <InputSelect @bind-Value="_selectedComparisonDate" @bind-Value:after="OnFiltersChanged" class="form-control" id="comparisonDateSelector">
+                            @if (comparisonDates != null)
+                            {
+                                @foreach (var date in comparisonDates)
+                                {
+                                    <option value="@date.Date.ToString("yyyy-MM-dd")">@date.Description</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+
+                    <!-- Chart Type Selection -->
+                    <div class="flex-1 min-w-[200px]">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Chart Type</label>
+                        <select @bind="_selectedChartType" @bind:after="OnFiltersChanged" class="form-control">
+                            <option value="line">Line Chart</option>
+                            <option value="bar">Bar Chart</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Total Value Card -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-primary">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Value</span>
+                    <span class="info-box-number">@totalValue.ToString("C")</span>
+                </div>
+            </div>
+
+            <!-- Total Count Card -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-success">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Total Count</span>
+                    <span class="info-box-number">@totalCount</span>
+                </div>
+            </div>
+
+            <!-- Average Value Card -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-warning">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Average Value</span>
+                    <span class="info-box-number">@averageValue.ToString("C")</span>
+                    <span class="info-box-description">Total Value / Total Count</span>
+                </div>
+            </div>
+
+            <!-- Net Settlement Card -->
+            <div class="info-box">
+                <div class="info-box-icon bg-admin-info">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Net Settlement</span>
+                    <span class="info-box-number">@netSettlement.ToString("C")</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <!-- Transaction Volume Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Transaction Volume Over Time</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="volumeChart" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
+
+            <!-- Transaction Value Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Transaction Value Over Time</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="valueChart" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool isLoading = true;
+    private string? errorMessage;
+
+    private List<ComparisonDateModel>? comparisonDates;
+    private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+    private string _selectedChartType = "line";
+
+    private decimal totalValue = 0;
+    private int totalCount = 0;
+    private decimal averageValue = 0;
+    private decimal netSettlement = 0;
+
+    private List<TodaysSalesCountByHourModel>? salesCountData;
+    private List<TodaysSalesValueByHourModel>? salesValueData;
+    private TodaysSalesModel? todaysSales;
+    private TodaysSettlementModel? todaysSettlement;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDashboardData();
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Give Chart.js time to load from CDN
+            await Task.Delay(100);
+        }
+        
+        if (!isLoading && salesCountData != null && salesValueData != null)
+        {
+            try
+            {
+                // Check if Chart.js is available
+                var isChartJsLoaded = await JSRuntime.InvokeAsync<bool>("eval", "typeof Chart !== 'undefined'");
+                if (!isChartJsLoaded)
+                {
+                    Logger.LogWarning("Chart.js not loaded yet, will retry on next render");
+                    return;
+                }
+                
+                await UpdateCharts();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error in OnAfterRenderAsync");
+            }
+        }
+    }
+
+    private async Task LoadDashboardData()
+    {
+        try
+        {
+            isLoading = true;
+            errorMessage = null;
+            StateHasChanged();
+
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            // Note: These are stubbed values used throughout the test environment
+            // In production, these would come from the authentication context
+            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var accessToken = "stubbed-token";
+
+            // Load comparison dates first (only if not already loaded)
+            if (comparisonDates == null || !comparisonDates.Any())
+            {
+                var comparisonDatesResult = await Mediator.Send(new GetComparisonDatesQuery(correlationId, accessToken, estateId));
+                if (comparisonDatesResult.IsSuccess)
+                {
+                    comparisonDates = comparisonDatesResult.Data;
+                    if (comparisonDates != null && comparisonDates.Any())
+                    {
+                        _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
+                    }
+                }
+            }
+
+            if (!DateTime.TryParse(_selectedComparisonDate, out var comparisonDate))
+            {
+                comparisonDate = DateTime.Now.AddDays(-7);
+            }
+
+            // Load all data in parallel
+            var salesCountTask = Mediator.Send(new GetTodaysSalesCountByHourQuery(correlationId, accessToken, estateId, comparisonDate));
+            var salesValueTask = Mediator.Send(new GetTodaysSalesValueByHourQuery(correlationId, accessToken, estateId, comparisonDate));
+            var todaysSalesTask = Mediator.Send(new GetTodaysSalesQuery(correlationId, accessToken, estateId, comparisonDate));
+            var settlementTask = Mediator.Send(new GetTodaysSettlementQuery(correlationId, accessToken, estateId, comparisonDate));
+
+            await Task.WhenAll(salesCountTask, salesValueTask, todaysSalesTask, settlementTask);
+
+            // Process results
+            if (salesCountTask.Result.IsSuccess)
+                salesCountData = salesCountTask.Result.Data;
+
+            if (salesValueTask.Result.IsSuccess)
+                salesValueData = salesValueTask.Result.Data;
+
+            if (todaysSalesTask.Result.IsSuccess)
+                todaysSales = todaysSalesTask.Result.Data;
+
+            if (settlementTask.Result.IsSuccess)
+                todaysSettlement = settlementTask.Result.Data;
+
+            // Calculate KPIs
+            CalculateKPIs();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load data: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private void CalculateKPIs()
+    {
+        if (todaysSales != null)
+        {
+            totalValue = todaysSales.TodaysSalesValue;
+            totalCount = todaysSales.TodaysSalesCount;
+            averageValue = totalCount > 0 ? totalValue / totalCount : 0;
+        }
+
+        if (todaysSettlement != null)
+        {
+            netSettlement = todaysSettlement.TodaysSettlementValue;
+        }
+    }
+
+    private async Task OnFiltersChanged()
+    {
+        await LoadDashboardData();
+    }
+
+    private async Task UpdateCharts()
+    {
+        try
+        {
+            if (salesCountData == null || salesValueData == null)
+            {
+                Logger.LogWarning("Chart data is null - salesCountData: {SalesCountData}, salesValueData: {SalesValueData}", 
+                    salesCountData == null ? "null" : "not null", 
+                    salesValueData == null ? "null" : "not null");
+                return;
+            }
+
+            Logger.LogInformation("Updating charts with {CountRecords} count records and {ValueRecords} value records", 
+                salesCountData.Count, salesValueData.Count);
+
+            // Create labels with date and time context
+            var today = DateTime.Today;
+            var comparisonDateParsed = DateTime.TryParse(_selectedComparisonDate, out var compDate) ? compDate : DateTime.Today.AddDays(-7);
+            
+            var labels = salesCountData.Select(d => $"{d.Hour:00}:00").ToArray();
+            var todaysCountData = salesCountData.Select(d => d.TodaysSalesCount).ToArray();
+            var comparisonCountData = salesCountData.Select(d => d.ComparisonSalesCount).ToArray();
+
+            var todaysValueData = salesValueData.Select(d => (double)d.TodaysSalesValue).ToArray();
+            var comparisonValueData = salesValueData.Select(d => (double)d.ComparisonSalesValue).ToArray();
+
+            var comparisonLabel = GetComparisonLabel();
+            var todayLabel = today.ToString("MMM dd");
+            var comparisonDateLabel = compDate.ToString("MMM dd");
+
+            Logger.LogInformation("Chart labels: {Labels}, Today data points: {TodayCount}, Comparison data points: {CompCount}", 
+                string.Join(", ", labels), todaysCountData.Length, comparisonCountData.Length);
+
+            // Update Volume Chart
+            await JSRuntime.InvokeVoidAsync("updateOrCreateChart", 
+                "volumeChart", 
+                _selectedChartType,
+                labels,
+                new object[] 
+                {
+                    new { label = $"Today ({todayLabel}) Volume", data = todaysCountData, borderColor = "rgb(59, 130, 246)", backgroundColor = "rgba(59, 130, 246, 0.1)", tension = 0.4 },
+                    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Volume", data = comparisonCountData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
+                },
+                "Transaction Count"
+            );
+
+            // Update Value Chart
+            await JSRuntime.InvokeVoidAsync("updateOrCreateChart", 
+                "valueChart", 
+                _selectedChartType,
+                labels,
+                new object[] 
+                {
+                    new { label = $"Today ({todayLabel}) Value", data = todaysValueData, borderColor = "rgb(16, 185, 129)", backgroundColor = "rgba(16, 185, 129, 0.1)", tension = 0.4 },
+                    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Value", data = comparisonValueData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
+                },
+                "Transaction Value ($)"
+            );
+            
+            Logger.LogInformation("Charts updated successfully");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error updating charts");
+        }
+    }
+
+    private string GetComparisonLabel()
+    {
+        if (comparisonDates == null) return "Comparison";
+        if (!DateTime.TryParse(_selectedComparisonDate, out var date))
+            return "Comparison";
+        var comparisonDate = comparisonDates.FirstOrDefault(d => d.Date.Date == date.Date);
+        return comparisonDate?.Description ?? date.ToString("MMM dd");
+    }
+}

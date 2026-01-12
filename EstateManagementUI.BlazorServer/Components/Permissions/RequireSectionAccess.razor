@@ -1,0 +1,57 @@
+@using EstateManagementUI.BlazorServer.Permissions
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IPermissionService PermissionService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@implements IDisposable
+
+@if (_isChecking)
+{
+    <!-- Render nothing while checking to avoid flicker -->
+}
+else if (_hasSectionAccess)
+{
+    @ChildContent
+}
+
+@code {
+    private bool _hasSectionAccess;
+    private bool _isChecking = true;
+
+    [Parameter]
+    public PermissionSection Section { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Subscribe to authentication state changes
+        AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        await CheckAccessAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await CheckAccessAsync();
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
+    {
+        await CheckAccessAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task CheckAccessAsync()
+    {
+        _isChecking = true;
+        _hasSectionAccess = await PermissionService.HasSectionAccessAsync(Section);
+        _isChecking = false;
+        Console.WriteLine($"RequireSectionAccess: Section={Section}, HasAccess={_hasSectionAccess}");
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged -= OnAuthenticationStateChanged;
+    }
+}

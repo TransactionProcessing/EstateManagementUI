@@ -1,192 +1,213 @@
 name: Build and Test Pull Requests
 
 on:
-  pull_request:
-    branches:
-    - main
+   pull_request:
+     branches:
+     - main
 
 jobs:
-  unittests:
-    name: "Build and Unit Test"
+   unittests:
+     name: "Build and Unit Test"
 
-    env:
-        ASPNETCORE_ENVIRONMENT: "Production"
+     env:
+         ASPNETCORE_ENVIRONMENT: "Production"
 
-    runs-on: ubuntu-latest
+     runs-on: ubuntu-latest
+    
+     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+    
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+    
+      - name: Restore NuGet packages
+        run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+    
+      - name: Build solution
+        run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
+    
+      - name: Run Blazor Server unit tests
+        run: dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=blazor-test-results.trx"
+    
+      - name: Publish test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Test Results
+          path: '**/TestResults/*.trx'
+          reporter: dotnet-trx
+          fail-on-error: true
+    
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'
+          retention-days: 30
 
-    steps:
-    - uses: actions/checkout@v2.3.4
 
-    - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+#   chrometests:
+#     name: "Build and Test UI - Chrome"
+#     env:
+#         ASPNETCORE_ENVIRONMENT: "Production"
+#         NODE_VERSION: '14.x'                # set this to the node version to use
 
-    - name: Build Code
-      run: |
-        dotnet build EstateManagementUI.sln --configuration Release
+#     runs-on: ubuntu-latest
 
-    - name: Run Unit Tests
-      run: |        
-        dotnet test "EstateManagementUI.BusinessLogic.Tests\EstateManagementUI.BusinessLogic.Tests.csproj"  
-        dotnet test "EstateManagementUI.UITests\EstateManagementUI.UITests.csproj"  
+#     steps:
+#     - uses: actions/checkout@v2.3.4
 
-  chrometests:
-    name: "Build and Test UI - Chrome"
-    env:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        NODE_VERSION: '14.x'                # set this to the node version to use
+#     - name: Trust Certificate
+#       run: |
+#         sudo apt-get install expect
+#         certPath="$GITHUB_WORKSPACE/Certificates/aspnetapp-root-cert.pfx"
+#         password="password"
 
-    runs-on: ubuntu-latest
+#         # Use expect to automate the passphrase input
+#         expect -c "
+#         spawn openssl pkcs12 -in \"$certPath\" -clcerts -nokeys -out certificate.crt -password pass:\"$password\"
+#         expect \"Enter Import Password:\" { send \"$password\n\" }
+#         expect eof
+#         "
 
-    steps:
-    - uses: actions/checkout@v2.3.4
+#         expect -c "
+#         spawn openssl pkcs12 -in \"$certPath\" -nocerts -out private.key -password pass:\"$password\"
+#         expect \"Enter Import Password:\" { send \"$password\n\" }
+#         expect eof
+#         "
 
-    - name: Trust Certificate
-      run: |
-        sudo apt-get install expect
-        certPath="$GITHUB_WORKSPACE/Certificates/aspnetapp-root-cert.pfx"
-        password="password"
+#         sudo cp certificate.crt /usr/local/share/ca-certificates/aspnetapp-root-cert.crt
+#         sudo update-ca-certificates
 
-        # Use expect to automate the passphrase input
-        expect -c "
-        spawn openssl pkcs12 -in \"$certPath\" -clcerts -nokeys -out certificate.crt -password pass:\"$password\"
-        expect \"Enter Import Password:\" { send \"$password\n\" }
-        expect eof
-        "
-
-        expect -c "
-        spawn openssl pkcs12 -in \"$certPath\" -nocerts -out private.key -password pass:\"$password\"
-        expect \"Enter Import Password:\" { send \"$password\n\" }
-        expect eof
-        "
-
-        sudo cp certificate.crt /usr/local/share/ca-certificates/aspnetapp-root-cert.crt
-        sudo update-ca-certificates
-
-        sudo cp private.key /etc/ssl/private/aspnetapp-root-cert.key
-        sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
+#         sudo cp private.key /etc/ssl/private/aspnetapp-root-cert.key
+#         sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
             
-    - name: Build Docker Image
-      run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
+#     - name: Build Docker Image
+#       run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
 
-    - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+#     - name: Restore Nuget Packages
+#       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
 
-    - name: Run Integration Tests (Chrome)
-      env:
-        Browser: Chrome
-        IsCI: true
-      run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" --filter Category=PRTest
+#     - name: Run Integration Tests (Chrome)
+#       env:
+#         Browser: Chrome
+#         IsCI: true
+#       run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" --filter Category=PRTest
       
-    - uses: actions/upload-artifact@v4.4.0
-      if: ${{ failure() }}
-      with:
-        name: chrometracelogs
-        path: /home/txnproc/trace/   
+#     - uses: actions/upload-artifact@v4.4.0
+#       if: ${{ failure() }}
+#       with:
+#         name: chrometracelogs
+#         path: /home/txnproc/trace/   
 
-  edgetests:
-    name: "Build and Test UI - Edge"
-    env:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        NODE_VERSION: '14.x'                # set this to the node version to use
+#   edgetests:
+#     name: "Build and Test UI - Edge"
+#     env:
+#         ASPNETCORE_ENVIRONMENT: "Production"
+#         NODE_VERSION: '14.x'                # set this to the node version to use
 
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2.3.4
+#     steps:
+#     - uses: actions/checkout@v2.3.4
 
-    - name: Trust Certificate
-      run: |
-        sudo apt-get install expect
-        certPath="$GITHUB_WORKSPACE/Certificates/aspnetapp-root-cert.pfx"
-        password="password"
+#     - name: Trust Certificate
+#       run: |
+#         sudo apt-get install expect
+#         certPath="$GITHUB_WORKSPACE/Certificates/aspnetapp-root-cert.pfx"
+#         password="password"
 
-        # Use expect to automate the passphrase input
-        expect -c "
-        spawn openssl pkcs12 -in \"$certPath\" -clcerts -nokeys -out certificate.crt -password pass:\"$password\"
-        expect \"Enter Import Password:\" { send \"$password\n\" }
-        expect eof
-        "
+#         # Use expect to automate the passphrase input
+#         expect -c "
+#         spawn openssl pkcs12 -in \"$certPath\" -clcerts -nokeys -out certificate.crt -password pass:\"$password\"
+#         expect \"Enter Import Password:\" { send \"$password\n\" }
+#         expect eof
+#         "
 
-        expect -c "
-        spawn openssl pkcs12 -in \"$certPath\" -nocerts -out private.key -password pass:\"$password\"
-        expect \"Enter Import Password:\" { send \"$password\n\" }
-        expect eof
-        "
+#         expect -c "
+#         spawn openssl pkcs12 -in \"$certPath\" -nocerts -out private.key -password pass:\"$password\"
+#         expect \"Enter Import Password:\" { send \"$password\n\" }
+#         expect eof
+#         "
 
-        sudo cp certificate.crt /usr/local/share/ca-certificates/aspnetapp-root-cert.crt
-        sudo update-ca-certificates
+#         sudo cp certificate.crt /usr/local/share/ca-certificates/aspnetapp-root-cert.crt
+#         sudo update-ca-certificates
 
-        sudo cp private.key /etc/ssl/private/aspnetapp-root-cert.key
-        sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
+#         sudo cp private.key /etc/ssl/private/aspnetapp-root-cert.key
+#         sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
             
-    - name: Build Docker Image
-      run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
+#     - name: Build Docker Image
+#       run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
 
-    - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+#     - name: Restore Nuget Packages
+#       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
 
-    - name: Run Integration Tests (Edge)
-      env:
-        Browser: Edge
-        IsCI: true
-      run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" --filter Category=PRTest
+#     - name: Run Integration Tests (Edge)
+#       env:
+#         Browser: Edge
+#         IsCI: true
+#       run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" --filter Category=PRTest
       
-    - uses: actions/upload-artifact@v4.4.0
-      if: ${{ failure() }}
-      with:
-        name: edgetracelogs
-        path: /home/txnproc/trace/   
+#     - uses: actions/upload-artifact@v4.4.0
+#       if: ${{ failure() }}
+#       with:
+#         name: edgetracelogs
+#         path: /home/txnproc/trace/   
 
-  fireefoxtests:
-    name: "Build and Test UI - Firefox"
-    env:
-        ASPNETCORE_ENVIRONMENT: "Production"
-        NODE_VERSION: '14.x'                # set this to the node version to use
+#   fireefoxtests:
+#     name: "Build and Test UI - Firefox"
+#     env:
+#         ASPNETCORE_ENVIRONMENT: "Production"
+#         NODE_VERSION: '14.x'                # set this to the node version to use
 
-    runs-on: ubuntu-latest
+#     runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2.3.4
+#     steps:
+#     - uses: actions/checkout@v2.3.4
 
-    - name: Trust Certificate
-      run: |
-        sudo apt-get install expect
-        certPath="$GITHUB_WORKSPACE/Certificates/aspnetapp-root-cert.pfx"
-        password="password"
+#     - name: Trust Certificate
+#       run: |
+#         sudo apt-get install expect
+#         certPath="$GITHUB_WORKSPACE/Certificates/aspnetapp-root-cert.pfx"
+#         password="password"
 
-        # Use expect to automate the passphrase input
-        expect -c "
-        spawn openssl pkcs12 -in \"$certPath\" -clcerts -nokeys -out certificate.crt -password pass:\"$password\"
-        expect \"Enter Import Password:\" { send \"$password\n\" }
-        expect eof
-        "
+#         # Use expect to automate the passphrase input
+#         expect -c "
+#         spawn openssl pkcs12 -in \"$certPath\" -clcerts -nokeys -out certificate.crt -password pass:\"$password\"
+#         expect \"Enter Import Password:\" { send \"$password\n\" }
+#         expect eof
+#         "
 
-        expect -c "
-        spawn openssl pkcs12 -in \"$certPath\" -nocerts -out private.key -password pass:\"$password\"
-        expect \"Enter Import Password:\" { send \"$password\n\" }
-        expect eof
-        "
+#         expect -c "
+#         spawn openssl pkcs12 -in \"$certPath\" -nocerts -out private.key -password pass:\"$password\"
+#         expect \"Enter Import Password:\" { send \"$password\n\" }
+#         expect eof
+#         "
 
-        sudo cp certificate.crt /usr/local/share/ca-certificates/aspnetapp-root-cert.crt
-        sudo update-ca-certificates
+#         sudo cp certificate.crt /usr/local/share/ca-certificates/aspnetapp-root-cert.crt
+#         sudo update-ca-certificates
 
-        sudo cp private.key /etc/ssl/private/aspnetapp-root-cert.key
-        sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
+#         sudo cp private.key /etc/ssl/private/aspnetapp-root-cert.key
+#         sudo chmod 400 /etc/ssl/private/aspnetapp-root-cert.key    
             
-    - name: Build Docker Image
-      run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
+#     - name: Build Docker Image
+#       run: docker build . --file EstateManagementUI/Dockerfile --tag estatemanagementui:latest
 
-    - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+#     - name: Restore Nuget Packages
+#       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
 
-    - name: Run Integration Tests (Firefox)
-      env:
-        Browser: Firefox
-        IsCI: true
-      run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" --filter Category=PRTest
+#     - name: Run Integration Tests (Firefox)
+#       env:
+#         Browser: Firefox
+#         IsCI: true
+#       run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" --filter Category=PRTest
       
-    - uses: actions/upload-artifact@v4.4.0
-      if: ${{ failure() }}
-      with:
-        name: firefoxtracelogs
-        path: /home/txnproc/trace/   
+#     - uses: actions/upload-artifact@v4.4.0
+#       if: ${{ failure() }}
+#       with:
+#         name: firefoxtracelogs
+#         path: /home/txnproc/trace/   

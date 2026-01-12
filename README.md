@@ -1,5 +1,39 @@
 # EstateManagementUI
 
+## Overview
+
+This repository contains the Estate Management User Interface applications and associated test projects.
+
+### UI Projects
+
+- **EstateManagementUI**: Legacy ASP.NET Core web application with Razor Pages (Hydro)
+- **EstateManagementUI.BlazorServer**: Modern Blazor Server application (current/future UI)
+
+### Test Projects
+
+- **EstateManagementUI.IntegrationTests**: Integration tests for the legacy UI using Selenium WebDriver
+- **EstateManagementUI.BlazorIntegrationTests**: Integration tests for the Blazor UI using Playwright (NEW!)
+- **EstateManagementUI.UITests**: Unit tests for UI components
+- **EstateManagementUI.BusinessLogic.Tests**: Unit tests for business logic
+
+## Integration Testing
+
+### Blazor Integration Tests (NEW)
+
+The `EstateManagementUI.BlazorIntegrationTests` project provides comprehensive integration tests for the Blazor Server UI using **Microsoft Playwright** for browser automation.
+
+**Key Features:**
+- Targets the Blazor Server UI (`EstateManagementUI.BlazorServer`)
+- Uses Playwright for modern, reliable browser automation
+- Full Docker infrastructure support for testing
+- BDD-style tests using Reqnroll (SpecFlow successor)
+
+See [EstateManagementUI.BlazorIntegrationTests/README.md](EstateManagementUI.BlazorIntegrationTests/README.md) for detailed documentation.
+
+### Legacy Integration Tests
+
+The `EstateManagementUI.IntegrationTests` project provides integration tests for the legacy UI using Selenium WebDriver. These tests target the old ASP.NET Core application.
+
 ## Building the Blazor Server Application
 
 The `EstateManagementUI.BlazorServer` project uses Tailwind CSS for styling. The CSS must be built before running the application.

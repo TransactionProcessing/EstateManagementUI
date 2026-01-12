@@ -1,0 +1,13 @@
+namespace EstateManagementUI.BlazorServer.Permissions;
+
+/// <summary>
+/// Defines the functions/actions that can be performed within each section
+/// </summary>
+public enum PermissionFunction
+{
+    View,
+    Create,
+    Edit,
+    Delete,
+    MakeDeposit
+}
