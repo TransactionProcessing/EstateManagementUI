@@ -1,29 +1,45 @@
-# Estate Management UI - Dashboard Integration Tests
+# Estate Management UI - Integration Tests
 
-This project contains integration tests for the Dashboard functionality of the Estate Management Blazor Server application, using Reqnroll (SpecFlow successor), Playwright, and Shouldly.
+This project contains integration tests for the Estate Management Blazor Server application, using Reqnroll (SpecFlow successor), Playwright, and Shouldly.
 
 ## Project Structure
 
 ```
 EstateManagementUI.IntegrationTests/
-├── Features/              # Reqnroll feature files (Gherkin scenarios)
-│   └── Dashboard.feature  # Dashboard test scenarios for all roles
-├── Steps/                 # Step definitions (links features to code)
-│   └── DashboardSteps.cs  # Dashboard step implementations
-├── Hooks/                 # Test lifecycle hooks
-│   └── BrowserHooks.cs    # Playwright browser management
-├── Common/                # Helper classes and utilities
-│   └── DashboardPageHelper.cs  # Page object for Dashboard interactions
-└── appsettings.json       # Test configuration and hardcoded test data
+├── Features/                          # Reqnroll feature files (Gherkin scenarios)
+│   ├── Dashboard.feature              # Dashboard test scenarios for all roles
+│   ├── EstateManagement.feature       # Estate Management test scenarios
+│   └── MerchantManagement.feature     # Merchant Management test scenarios
+├── Steps/                             # Step definitions (links features to code)
+│   ├── DashboardSteps.cs              # Dashboard step implementations
+│   ├── EstateManagementSteps.cs       # Estate Management step implementations
+│   └── MerchantManagementSteps.cs     # Merchant Management step implementations
+├── Hooks/                             # Test lifecycle hooks
+│   └── BrowserHooks.cs                # Playwright browser management
+├── Common/                            # Helper classes and utilities
+│   ├── DashboardPageHelper.cs         # Page object for Dashboard interactions
+│   ├── EstateManagementPageHelper.cs  # Page object for Estate Management interactions
+│   └── MerchantManagementPageHelper.cs # Page object for Merchant Management interactions
+└── appsettings.json                   # Test configuration and hardcoded test data
 ```
 
 ## Key Components
 
-### 1. Feature File (`Features/Dashboard.feature`)
-- Defines test scenarios in Gherkin syntax (Given/When/Then)
-- Covers three user roles: Administrator, Estate, and Viewer
+### 1. Feature Files
+Feature files define test scenarios in Gherkin syntax (Given/When/Then) and cover three user roles: Administrator, Estate, and Viewer.
+
+#### `Features/Dashboard.feature`
 - Tests dashboard visibility and data display based on role permissions
 - Uses hardcoded test data values from the application
+
+#### `Features/EstateManagement.feature`
+- Tests Estate Management functionality including estate details, operators, and contracts
+- Tests role-based access controls
+
+#### `Features/MerchantManagement.feature`
+- Tests Merchant Management functionality including merchant list, details, and CRUD operations
+- Covers merchant viewing, creation, editing, and deposit operations
+- Tests role-based permissions for different operations
 
 ### 2. Hooks File (`Hooks/BrowserHooks.cs`)
 - Manages Playwright browser lifecycle
@@ -32,34 +48,78 @@ EstateManagementUI.IntegrationTests/
 - `AfterScenario`: Cleans up and takes screenshots on test failures
 - `AfterTestRun`: Disposes Playwright resources
 
-### 3. Step Definitions (`Steps/DashboardSteps.cs`)
-- Links Gherkin steps from feature files to C# code
-- Uses DashboardPageHelper to interact with the browser
-- Implements Given/When/Then steps for all Dashboard scenarios
+### 3. Step Definitions
+Step definitions link Gherkin steps from feature files to C# code and use Page Helpers to interact with the browser.
 
-### 4. Page Helper (`Common/DashboardPageHelper.cs`)
-- Encapsulates all Dashboard page interactions using Playwright
-- Provides methods for navigation, verification, and interaction
-- Uses Shouldly for assertions
+- `Steps/DashboardSteps.cs` - Dashboard scenarios
+- `Steps/EstateManagementSteps.cs` - Estate Management scenarios
+- `Steps/MerchantManagementSteps.cs` - Merchant Management scenarios
+
+### 4. Page Helpers
+Page Helpers encapsulate all page interactions using Playwright and use Shouldly for assertions.
+
+- `Common/DashboardPageHelper.cs` - Dashboard page interactions
+- `Common/EstateManagementPageHelper.cs` - Estate Management page interactions
+- `Common/MerchantManagementPageHelper.cs` - Merchant Management page interactions
 
 ## Test Data
 
-The tests are designed to assert against hardcoded test data in the application's `TestMediatorService.cs`:
+The tests are designed to assert against hardcoded test data in the application's `StubbedMediatorService.cs`:
 
-### Merchant KPIs
+### Dashboard Data
+
+#### Merchant KPIs
 - Merchants with Sales in Last Hour: **45**
 - Merchants with No Sales Today: **12**
 - Merchants with No Sales in Last 7 Days: **5**
 
-### Today's Sales
+#### Today's Sales
 - Transaction Count: **523**
 - Sales Value: **$145,000.00**
 
-### Failed Sales (Low Credit)
+#### Failed Sales (Low Credit)
 - Transaction Count: **15**
 - Sales Value: **$850.00**
 
-These values are defined in the application's `TestMediatorService` and can be updated when the test data is changed.
+### Estate Management Data
+
+#### Estate Details
+- Estate Name: **Test Estate**
+- Estate Reference: **Test Estate**
+- Total Merchants: **3**
+- Total Operators: **2**
+- Total Contracts: **2**
+- Total Users: **5**
+
+#### Operators
+- **Safaricom** (requires custom merchant number)
+- **Voucher**
+
+#### Contracts
+- **Standard Transaction Contract** (Safaricom)
+- **Voucher Sales Contract** (Voucher)
+
+### Merchant Management Data
+
+#### Merchants
+1. **Test Merchant 1** (MERCH001)
+   - Balance: £10,000.00
+   - Available Balance: £8,500.00
+   - Settlement Schedule: Immediate
+   - Address: 123 Main Street, Test Town, Test Region, 12345, Test Country
+   - Contact: John Smith, john@testmerchant.com, 555-1234
+
+2. **Test Merchant 2** (MERCH002)
+   - Balance: £5,000.00
+   - Available Balance: £4,200.00
+   - Settlement Schedule: Weekly
+
+3. **Test Merchant 3** (MERCH003)
+   - Balance: £15,000.00
+   - Available Balance: £12,000.00
+   - Settlement Schedule: Monthly
+
+These values are defined in the application's `StubbedMediatorService` and can be updated when the test data is changed.
 
 ## User Roles Tested
 
@@ -111,6 +171,18 @@ dotnet test --filter "Category=EstateRole"
 
 # Run only Viewer role tests
 dotnet test --filter "Category=ViewerRole"
+```
+
+### Filter by Feature
+```bash
+# Run only Dashboard tests
+dotnet test --filter "Category=DashboardTests"
+
+# Run only Estate Management tests
+dotnet test --filter "Category=EstateManagementTests"
+
+# Run only Merchant Management tests
+dotnet test --filter "Category=MerchantManagementTests"
 ```
 
 ## Notes
