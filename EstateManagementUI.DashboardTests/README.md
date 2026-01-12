@@ -56,7 +56,7 @@ The tests are designed to assert against hardcoded test data in the application'
 - Sales Value: **$145,000.00**
 
 ### Failed Sales (Low Credit)
-- Transaction Count: **18**
+- Transaction Count: **15**
 - Sales Value: **$850.00**
 
 These values are defined in the application's `TestMediatorService` and can be updated when the test data is changed.

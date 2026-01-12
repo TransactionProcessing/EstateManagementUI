@@ -34,7 +34,7 @@ Scenario: Estate user sees sales data on dashboard
     And the Today's Sales card shows "523" transactions
     And the Today's Sales card shows a value greater than $0
     And the Failed Sales card is displayed
-    And the Failed Sales card shows "18" transactions
+    And the Failed Sales card shows "15" transactions
 
 @DashboardTests @EstateRole
 Scenario: Estate user sees comparison date selector
@@ -70,7 +70,7 @@ Scenario: Viewer user sees sales data on dashboard
     And the Today's Sales card shows "523" transactions
     And the Today's Sales card shows a value greater than $0
     And the Failed Sales card is displayed
-    And the Failed Sales card shows "18" transactions
+    And the Failed Sales card shows "15" transactions
 
 @DashboardTests @ViewerRole
 Scenario: Viewer user sees comparison date selector

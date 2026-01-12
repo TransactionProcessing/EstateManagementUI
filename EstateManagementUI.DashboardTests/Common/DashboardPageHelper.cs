@@ -115,7 +115,7 @@ public class DashboardPageHelper
     /// </summary>
     public async Task VerifyTodaysSalesCardIsDisplayed()
     {
-        await _page.Locator("h3:has-text('Today\\'s Sales')").WaitForAsync();
+        await _page.Locator("h3:has-text(\"Today's Sales\")").WaitForAsync();
     }
 
     /// <summary>
@@ -232,7 +232,7 @@ public class DashboardPageHelper
     /// </summary>
     public async Task SelectComparisonDate(string dateDescription)
     {
-        await _page.Locator("#comparisonDateSelector").SelectOptionAsync(new[] { new SelectOptionValue { Label = dateDescription } });
+        await _page.Locator("#comparisonDateSelector").SelectOptionAsync(new[] { dateDescription });
         // Wait for dashboard to reload
         await Task.Delay(500); // Small delay for state update
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
