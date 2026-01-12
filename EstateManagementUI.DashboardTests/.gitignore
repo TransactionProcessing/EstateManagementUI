@@ -1,0 +1,42 @@
+## Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+## Test Results
+[Tt]est[Rr]esult*/
+TestResults/
+*.trx
+*.coverage
+
+## Playwright
+.playwright/
+playwright-report/
+playwright/.cache/
+
+## Screenshots
+screenshot-*.png
+
+## Visual Studio cache/options
+.vs/
+.vscode/
+
+## Reqnroll/SpecFlow generated files
+*.feature.cs
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
