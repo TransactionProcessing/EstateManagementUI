@@ -588,14 +588,6 @@ public class ReportingPageHelper
         chartCanvas.ShouldBeGreaterThan(0, "Chart should be displayed");
     }
 
-    /// <summary>
-    /// Verify product performance grid is displayed
-    /// </summary>
-    public async Task VerifyProductPerformanceGridIsDisplayed()
-    {
-        await VerifyDataGridIsDisplayed();
-    }
-
     #endregion
 
     #region Chart Type Selection
