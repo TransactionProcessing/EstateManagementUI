@@ -375,4 +375,112 @@ public class EstateManagementPageHelper
     }
 
     #endregion
+
+    #region Add/Remove Operator Actions
+
+    /// <summary>
+    /// Remove an operator from the estate
+    /// </summary>
+    public async Task RemoveOperator(string operatorName)
+    {
+        // Find the operator item by name
+        var operatorItem = _page.Locator(".flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg")
+            .Filter(new LocatorFilterOptions { HasText = operatorName });
+        
+        await operatorItem.WaitForAsync();
+        
+        // Click the Remove button
+        var removeButton = operatorItem.Locator("button:has-text('Remove')");
+        await removeButton.ClickAsync();
+        
+        // Wait for the action to complete
+        await Task.Delay(500);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
+
+    /// <summary>
+    /// Click the Add Operator button
+    /// </summary>
+    public async Task ClickAddOperatorButton()
+    {
+        await _page.Locator("#addOperatorButton").ClickAsync();
+        
+        // Wait for the form to appear
+        await Task.Delay(500);
+    }
+
+    /// <summary>
+    /// Select an operator from the dropdown
+    /// </summary>
+    public async Task SelectOperatorFromDropdown(string operatorName)
+    {
+        var dropdown = _page.Locator("select.input.flex-1");
+        await dropdown.WaitForAsync();
+        await dropdown.SelectOptionAsync(new[] { operatorName });
+        
+        // Wait for selection to register
+        await Task.Delay(300);
+    }
+
+    /// <summary>
+    /// Click the Add button in the operator form
+    /// </summary>
+    public async Task ClickAddButton()
+    {
+        var addButton = _page.Locator("button.btn.btn-primary:has-text('Add')");
+        await addButton.ClickAsync();
+        
+        // Wait for the action to complete
+        await Task.Delay(500);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+    }
+
+    /// <summary>
+    /// Verify success message is displayed
+    /// </summary>
+    public async Task VerifySuccessMessageIsDisplayed()
+    {
+        var successMessage = _page.Locator(".bg-green-50.border.border-green-200.text-green-800");
+        await successMessage.WaitForAsync();
+        
+        var isVisible = await successMessage.IsVisibleAsync();
+        isVisible.ShouldBeTrue("Success message should be displayed");
+    }
+
+    /// <summary>
+    /// Verify success message contains expected text
+    /// </summary>
+    public async Task VerifySuccessMessageContains(string expectedMessage)
+    {
+        var successMessage = _page.Locator(".bg-green-50.border.border-green-200.text-green-800");
+        await successMessage.WaitForAsync();
+        
+        var messageText = await successMessage.TextContentAsync();
+        messageText.ShouldNotBeNull();
+        messageText.ShouldContain(expectedMessage);
+    }
+
+    /// <summary>
+    /// Verify an operator is NOT listed (after removal)
+    /// </summary>
+    public async Task VerifyOperatorIsNotListed(string operatorName)
+    {
+        // Wait a moment for removal to complete
+        await Task.Delay(500);
+        
+        var operatorCount = await _page.Locator($".flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg span.font-medium:has-text('{operatorName}')").CountAsync();
+        operatorCount.ShouldBe(0, $"Operator '{operatorName}' should not be listed after removal");
+    }
+
+    /// <summary>
+    /// Verify operator selection form is displayed
+    /// </summary>
+    public async Task VerifyOperatorSelectionFormIsDisplayed()
+    {
+        await _page.Locator("select.input.flex-1").WaitForAsync();
+        var isVisible = await _page.Locator("select.input.flex-1").IsVisibleAsync();
+        isVisible.ShouldBeTrue("Operator selection form should be displayed");
+    }
+
+    #endregion
 }

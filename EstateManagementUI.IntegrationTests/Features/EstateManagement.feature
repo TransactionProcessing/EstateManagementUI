@@ -75,6 +75,32 @@ Scenario: Estate user can see Add Operator button
     Then the operators tab content is displayed
     And the Add Operator button is visible
 
+@EstateManagementTests @EstateRole
+Scenario: Estate user can remove an operator from the estate
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Estate Management
+    And the user clicks on the "operators" tab
+    And the user removes the operator "Voucher"
+    Then a success message is displayed
+    And the success message contains "Operator removed successfully"
+    And the operator "Voucher" is no longer listed
+    And the Total Operators count is "1"
+
+@EstateManagementTests @EstateRole
+Scenario: Estate user can add an operator to the estate
+    Given the user is authenticated as an "Estate" user
+    When the user navigates to Estate Management
+    And the user clicks on the "operators" tab
+    And the user removes the operator "Voucher"
+    And the user clicks the Add Operator button
+    Then the operator selection form is displayed
+    When the user selects "Voucher" from the operator dropdown
+    And the user clicks the Add button
+    Then a success message is displayed
+    And the success message contains "Operator added successfully"
+    And the operator "Voucher" is listed
+    And the Total Operators count is "2"
+
 @EstateManagementTests @ViewerRole
 Scenario: Viewer user can view estate overview
     Given the user is authenticated as a "Viewer" user

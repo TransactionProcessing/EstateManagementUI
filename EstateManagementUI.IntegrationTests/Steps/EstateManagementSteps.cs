@@ -235,4 +235,56 @@ public class EstateManagementSteps
     }
 
     #endregion
+
+    #region Add/Remove Operator Steps
+
+    [When(@"the user removes the operator ""(.*)""")]
+    public async Task WhenTheUserRemovesTheOperator(string operatorName)
+    {
+        await _estateManagementHelper.RemoveOperator(operatorName);
+    }
+
+    [When(@"the user clicks the Add Operator button")]
+    public async Task WhenTheUserClicksTheAddOperatorButton()
+    {
+        await _estateManagementHelper.ClickAddOperatorButton();
+    }
+
+    [When(@"the user selects ""(.*)"" from the operator dropdown")]
+    public async Task WhenTheUserSelectsFromTheOperatorDropdown(string operatorName)
+    {
+        await _estateManagementHelper.SelectOperatorFromDropdown(operatorName);
+    }
+
+    [When(@"the user clicks the Add button")]
+    public async Task WhenTheUserClicksTheAddButton()
+    {
+        await _estateManagementHelper.ClickAddButton();
+    }
+
+    [Then(@"a success message is displayed")]
+    public async Task ThenASuccessMessageIsDisplayed()
+    {
+        await _estateManagementHelper.VerifySuccessMessageIsDisplayed();
+    }
+
+    [Then(@"the success message contains ""(.*)""")]
+    public async Task ThenTheSuccessMessageContains(string expectedMessage)
+    {
+        await _estateManagementHelper.VerifySuccessMessageContains(expectedMessage);
+    }
+
+    [Then(@"the operator ""(.*)"" is no longer listed")]
+    public async Task ThenTheOperatorIsNoLongerListed(string operatorName)
+    {
+        await _estateManagementHelper.VerifyOperatorIsNotListed(operatorName);
+    }
+
+    [Then(@"the operator selection form is displayed")]
+    public async Task ThenTheOperatorSelectionFormIsDisplayed()
+    {
+        await _estateManagementHelper.VerifyOperatorSelectionFormIsDisplayed();
+    }
+
+    #endregion
 }
