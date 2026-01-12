@@ -41,14 +41,9 @@ public class ContractManagementSteps
     }
 
     [When(@"the user navigates to the Create New Contract page")]
+    [When(@"the user navigates to the Create New Contract page directly")]
     [Given(@"the user navigates to the Create New Contract page")]
     public async Task WhenTheUserNavigatesToTheCreateNewContractPage()
-    {
-        await _contractHelper.NavigateToCreateNewContract();
-    }
-
-    [When(@"the user navigates to the Create New Contract page directly")]
-    public async Task WhenTheUserNavigatesToTheCreateNewContractPageDirectly()
     {
         await _contractHelper.NavigateToCreateNewContract();
     }
