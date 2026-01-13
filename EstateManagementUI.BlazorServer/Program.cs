@@ -86,7 +86,7 @@ builder.Services.AddSession(options =>
 });
 
 // Configure authentication based on mode
-if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full) // TODO: bitmap??
+if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full)
 {
     // Test mode: Use test authentication handler to bypass OIDC
     builder.Services.AddAuthentication(options =>
@@ -212,7 +212,6 @@ if (testMode == TestMode.BackedByTestDataStore || testMode == TestMode.Full)
 }
 else
 {
-    // TODO: this will be th real backedn services
     Console.WriteLine("Registering StubbedMediatorService");
     builder.Services.AddSingleton<IMediator, StubbedMediatorService>();
 }
@@ -248,6 +247,12 @@ if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full)
         // In test mode, redirect directly to home since authentication is automatic
         return Results.Redirect("/");
     }).AllowAnonymous();
+
+    app.MapGet("/logout", (HttpContext context) =>
+    {
+        // In test mode, just redirect to home
+        return Results.Redirect("/");
+    }).RequireAuthorization();
 }
 else
 {
@@ -265,19 +270,7 @@ else
             authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
         );
     }).AllowAnonymous();
-}
 
-// Add logout endpoint - behavior depends on test mode
-if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full)
-{
-    app.MapGet("/logout", (HttpContext context) =>
-    {
-        // In test mode, just redirect to home
-        return Results.Redirect("/");
-    }).RequireAuthorization();
-}
-else
-{
     app.MapGet("/logout", async (HttpContext context) =>
     {
         await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
