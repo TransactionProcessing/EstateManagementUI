@@ -5,7 +5,7 @@
 @inject IPermissionService PermissionService
 @inject IPermissionKeyProvider PermissionKeyProvider
 
-@if (isTestMode)
+@if (testMode == TestMode.Full || testMode == TestMode.AuthenticationOnly)
 {
     <div class="relative">
         <button type="button" @onclick="ToggleDropdown" @onclick:stopPropagation 
@@ -56,7 +56,7 @@
 }
 
 @code {
-    private bool isTestMode;
+    private TestMode testMode;
     private string currentRole = "Administrator";
     private bool isDropdownOpen = false;
     
@@ -69,7 +69,11 @@
     
     protected override async Task OnInitializedAsync()
     {
-        isTestMode = Configuration.GetValue<bool>("AppSettings:TestMode", false);
+        //isTestMode = Configuration.GetValue<bool>("AppSettings:TestMode", false);
+        // Check if running in test mode
+        var testModeConfig = Configuration.GetValue<String>("AppSettings:TestMode", "Disabled");
+        // Convert to enum
+        testMode = Enum.Parse<TestMode>(testModeConfig, ignoreCase: true);
         
         // Get the actual current role from authentication
         var actualRole = await PermissionService.GetUserRoleAsync();
@@ -79,7 +83,7 @@
     protected override async Task OnParametersSetAsync()
     {
         // Update current role when parameters change (e.g., after navigation)
-        if (isTestMode)
+        if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full)
         {
             var actualRole = await PermissionService.GetUserRoleAsync();
             if (!string.IsNullOrEmpty(actualRole))
