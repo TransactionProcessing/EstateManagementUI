@@ -66,7 +66,10 @@ builder.WebHost.UseKestrel(options =>
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 // Check if running in test mode
-var testMode = builder.Configuration.GetValue<bool>("AppSettings:TestMode", false);
+var testModeConfig = builder.Configuration.GetValue<String>("AppSettings:TestMode", "Disabled");
+// Convert to enum
+var testMode = Enum.Parse<TestMode>(testModeConfig, ignoreCase: true);
+
 Console.WriteLine($"Application running in Test Mode: {testMode}");
 
 // Add services to the container.
@@ -83,7 +86,7 @@ builder.Services.AddSession(options =>
 });
 
 // Configure authentication based on mode
-if (testMode)
+if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full)
 {
     // Test mode: Use test authentication handler to bypass OIDC
     builder.Services.AddAuthentication(options =>
@@ -167,6 +170,7 @@ else
             NameClaimType = "name",
             RoleClaimType = "role"
         };
+        options.ClaimActions.MapAllExcept("iss", "nbf", "exp", "aud", "nonce", "iat", "c_hash");
         
         // Set MetadataAddress to use the authority address
         options.MetadataAddress = $"{authorityAddress}/.well-known/openid-configuration";
@@ -200,7 +204,7 @@ builder.Services.AddScoped<IPermissionKeyProvider, PermissionKeyProvider>();
 Console.WriteLine("Registered Permission services");
 
 // Register MediatR service based on test mode
-if (testMode)
+if (testMode == TestMode.BackedByTestDataStore || testMode == TestMode.Full)
 {
     Console.WriteLine("Registering TestMediatorService with in-memory test data store");
     builder.Services.AddSingleton<ITestDataStore, TestDataStore>();
@@ -236,13 +240,19 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 // Add login endpoint - behavior depends on test mode
-if (testMode)
+if (testMode == TestMode.AuthenticationOnly || testMode == TestMode.Full)
 {
     app.MapGet("/login", (HttpContext context) =>
     {
         // In test mode, redirect directly to home since authentication is automatic
         return Results.Redirect("/");
     }).AllowAnonymous();
+
+    app.MapGet("/logout", (HttpContext context) =>
+    {
+        // In test mode, just redirect to home
+        return Results.Redirect("/");
+    }).RequireAuthorization();
 }
 else
 {
@@ -260,19 +270,7 @@ else
             authenticationSchemes: new[] { OpenIdConnectDefaults.AuthenticationScheme }
         );
     }).AllowAnonymous();
-}
 
-// Add logout endpoint - behavior depends on test mode
-if (testMode)
-{
-    app.MapGet("/logout", (HttpContext context) =>
-    {
-        // In test mode, just redirect to home
-        return Results.Redirect("/");
-    }).RequireAuthorization();
-}
-else
-{
     app.MapGet("/logout", async (HttpContext context) =>
     {
         await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
@@ -282,3 +280,11 @@ else
 }
 
 app.Run();
+
+
+enum TestMode {
+    Disabled,
+    AuthenticationOnly,
+    BackedByTestDataStore,
+    Full
+}
