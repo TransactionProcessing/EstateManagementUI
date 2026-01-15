@@ -231,7 +231,6 @@ if (testMode == TestMode.BackedByTestDataStore || testMode == TestMode.Full)
 else
 {
     Console.WriteLine("Registering Mediator Service");
-    //builder.Services.AddTransient<IMediator, Mediator>();
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EstateRequestHandler).Assembly));
     builder.Services.AddSingleton<IApiClient, ApiClient>();
     builder.Services.AddSingleton<Func<String, String>>(container => (serviceName) => ConfigurationReader.GetBaseServerUri(serviceName).OriginalString);

@@ -8,7 +8,6 @@ public static class APIModelFactory {
     {
         List<ComparisonDateModel> comparisonDates = new();
 
-        // TODO: Move to a factory
         foreach (ComparisonDate comparisonDate in apiResult)
         {
             comparisonDates.Add(new ComparisonDateModel

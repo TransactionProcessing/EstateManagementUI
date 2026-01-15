@@ -235,89 +235,98 @@ public static class Helpers
 
     public static string GetSalesBackgroundClass(TodaysSalesModel todaysSales)
     {
-        var variance = GetSalesVariance(todaysSales);
-        if (variance < 0) return "bg-red-50"; // Worse
-        if (variance == 0) return "bg-blue-50"; // Same
-        if (variance > 0 && variance < 0.2m) return "bg-yellow-50"; // Slightly better
-        return "bg-green-50"; // Much better
+        Decimal variance = GetSalesVariance(todaysSales);
+
+        return variance switch {
+            _ when variance < 0 => "bg-red-50", // Worse
+            _ when variance == 0 => "bg-blue-50", // Same
+            _ when variance > 0 && variance < 0.2m => "bg-yellow-50", // Slightly better
+            _ => "bg-green-50", // Much better
+        };
     }
 
     public static string GetSalesTextClass(TodaysSalesModel todaysSales, double opacity = 1.0)
     {
         var variance = GetSalesVariance(todaysSales);
-        if (opacity < 1.0)
-        {
-            if (variance < 0) return "text-red-700";
-            if (variance == 0) return "text-blue-700";
-            if (variance > 0 && variance < 0.2m) return "text-yellow-700";
-            return "text-green-700";
-        }
-        if (variance < 0) return "text-red-900";
-        if (variance == 0) return "text-blue-900";
-        if (variance > 0 && variance < 0.2m) return "text-yellow-900";
-        return "text-green-900";
+
+        return opacity switch {
+            _ when opacity < 1.0 && variance < 0 => "text-red-700",
+            _ when opacity < 1.0 && variance == 0 => "text-blue-700",
+            _ when opacity < 1.0 && variance > 0 && variance < 0.2m => "text-yellow-700",
+            _ when opacity < 1.0 => "text-green-700",
+            _ when variance < 0 => "text-red-900",
+            _ when variance == 0 => "text-blue-900",
+            _ when variance > 0 && variance < 0.2m => "text-yellow-900",
+            _ => "text-green-900",
+        };
     }
 
     public static string GetSalesBorderClass(TodaysSalesModel todaysSales)
     {
-        var variance = GetSalesVariance(todaysSales);
-        if (variance < 0) return "border-red-200";
-        if (variance == 0) return "border-blue-200";
-        if (variance > 0 && variance < 0.2m) return "border-yellow-200";
-        return "border-green-200";
+        Decimal variance = GetSalesVariance(todaysSales);
+        return variance switch {
+            _ when variance < 0 => "border-red-200",
+            _ when variance == 0 => "border-blue-200",
+            _ when variance > 0 && variance < 0.2m => "border-yellow-200",
+            _ => "border-green-200",
+        };
     }
 
     public static string GetSalesVarianceDisplay(TodaysSalesModel todaysSales)
     {
-        var variance = GetSalesVariance(todaysSales);
+        Decimal variance = GetSalesVariance(todaysSales);
         // Special case: comparison was 0, now has sales
         if (variance >= 999m) return "NEW";
-        var percentageChange = variance * 100;
-        var sign = variance > 0 ? "+" : "";
+        Decimal percentageChange = variance * 100;
+        String sign = variance > 0 ? "+" : "";
         return $"{sign}{percentageChange:F1}%";
     }
 
     public static string GetFailedSalesBackgroundClass(TodaysSalesModel todaysSales)
     {
-        var variance = GetSalesVariance(todaysSales);
-        if (variance < 0) return "bg-green-50"; // Good - fewer failures
-        if (variance == 0) return "bg-blue-50"; // Same
-        if (variance > 0 && variance < 0.2m) return "bg-yellow-50"; // Slightly worse
-        return "bg-red-50"; // Much worse
+        Decimal variance = GetSalesVariance(todaysSales);
+        return variance switch {
+            _ when variance < 0 => "bg-green-50", // Good - fewer failures
+            _ when variance == 0 => "bg-blue-50", // Same
+            _ when variance > 0 && variance < 0.2m => "bg-yellow-50", // Slightly worse
+            _ => "bg-red-50", // Much worse
+        };
     }
 
     public static string GetFailedSalesTextClass(TodaysSalesModel todaysSales, double opacity = 1.0)
     {
-        var variance = GetSalesVariance(todaysSales);
-        if (opacity < 1.0)
-        {
-            if (variance < 0) return "text-green-700";
-            if (variance == 0) return "text-blue-700";
-            if (variance > 0 && variance < 0.2m) return "text-yellow-700";
-            return "text-red-700";
-        }
-        if (variance < 0) return "text-green-900";
-        if (variance == 0) return "text-blue-900";
-        if (variance > 0 && variance < 0.2m) return "text-yellow-900";
-        return "text-red-900";
+        Decimal variance = GetSalesVariance(todaysSales);
+
+        return opacity switch {
+            _ when opacity < 1.0 && variance < 0 => "text-green-700",
+            _ when opacity < 1.0 && variance == 0 => "text-blue-700",
+            _ when opacity < 1.0 && variance > 0 && variance < 0.2m => "text-yellow-700",
+            _ when opacity < 1.0 => "text-red-700",
+            _ when variance < 0 => "text-green-900",
+            _ when variance == 0 => "text-blue-900",
+            _ when variance > 0 && variance < 0.2m => "text-yellow-900",
+            _ => "text-red-900",
+        };
     }
 
     public static string GetFailedSalesBorderClass(TodaysSalesModel todaysSales)
     {
-        var variance = GetSalesVariance(todaysSales);
-        if (variance < 0) return "border-green-200";
-        if (variance == 0) return "border-blue-200";
-        if (variance > 0 && variance < 0.2m) return "border-yellow-200";
-        return "border-red-200";
+        Decimal variance = GetSalesVariance(todaysSales);
+        return variance switch {
+            _ when variance < 0 => "border-green-200",
+            _ when variance == 0 => "border-blue-200",
+            _ when variance > 0 && variance < 0.2m => "border-yellow-200",
+            _ => "border-red-200",
+        };
     }
 
     public static string GetFailedSalesVarianceDisplay(TodaysSalesModel todaysSales)
     {
-        var variance = GetSalesVariance(todaysSales);
+        Decimal variance = GetSalesVariance(todaysSales);
         // Special case: comparison was 0, now has failures
         if (variance >= 999m) return "NEW";
-        var percentageChange = variance * 100;
-        var sign = variance > 0 ? "+" : "";
+        Decimal percentageChange = variance * 100;
+        String sign = variance > 0 ? "+" : "";
         return $"{sign}{percentageChange:F1}%";
     }
 }
