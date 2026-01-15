@@ -10,6 +10,9 @@ using Microsoft.JSInterop;
 using Moq;
 using Shouldly;
 using System.Security.Claims;
+using EstateManagementUI.BusinessLogic.Client;
+using EstateManagementUI.BusinessLogic.Requests;
+using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
@@ -44,13 +47,21 @@ public class HomePageTests : TestContext
     public void Home_RendersCorrectly()
     {
         // Arrange
-        var claims = new[] { new Claim(ClaimTypes.Role, "Estate") };
+        var claims = new[] { new Claim(ClaimTypes.Role, "Estate"),
+            new Claim("estateId", Guid.NewGuid().ToString()),
+            new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "EstateUser")
+        };
         var identity = new ClaimsIdentity(claims, "Test");
         var user = new ClaimsPrincipal(identity);
         var authState = Task.FromResult(new AuthenticationState(user));
-        
+
         _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync()).Returns(authState);
-        
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockComparisonDates()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantKpiQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchantKpi()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysFailedSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchants()));
+
         // Act
         var cut = RenderComponent<Home>();
         
@@ -63,13 +74,22 @@ public class HomePageTests : TestContext
     public void Home_HasCorrectPageTitle()
     {
         // Arrange
-        var claims = new[] { new Claim(ClaimTypes.Role, "Estate") };
+        var claims = new[] { new Claim(ClaimTypes.Role, "Estate"), 
+            new Claim("estateId", Guid.NewGuid().ToString()),
+            new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "EstateUser")
+        };
         var identity = new ClaimsIdentity(claims, "Test");
         var user = new ClaimsPrincipal(identity);
         var authState = Task.FromResult(new AuthenticationState(user));
         
         _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync()).Returns(authState);
-        
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>())).ReturnsAsync(Result.Success( StubTestData.GetMockComparisonDates()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantKpiQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchantKpi()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysFailedSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchants()));
+
+
         // Act
         var cut = RenderComponent<Home>();
         
