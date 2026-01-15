@@ -256,7 +256,7 @@
             // Load all data in parallel
             var salesCountTask = Mediator.Send(new Queries.GetTodaysSalesCountByHourQuery(correlationId, accessToken, estateId, comparisonDate));
             var salesValueTask = Mediator.Send(new Queries.GetTodaysSalesValueByHourQuery(correlationId, accessToken, estateId, comparisonDate));
-            var todaysSalesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, accessToken, estateId, comparisonDate));
+            var todaysSalesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateId, comparisonDate));
             var settlementTask = Mediator.Send(new Queries.GetTodaysSettlementQuery(correlationId, accessToken, estateId, comparisonDate));
 
             await Task.WhenAll(salesCountTask, salesValueTask, todaysSalesTask, settlementTask);

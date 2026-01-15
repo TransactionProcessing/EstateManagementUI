@@ -97,39 +97,25 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 errorMessage = null;
                 StateHasChanged();
 
-                var correlationId = new CorrelationId(Guid.NewGuid());
+                CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
                 var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 
                 var estateIdResult = authState.GetEstateIdFromClaims();
                 if (estateIdResult.IsFailed) {
                     return ResultHelpers.CreateFailure(estateIdResult);
                 }
-                var accessToken = "stubbed-token";
 
                 // Load comparison dates first (only if not already loaded)
-                if (comparisonDates == null || !comparisonDates.Any()) {
-                    var comparisonDatesResult = await Mediator.Send(new Queries.GetComparisonDatesQuery(correlationId, estateIdResult.Data));
-                    if (comparisonDatesResult.IsFailed) {
-                        return ResultHelpers.CreateFailure(comparisonDatesResult);
-                    }
-
-                    comparisonDates = ModelFactory.ConvertFrom(comparisonDatesResult.Data);
-                    if (comparisonDates != null && comparisonDates.Any()) {
-                        // Set default comparison date to the first one only on initial load
-                        _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
-                    }
-                }
-
-                if (!DateTime.TryParse(_selectedComparisonDate, out DateTime comparisonDate)) {
-                    // Fallback to a week ago if parse fails
-                    comparisonDate = DateTime.Now.AddDays(-7);
+                Result<DateTime> comparisonDateResult = await LoadComparisonDates(correlationId, estateIdResult.Data);
+                if (comparisonDateResult.IsFailed) {
+                    return ResultHelpers.CreateFailure(comparisonDateResult);
                 }
 
                 // Load all dashboard data in parallel
-                var kpiTask = Mediator.Send(new Queries.GetMerchantKpiQuery(correlationId, accessToken, estateIdResult.Data));
-                var salesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, accessToken, estateIdResult.Data, comparisonDate));
-                var failedSalesTask = Mediator.Send(new Queries.GetTodaysFailedSalesQuery(correlationId, accessToken, estateIdResult.Data, LOW_CREDIT_RESPONSE_CODE, comparisonDate));
-                var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateIdResult.Data));
+                var kpiTask = Mediator.Send(new Queries.GetMerchantKpiQuery(correlationId, estateIdResult.Data));
+                var salesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateIdResult.Data, comparisonDateResult.Data));
+                var failedSalesTask = Mediator.Send(new Queries.GetTodaysFailedSalesQuery(correlationId, estateIdResult.Data, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
+                var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateIdResult.Data));
 
                 await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
 
@@ -153,7 +139,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
             catch (Exception ex) {
                 errorMessage = $"Failed to load dashboard data: {ex.Message}";
                 return Result.Failure(ex.GetCombinedExceptionMessages());
-
             }
             finally {
                 isLoading = false;
@@ -161,7 +146,32 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 await LogToConsole("LoadDashboardData END");
             }
         }
+
+        private async Task<Result<DateTime>> LoadComparisonDates(CorrelationId correlationId, Guid estateId) {
+
+            Result<List<BusinessLogic.Models.ComparisonDateModel>> comparisonDatesResult = default;
+            if (comparisonDates == null || !comparisonDates.Any()) {
+                comparisonDatesResult = await Mediator.Send(new Queries.GetComparisonDatesQuery(correlationId, estateId));
+                if (comparisonDatesResult.IsFailed) {
+                    return ResultHelpers.CreateFailure(comparisonDatesResult);
+                }
+
+
+                comparisonDates = ModelFactory.ConvertFrom(comparisonDatesResult.Data);
+                if (comparisonDates != null && comparisonDates.Any()) {
+                    // Set default comparison date to the first one only on initial load
+                    _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
+                }
+            }
+
+            if (!DateTime.TryParse(_selectedComparisonDate, out DateTime comparisonDate)) {
+                // Fallback to a week ago if parse fails
+                comparisonDate = DateTime.Now.AddDays(-7);
+            }
         
+            return Result.Success(comparisonDate);
+        }
+
         private async Task OnComparisonDateChanged()
         {
             changeEventCounter++;

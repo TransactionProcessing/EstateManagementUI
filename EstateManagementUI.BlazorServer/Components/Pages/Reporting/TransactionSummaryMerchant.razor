@@ -272,7 +272,7 @@
             var accessToken = "stubbed-token";
             
             // Load filter options
-            var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateId));
+            var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
             var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
             
             await Task.WhenAll(merchantsTask, operatorsTask);

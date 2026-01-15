@@ -136,9 +136,8 @@
         {
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
 
-            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateId));
+            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
             if (result.IsSuccess)
             {
                 merchants = ModelFactory.ConvertFrom(result.Data);

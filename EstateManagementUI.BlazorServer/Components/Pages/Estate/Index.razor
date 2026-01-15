@@ -298,7 +298,7 @@
                 }
             }
 
-            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateId));
+            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
             if (merchantsResult.IsSuccess)
             {
                 merchants = ModelFactory.ConvertFrom(merchantsResult.Data);
