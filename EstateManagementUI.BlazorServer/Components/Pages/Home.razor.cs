@@ -3,6 +3,7 @@ using EstateManagementUI.BlazorServer.Factories;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using Shared.Exceptions;
@@ -55,7 +56,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
 
                 // Redirect unauthenticated users to entry screen
                 if (!user.Identity?.IsAuthenticated ?? true) {
-                    NavigationManager.NavigateTo("/entry", replace: true);
+                    NavigationManager.NavigateToEntryPage();
                     return;
                 }
 
@@ -67,7 +68,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
                 var estateIdResult = authState.GetEstateIdFromClaims();
                 if (estateIdResult.IsFailed) {
-                    NavigationManager.NavigateTo("/error", replace: true);
+                    this.NavigationManager.NavigateToErrorPage();
                     return;
                 }
 
@@ -75,7 +76,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 if (isAdministrator == false) {
                     var result = await LoadDashboardData(correlationId, estateIdResult.Data);
                     if (result.IsFailed) {
-                        NavigationManager.NavigateTo("/error", replace: true);
+                        this.NavigationManager.NavigateToErrorPage();
                         return;
                     }
                 }
@@ -89,7 +90,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 errorMessage = $"Initialization error: {ex.Message}";
                 isLoading = false;
                 StateHasChanged();
-                NavigationManager.NavigateTo("/error", replace: true);
+                this.NavigationManager.NavigateToErrorPage();
                 return;
             }
 
@@ -183,14 +184,14 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 Result<Guid> estateIdResult = authState.GetEstateIdFromClaims();
                 if (estateIdResult.IsFailed) {
-                    NavigationManager.NavigateTo("/error", replace: true);
+                    this.NavigationManager.NavigateToErrorPage();
                     return;
                 }
 
                 await LogToConsole($"Loading dashboard data for date: {_selectedComparisonDate}");
                 var loadResult = await LoadDashboardData(correlationId,estateIdResult.Data);
                 if (loadResult.IsFailed) {
-                    NavigationManager.NavigateTo("/error", replace: true);
+                    this.NavigationManager.NavigateToErrorPage();
                     return;
                 }
                 StateHasChanged();
@@ -347,4 +348,14 @@ public static class Helpers
         String sign = variance > 0 ? "+" : "";
         return $"{sign}{percentageChange:F1}%";
     }
+
+    public static void NavigateToErrorPage(this NavigationManager navigationManager) {
+        navigationManager.NavigateTo("/error", replace: true);
+    }
+    public static void NavigateToEntryPage(this NavigationManager navigationManager)
+    {
+        navigationManager.NavigateTo("/entry", replace: true);
+    }
+
+    
 }
