@@ -64,9 +64,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 isAdministrator = role == "Administrator";
                 await LogToConsole($"User role: {role}, isAdministrator: {isAdministrator}");
 
+                CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
+                var estateIdResult = authState.GetEstateIdFromClaims();
+                if (estateIdResult.IsFailed) {
+                    NavigationManager.NavigateTo("/error", replace: true);
+                    return;
+                }
+
                 // Only load dashboard data for non-admins
                 if (isAdministrator == false) {
-                    var result = await LoadDashboardData();
+                    var result = await LoadDashboardData(correlationId, estateIdResult.Data);
                     if (result.IsFailed) {
                         NavigationManager.NavigateTo("/error", replace: true);
                         return;
@@ -89,33 +96,25 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
             await base.OnAfterRenderAsync(firstRender);
         }
         
-        private async Task<Result> LoadDashboardData()
+        private async Task<Result> LoadDashboardData(CorrelationId correlationId, Guid estateId)
         {
             await LogToConsole($"LoadDashboardData START - selectedDate: {_selectedComparisonDate}");
             try {
                 isLoading = true;
                 errorMessage = null;
                 StateHasChanged();
-
-                CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
-                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
                 
-                var estateIdResult = authState.GetEstateIdFromClaims();
-                if (estateIdResult.IsFailed) {
-                    return ResultHelpers.CreateFailure(estateIdResult);
-                }
-
                 // Load comparison dates first (only if not already loaded)
-                Result<DateTime> comparisonDateResult = await LoadComparisonDates(correlationId, estateIdResult.Data);
+                Result<DateTime> comparisonDateResult = await LoadComparisonDates(correlationId, estateId);
                 if (comparisonDateResult.IsFailed) {
                     return ResultHelpers.CreateFailure(comparisonDateResult);
                 }
 
                 // Load all dashboard data in parallel
-                var kpiTask = Mediator.Send(new Queries.GetMerchantKpiQuery(correlationId, estateIdResult.Data));
-                var salesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateIdResult.Data, comparisonDateResult.Data));
-                var failedSalesTask = Mediator.Send(new Queries.GetTodaysFailedSalesQuery(correlationId, estateIdResult.Data, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
-                var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateIdResult.Data));
+                var kpiTask = Mediator.Send(new Queries.GetMerchantKpiQuery(correlationId, estateId));
+                var salesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateId, comparisonDateResult.Data));
+                var failedSalesTask = Mediator.Send(new Queries.GetTodaysFailedSalesQuery(correlationId, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
+                var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
 
                 await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
 
@@ -149,7 +148,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
 
         private async Task<Result<DateTime>> LoadComparisonDates(CorrelationId correlationId, Guid estateId) {
 
-            Result<List<BusinessLogic.Models.ComparisonDateModel>> comparisonDatesResult = default;
+            Result<List<BusinessLogic.Models.ComparisonDateModel>> comparisonDatesResult;
             if (comparisonDates == null || !comparisonDates.Any()) {
                 comparisonDatesResult = await Mediator.Send(new Queries.GetComparisonDatesQuery(correlationId, estateId));
                 if (comparisonDatesResult.IsFailed) {
@@ -179,8 +178,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
 
             // This is called after _selectedComparisonDate is updated by @bind-Value
             if (isAdministrator == false) {
+
+                CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
+                AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                Result<Guid> estateIdResult = authState.GetEstateIdFromClaims();
+                if (estateIdResult.IsFailed) {
+                    NavigationManager.NavigateTo("/error", replace: true);
+                    return;
+                }
+
                 await LogToConsole($"Loading dashboard data for date: {_selectedComparisonDate}");
-                var loadResult = await LoadDashboardData();
+                var loadResult = await LoadDashboardData(correlationId,estateIdResult.Data);
                 if (loadResult.IsFailed) {
                     NavigationManager.NavigateTo("/error", replace: true);
                     return;
