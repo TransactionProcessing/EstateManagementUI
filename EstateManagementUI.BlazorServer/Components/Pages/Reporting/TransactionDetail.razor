@@ -1,11 +1,8 @@
 @page "/reporting/transaction-detail"
 @rendermode InteractiveServer
-@using MediatR
-@using Microsoft.AspNetCore.Components.Forms
-@using EstateManagementUI.BlazorServer.Requests
-@using EstateManagementUI.BlazorServer.Models
 @using System.Text
-@using static EstateManagementUI.BlazorServer.Requests.Queries
+@using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager Navigation
 @inject ILogger<TransactionDetail> Logger
@@ -434,23 +431,23 @@
             var accessToken = DEFAULT_ACCESS_TOKEN;
             
             // Load filter options
-            var merchantsTask = Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
-            var operatorsTask = Mediator.Send(new GetOperatorsQuery(correlationId, accessToken, estateId));
-            var contractsTask = Mediator.Send(new GetContractsQuery(correlationId, accessToken, estateId));
+            var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
+            var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
+            var contractsTask = Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
             
             await Task.WhenAll(merchantsTask, operatorsTask, contractsTask);
             
             if (merchantsTask.Result.IsSuccess)
-                merchants = merchantsTask.Result.Data;
+                merchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
             
             if (operatorsTask.Result.IsSuccess)
-                operators = operatorsTask.Result.Data;
+                operators = ModelFactory.ConvertFrom(operatorsTask.Result.Data);
             
             if (contractsTask.Result.IsSuccess)
             {
                 // Extract all products from all contracts
                 products = contractsTask.Result.Data
-                    ?.SelectMany(c => c.Products ?? new List<ContractProductModel>())
+                    ?.SelectMany(c => ModelFactory.ConvertFrom(c.Products) ?? new List<ContractProductModel>())
                     .Where(p => !string.IsNullOrEmpty(p.ProductName))
                     .DistinctBy(p => p.ProductName)
                     .ToList();
@@ -486,7 +483,7 @@
             Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
             Guid? productId = string.IsNullOrEmpty(_selectedProductId) ? null : Guid.Parse(_selectedProductId);
             
-            var result = await Mediator.Send(new GetTransactionDetailQuery(
+            var result = await Mediator.Send(new Queries.GetTransactionDetailQuery(
                 correlationId, 
                 accessToken, 
                 estateId, 
@@ -499,7 +496,7 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                detailData = result.Data;
+                detailData = ModelFactory.ConvertFrom(result.Data);
                 CalculateKPIs();
             }
             else

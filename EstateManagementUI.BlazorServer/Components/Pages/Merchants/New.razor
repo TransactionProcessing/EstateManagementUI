@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService
@@ -190,7 +191,7 @@ else
 </div>
 
 @code {
-    private CreateMerchantModel model = new();
+    private readonly New.CreateMerchantModel model = new();
     private bool isSaving = false;
     private bool hasPermission = false;
     private string? errorMessage;

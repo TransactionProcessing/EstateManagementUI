@@ -1,14 +1,15 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 using EstateManagementUI.BlazorServer.Components.Permissions;
-using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
 
@@ -45,8 +46,8 @@ public class ContractsViewPageTests : TestContext
             OperatorName = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractQuery>(), default))
-            .ReturnsAsync(Result<ContractModel>.Success(contract));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -68,8 +69,8 @@ public class ContractsViewPageTests : TestContext
             OperatorName = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractQuery>(), default))
-            .ReturnsAsync(Result<ContractModel>.Success(contract));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -85,8 +86,8 @@ public class ContractsViewPageTests : TestContext
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractQuery>(), default))
-            .ReturnsAsync(Result<ContractModel>.Success(new ContractModel { ContractId = contractId }));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(new ContractModel { ContractId = contractId }));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters

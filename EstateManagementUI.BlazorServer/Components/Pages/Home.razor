@@ -1,6 +1,5 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@using static EstateManagementUI.BlazorServer.Requests.Queries
 @inject IMediator Mediator
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
@@ -120,50 +119,50 @@
         <!-- Comparison Cards Row 2 - Sales Data -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Today's Sales vs Comparison -->
-            <div class="card @GetSalesBackgroundClass()">
+            <div class="card @Helpers.GetSalesBackgroundClass(todaysSales)">
                 <div class="card-body">
-                    <h3 class="text-lg font-semibold mb-4 @GetSalesTextClass()">Today's Sales</h3>
+                    <h3 class="text-lg font-semibold mb-4 @Helpers.GetSalesTextClass(todaysSales)">Today's Sales</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <p class="text-sm @GetSalesTextClass(0.7) uppercase font-medium">Today</p>
-                            <p class="text-2xl font-bold @GetSalesTextClass()">@((todaysSales?.TodaysSalesValue ?? 0).ToString("C"))</p>
-                            <p class="text-sm @GetSalesTextClass(0.7)">@(todaysSales?.TodaysSalesCount ?? 0) transactions</p>
+                            <p class="text-sm @Helpers.GetSalesTextClass(todaysSales, 0.7) uppercase font-medium">Today</p>
+                            <p class="text-2xl font-bold @Helpers.GetSalesTextClass(todaysSales)">@((todaysSales?.TodaysSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @Helpers.GetSalesTextClass(todaysSales, 0.7)">@(todaysSales?.TodaysSalesCount ?? 0) transactions</p>
                         </div>
                         <div>
-                            <p class="text-sm @GetSalesTextClass(0.7) uppercase font-medium">@GetComparisonLabel()</p>
-                            <p class="text-2xl font-bold @GetSalesTextClass()">@((todaysSales?.ComparisonSalesValue ?? 0).ToString("C"))</p>
-                            <p class="text-sm @GetSalesTextClass(0.7)">@(todaysSales?.ComparisonSalesCount ?? 0) transactions</p>
+                            <p class="text-sm @Helpers.GetSalesTextClass(todaysSales, 0.7) uppercase font-medium">@Helpers.GetComparisonLabel(comparisonDates, _selectedComparisonDate)</p>
+                            <p class="text-2xl font-bold @Helpers.GetSalesTextClass(todaysSales)">@((todaysSales?.ComparisonSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @Helpers.GetSalesTextClass(todaysSales, 0.7)">@(todaysSales?.ComparisonSalesCount ?? 0) transactions</p>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t @GetSalesBorderClass()">
+                    <div class="mt-4 pt-4 border-t @Helpers.GetSalesBorderClass(todaysSales)">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm @GetSalesTextClass(0.7) font-medium">Variance:</span>
-                            <span class="text-lg font-bold @GetSalesTextClass()">@GetSalesVarianceDisplay()</span>
+                            <span class="text-sm @Helpers.GetSalesTextClass(todaysSales, 0.7) font-medium">Variance:</span>
+                            <span class="text-lg font-bold @Helpers.GetSalesTextClass(todaysSales)">@Helpers.GetSalesVarianceDisplay(todaysSales)</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Today's Failed Sales vs Comparison -->
-            <div class="card @GetFailedSalesBackgroundClass()">
+            <div class="card @Helpers.GetFailedSalesBackgroundClass(todaysFailedSales)">
                 <div class="card-body">
-                    <h3 class="text-lg font-semibold mb-4 @GetFailedSalesTextClass()">Failed Sales (Low Credit)</h3>
+                    <h3 class="text-lg font-semibold mb-4 @Helpers.GetFailedSalesTextClass(todaysFailedSales)">Failed Sales (Low Credit)</h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <p class="text-sm @GetFailedSalesTextClass(0.7) uppercase font-medium">Today</p>
-                            <p class="text-2xl font-bold @GetFailedSalesTextClass()">@((todaysFailedSales?.TodaysSalesValue ?? 0).ToString("C"))</p>
-                            <p class="text-sm @GetFailedSalesTextClass(0.7)">@(todaysFailedSales?.TodaysSalesCount ?? 0) transactions</p>
+                            <p class="text-sm @Helpers.GetFailedSalesTextClass(todaysFailedSales, 0.7) uppercase font-medium">Today</p>
+                            <p class="text-2xl font-bold @Helpers.GetFailedSalesTextClass(todaysFailedSales)">@((todaysFailedSales?.TodaysSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @Helpers.GetFailedSalesTextClass(todaysFailedSales,0.7)">@(todaysFailedSales?.TodaysSalesCount ?? 0) transactions</p>
                         </div>
                         <div>
-                            <p class="text-sm @GetFailedSalesTextClass(0.7) uppercase font-medium">@GetComparisonLabel()</p>
-                            <p class="text-2xl font-bold @GetFailedSalesTextClass()">@((todaysFailedSales?.ComparisonSalesValue ?? 0).ToString("C"))</p>
-                            <p class="text-sm @GetFailedSalesTextClass(0.7)">@(todaysFailedSales?.ComparisonSalesCount ?? 0) transactions</p>
+                            <p class="text-sm @Helpers.GetFailedSalesTextClass(todaysFailedSales, 0.7) uppercase font-medium">@Helpers.GetComparisonLabel(comparisonDates, _selectedComparisonDate)</p>
+                            <p class="text-2xl font-bold @Helpers.GetFailedSalesTextClass(todaysFailedSales)">@((todaysFailedSales?.ComparisonSalesValue ?? 0).ToString("C"))</p>
+                            <p class="text-sm @Helpers.GetFailedSalesTextClass(todaysFailedSales, 0.7)">@(todaysFailedSales?.ComparisonSalesCount ?? 0) transactions</p>
                         </div>
                     </div>
-                    <div class="mt-4 pt-4 border-t @GetFailedSalesBorderClass()">
+                    <div class="mt-4 pt-4 border-t @Helpers.GetFailedSalesBorderClass(todaysFailedSales)">
                         <div class="flex items-center justify-between">
-                            <span class="text-sm @GetFailedSalesTextClass(0.7) font-medium">Variance:</span>
-                            <span class="text-lg font-bold @GetFailedSalesTextClass()">@GetFailedSalesVarianceDisplay()</span>
+                            <span class="text-sm @Helpers.GetFailedSalesTextClass(todaysFailedSales, 0.7) font-medium">Variance:</span>
+                            <span class="text-lg font-bold @Helpers.GetFailedSalesTextClass(todaysFailedSales)">@Helpers.GetFailedSalesVarianceDisplay(todaysFailedSales)</span>
                         </div>
                     </div>
                 </div>
@@ -202,278 +201,3 @@
         }
     }
 </div>
-
-@code {
-    // Response code for low credit failures
-    private const string LOW_CREDIT_RESPONSE_CODE = "1008";
-    
-    private bool isLoading = true;
-    private bool isAdministrator = false;
-    private string? errorMessage;
-    
-    private MerchantKpiModel? merchantKpi;
-    private TodaysSalesModel? todaysSales;
-    private TodaysSalesModel? todaysFailedSales;
-    private List<ComparisonDateModel>? comparisonDates;
-    private List<MerchantModel>? recentMerchants;
-    private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
-    private int changeEventCounter = 0;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await LogToConsole("OnInitializedAsync START");
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-        
-        // Redirect unauthenticated users to entry screen
-        if (!user.Identity?.IsAuthenticated ?? true)
-        {
-            NavigationManager.NavigateTo("/entry", replace: true);
-            return;
-        }
-
-        // Check if user is Administrator
-        var role = await PermissionService.GetUserRoleAsync();
-        isAdministrator = role == "Administrator";
-        await LogToConsole($"User role: {role}, isAdministrator: {isAdministrator}");
-
-        // Only load data if not administrator
-        if (!isAdministrator)
-        {
-            await LoadDashboardData();
-        }
-        else
-        {
-            isLoading = false;
-        }
-        
-        await base.OnInitializedAsync();
-    }
-
-    private async Task LoadDashboardData()
-    {
-        await LogToConsole($"LoadDashboardData START - selectedDate: {_selectedComparisonDate}");
-        try
-        {
-            isLoading = true;
-            errorMessage = null;
-            StateHasChanged();
-
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            // Note: These are stubbed values used throughout the test environment
-            // In production, these would come from the authentication context
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            // Load comparison dates first (only if not already loaded)
-            if (comparisonDates == null || !comparisonDates.Any())
-            {
-                var comparisonDatesResult = await Mediator.Send(new GetComparisonDatesQuery(correlationId, accessToken, estateId));
-                if (comparisonDatesResult.IsSuccess)
-                {
-                    comparisonDates = comparisonDatesResult.Data;
-                    if (comparisonDates != null && comparisonDates.Any())
-                    {
-                        // Set default comparison date to the first one only on initial load
-                        _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
-                    }
-                }
-            }
-
-            if (!DateTime.TryParse(_selectedComparisonDate, out var comparisonDate))
-            {
-                // Fallback to a week ago if parse fails
-                comparisonDate = DateTime.Now.AddDays(-7);
-            }
-
-            // Load all dashboard data in parallel
-            var kpiTask = Mediator.Send(new GetMerchantKpiQuery(correlationId, accessToken, estateId));
-            var salesTask = Mediator.Send(new GetTodaysSalesQuery(correlationId, accessToken, estateId, comparisonDate));
-            var failedSalesTask = Mediator.Send(new GetTodaysFailedSalesQuery(correlationId, accessToken, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDate));
-            var merchantsTask = Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
-
-            await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
-
-            // Process results
-            if (kpiTask.Result.IsSuccess)
-                merchantKpi = kpiTask.Result.Data;
-
-            if (salesTask.Result.IsSuccess)
-                todaysSales = salesTask.Result.Data;
-
-            if (failedSalesTask.Result.IsSuccess)
-                todaysFailedSales = failedSalesTask.Result.Data;
-
-            if (merchantsTask.Result.IsSuccess)
-                // Note: API returns merchants in creation order (newest first)
-                // If ordering is incorrect, would need CreatedDate field in the model
-                recentMerchants = merchantsTask.Result.Data?.ToList();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load dashboard data: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-            await LogToConsole("LoadDashboardData END");
-        }
-    }
-    private async Task OnComparisonDateChanged()
-    {
-        changeEventCounter++;
-        await LogToConsole($"🔥 OnComparisonDateChanged FIRED! Count: {changeEventCounter}, New value: {_selectedComparisonDate}");
-        
-        // This is called after _selectedComparisonDate is updated by @bind-Value
-        if (!isAdministrator)
-        {
-            await LogToConsole($"Loading dashboard data for date: {_selectedComparisonDate}");
-            await LoadDashboardData();
-            StateHasChanged();
-            await LogToConsole("Dashboard data reload complete");
-        }
-        else
-        {
-            await LogToConsole("User is administrator - skipping data reload");
-        }
-    }
-    
-    private async Task LogToConsole(string message)
-    {
-        try
-        {
-            await JSRuntime.InvokeVoidAsync("console.log", $"[Home.razor {DateTime.Now:HH:mm:ss.fff}] {message}");
-        }
-        catch
-        {
-            // Ignore JS interop errors during prerendering
-        }
-    }
-
-
-    private string GetComparisonLabel()
-    {
-        if (comparisonDates == null) return "Comparison";
-        if (!DateTime.TryParse(_selectedComparisonDate, out var date))
-            return "Comparison";
-        var comparisonDate = comparisonDates.FirstOrDefault(d => d.Date.Date == date.Date);
-        return comparisonDate?.Description ?? date.ToString("MMM dd");
-    }
-
-    // Sales comparison color methods
-    private decimal GetSalesVariance()
-    {
-        if (todaysSales == null) return 0;
-        if (todaysSales.ComparisonSalesValue == 0)
-        {
-            // If comparison is 0 and today is 0, no change
-            if (todaysSales.TodaysSalesValue == 0) return 0;
-            // If comparison is 0 but today has sales, treat as maximum positive change
-            return todaysSales.TodaysSalesValue > 0 ? 999m : 0;
-        }
-        return (todaysSales.TodaysSalesValue - todaysSales.ComparisonSalesValue) / todaysSales.ComparisonSalesValue;
-    }
-
-    private string GetSalesBackgroundClass()
-    {
-        var variance = GetSalesVariance();
-        if (variance < 0) return "bg-red-50"; // Worse
-        if (variance == 0) return "bg-blue-50"; // Same
-        if (variance > 0 && variance < 0.2m) return "bg-yellow-50"; // Slightly better
-        return "bg-green-50"; // Much better
-    }
-
-    private string GetSalesTextClass(double opacity = 1.0)
-    {
-        var variance = GetSalesVariance();
-        if (opacity < 1.0)
-        {
-            if (variance < 0) return "text-red-700";
-            if (variance == 0) return "text-blue-700";
-            if (variance > 0 && variance < 0.2m) return "text-yellow-700";
-            return "text-green-700";
-        }
-        if (variance < 0) return "text-red-900";
-        if (variance == 0) return "text-blue-900";
-        if (variance > 0 && variance < 0.2m) return "text-yellow-900";
-        return "text-green-900";
-    }
-
-    private string GetSalesBorderClass()
-    {
-        var variance = GetSalesVariance();
-        if (variance < 0) return "border-red-200";
-        if (variance == 0) return "border-blue-200";
-        if (variance > 0 && variance < 0.2m) return "border-yellow-200";
-        return "border-green-200";
-    }
-
-    private string GetSalesVarianceDisplay()
-    {
-        var variance = GetSalesVariance();
-        // Special case: comparison was 0, now has sales
-        if (variance >= 999m) return "NEW";
-        var percentageChange = variance * 100;
-        var sign = variance > 0 ? "+" : "";
-        return $"{sign}{percentageChange:F1}%";
-    }
-
-    // Failed sales comparison color methods (reversed logic)
-    private decimal GetFailedSalesVariance()
-    {
-        if (todaysFailedSales == null) return 0;
-        if (todaysFailedSales.ComparisonSalesValue == 0)
-        {
-            // If comparison is 0 and today is 0, no change
-            if (todaysFailedSales.TodaysSalesValue == 0) return 0;
-            // If comparison is 0 but today has failures, treat as maximum negative change (bad!)
-            return todaysFailedSales.TodaysSalesValue > 0 ? 999m : 0;
-        }
-        return (todaysFailedSales.TodaysSalesValue - todaysFailedSales.ComparisonSalesValue) / todaysFailedSales.ComparisonSalesValue;
-    }
-
-    private string GetFailedSalesBackgroundClass()
-    {
-        var variance = GetFailedSalesVariance();
-        if (variance < 0) return "bg-green-50"; // Good - fewer failures
-        if (variance == 0) return "bg-blue-50"; // Same
-        if (variance > 0 && variance < 0.2m) return "bg-yellow-50"; // Slightly worse
-        return "bg-red-50"; // Much worse
-    }
-
-    private string GetFailedSalesTextClass(double opacity = 1.0)
-    {
-        var variance = GetFailedSalesVariance();
-        if (opacity < 1.0)
-        {
-            if (variance < 0) return "text-green-700";
-            if (variance == 0) return "text-blue-700";
-            if (variance > 0 && variance < 0.2m) return "text-yellow-700";
-            return "text-red-700";
-        }
-        if (variance < 0) return "text-green-900";
-        if (variance == 0) return "text-blue-900";
-        if (variance > 0 && variance < 0.2m) return "text-yellow-900";
-        return "text-red-900";
-    }
-
-    private string GetFailedSalesBorderClass()
-    {
-        var variance = GetFailedSalesVariance();
-        if (variance < 0) return "border-green-200";
-        if (variance == 0) return "border-blue-200";
-        if (variance > 0 && variance < 0.2m) return "border-yellow-200";
-        return "border-red-200";
-    }
-
-    private string GetFailedSalesVarianceDisplay()
-    {
-        var variance = GetFailedSalesVariance();
-        // Special case: comparison was 0, now has failures
-        if (variance >= 999m) return "NEW";
-        var percentageChange = variance * 100;
-        var sign = variance > 0 ? "+" : "";
-        return $"{sign}{percentageChange:F1}%";
-    }
-}

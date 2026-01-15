@@ -1,14 +1,12 @@
 @page "/reporting/analytical-charts"
+@using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Requests
+@using Shared.General
 @rendermode InteractiveServer
-@using MediatR
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.Forms
-@using EstateManagementUI.BlazorServer.Requests
-@using EstateManagementUI.BlazorServer.Models
-@using static EstateManagementUI.BlazorServer.Requests.Queries
 @inject IMediator Mediator
 @inject IJSRuntime JSRuntime
 @inject ILogger<AnalyticalCharts> Logger
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Analytical Charts (Volume &amp; Value)</PageTitle>
 
@@ -228,16 +226,21 @@
             var correlationId = new CorrelationId(Guid.NewGuid());
             // Note: These are stubbed values used throughout the test environment
             // In production, these would come from the authentication context
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var estateIdClaim = ClaimsHelper.GetUserClaim(user, "estateId");
+            if (estateIdClaim.IsFailed)
+                return;
+            Guid estateId = Guid.Parse(estateIdClaim.Data.Value);
             var accessToken = "stubbed-token";
 
             // Load comparison dates first (only if not already loaded)
             if (comparisonDates == null || !comparisonDates.Any())
             {
-                var comparisonDatesResult = await Mediator.Send(new GetComparisonDatesQuery(correlationId, accessToken, estateId));
+                var comparisonDatesResult = await Mediator.Send(new Queries.GetComparisonDatesQuery(correlationId, estateId));
                 if (comparisonDatesResult.IsSuccess)
                 {
-                    comparisonDates = comparisonDatesResult.Data;
+                    comparisonDates = ModelFactory.ConvertFrom(comparisonDatesResult.Data);
                     if (comparisonDates != null && comparisonDates.Any())
                     {
                         _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
@@ -251,25 +254,25 @@
             }
 
             // Load all data in parallel
-            var salesCountTask = Mediator.Send(new GetTodaysSalesCountByHourQuery(correlationId, accessToken, estateId, comparisonDate));
-            var salesValueTask = Mediator.Send(new GetTodaysSalesValueByHourQuery(correlationId, accessToken, estateId, comparisonDate));
-            var todaysSalesTask = Mediator.Send(new GetTodaysSalesQuery(correlationId, accessToken, estateId, comparisonDate));
-            var settlementTask = Mediator.Send(new GetTodaysSettlementQuery(correlationId, accessToken, estateId, comparisonDate));
+            var salesCountTask = Mediator.Send(new Queries.GetTodaysSalesCountByHourQuery(correlationId, accessToken, estateId, comparisonDate));
+            var salesValueTask = Mediator.Send(new Queries.GetTodaysSalesValueByHourQuery(correlationId, accessToken, estateId, comparisonDate));
+            var todaysSalesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateId, comparisonDate));
+            var settlementTask = Mediator.Send(new Queries.GetTodaysSettlementQuery(correlationId, accessToken, estateId, comparisonDate));
 
             await Task.WhenAll(salesCountTask, salesValueTask, todaysSalesTask, settlementTask);
 
             // Process results
             if (salesCountTask.Result.IsSuccess)
-                salesCountData = salesCountTask.Result.Data;
+                salesCountData = ModelFactory.ConvertFrom(salesCountTask.Result.Data);
 
             if (salesValueTask.Result.IsSuccess)
-                salesValueData = salesValueTask.Result.Data;
+                salesValueData = ModelFactory.ConvertFrom(salesValueTask.Result.Data);
 
             if (todaysSalesTask.Result.IsSuccess)
-                todaysSales = todaysSalesTask.Result.Data;
+                todaysSales = ModelFactory.ConvertFrom(todaysSalesTask.Result.Data);
 
             if (settlementTask.Result.IsSuccess)
-                todaysSettlement = settlementTask.Result.Data;
+                todaysSettlement = ModelFactory.ConvertFrom(settlementTask.Result.Data);
 
             // Calculate KPIs
             CalculateKPIs();

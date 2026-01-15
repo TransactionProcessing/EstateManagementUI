@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -12,13 +12,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Lamar" Version="15.0.1" />
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="15.0.1" />
     <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="IdentityModel" Version="6.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Shared" Version="2025.12.2" />
   </ItemGroup>
+
 
   <ItemGroup>
     <Content Update="appsettings.json">
@@ -36,6 +36,14 @@
     <None Update=".dockerignore">
       <DependentUpon>Dockerfile</DependentUpon>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Requests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EstateManagmentUI.BusinessLogic\EstateManagementUI.BusinessLogic.csproj" />
   </ItemGroup>
 
   <!-- Build Tailwind CSS before build -->

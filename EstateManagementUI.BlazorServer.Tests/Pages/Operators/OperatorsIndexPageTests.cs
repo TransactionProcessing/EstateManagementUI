@@ -1,13 +1,14 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
-using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
 using OperatorsIndex = EstateManagementUI.BlazorServer.Components.Pages.Operators.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
@@ -49,8 +50,8 @@ public class OperatorsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result<List<OperatorModel>>.Success(operators));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(operators));
         
         // Act
         var cut = RenderComponent<OperatorsIndex>();
@@ -64,8 +65,8 @@ public class OperatorsIndexPageTests : TestContext
     {
         // Arrange
         var emptyList = new List<OperatorModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result<List<OperatorModel>>.Success(emptyList));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(emptyList));
         
         // Act
         var cut = RenderComponent<OperatorsIndex>();
@@ -97,8 +98,8 @@ public class OperatorsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result<List<OperatorModel>>.Success(operators));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(operators));
         
         // Act
         var cut = RenderComponent<OperatorsIndex>();
@@ -124,8 +125,8 @@ public class OperatorsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result<List<OperatorModel>>.Success(operators));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(operators));
         
         // Act
         var cut = RenderComponent<OperatorsIndex>();
@@ -140,8 +141,8 @@ public class OperatorsIndexPageTests : TestContext
     public void OperatorsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result<List<OperatorModel>>.Success(new List<OperatorModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
         
         // Act
         var cut = RenderComponent<OperatorsIndex>();

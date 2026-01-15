@@ -1,10 +1,7 @@
 @page "/reporting/transaction-summary-merchant"
+@using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
-@using MediatR
-@using Microsoft.AspNetCore.Components.Forms
-@using EstateManagementUI.BlazorServer.Requests
-@using EstateManagementUI.BlazorServer.Models
-@using static EstateManagementUI.BlazorServer.Requests.Queries
 @inject IMediator Mediator
 @inject NavigationManager Navigation
 @inject ILogger<TransactionSummaryMerchant> Logger
@@ -275,16 +272,16 @@
             var accessToken = "stubbed-token";
             
             // Load filter options
-            var merchantsTask = Mediator.Send(new GetMerchantsQuery(correlationId, accessToken, estateId));
-            var operatorsTask = Mediator.Send(new GetOperatorsQuery(correlationId, accessToken, estateId));
+            var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
+            var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
             
             await Task.WhenAll(merchantsTask, operatorsTask);
             
             if (merchantsTask.Result.IsSuccess)
-                merchants = merchantsTask.Result.Data;
+                merchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
             
             if (operatorsTask.Result.IsSuccess)
-                operators = operatorsTask.Result.Data;
+                operators = ModelFactory.ConvertFrom(operatorsTask.Result.Data);
             
             // Load summary data
             await LoadSummaryData();
@@ -315,7 +312,7 @@
             Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
             Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
             
-            var result = await Mediator.Send(new GetMerchantTransactionSummaryQuery(
+            var result = await Mediator.Send(new Queries.GetMerchantTransactionSummaryQuery(
                 correlationId, 
                 accessToken, 
                 estateId, 
@@ -327,7 +324,7 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                summaryData = result.Data;
+                summaryData = ModelFactory.ConvertFrom(result.Data);
                 CalculateKPIs();
             }
             else

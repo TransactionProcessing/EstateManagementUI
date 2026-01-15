@@ -1,6 +1,6 @@
-using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BusinessLogic.Models;
 
-namespace EstateManagementUI.BlazorServer.Services;
+namespace EstateManagementUI.BusinessLogic.Services;
 
 /// <summary>
 /// Interface for managing test data in memory during integration testing

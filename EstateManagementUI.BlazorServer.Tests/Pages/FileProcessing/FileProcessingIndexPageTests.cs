@@ -2,12 +2,14 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
+using FileImportLogModel = EstateManagementUI.BusinessLogic.Models.FileImportLogModel;
 using FileProcessingIndex = EstateManagementUI.BlazorServer.Components.Pages.FileProcessing.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
@@ -37,8 +39,8 @@ public class FileProcessingIndexPageTests : TestContext
     public void FileProcessingIndex_RendersCorrectly()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetFileImportLogsListQuery>(), default))
-            .ReturnsAsync(Result<List<FileImportLogModel>>.Success(new List<FileImportLogModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetFileImportLogsListQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<FileImportLogModel>()));
         
         // Act
         var cut = RenderComponent<FileProcessingIndex>();
@@ -51,8 +53,8 @@ public class FileProcessingIndexPageTests : TestContext
     public void FileProcessingIndex_WithNoFiles_ShowsEmptyState()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetFileImportLogsListQuery>(), default))
-            .ReturnsAsync(Result<List<FileImportLogModel>>.Success(new List<FileImportLogModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetFileImportLogsListQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<FileImportLogModel>()));
         
         // Act
         var cut = RenderComponent<FileProcessingIndex>();
@@ -66,8 +68,8 @@ public class FileProcessingIndexPageTests : TestContext
     public void FileProcessingIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetFileImportLogsListQuery>(), default))
-            .ReturnsAsync(Result<List<FileImportLogModel>>.Success(new List<FileImportLogModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetFileImportLogsListQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<FileImportLogModel>()));
         
         // Act
         var cut = RenderComponent<FileProcessingIndex>();

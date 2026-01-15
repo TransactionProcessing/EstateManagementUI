@@ -1,4 +1,6 @@
 @page "/operators/{OperatorId:guid}"
+@using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
@@ -100,7 +102,7 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                operatorModel = result.Data;
+                operatorModel = ModelFactory.ConvertFrom(result.Data);
             }
         }
         finally

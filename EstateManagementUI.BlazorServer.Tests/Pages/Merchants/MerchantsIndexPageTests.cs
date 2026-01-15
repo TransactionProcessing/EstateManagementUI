@@ -1,13 +1,14 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
-using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
 using MerchantsIndex = EstateManagementUI.BlazorServer.Components.Pages.Merchants.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
@@ -51,8 +52,8 @@ public class MerchantsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result<List<MerchantModel>>.Success(merchants));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -66,8 +67,8 @@ public class MerchantsIndexPageTests : TestContext
     {
         // Arrange
         var emptyList = new List<MerchantModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result<List<MerchantModel>>.Success(emptyList));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(emptyList));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -103,8 +104,8 @@ public class MerchantsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result<List<MerchantModel>>.Success(merchants));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -141,8 +142,8 @@ public class MerchantsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result<List<MerchantModel>>.Success(merchants));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -158,8 +159,8 @@ public class MerchantsIndexPageTests : TestContext
     public void MerchantsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result<List<MerchantModel>>.Success(new List<MerchantModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<MerchantModel>()));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();

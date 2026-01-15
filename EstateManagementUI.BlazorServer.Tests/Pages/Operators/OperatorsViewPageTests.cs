@@ -1,12 +1,14 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Operators;
 using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
+using OperatorModel = EstateManagementUI.BusinessLogic.Models.OperatorModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
 
@@ -35,8 +37,8 @@ public class OperatorsViewPageTests : TestContext
             Name = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorQuery>(), default))
-            .ReturnsAsync(Result<OperatorModel>.Success(operatorModel));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorQuery>(), default))
+            .ReturnsAsync(Result.Success(operatorModel));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -57,8 +59,8 @@ public class OperatorsViewPageTests : TestContext
             Name = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorQuery>(), default))
-            .ReturnsAsync(Result<OperatorModel>.Success(operatorModel));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorQuery>(), default))
+            .ReturnsAsync(Result.Success(operatorModel));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -74,8 +76,8 @@ public class OperatorsViewPageTests : TestContext
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetOperatorQuery>(), default))
-            .ReturnsAsync(Result<OperatorModel>.Success(new OperatorModel { OperatorId = operatorId }));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorQuery>(), default))
+            .ReturnsAsync(Result.Success(new OperatorModel { OperatorId = operatorId }));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters

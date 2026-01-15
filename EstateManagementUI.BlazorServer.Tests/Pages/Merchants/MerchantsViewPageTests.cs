@@ -1,12 +1,14 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
+using MerchantModel = EstateManagementUI.BusinessLogic.Models.MerchantModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
@@ -36,8 +38,8 @@ public class MerchantsViewPageTests : TestContext
             MerchantReference = "REF001"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantQuery>(), default))
-            .ReturnsAsync(Result<MerchantModel>.Success(merchant));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantQuery>(), default))
+            .ReturnsAsync(Result.Success(merchant));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -59,8 +61,8 @@ public class MerchantsViewPageTests : TestContext
             MerchantReference = "REF001"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantQuery>(), default))
-            .ReturnsAsync(Result<MerchantModel>.Success(merchant));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantQuery>(), default))
+            .ReturnsAsync(Result.Success(merchant));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -77,8 +79,8 @@ public class MerchantsViewPageTests : TestContext
     {
         // Arrange
         var merchantId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantQuery>(), default))
-            .ReturnsAsync(Result<MerchantModel>.Success(new MerchantModel { MerchantId = merchantId }));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantQuery>(), default))
+            .ReturnsAsync(Result.Success(new MerchantModel { MerchantId = merchantId }));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -100,8 +102,8 @@ public class MerchantsViewPageTests : TestContext
             MerchantName = "Test Merchant"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetMerchantQuery>(), default))
-            .ReturnsAsync(Result<MerchantModel>.Success(merchant));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantQuery>(), default))
+            .ReturnsAsync(Result.Success(merchant));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters

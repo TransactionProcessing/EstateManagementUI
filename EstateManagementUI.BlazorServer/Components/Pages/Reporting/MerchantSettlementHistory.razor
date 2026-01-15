@@ -1,9 +1,9 @@
 @page "/reporting/merchant-settlement-history"
+@using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
-@using EstateManagementUI.BlazorServer.Models
-@using EstateManagementUI.BlazorServer.Requests
 
 <PageTitle>Merchant Settlement History</PageTitle>
 
@@ -219,14 +219,13 @@
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111"); // Test estate ID
             var query = new Queries.GetMerchantsQuery(
                 CorrelationIdHelper.New(),
-                "test-token",
                 estateId
             );
 
             var result = await Mediator.Send(query);
             if (result.IsSuccess)
             {
-                merchants = result.Data;
+                merchants = ModelFactory.ConvertFrom(result.Data);
             }
         }
         catch (Exception ex)
@@ -257,7 +256,7 @@
             var result = await Mediator.Send(query);
             if (result.IsSuccess)
             {
-                settlements = result.Data;
+                settlements = ModelFactory.ConvertFrom(result.Data);
             }
             else
             {

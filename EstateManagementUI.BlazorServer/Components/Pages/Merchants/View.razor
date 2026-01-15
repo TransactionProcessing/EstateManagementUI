@@ -1,9 +1,10 @@
 @page "/merchants/{MerchantId:guid}"
+@using EstateManagementUI.BlazorServer.Factories
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 @using EstateManagementUI.BlazorServer.Models
-@using EstateManagementUI.BlazorServer.Requests
+@using EstateManagementUI.BusinessLogic.Requests
 
 <PageTitle>View Merchant</PageTitle>
 
@@ -354,7 +355,7 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                merchant = result.Data;
+                merchant = ModelFactory.ConvertFrom(result.Data);
 
                 // Mock some assigned data for display
                 assignedOperators = new List<OperatorModel>
@@ -403,7 +404,7 @@
             var result = await Mediator.Send(query);
             if (result.IsSuccess)
             {
-                settlements = result.Data;
+                settlements = ModelFactory.ConvertFrom(result.Data);
             }
         }
         catch (Exception)

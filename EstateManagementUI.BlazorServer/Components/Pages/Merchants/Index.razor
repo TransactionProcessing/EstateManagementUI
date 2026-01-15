@@ -1,6 +1,8 @@
 @page "/merchants"
+@using EstateManagementUI.BlazorServer.Factories
 @rendermode InteractiveServer
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 @inject IPermissionKeyProvider PermissionKeyProvider
@@ -134,12 +136,11 @@
         {
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
 
-            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateId));
+            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
             if (result.IsSuccess)
             {
-                merchants = result.Data;
+                merchants = ModelFactory.ConvertFrom(result.Data);
             }
         }
         finally
