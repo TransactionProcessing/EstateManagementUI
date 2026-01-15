@@ -1,7 +1,8 @@
+using EstateManagementUI.BusinessLogic.Models;
 using MediatR;
-using EstateManagementUI.BlazorServer.Models;
+using SimpleResults;
 
-namespace EstateManagementUI.BlazorServer.Requests;
+namespace EstateManagementUI.BusinessLogic.Requests;
 
 public record CorrelationId(Guid Value);
 
@@ -23,7 +24,7 @@ public static class Queries
     public record GetFileImportLogQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid FileImportLogId)
         : IRequest<Result<FileImportLogModel>>;
     public record GetFileDetailsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid FileId) : IRequest<Result<FileDetailsModel>>;
-    public record GetComparisonDatesQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<List<ComparisonDateModel>>>;
+    public record GetComparisonDatesQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<ComparisonDateModel>>>;
     public record GetTodaysSalesQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
     public record GetTodaysSettlementQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSettlementModel>>;
     public record GetTodaysSalesCountByHourQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesCountByHourModel>>>;

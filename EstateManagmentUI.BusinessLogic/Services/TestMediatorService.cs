@@ -1,8 +1,9 @@
-using EstateManagementUI.BlazorServer.Models;
-using EstateManagementUI.BlazorServer.Requests;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
+using SimpleResults;
 
-namespace EstateManagementUI.BlazorServer.Services;
+namespace EstateManagementUI.BusinessLogic.Services;
 
 /// <summary>
 /// Test-enabled MediatR service that uses an in-memory data store
@@ -14,7 +15,7 @@ public class TestMediatorService : IMediator
 
     public TestMediatorService(ITestDataStore testDataStore)
     {
-        _testDataStore = testDataStore;
+        this._testDataStore = testDataStore;
     }
 
     public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
@@ -22,67 +23,67 @@ public class TestMediatorService : IMediator
         return request switch
         {
             // Estate Queries
-            Queries.GetEstateQuery query => Task.FromResult((TResponse)(object)Result<EstateModel>.Success(_testDataStore.GetEstate(query.EstateId))),
+            Queries.GetEstateQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetEstate(query.EstateId))),
             
             // Merchant Queries
-            Queries.GetMerchantsQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantModel>>.Success(_testDataStore.GetMerchants(query.EstateId))),
-            Queries.GetMerchantQuery query => Task.FromResult((TResponse)(object)GetMerchantResult(query.EstateId, query.MerchantId)),
+            Queries.GetMerchantsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetMerchants(query.EstateId))),
+            Queries.GetMerchantQuery query => Task.FromResult((TResponse)(object)this.GetMerchantResult(query.EstateId, query.MerchantId)),
             
             // Operator Queries
-            Queries.GetOperatorsQuery query => Task.FromResult((TResponse)(object)Result<List<OperatorModel>>.Success(_testDataStore.GetOperators(query.EstateId))),
-            Queries.GetOperatorQuery query => Task.FromResult((TResponse)(object)GetOperatorResult(query.EstateId, query.OperatorId)),
+            Queries.GetOperatorsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetOperators(query.EstateId))),
+            Queries.GetOperatorQuery query => Task.FromResult((TResponse)(object)this.GetOperatorResult(query.EstateId, query.OperatorId)),
             
             // Contract Queries
-            Queries.GetContractsQuery query => Task.FromResult((TResponse)(object)Result<List<ContractModel>>.Success(_testDataStore.GetContracts(query.EstateId))),
-            Queries.GetContractQuery query => Task.FromResult((TResponse)(object)GetContractResult(query.EstateId, query.ContractId)),
+            Queries.GetContractsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetContracts(query.EstateId))),
+            Queries.GetContractQuery query => Task.FromResult((TResponse)(object)this.GetContractResult(query.EstateId, query.ContractId)),
             
             // File Processing Queries - return mock data
-            Queries.GetFileImportLogsListQuery => Task.FromResult((TResponse)(object)Result<List<FileImportLogModel>>.Success(GetMockFileImportLogs())),
-            Queries.GetFileImportLogQuery => Task.FromResult((TResponse)(object)Result<FileImportLogModel>.Success(GetMockFileImportLog())),
-            Queries.GetFileDetailsQuery => Task.FromResult((TResponse)(object)Result<FileDetailsModel>.Success(GetMockFileDetails())),
+            Queries.GetFileImportLogsListQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockFileImportLogs())),
+            Queries.GetFileImportLogQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockFileImportLog())),
+            Queries.GetFileDetailsQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockFileDetails())),
             
             // Dashboard Queries - return mock data
-            Queries.GetComparisonDatesQuery => Task.FromResult((TResponse)(object)Result<List<ComparisonDateModel>>.Success(GetMockComparisonDates())),
-            Queries.GetTodaysSalesQuery query => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysSales(query.ComparisonDate))),
-            Queries.GetTodaysSettlementQuery => Task.FromResult((TResponse)(object)Result<TodaysSettlementModel>.Success(GetMockTodaysSettlement())),
-            Queries.GetTodaysSalesCountByHourQuery => Task.FromResult((TResponse)(object)Result<List<TodaysSalesCountByHourModel>>.Success(GetMockSalesCountByHour())),
-            Queries.GetTodaysSalesValueByHourQuery => Task.FromResult((TResponse)(object)Result<List<TodaysSalesValueByHourModel>>.Success(GetMockSalesValueByHour())),
-            Queries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result<MerchantKpiModel>.Success(GetMockMerchantKpi())),
-            Queries.GetTodaysFailedSalesQuery query => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysFailedSales(query.ComparisonDate))),
-            Queries.GetTopProductDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomProductDataModel>>.Success(GetMockTopProducts())),
-            Queries.GetBottomProductDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomProductDataModel>>.Success(GetMockBottomProducts())),
-            Queries.GetTopMerchantDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomMerchantDataModel>>.Success(GetMockTopMerchants())),
-            Queries.GetBottomMerchantDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomMerchantDataModel>>.Success(GetMockBottomMerchants())),
-            Queries.GetTopOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockTopOperators())),
-            Queries.GetBottomOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockBottomOperators())),
-            Queries.GetLastSettlementQuery => Task.FromResult((TResponse)(object)Result<LastSettlementModel>.Success(GetMockLastSettlement())),
-            Queries.GetMerchantTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantTransactionSummaryModel>>.Success(GetMockMerchantTransactionSummary(query))),
-            Queries.GetProductPerformanceQuery query => Task.FromResult((TResponse)(object)Result<List<ProductPerformanceModel>>.Success(GetMockProductPerformance(query))),
-            Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<OperatorTransactionSummaryModel>>.Success(GetMockOperatorTransactionSummary(query))),
-            Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result<List<MerchantSettlementHistoryModel>>.Success(GetMockMerchantSettlementHistory(query))),
-            Queries.GetSettlementSummaryQuery query => Task.FromResult((TResponse)(object)Result<List<SettlementSummaryModel>>.Success(GetMockSettlementSummary(query))),
-            Queries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result<List<TransactionDetailModel>>.Success(GetMockTransactionDetails(q))),
+            Queries.GetComparisonDatesQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockComparisonDates())),
+            Queries.GetTodaysSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysSales(query.ComparisonDate))),
+            Queries.GetTodaysSettlementQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysSettlement())),
+            Queries.GetTodaysSalesCountByHourQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockSalesCountByHour())),
+            Queries.GetTodaysSalesValueByHourQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockSalesValueByHour())),
+            Queries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockMerchantKpi())),
+            Queries.GetTodaysFailedSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysFailedSales(query.ComparisonDate))),
+            Queries.GetTopProductDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTopProducts())),
+            Queries.GetBottomProductDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockBottomProducts())),
+            Queries.GetTopMerchantDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTopMerchants())),
+            Queries.GetBottomMerchantDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockBottomMerchants())),
+            Queries.GetTopOperatorDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTopOperators())),
+            Queries.GetBottomOperatorDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockBottomOperators())),
+            Queries.GetLastSettlementQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockLastSettlement())),
+            Queries.GetMerchantTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockMerchantTransactionSummary(query))),
+            Queries.GetProductPerformanceQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockProductPerformance(query))),
+            Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockOperatorTransactionSummary(query))),
+            Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockMerchantSettlementHistory(query))),
+            Queries.GetSettlementSummaryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockSettlementSummary(query))),
+            Queries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result.Success(this.GetMockTransactionDetails(q))),
             
             // Commands - execute against test data store
-            Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateMerchant(cmd)),
-            Commands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteUpdateMerchant(cmd)),
-            Commands.UpdateMerchantAddressCommand cmd => Task.FromResult((TResponse)(object)ExecuteUpdateMerchantAddress(cmd)),
-            Commands.UpdateMerchantContactCommand cmd => Task.FromResult((TResponse)(object)ExecuteUpdateMerchantContact(cmd)),
-            Commands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateOperator(cmd)),
-            Commands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)ExecuteUpdateOperator(cmd)),
-            Commands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)ExecuteCreateContract(cmd)),
-            Commands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)ExecuteAddProductToContract(cmd)),
-            Commands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)ExecuteAddTransactionFee(cmd)),
-            Commands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteAssignContractToMerchant(cmd)),
-            Commands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteRemoveContractFromMerchant(cmd)),
-            Commands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteAddOperatorToMerchant(cmd)),
-            Commands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)ExecuteRemoveOperatorFromMerchant(cmd)),
-            Commands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)ExecuteAddOperatorToEstate(cmd)),
-            Commands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)ExecuteRemoveOperatorFromEstate(cmd)),
+            Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
+            Commands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchant(cmd)),
+            Commands.UpdateMerchantAddressCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchantAddress(cmd)),
+            Commands.UpdateMerchantContactCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchantContact(cmd)),
+            Commands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
+            Commands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
+            Commands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
+            Commands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
+            Commands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
+            Commands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
+            Commands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
+            Commands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
+            Commands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
+            Commands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToEstate(cmd)),
+            Commands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromEstate(cmd)),
             Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)ExecuteMakeMerchantDeposit(cmd)),
+            Commands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteMakeMerchantDeposit(cmd)),
             Commands.SetMerchantSettlementScheduleCommand => Task.FromResult((TResponse)(object)Result.Success()),
             
             _ => throw new NotImplementedException($"Request type {request.GetType().Name} is not implemented in test mediator")
@@ -122,26 +123,26 @@ public class TestMediatorService : IMediator
     // Helper methods for retrieving data
     private Result<MerchantModel> GetMerchantResult(Guid estateId, Guid merchantId)
     {
-        var merchant = _testDataStore.GetMerchant(estateId, merchantId);
+        var merchant = this._testDataStore.GetMerchant(estateId, merchantId);
         return merchant != null 
-            ? Result<MerchantModel>.Success(merchant) 
-            : Result<MerchantModel>.Failure($"Merchant {merchantId} not found");
+            ? Result.Success(merchant) 
+            : Result.Failure($"Merchant {merchantId} not found");
     }
 
     private Result<OperatorModel> GetOperatorResult(Guid estateId, Guid operatorId)
     {
-        var operatorModel = _testDataStore.GetOperator(estateId, operatorId);
+        var operatorModel = this._testDataStore.GetOperator(estateId, operatorId);
         return operatorModel != null 
-            ? Result<OperatorModel>.Success(operatorModel) 
-            : Result<OperatorModel>.Failure($"Operator {operatorId} not found");
+            ? Result.Success(operatorModel) 
+            : Result.Failure($"Operator {operatorId} not found");
     }
 
     private Result<ContractModel> GetContractResult(Guid estateId, Guid contractId)
     {
-        var contract = _testDataStore.GetContract(estateId, contractId);
+        var contract = this._testDataStore.GetContract(estateId, contractId);
         return contract != null 
-            ? Result<ContractModel>.Success(contract) 
-            : Result<ContractModel>.Failure($"Contract {contractId} not found");
+            ? Result.Success(contract) 
+            : Result.Failure($"Contract {contractId} not found");
     }
 
     // Command execution methods
@@ -155,24 +156,24 @@ public class TestMediatorService : IMediator
             ContactEmailAddress = cmd.ContactEmail,
             SettlementSchedule = "Immediate"
         };
-        _testDataStore.AddMerchant(cmd.EstateId, merchant);
+        this._testDataStore.AddMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
 
     private Result ExecuteUpdateMerchant(Commands.UpdateMerchantCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
         merchant.MerchantName = cmd.Name;
-        _testDataStore.UpdateMerchant(cmd.EstateId, merchant);
+        this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
 
     private Result ExecuteUpdateMerchantAddress(Commands.UpdateMerchantAddressCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
@@ -181,20 +182,20 @@ public class TestMediatorService : IMediator
         merchant.Region = cmd.Region;
         merchant.PostalCode = cmd.PostalCode;
         merchant.Country = cmd.Country;
-        _testDataStore.UpdateMerchant(cmd.EstateId, merchant);
+        this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
 
     private Result ExecuteUpdateMerchantContact(Commands.UpdateMerchantContactCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
         merchant.ContactName = cmd.ContactName;
         merchant.ContactEmailAddress = cmd.ContactEmail;
         merchant.ContactPhoneNumber = cmd.ContactPhone;
-        _testDataStore.UpdateMerchant(cmd.EstateId, merchant);
+        this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
 
@@ -207,20 +208,20 @@ public class TestMediatorService : IMediator
             RequireCustomMerchantNumber = cmd.RequireCustomMerchantNumber,
             RequireCustomTerminalNumber = cmd.RequireCustomTerminalNumber
         };
-        _testDataStore.AddOperator(cmd.EstateId, operatorModel);
+        this._testDataStore.AddOperator(cmd.EstateId, operatorModel);
         return Result.Success();
     }
 
     private Result ExecuteUpdateOperator(Commands.UpdateOperatorCommand cmd)
     {
-        var operatorModel = _testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
+        var operatorModel = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operatorModel == null)
             return Result.Failure($"Operator {cmd.OperatorId} not found");
         
         operatorModel.Name = cmd.Name;
         operatorModel.RequireCustomMerchantNumber = cmd.RequireCustomMerchantNumber;
         operatorModel.RequireCustomTerminalNumber = cmd.RequireCustomTerminalNumber;
-        _testDataStore.UpdateOperator(cmd.EstateId, operatorModel);
+        this._testDataStore.UpdateOperator(cmd.EstateId, operatorModel);
         return Result.Success();
     }
 
@@ -234,19 +235,19 @@ public class TestMediatorService : IMediator
             Products = new List<ContractProductModel>()
         };
         
-        var operatorModel = _testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
+        var operatorModel = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operatorModel != null)
         {
             contract.OperatorName = operatorModel.Name;
         }
         
-        _testDataStore.AddContract(cmd.EstateId, contract);
+        this._testDataStore.AddContract(cmd.EstateId, contract);
         return Result.Success();
     }
 
     private Result ExecuteAddProductToContract(Commands.AddProductToContractCommand cmd)
     {
-        var contract = _testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
+        var contract = this._testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
         if (contract == null)
             return Result.Failure($"Contract {cmd.ContractId} not found");
         
@@ -261,13 +262,13 @@ public class TestMediatorService : IMediator
             Value = cmd.Value?.ToString() ?? "Variable"
         });
         
-        _testDataStore.UpdateContract(cmd.EstateId, contract);
+        this._testDataStore.UpdateContract(cmd.EstateId, contract);
         return Result.Success();
     }
 
     private Result ExecuteAddTransactionFee(Commands.AddTransactionFeeForProductToContractCommand cmd)
     {
-        var contract = _testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
+        var contract = this._testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
         if (contract == null)
             return Result.Failure($"Contract {cmd.ContractId} not found");
         
@@ -285,13 +286,13 @@ public class TestMediatorService : IMediator
             Value = cmd.Value
         });
         
-        _testDataStore.UpdateContract(cmd.EstateId, contract);
+        this._testDataStore.UpdateContract(cmd.EstateId, contract);
         return Result.Success();
     }
 
     private Result ExecuteAssignContractToMerchant(Commands.AssignContractToMerchantCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
@@ -302,7 +303,7 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteRemoveContractFromMerchant(Commands.RemoveContractFromMerchantCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
@@ -311,7 +312,7 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteAddOperatorToMerchant(Commands.AddOperatorToMerchantCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
@@ -320,7 +321,7 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteRemoveOperatorFromMerchant(Commands.RemoveOperatorFromMerchantCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
@@ -329,7 +330,7 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteMakeMerchantDeposit(Commands.MakeMerchantDepositCommand cmd)
     {
-        var merchant = _testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
+        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
             return Result.Failure($"Merchant {cmd.MerchantId} not found");
         
@@ -337,7 +338,7 @@ public class TestMediatorService : IMediator
         merchant.Balance = (merchant.Balance ?? 0) + cmd.Amount;
         merchant.AvailableBalance = (merchant.AvailableBalance ?? 0) + cmd.Amount;
         
-        _testDataStore.UpdateMerchant(cmd.EstateId, merchant);
+        this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
 
@@ -549,7 +550,7 @@ public class TestMediatorService : IMediator
         const double MinSuccessRate = 0.80; // 80% minimum success rate for test data
         const double SuccessRateRange = 0.15; // Range up to 95% success rate
         
-        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        var merchants = this._testDataStore.GetMerchants(query.EstateId);
         var random = new Random(42); // Use seed for consistent data
         
         var summary = merchants.Select(merchant =>
@@ -583,7 +584,7 @@ public class TestMediatorService : IMediator
 
     private List<MerchantSettlementHistoryModel> GetMockMerchantSettlementHistory(Queries.GetMerchantSettlementHistoryQuery query)
     {
-        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        var merchants = this._testDataStore.GetMerchants(query.EstateId);
         
         // Filter by merchant if specified
         if (query.MerchantId.HasValue)
@@ -648,7 +649,7 @@ public class TestMediatorService : IMediator
 
     private List<ProductPerformanceModel> GetMockProductPerformance(Queries.GetProductPerformanceQuery query)
     {
-        var contracts = _testDataStore.GetContracts(query.EstateId);
+        var contracts = this._testDataStore.GetContracts(query.EstateId);
         
         // Calculate days in the date range to vary data based on period
         var daysInRange = (query.EndDate - query.StartDate).Days + 1;
@@ -716,7 +717,7 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteAddOperatorToEstate(Commands.AddOperatorToEstateCommand cmd)
     {
-        var operator1 = _testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
+        var operator1 = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operator1 == null)
             return Result.Failure($"Operator {cmd.OperatorId} not found");
         
@@ -727,7 +728,7 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteRemoveOperatorFromEstate(Commands.RemoveOperatorFromEstateCommand cmd)
     {
-        var operator1 = _testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
+        var operator1 = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operator1 == null)
             return Result.Failure($"Operator {cmd.OperatorId} not found");
         
@@ -738,7 +739,7 @@ public class TestMediatorService : IMediator
 
     private List<SettlementSummaryModel> GetMockSettlementSummary(Queries.GetSettlementSummaryQuery query)
     {
-        var merchants = _testDataStore.GetMerchants(query.EstateId);
+        var merchants = this._testDataStore.GetMerchants(query.EstateId);
         
         // Use date range as seed for consistent but varying data
         var seed = query.StartDate.GetHashCode() ^ query.EndDate.GetHashCode();
@@ -786,7 +787,7 @@ public class TestMediatorService : IMediator
 
     private List<OperatorTransactionSummaryModel> GetMockOperatorTransactionSummary(Queries.GetOperatorTransactionSummaryQuery query)
     {
-        var operators = _testDataStore.GetOperators(query.EstateId);
+        var operators = this._testDataStore.GetOperators(query.EstateId);
         var summary = new List<OperatorTransactionSummaryModel>();
         var random = new Random(42); // Use seed for consistent test data
         
@@ -823,9 +824,9 @@ public class TestMediatorService : IMediator
 
     private List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
     {
-        var merchants = _testDataStore.GetMerchants(query.EstateId);
-        var operators = _testDataStore.GetOperators(query.EstateId);
-        var contracts = _testDataStore.GetContracts(query.EstateId);
+        var merchants = this._testDataStore.GetMerchants(query.EstateId);
+        var operators = this._testDataStore.GetOperators(query.EstateId);
+        var contracts = this._testDataStore.GetContracts(query.EstateId);
         
         // Get all products with their IDs from contracts
         var productList = contracts

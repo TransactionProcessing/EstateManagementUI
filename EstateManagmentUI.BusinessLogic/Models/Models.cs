@@ -1,4 +1,4 @@
-namespace EstateManagementUI.BlazorServer.Models;
+namespace EstateManagementUI.BusinessLogic.Models;
 
 // Estate Models
 public class EstateModel
@@ -107,6 +107,7 @@ public class ComparisonDateModel
 {
     public DateTime Date { get; set; }
     public string? Description { get; set; }
+    public Int32 OrderValue { get; set; }
 }
 
 public class TodaysSalesModel
@@ -157,6 +158,28 @@ public class TopBottomProductDataModel
     public string? ProductName { get; set; }
     public decimal SalesValue { get; set; }
 }
+
+public class TopBottomMerchantDataModel
+{
+    public string? MerchantName { get; set; }
+    public decimal SalesValue { get; set; }
+}
+
+public class TopBottomOperatorDataModel
+{
+    public string? OperatorName { get; set; }
+    public decimal SalesValue { get; set; }
+}
+
+public class LastSettlementModel
+{
+    public DateTime SettlementDate { get; set; }
+    public decimal FeesValue { get; set; }
+    public int SalesCount { get; set; }
+    public decimal SalesValue { get; set; }
+    public decimal SettlementValue { get; set; }
+}
+
 
 // Transaction Summary Models
 public class MerchantTransactionSummaryModel

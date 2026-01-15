@@ -1,13 +1,14 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
-using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
-using static EstateManagementUI.BlazorServer.Requests.Queries;
+using SimpleResults;
 using ContractsIndex = EstateManagementUI.BlazorServer.Components.Pages.Contracts.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
@@ -50,8 +51,8 @@ public class ContractsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractsQuery>(), default))
-            .ReturnsAsync(Result<List<ContractModel>>.Success(contracts));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(contracts));
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
@@ -65,8 +66,8 @@ public class ContractsIndexPageTests : TestContext
     {
         // Arrange
         var emptyList = new List<ContractModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractsQuery>(), default))
-            .ReturnsAsync(Result<List<ContractModel>>.Success(emptyList));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(emptyList));
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
@@ -100,8 +101,8 @@ public class ContractsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractsQuery>(), default))
-            .ReturnsAsync(Result<List<ContractModel>>.Success(contracts));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(contracts));
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
@@ -134,8 +135,8 @@ public class ContractsIndexPageTests : TestContext
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractsQuery>(), default))
-            .ReturnsAsync(Result<List<ContractModel>>.Success(contracts));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(contracts));
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
@@ -149,8 +150,8 @@ public class ContractsIndexPageTests : TestContext
     public void ContractsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<GetContractsQuery>(), default))
-            .ReturnsAsync(Result<List<ContractModel>>.Success(new List<ContractModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<ContractModel>()));
         
         // Act
         var cut = RenderComponent<ContractsIndex>();

@@ -1,115 +1,18 @@
-using EstateManagementUI.BlazorServer.Models;
-using EstateManagementUI.BlazorServer.Requests;
-using MediatR;
+﻿using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 
-namespace EstateManagementUI.BlazorServer.Services;
+namespace EstateManagementUI.BusinessLogic.Client;
 
-/// <summary>
-/// Stubbed MediatR service that returns mock data without making remote calls
-/// This allows quick development and testing without backend dependencies
-/// </summary>
-public class StubbedMediatorService : IMediator
-{
-    public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
-    {
-        return request switch
-        {
-            // Estate Queries
-            Queries.GetEstateQuery => Task.FromResult((TResponse)(object)Result<EstateModel>.Success(GetMockEstate())),
-            Queries.GetMerchantsQuery => Task.FromResult((TResponse)(object)Result<List<MerchantModel>>.Success(GetMockMerchants())),
-            Queries.GetOperatorsQuery => Task.FromResult((TResponse)(object)Result<List<OperatorModel>>.Success(GetMockOperators())),
-            Queries.GetContractsQuery => Task.FromResult((TResponse)(object)Result<List<ContractModel>>.Success(GetMockContracts())),
-            Queries.GetOperatorQuery => Task.FromResult((TResponse)(object)Result<OperatorModel>.Success(GetMockOperator())),
-            Queries.GetContractQuery => Task.FromResult((TResponse)(object)Result<ContractModel>.Success(GetMockContract())),
-            Queries.GetMerchantQuery => Task.FromResult((TResponse)(object)Result<MerchantModel>.Success(GetMockMerchant())),
-            
-            // File Processing Queries
-            Queries.GetFileImportLogsListQuery => Task.FromResult((TResponse)(object)Result<List<FileImportLogModel>>.Success(GetMockFileImportLogs())),
-            Queries.GetFileImportLogQuery => Task.FromResult((TResponse)(object)Result<FileImportLogModel>.Success(GetMockFileImportLog())),
-            Queries.GetFileDetailsQuery => Task.FromResult((TResponse)(object)Result<FileDetailsModel>.Success(GetMockFileDetails())),
-            
-            // Dashboard Queries
-            Queries.GetComparisonDatesQuery => Task.FromResult((TResponse)(object)Result<List<ComparisonDateModel>>.Success(GetMockComparisonDates())),
-            Queries.GetTodaysSalesQuery => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysSales())),
-            Queries.GetTodaysSettlementQuery => Task.FromResult((TResponse)(object)Result<TodaysSettlementModel>.Success(GetMockTodaysSettlement())),
-            Queries.GetTodaysSalesCountByHourQuery => Task.FromResult((TResponse)(object)Result<List<TodaysSalesCountByHourModel>>.Success(GetMockSalesCountByHour())),
-            Queries.GetTodaysSalesValueByHourQuery => Task.FromResult((TResponse)(object)Result<List<TodaysSalesValueByHourModel>>.Success(GetMockSalesValueByHour())),
-            Queries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result<MerchantKpiModel>.Success(GetMockMerchantKpi())),
-            Queries.GetTodaysFailedSalesQuery => Task.FromResult((TResponse)(object)Result<TodaysSalesModel>.Success(GetMockTodaysSales())),
-            Queries.GetTopProductDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomProductDataModel>>.Success(GetMockTopProducts())),
-            Queries.GetBottomProductDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomProductDataModel>>.Success(GetMockBottomProducts())),
-            Queries.GetTopMerchantDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomMerchantDataModel>>.Success(GetMockTopMerchants())),
-            Queries.GetBottomMerchantDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomMerchantDataModel>>.Success(GetMockBottomMerchants())),
-            Queries.GetTopOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockTopOperators())),
-            Queries.GetBottomOperatorDataQuery => Task.FromResult((TResponse)(object)Result<List<TopBottomOperatorDataModel>>.Success(GetMockBottomOperators())),
-            Queries.GetLastSettlementQuery => Task.FromResult((TResponse)(object)Result<LastSettlementModel>.Success(GetMockLastSettlement())),
-            Queries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result<List<TransactionDetailModel>>.Success(GetMockTransactionDetails(q))),
-            
-            // Commands - just return success
-            Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.AddOperatorToMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.AddOperatorToEstateCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.AssignContractToMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.CreateContractCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.CreateMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.CreateOperatorCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.MakeMerchantDepositCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.RemoveContractFromMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.RemoveOperatorFromMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.RemoveOperatorFromEstateCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.SetMerchantSettlementScheduleCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.UpdateMerchantAddressCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.UpdateMerchantCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.UpdateMerchantContactCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.UpdateOperatorCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.AddProductToContractCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.AddTransactionFeeForProductToContractCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            
-            _ => throw new NotImplementedException($"Request type {request.GetType().Name} is not implemented in stubbed mediator")
-        };
-    }
+public static class StubTestData {
 
-    public Task Send<TRequest>(TRequest request, CancellationToken cancellationToken = default) where TRequest : IRequest
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task<object?> Send(object request, CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult<object?>(null);
-    }
-
-    public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public IAsyncEnumerable<object?> CreateStream(object request, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task Publish(object notification, CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification
-    {
-        return Task.CompletedTask;
-    }
-
-    // Mock data methods
-    private static EstateModel GetMockEstate() => new()
+    public static EstateModel GetMockEstate() => new()
     {
         EstateId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
         EstateName = "Test Estate",
         Reference = "Test Estate"
     };
 
-    private static List<MerchantModel> GetMockMerchants() => new()
+    public static List<MerchantModel> GetMockMerchants() => new()
     {
         new MerchantModel
         {
@@ -140,7 +43,7 @@ public class StubbedMediatorService : IMediator
         }
     };
 
-    private static MerchantModel GetMockMerchant() => new()
+    public static MerchantModel GetMockMerchant() => new()
     {
         MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
         MerchantName = "Test Merchant 1",
@@ -158,7 +61,7 @@ public class StubbedMediatorService : IMediator
         ContactPhoneNumber = "555-1234"
     };
 
-    private static List<OperatorModel> GetMockOperators() => new()
+    public static List<OperatorModel> GetMockOperators() => new()
     {
         new OperatorModel
         {
@@ -176,7 +79,7 @@ public class StubbedMediatorService : IMediator
         }
     };
 
-    private static OperatorModel GetMockOperator() => new()
+    public static OperatorModel GetMockOperator() => new()
     {
         OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
         Name = "Safaricom",
@@ -184,7 +87,7 @@ public class StubbedMediatorService : IMediator
         RequireCustomTerminalNumber = false
     };
 
-    private static List<ContractModel> GetMockContracts() => new()
+    public static List<ContractModel> GetMockContracts() => new()
     {
         new ContractModel
         {
@@ -220,7 +123,7 @@ public class StubbedMediatorService : IMediator
         }
     };
 
-    private static ContractModel GetMockContract() => new()
+    public static ContractModel GetMockContract() => new()
     {
         ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
         Description = "Standard Transaction Contract",
@@ -279,7 +182,7 @@ public class StubbedMediatorService : IMediator
         }
     };
 
-    private static List<FileImportLogModel> GetMockFileImportLogs() => new()
+    public static List<FileImportLogModel> GetMockFileImportLogs() => new()
     {
         new FileImportLogModel
         {
@@ -297,7 +200,7 @@ public class StubbedMediatorService : IMediator
         }
     };
 
-    private static FileImportLogModel GetMockFileImportLog() => new()
+    public static FileImportLogModel GetMockFileImportLog() => new()
     {
         FileImportLogId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
         ImportLogDateTime = DateTime.Now.AddHours(-2),
@@ -305,7 +208,7 @@ public class StubbedMediatorService : IMediator
         FileUploadedDateTime = DateTime.Now.AddHours(-3)
     };
 
-    private static FileDetailsModel GetMockFileDetails() => new()
+    public static FileDetailsModel GetMockFileDetails() => new()
     {
         FileId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
         FileLocation = "/files/transactions.csv",
@@ -320,7 +223,7 @@ public class StubbedMediatorService : IMediator
         IgnoredLines = 0
     };
 
-    private static List<ComparisonDateModel> GetMockComparisonDates() => new()
+    public static List<ComparisonDateModel> GetMockComparisonDates() => new()
     {
         new ComparisonDateModel
         {
@@ -334,7 +237,7 @@ public class StubbedMediatorService : IMediator
         }
     };
 
-    private static TodaysSalesModel GetMockTodaysSales() => new()
+    public static TodaysSalesModel GetMockTodaysSales() => new()
     {
         ComparisonSalesCount = 450,
         ComparisonSalesValue = 125000.00m,
@@ -344,7 +247,7 @@ public class StubbedMediatorService : IMediator
         TodaysAverageValue = 277.24m
     };
 
-    private static TodaysSettlementModel GetMockTodaysSettlement() => new()
+    public static TodaysSettlementModel GetMockTodaysSettlement() => new()
     {
         ComparisonSettlementCount = 125,
         ComparisonSettlementValue = 112500.00m,
@@ -356,7 +259,7 @@ public class StubbedMediatorService : IMediator
         TodaysPendingSettlementValue = 14500.00m
     };
 
-    private static List<TodaysSalesCountByHourModel> GetMockSalesCountByHour() => new()
+    public static List<TodaysSalesCountByHourModel> GetMockSalesCountByHour() => new()
     {
         new TodaysSalesCountByHourModel { Hour = 9, TodaysSalesCount = 45, ComparisonSalesCount = 38 },
         new TodaysSalesCountByHourModel { Hour = 10, TodaysSalesCount = 67, ComparisonSalesCount = 54 },
@@ -367,7 +270,7 @@ public class StubbedMediatorService : IMediator
         new TodaysSalesCountByHourModel { Hour = 15, TodaysSalesCount = 77, ComparisonSalesCount = 34 }
     };
 
-    private static List<TodaysSalesValueByHourModel> GetMockSalesValueByHour() => new()
+    public static List<TodaysSalesValueByHourModel> GetMockSalesValueByHour() => new()
     {
         new TodaysSalesValueByHourModel { Hour = 9, TodaysSalesValue = 12500, ComparisonSalesValue = 10500 },
         new TodaysSalesValueByHourModel { Hour = 10, TodaysSalesValue = 18500, ComparisonSalesValue = 15000 },
@@ -378,53 +281,53 @@ public class StubbedMediatorService : IMediator
         new TodaysSalesValueByHourModel { Hour = 15, TodaysSalesValue = 21500, ComparisonSalesValue = 9500 }
     };
 
-    private static MerchantKpiModel GetMockMerchantKpi() => new()
+    public static MerchantKpiModel GetMockMerchantKpi() => new()
     {
         MerchantsWithNoSaleInLast7Days = 5,
         MerchantsWithNoSaleToday = 12,
         MerchantsWithSaleInLastHour = 45
     };
 
-    private static List<TopBottomProductDataModel> GetMockTopProducts() => new()
+    public static List<TopBottomProductDataModel> GetMockTopProducts() => new()
     {
         new TopBottomProductDataModel { ProductName = "Mobile Topup", SalesValue = 125000.00m },
         new TopBottomProductDataModel { ProductName = "Bill Payment", SalesValue = 87000.00m },
         new TopBottomProductDataModel { ProductName = "Voucher", SalesValue = 45000.00m }
     };
 
-    private static List<TopBottomProductDataModel> GetMockBottomProducts() => new()
+    public static List<TopBottomProductDataModel> GetMockBottomProducts() => new()
     {
         new TopBottomProductDataModel { ProductName = "Data Bundle", SalesValue = 5000.00m },
         new TopBottomProductDataModel { ProductName = "SMS Bundle", SalesValue = 3500.00m },
         new TopBottomProductDataModel { ProductName = "International Topup", SalesValue = 1200.00m }
     };
 
-    private static List<TopBottomMerchantDataModel> GetMockTopMerchants() => new()
+    public static List<TopBottomMerchantDataModel> GetMockTopMerchants() => new()
     {
         new TopBottomMerchantDataModel { MerchantName = "Test Merchant 1", SalesValue = 85000.00m },
         new TopBottomMerchantDataModel { MerchantName = "Test Merchant 2", SalesValue = 67000.00m },
         new TopBottomMerchantDataModel { MerchantName = "Test Merchant 3", SalesValue = 45000.00m }
     };
 
-    private static List<TopBottomMerchantDataModel> GetMockBottomMerchants() => new()
+    public static List<TopBottomMerchantDataModel> GetMockBottomMerchants() => new()
     {
         new TopBottomMerchantDataModel { MerchantName = "Test Merchant 10", SalesValue = 1200.00m },
         new TopBottomMerchantDataModel { MerchantName = "Test Merchant 11", SalesValue = 850.00m },
         new TopBottomMerchantDataModel { MerchantName = "Test Merchant 12", SalesValue = 450.00m }
     };
 
-    private static List<TopBottomOperatorDataModel> GetMockTopOperators() => new()
+    public static List<TopBottomOperatorDataModel> GetMockTopOperators() => new()
     {
         new TopBottomOperatorDataModel { OperatorName = "Safaricom", SalesValue = 195000.00m },
         new TopBottomOperatorDataModel { OperatorName = "Voucher", SalesValue = 67000.00m }
     };
 
-    private static List<TopBottomOperatorDataModel> GetMockBottomOperators() => new()
+    public static List<TopBottomOperatorDataModel> GetMockBottomOperators() => new()
     {
         new TopBottomOperatorDataModel { OperatorName = "PataPawa PostPay", SalesValue = 12000.00m }
     };
 
-    private static LastSettlementModel GetMockLastSettlement() => new()
+    public static LastSettlementModel GetMockLastSettlement() => new()
     {
         SettlementDate = DateTime.Today.AddDays(-1),
         FeesValue = 1250.00m,
@@ -433,29 +336,29 @@ public class StubbedMediatorService : IMediator
         SettlementValue = 123750.00m
     };
 
-    private static List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
+    public static List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
     {
         var merchants = GetMockMerchants();
         var operators = GetMockOperators();
         var contracts = GetMockContracts();
-        
+
         // Get all products with their IDs from contracts
         var productList = contracts
             .SelectMany(c => c.Products ?? new List<ContractProductModel>())
             .Where(p => !string.IsNullOrEmpty(p.ProductName))
             .ToList();
-        
+
         var transactionTypes = new[] { "Sale", "Refund", "Reversal" };
         var transactionStatuses = new[] { "Successful", "Failed", "Reversed" };
-        
+
         var random = new Random(42); // Use seed for consistent data
         var transactions = new List<TransactionDetailModel>();
-        
+
         // Calculate days in date range
         var daysInRange = (query.EndDate - query.StartDate).Days + 1;
         var transactionsPerDay = 50;
         var totalTransactions = daysInRange * transactionsPerDay;
-        
+
         for (int i = 0; i < totalTransactions; i++)
         {
             // Random date within range
@@ -465,19 +368,19 @@ public class StubbedMediatorService : IMediator
             var transactionDate = query.StartDate.AddDays(randomDays)
                 .AddHours(randomHours)
                 .AddMinutes(randomMinutes);
-            
+
             // Random merchant, operator, and product
             var merchant = merchants[random.Next(merchants.Count)];
             var op = operators[random.Next(operators.Count)];
             var product = productList[random.Next(productList.Count)];
-            
+
             // Random type and status (90% successful sales)
             var typeRoll = random.NextDouble();
             var statusRoll = random.NextDouble();
-            
+
             string transactionType;
             string transactionStatus;
-            
+
             if (typeRoll < 0.85)
             {
                 transactionType = "Sale";
@@ -493,20 +396,20 @@ public class StubbedMediatorService : IMediator
                 transactionType = "Reversal";
                 transactionStatus = "Reversed";
             }
-            
+
             // Random amounts
             var grossAmount = Math.Round((decimal)(random.NextDouble() * 200 + 10), 2);
             var feePercentage = 0.015m; // 1.5%
             var feesCommission = Math.Round(grossAmount * feePercentage, 2);
             var netAmount = grossAmount - feesCommission;
-            
+
             // Settlement reference (70% have one for successful transactions)
             string? settlementReference = null;
             if (transactionStatus == "Successful" && random.NextDouble() < 0.7)
             {
                 settlementReference = $"STL-{transactionDate:yyyyMMdd}-{random.Next(1000, 9999)}";
             }
-            
+
             transactions.Add(new TransactionDetailModel
             {
                 TransactionId = Guid.NewGuid(),
@@ -525,23 +428,23 @@ public class StubbedMediatorService : IMediator
                 SettlementReference = settlementReference
             });
         }
-        
+
         // Apply filters
         if (query.MerchantId.HasValue)
         {
             transactions = transactions.Where(t => t.MerchantId == query.MerchantId.Value).ToList();
         }
-        
+
         if (query.OperatorId.HasValue)
         {
             transactions = transactions.Where(t => t.OperatorId == query.OperatorId.Value).ToList();
         }
-        
+
         if (query.ProductId.HasValue)
         {
             transactions = transactions.Where(t => t.ProductId == query.ProductId.Value).ToList();
         }
-        
+
         // Sort by transaction date descending (most recent first)
         return transactions.OrderByDescending(t => t.TransactionDateTime).ToList();
     }

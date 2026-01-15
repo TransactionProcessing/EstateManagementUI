@@ -1,21 +1,39 @@
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
 using EstateManagementUI.BlazorServer.Permissions;
-using EstateManagementUI.BlazorServer.Services;
 using EstateManagementUI.BlazorServer.TokenManagement;
+using EstateManagementUI.BusinessLogic.BackendAPI;
+using EstateManagementUI.BusinessLogic.Client;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.RequestHandlers;
+using EstateManagementUI.BusinessLogic.Requests;
+using EstateManagementUI.BusinessLogic.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Primitives;
+using SimpleResults;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using ClientProxyBase;
+using SecurityService.Client;
+using Shared.General;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Load hosting.json configuration for port settings
-builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true);
+//builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true)
+builder.Configuration
+    .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
+    .AddJsonFile($"/home/txnproc/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
+ConfigurationReader.Initialise(builder.Configuration);
 
 // Configure Kestrel with certificate for HTTPS
 builder.WebHost.UseKestrel(options =>
@@ -212,11 +230,17 @@ if (testMode == TestMode.BackedByTestDataStore || testMode == TestMode.Full)
 }
 else
 {
-    Console.WriteLine("Registering StubbedMediatorService");
-    builder.Services.AddSingleton<IMediator, StubbedMediatorService>();
+    Console.WriteLine("Registering Mediator Service");
+    //builder.Services.AddTransient<IMediator, Mediator>();
+    builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EstateRequestHandler).Assembly));
+    builder.Services.AddSingleton<IApiClient, ApiClient>();
+    builder.Services.AddSingleton<Func<String, String>>(container => (serviceName) => ConfigurationReader.GetBaseServerUri(serviceName).OriginalString);
+
+    builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
+    builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
 }
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -287,4 +311,69 @@ enum TestMode {
     AuthenticationOnly,
     BackedByTestDataStore,
     Full
+}
+
+public static class Extensions{
+
+    public static void RegisterEstateRequestHandler(this IServiceCollection services) {
+        services.AddSingleton<IRequestHandler<Queries.GetEstateQuery, Result<EstateModel>>, EstateRequestHandler>();
+        
+    }
+
+    public static void RegisterMerchantRequestHandler(this IServiceCollection services) {
+        services.AddSingleton<IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantModel>>>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetMerchantQuery, Result<MerchantModel>>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.CreateMerchantCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.UpdateMerchantCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.UpdateMerchantAddressCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.UpdateMerchantContactCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.AddOperatorToMerchantCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.RemoveOperatorFromMerchantCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.AssignContractToMerchantCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.RemoveContractFromMerchantCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.MakeMerchantDepositCommand, Result>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.AddMerchantDeviceCommand, Result>, MerchantRequestHandler>();
+    }
+
+    public static void RegisterOperatorRequestHandler(this IServiceCollection services) {
+        services.AddSingleton<IRequestHandler<Queries.GetOperatorsQuery, Result<List<OperatorModel>>>, OperatorRequestHandler>();
+
+        services.AddSingleton<IRequestHandler<Commands.CreateOperatorCommand, Result>, OperatorRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.UpdateOperatorCommand, Result>, OperatorRequestHandler>();
+    }
+
+    public static void RegisterContractRequestHandler(this IServiceCollection services) {
+        services.AddSingleton<IRequestHandler<Queries.GetContractsQuery, Result<List<ContractModel>>>, ContractRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>, ContractRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetOperatorQuery, Result<OperatorModel>>, OperatorRequestHandler>();
+
+        services.AddSingleton<IRequestHandler<Commands.CreateContractCommand, Result>, ContractRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.AddProductToContractCommand, Result>, ContractRequestHandler>();
+        services.AddSingleton<IRequestHandler<Commands.AddTransactionFeeForProductToContractCommand, Result>, ContractRequestHandler>();
+    }
+
+    public static void RegisterFileRequestHandler(this IServiceCollection services) {
+        services.AddSingleton<IRequestHandler<Queries.GetFileImportLogsListQuery, Result<List<FileImportLogModel>>>, FileRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetFileImportLogQuery, Result<FileImportLogModel>>, FileRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetFileDetailsQuery, Result<FileDetailsModel>>, FileRequestHandler>();
+    }
+
+    public static void RegisterReportingRequestHandler(this IServiceCollection services) {
+        services.AddSingleton<IRequestHandler<Queries.GetTodaysSalesQuery, Result<TodaysSalesModel>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTodaysSettlementQuery, Result<TodaysSettlementModel>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTodaysSalesCountByHourQuery, Result<List<TodaysSalesCountByHourModel>>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>, DashboardRequestHandler>();
+        
+        services.AddSingleton<IRequestHandler<Queries.GetMerchantKpiQuery, Result<MerchantKpiModel>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTopMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetBottomMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTopProductDataQuery, Result<List<TopBottomProductDataModel>>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetBottomProductDataQuery, Result<List<TopBottomProductDataModel>>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>, DashboardRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>, DashboardRequestHandler>();
+
+        services.AddSingleton<IRequestHandler<Queries.GetLastSettlementQuery, Result<LastSettlementModel>>, DashboardRequestHandler>();
+
+    }
 }

@@ -1,7 +1,9 @@
 @page "/merchants/{MerchantId:guid}/edit"
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
+@using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService
@@ -491,7 +493,7 @@ else
             
             if (result.IsSuccess && result.Data != null)
             {
-                merchant = result.Data;
+                merchant = ModelFactory.ConvertFrom(result.Data);
                 
                 // Initialize unified model with current values
                 merchantEditModel = new MerchantEditModel
@@ -541,7 +543,7 @@ else
             
             if (result.IsSuccess)
             {
-                availableOperators = result.Data;
+                availableOperators = ModelFactory.ConvertFrom(result.Data);
             }
         }
         catch (Exception ex)
@@ -562,7 +564,7 @@ else
             
             if (result.IsSuccess)
             {
-                availableContracts = result.Data;
+                availableContracts = ModelFactory.ConvertFrom(result.Data);
             }
         }
         catch (Exception ex)

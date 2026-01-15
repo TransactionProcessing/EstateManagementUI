@@ -1,6 +1,8 @@
 @page "/merchants"
+@using EstateManagementUI.BlazorServer.Factories
 @rendermode InteractiveServer
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 @inject IPermissionKeyProvider PermissionKeyProvider
@@ -139,7 +141,7 @@
             var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, accessToken, estateId));
             if (result.IsSuccess)
             {
-                merchants = result.Data;
+                merchants = ModelFactory.ConvertFrom(result.Data);
             }
         }
         finally

@@ -1,5 +1,7 @@
 @page "/file-processing"
+@using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 @inject IPermissionKeyProvider PermissionKeyProvider
@@ -145,7 +147,7 @@
 
             if (result.IsSuccess)
             {
-                fileImportLogs = result.Data;
+                fileImportLogs = ModelFactory.ConvertFrom(result.Data);
             }
         }
         finally

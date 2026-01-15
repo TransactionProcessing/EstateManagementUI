@@ -1,4 +1,6 @@
 @page "/contracts/{ContractId:guid}"
+@using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
@@ -155,7 +157,7 @@
             
             if (result.IsSuccess && result.Data != null)
             {
-                contractModel = result.Data;
+                contractModel = ModelFactory.ConvertFrom(result.Data);
             }
         }
         finally
