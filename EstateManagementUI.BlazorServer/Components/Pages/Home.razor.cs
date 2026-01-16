@@ -120,19 +120,27 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
 
                 // Process results
-                if (kpiTask.Result.IsSuccess)
-                    merchantKpi = ModelFactory.ConvertFrom(kpiTask.Result.Data);
+                if (kpiTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(kpiTask.Result);
 
-                if (salesTask.Result.IsSuccess)
-                    todaysSales = ModelFactory.ConvertFrom(salesTask.Result.Data);
+                merchantKpi = ModelFactory.ConvertFrom(kpiTask.Result.Data);
 
-                if (failedSalesTask.Result.IsSuccess)
-                    todaysFailedSales = ModelFactory.ConvertFrom(failedSalesTask.Result.Data);
+                if (salesTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(salesTask.Result);
 
-                if (merchantsTask.Result.IsSuccess)
-                    // Note: API returns merchants in creation order (newest first)
-                    // If ordering is incorrect, would need CreatedDate field in the model
-                    recentMerchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data?.ToList());
+                todaysSales = ModelFactory.ConvertFrom(salesTask.Result.Data);
+
+                if (failedSalesTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(failedSalesTask.Result);
+
+                todaysFailedSales = ModelFactory.ConvertFrom(failedSalesTask.Result.Data);
+
+                if (merchantsTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(merchantsTask.Result);
+
+                // Note: API returns merchants in creation order (newest first)
+                // If ordering is incorrect, would need CreatedDate field in the model
+                recentMerchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
 
                 return Result.Success();
             }
