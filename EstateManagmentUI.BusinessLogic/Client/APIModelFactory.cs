@@ -1,5 +1,6 @@
 ﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
+using TransactionProcessor.DataTransferObjects.Responses.Estate;
 
 namespace EstateManagementUI.BusinessLogic.Client;
 
@@ -65,5 +66,25 @@ public static class APIModelFactory {
         }
 
         return merchants;
+    }
+
+    public static EstateModel ConvertFrom(EstateResponse apiResultData) {
+        EstateModel model = new EstateModel {
+            Reference = apiResultData.EstateReference,
+            EstateId = apiResultData.EstateId,
+            EstateName = apiResultData.EstateName,
+            Operators = new List<EstateOperatorModel>()
+        };
+
+        foreach (EstateOperatorResponse estateOperatorResponse in apiResultData.Operators) {
+            model.Operators.Add(new EstateOperatorModel {
+                Name = estateOperatorResponse.Name,
+                OperatorId = estateOperatorResponse.OperatorId,
+                RequireCustomMerchantNumber = estateOperatorResponse.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = estateOperatorResponse.RequireCustomTerminalNumber,
+            });
+        }
+
+        return model;
     }
 }
