@@ -35,6 +35,7 @@ public class MerchantModel
     public string? ContactName { get; set; }
     public string? ContactEmailAddress { get; set; }
     public string? ContactPhoneNumber { get; set; }
+    public DateTime CreatedDateTime { get; set; }
 }
 
 // Operator Models
