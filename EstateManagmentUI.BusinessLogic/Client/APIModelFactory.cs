@@ -20,4 +20,14 @@ public static class APIModelFactory {
 
         return comparisonDates;
     }
+
+    public static MerchantKpiModel ConvertFrom(MerchantKpi apiResult) {
+        MerchantKpiModel model = new MerchantKpiModel {
+            MerchantsWithNoSaleInLast7Days = apiResult.MerchantsWithNoSaleInLast7Days, 
+            MerchantsWithNoSaleToday = apiResult.MerchantsWithNoSaleToday, 
+            MerchantsWithSaleInLastHour = apiResult.MerchantsWithSaleInLastHour
+        };
+
+        return model;
+    }
 }

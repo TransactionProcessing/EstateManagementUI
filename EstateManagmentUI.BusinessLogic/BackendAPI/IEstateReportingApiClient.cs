@@ -10,6 +10,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
     public interface IEstateReportingApiClient
     {
         Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken, Guid estateId, CancellationToken cancellationToken);
+        Task<Result<MerchantKpi>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -24,7 +25,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
         public async Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken,
                                                                            Guid estateId,
                                                                            CancellationToken cancellationToken) {
-            String requestUri = this.BuildRequestUrl("/api/dimensions/calendar/comparisondates");
+            String requestUri = this.BuildRequestUrl("/api/calendars/comparisondates");
 
             try
             {
@@ -43,6 +44,31 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting comparison dates for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<MerchantKpi>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl("/api/merchants/kpis");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<MerchantKpi>? result = await this.SendHttpGetRequest<MerchantKpi>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting merchant kpis for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }
