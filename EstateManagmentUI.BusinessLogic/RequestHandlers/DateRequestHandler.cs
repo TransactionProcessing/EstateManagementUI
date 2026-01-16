@@ -5,6 +5,7 @@ using MediatR;
 using SimpleResults;
 using System.Threading.Tasks;
 using SecurityService.Client;
+using SecurityService.DataTransferObjects.Responses;
 using Shared.Results;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers
@@ -261,10 +262,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         IRequestHandler<Queries.GetTransactionDetailQuery, Result<List<TransactionDetailModel>>>
     {
         private readonly IApiClient ApiClient;
+        private readonly ISecurityServiceClient SecurityServiceClient;
 
-        public DashboardRequestHandler(IApiClient apiClient)
-        {
+        public DashboardRequestHandler(IApiClient apiClient, ISecurityServiceClient securityServiceClient) {
             this.ApiClient = apiClient;
+            this.SecurityServiceClient = securityServiceClient;
         }
 
         // Implementations similar to above handlers returning stub data
@@ -290,7 +292,14 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<MerchantKpiModel>> Handle(Queries.GetMerchantKpiQuery request,
                                                            CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockMerchantKpi());
+
+            // Get a token here 
+            Result<TokenResponse>? token = await this.SecurityServiceClient.GetToken("serviceClient", "d192cbc46d834d0da90e8a9d50ded543", cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            return await this.ApiClient.GetMerchantKpi(token.Data.AccessToken, request.CorrelationId.Value, request.EstateId, cancellationToken);
+
         }
 
         public async Task<Result<TodaysSalesModel>> Handle(Queries.GetTodaysFailedSalesQuery request,
