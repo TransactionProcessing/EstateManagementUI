@@ -16,7 +16,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
     public partial class Home
     {
         // Response code for low credit failures
-        private const string LOW_CREDIT_RESPONSE_CODE = "1008";
+        private const string LOW_CREDIT_RESPONSE_CODE = "1009";
 
         private bool isLoading = true;
         private bool isAdministrator;

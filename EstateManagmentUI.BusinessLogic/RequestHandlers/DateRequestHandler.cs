@@ -3,10 +3,6 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using SimpleResults;
-using System.Threading.Tasks;
-using SecurityService.Client;
-using SecurityService.DataTransferObjects.Responses;
-using Shared.Results;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers
 {
@@ -288,7 +284,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<TodaysSalesModel>> Handle(Queries.GetTodaysFailedSalesQuery request,
                                                            CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockTodaysSales());
+            return await this.ApiClient.GetTodaysFailedSales(request, cancellationToken);
         }
 
         public async Task<Result<List<TopBottomProductDataModel>>> Handle(Queries.GetTopProductDataQuery request,

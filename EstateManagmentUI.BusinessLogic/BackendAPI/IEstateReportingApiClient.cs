@@ -18,6 +18,8 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                  Int32 operatorReportingId,
                                                  DateTime comparisonDate,
                                                  CancellationToken cancellationToken);
+
+        Task<Result<TodaysSales>> GetTodaysFailedSales(String accessToken, Guid estateId, Int32 merchantReportingId, Int32 operatorReportingId, String responseCode, DateTime comparisonDate, CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -106,6 +108,37 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting todays sales for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<TodaysSales>> GetTodaysFailedSales(String accessToken, Guid estateId, Int32 merchantReportingId, Int32 operatorReportingId, String responseCode, DateTime comparisonDate, CancellationToken cancellationToken)
+        {
+            QueryStringBuilder builder = new QueryStringBuilder();
+            builder.AddParameter("comparisonDate", $"{comparisonDate.Date:yyyy-MM-dd}");
+            builder.AddParameter("merchantReportingId", merchantReportingId);
+            builder.AddParameter("operatorReportingId", operatorReportingId);
+            builder.AddParameter("responseCode", responseCode);
+
+            String requestUri = this.BuildRequestUrl($"/api/transactions/todaysfailedsales?{builder.BuildQueryString()}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<TodaysSales>? result = await this.SendHttpGetRequest<TodaysSales>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting todays failed sales for estate {estateId} and response code {responseCode}.", ex);
 
                 return Result.Failure(exception.Message);
             }
