@@ -12,6 +12,9 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
         Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken, Guid estateId, CancellationToken cancellationToken);
         Task<Result<MerchantKpi>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
 
+        Task<Result<List<Merchant>>> GetRecentMerchants(String accessToken,
+                                                        Guid estateId,
+                                                        CancellationToken cancellationToken);
         Task<Result<TodaysSales>> GetTodaysSales(String accessToken,
                                                  Guid estateId,
                                                  Int32 merchantReportingId,
@@ -78,6 +81,31 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting merchant kpis for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<Merchant>>> GetRecentMerchants(String accessToken, Guid estateId, CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl("/api/merchants/recent");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<Merchant>> result = await this.SendHttpGetRequest<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting recent merchants for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

@@ -66,6 +66,20 @@ public class TestDataStore : ITestDataStore
         return new List<MerchantModel>();
     }
 
+    public List<RecentMerchantsModel> GetRecentMerchants(Guid estateId)
+    {
+        if (this._merchants.TryGetValue(estateId, out var merchantDict))
+        {
+            return merchantDict.Values.Select(m => new RecentMerchantsModel {
+                CreatedDateTime = m.CreatedDateTime,
+                Reference = m.MerchantReference,
+                Name = m.MerchantName,
+                MerchantId = m.MerchantId
+            }).ToList();
+        }
+        return new List<RecentMerchantsModel>();
+    }
+
     public MerchantModel? GetMerchant(Guid estateId, Guid merchantId)
     {
         if (this._merchants.TryGetValue(estateId, out var merchantDict))
@@ -213,7 +227,8 @@ public class TestDataStore : ITestDataStore
             Country = "Test Country",
             ContactName = "John Smith",
             ContactEmailAddress = "john@testmerchant.com",
-            ContactPhoneNumber = "555-1234"
+            ContactPhoneNumber = "555-1234",
+            CreatedDateTime = DateTime.Now
         });
 
         this.AddMerchant(estateId, new MerchantModel
@@ -223,7 +238,8 @@ public class TestDataStore : ITestDataStore
             MerchantReference = "MERCH002",
             Balance = 5000.00m,
             AvailableBalance = 4200.00m,
-            SettlementSchedule = "Weekly"
+            SettlementSchedule = "Weekly",
+            CreatedDateTime = DateTime.Now.AddDays(-1)
         });
 
         this.AddMerchant(estateId, new MerchantModel
@@ -233,7 +249,8 @@ public class TestDataStore : ITestDataStore
             MerchantReference = "MERCH003",
             Balance = 15000.00m,
             AvailableBalance = 12000.00m,
-            SettlementSchedule = "Monthly"
+            SettlementSchedule = "Monthly",
+            CreatedDateTime = DateTime.Now.AddDays(-5)
         });
 
         // Default test operators

@@ -26,7 +26,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
         private TodaysSalesModel? todaysSales;
         private TodaysSalesModel? todaysFailedSales;
         private List<ComparisonDateModel>? comparisonDates;
-        private List<MerchantModel>? recentMerchants;
+        private List<RecentMerchantsModel>? recentMerchants;
         private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
         private int changeEventCounter = 0;
 
@@ -115,7 +115,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages
                 var kpiTask = Mediator.Send(new Queries.GetMerchantKpiQuery(correlationId, estateId));
                 var salesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateId, comparisonDateResult.Data));
                 var failedSalesTask = Mediator.Send(new Queries.GetTodaysFailedSalesQuery(correlationId, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
-                var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
+                var merchantsTask = Mediator.Send(new Queries.GetRecentMerchantsQuery(correlationId, estateId));
 
                 await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
 

@@ -14,6 +14,7 @@ public interface ITestDataStore
     
     // Merchant Management
     List<MerchantModel> GetMerchants(Guid estateId);
+    List<RecentMerchantsModel> GetRecentMerchants(Guid estateId);
     MerchantModel? GetMerchant(Guid estateId, Guid merchantId);
     void AddMerchant(Guid estateId, MerchantModel merchant);
     void UpdateMerchant(Guid estateId, MerchantModel merchant);

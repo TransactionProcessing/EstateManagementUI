@@ -42,4 +42,28 @@ public static class APIModelFactory {
         };
         return model;
     }
+
+    public static List<RecentMerchantsModel> ConvertFrom(List<Merchant> apiResultData) {
+        List<RecentMerchantsModel> merchants = new();
+
+        foreach (Merchant merchant in apiResultData) {
+            merchants.Add(new RecentMerchantsModel
+            {
+                CreatedDateTime = merchant.CreatedDateTime,
+                EstateReportingId = merchant.EstateReportingId,
+                LastSale = merchant.LastSale,
+                LastSaleDateTime = merchant.LastSaleDateTime,
+                LastStatement = merchant.LastStatement,
+                MerchantId = merchant.MerchantId,
+                MerchantReportingId = merchant.MerchantReportingId,
+                Name = merchant.Name,
+                PostCode = merchant.PostCode,
+                Reference = merchant.Reference,
+                Region = merchant.Region,
+                Town = merchant.Town
+            });
+        }
+
+        return merchants;
+    }
 }

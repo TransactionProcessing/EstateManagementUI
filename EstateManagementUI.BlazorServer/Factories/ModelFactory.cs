@@ -296,5 +296,29 @@ namespace EstateManagementUI.BlazorServer.Factories {
             models.ForEach(m => result.Add(ConvertFrom(m)));
             return result;
         }
+
+        public static List<RecentMerchantsModel>? ConvertFrom(List<BusinessLogic.Models.RecentMerchantsModel> models) {
+            List<RecentMerchantsModel> result = new List<RecentMerchantsModel>();
+            models.ForEach(m => result.Add(ConvertFrom(m)));
+            return result;
+        }
+
+        private static RecentMerchantsModel ConvertFrom(BusinessLogic.Models.RecentMerchantsModel model) {
+            RecentMerchantsModel result = new RecentMerchantsModel() {
+                CreatedDateTime = model.CreatedDateTime,
+                EstateReportingId = model.EstateReportingId,
+                LastSale = model.LastSale,
+                LastSaleDateTime = model.LastSaleDateTime,
+                LastStatement = model.LastStatement,
+                MerchantId = model.MerchantId,
+                MerchantReportingId = model.MerchantReportingId,
+                Name = model.Name,
+                PostCode = model.PostCode,
+                Reference = model.Reference,
+                Region = model.Region,
+                Town = model.Town
+            };
+            return result;
+        }
     }
 }

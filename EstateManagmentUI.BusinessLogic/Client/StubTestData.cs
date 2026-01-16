@@ -43,6 +43,31 @@ public static class StubTestData {
         }
     };
 
+    public static List<RecentMerchantsModel> GetMockRecentMerchants() => new()
+    {
+        new RecentMerchantsModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Name = "Test Merchant 1",
+            Reference = "MERCH001",
+            CreatedDateTime = DateTime.Now
+        },
+        new RecentMerchantsModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
+            Name = "Test Merchant 2",
+            Reference = "MERCH002",
+            CreatedDateTime = DateTime.Now.AddDays(-1)
+        },
+        new RecentMerchantsModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
+            Name = "Test Merchant 3",
+            Reference = "MERCH003",
+            CreatedDateTime = DateTime.Now.AddDays(-5)
+        }
+    };
+
     public static MerchantModel GetMockMerchant() => new()
     {
         MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),

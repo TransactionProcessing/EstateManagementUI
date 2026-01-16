@@ -60,7 +60,7 @@ public class HomePageTests : TestContext
         this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantKpiQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchantKpi()));
         this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
         this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysFailedSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchants()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetRecentMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockRecentMerchants()));
 
         // Act
         var cut = RenderComponent<Home>();
@@ -87,7 +87,7 @@ public class HomePageTests : TestContext
         this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantKpiQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchantKpi()));
         this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
         this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetTodaysFailedSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchants()));
+        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetRecentMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockRecentMerchants()));
 
 
         // Act

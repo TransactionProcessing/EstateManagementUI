@@ -58,7 +58,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<Commands.UpdateMerchantAddressCommand, Result>,
                                         IRequestHandler<Commands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<Commands.UpdateMerchantContactCommand, Result>,
-                                        IRequestHandler<Commands.AssignContractToMerchantCommand, Result>
+                                        IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
+                                        IRequestHandler<Queries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>
     {
         private readonly IApiClient ApiClient;
 
@@ -135,6 +136,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         public async Task<Result> Handle(Commands.AssignContractToMerchantCommand request,
                                          CancellationToken cancellationToken) {
             return Result.Success();
+        }
+
+        public async Task<Result<List<RecentMerchantsModel>>> Handle(Queries.GetRecentMerchantsQuery request,
+                                                        CancellationToken cancellationToken) {
+            return await this.ApiClient.GetRecentMerchants(request, cancellationToken);
         }
     }
 
