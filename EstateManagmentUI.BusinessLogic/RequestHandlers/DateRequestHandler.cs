@@ -13,21 +13,13 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
     public class DateRequestHandler : IRequestHandler<Queries.GetComparisonDatesQuery, Result<List<ComparisonDateModel>>>
     {
         private readonly IApiClient ApiClient;
-        private readonly ISecurityServiceClient SecurityServiceClient;
-
-        public DateRequestHandler(IApiClient apiClient, ISecurityServiceClient securityServiceClient) {
+        
+        public DateRequestHandler(IApiClient apiClient) {
             this.ApiClient = apiClient;
-            this.SecurityServiceClient = securityServiceClient;
         }
         public async Task<Result<List<ComparisonDateModel>>> Handle(Queries.GetComparisonDatesQuery request,
                                                                     CancellationToken cancellationToken) {
-
-            // Get a token here 
-            var token = await this.SecurityServiceClient.GetToken("serviceClient", "d192cbc46d834d0da90e8a9d50ded543", cancellationToken);
-            if (token.IsFailed)
-                return ResultHelpers.CreateFailure(token);
-
-            return await this.ApiClient.GetComparisonDates(token.Data.AccessToken, request.CorrelationId.Value, request.EstateId, cancellationToken);
+            return await this.ApiClient.GetComparisonDates(request, cancellationToken);
         }
     }
 
@@ -262,17 +254,16 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         IRequestHandler<Queries.GetTransactionDetailQuery, Result<List<TransactionDetailModel>>>
     {
         private readonly IApiClient ApiClient;
-        private readonly ISecurityServiceClient SecurityServiceClient;
 
-        public DashboardRequestHandler(IApiClient apiClient, ISecurityServiceClient securityServiceClient) {
+        public DashboardRequestHandler(IApiClient apiClient) {
             this.ApiClient = apiClient;
-            this.SecurityServiceClient = securityServiceClient;
+            
         }
 
         // Implementations similar to above handlers returning stub data
         public async Task<Result<TodaysSalesModel>> Handle(Queries.GetTodaysSalesQuery request,
                                                            CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockTodaysSales());
+            return await this.ApiClient.GetTodaysSales(request, cancellationToken);
         }
 
         public async Task<Result<TodaysSettlementModel>> Handle(Queries.GetTodaysSettlementQuery request,
@@ -292,14 +283,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<MerchantKpiModel>> Handle(Queries.GetMerchantKpiQuery request,
                                                            CancellationToken cancellationToken) {
-
-            // Get a token here 
-            Result<TokenResponse>? token = await this.SecurityServiceClient.GetToken("serviceClient", "d192cbc46d834d0da90e8a9d50ded543", cancellationToken);
-            if (token.IsFailed)
-                return ResultHelpers.CreateFailure(token);
-
-            return await this.ApiClient.GetMerchantKpi(token.Data.AccessToken, request.CorrelationId.Value, request.EstateId, cancellationToken);
-
+            return await this.ApiClient.GetMerchantKpi(request, cancellationToken);
         }
 
         public async Task<Result<TodaysSalesModel>> Handle(Queries.GetTodaysFailedSalesQuery request,

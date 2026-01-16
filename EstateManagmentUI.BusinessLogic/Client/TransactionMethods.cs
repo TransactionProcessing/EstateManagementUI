@@ -1,33 +1,34 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
-using EstateManagementUI.BusinessLogic.Requests;
-using SecurityService.DataTransferObjects.Responses;
 using Shared.Results;
 using SimpleResults;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using EstateManagementUI.BusinessLogic.Requests;
 
 namespace EstateManagementUI.BusinessLogic.Client
 {
     public partial interface IApiClient
     {
-        Task<Result<MerchantKpiModel>> GetMerchantKpi(Queries.GetMerchantKpiQuery request, CancellationToken cancellationToken);
+        Task<Result<TodaysSalesModel>> GetTodaysSales(Queries.GetTodaysSalesQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
-        public async Task<Result<MerchantKpiModel>> GetMerchantKpi(Queries.GetMerchantKpiQuery request,
+        public async Task<Result<TodaysSalesModel>> GetTodaysSales(Queries.GetTodaysSalesQuery request,
                                                                    CancellationToken cancellationToken) {
-
             // Get a token here 
             var token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
-            var apiResult = await this.EstateReportingApiClient.GetMerchantKpi(token.Data, request.EstateId, cancellationToken);
+            var apiResult = await this.EstateReportingApiClient.GetTodaysSales(token.Data, request.EstateId, 0, 0, request.ComparisonDate, cancellationToken);
 
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            MerchantKpiModel merchantKpiModel = APIModelFactory.ConvertFrom(apiResult.Data);
+            TodaysSalesModel todaysSalesModel = APIModelFactory.ConvertFrom(apiResult.Data);
 
-            return Result.Success(merchantKpiModel);
+            return Result.Success(todaysSalesModel);
         }
     }
 }

@@ -30,4 +30,16 @@ public static class APIModelFactory {
 
         return model;
     }
+
+    public static TodaysSalesModel ConvertFrom(TodaysSales apiResultData) {
+        TodaysSalesModel model = new TodaysSalesModel {
+            ComparisonAverageValue = apiResultData.ComparisonAverageSalesValue,
+            ComparisonSalesCount = apiResultData.ComparisonSalesCount,
+            ComparisonSalesValue = apiResultData.ComparisonSalesValue,
+            TodaysAverageValue = apiResultData.TodaysAverageSalesValue,
+            TodaysSalesCount = apiResultData.TodaysSalesCount,
+            TodaysSalesValue = apiResultData.TodaysSalesValue
+        };
+        return model;
+    }
 }
