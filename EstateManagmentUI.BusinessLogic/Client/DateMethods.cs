@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using TransactionProcessor.Client;
 
 namespace EstateManagementUI.BusinessLogic.Client
 {
@@ -21,10 +22,13 @@ namespace EstateManagementUI.BusinessLogic.Client
     public partial class ApiClient : IApiClient {
         private readonly IEstateReportingApiClient EstateReportingApiClient;
         private readonly ISecurityServiceClient SecurityServiceClient;
+        private readonly ITransactionProcessorClient TransactionProcessorClient;
 
-        public ApiClient(IEstateReportingApiClient estateReportingApiClient, ISecurityServiceClient securityServiceClient) {
+        public ApiClient(IEstateReportingApiClient estateReportingApiClient, ISecurityServiceClient securityServiceClient,
+                         ITransactionProcessorClient transactionProcessorClient) {
             this.EstateReportingApiClient = estateReportingApiClient;
             this.SecurityServiceClient = securityServiceClient;
+            this.TransactionProcessorClient = transactionProcessorClient;
         }
         public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(Queries.GetComparisonDatesQuery request,
                                                                                 CancellationToken cancellationToken) {

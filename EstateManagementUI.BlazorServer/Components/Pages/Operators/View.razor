@@ -3,6 +3,7 @@
 @using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
 @inject IMediator Mediator
+@inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 
 <PageTitle>View Operator</PageTitle>
@@ -86,6 +87,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await RequirePermission(PermissionSection.Operator, PermissionFunction.View);
+
         await LoadOperator();
     }
 

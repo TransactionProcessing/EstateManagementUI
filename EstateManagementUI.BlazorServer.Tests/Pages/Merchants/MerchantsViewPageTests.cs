@@ -1,6 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
@@ -12,20 +13,8 @@ using MerchantModel = EstateManagementUI.BusinessLogic.Models.MerchantModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
-public class MerchantsViewPageTests : TestContext
+public class MerchantsViewPageTests : BaseTest
 {
-    private readonly Mock<IMediator> _mockMediator;
-    private readonly Mock<NavigationManager> _mockNavigationManager;
-
-    public MerchantsViewPageTests()
-    {
-        _mockMediator = new Mock<IMediator>();
-        _mockNavigationManager = new Mock<NavigationManager>();
-        
-        Services.AddSingleton(_mockMediator.Object);
-        Services.AddSingleton(_mockNavigationManager.Object);
-    }
-
     [Fact]
     public void MerchantsView_InitialState_ShowsLoadingIndicator()
     {

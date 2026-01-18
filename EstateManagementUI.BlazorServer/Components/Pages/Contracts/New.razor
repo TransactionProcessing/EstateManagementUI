@@ -1,5 +1,6 @@
 @page "/contracts/new"
 @rendermode InteractiveServer
+@inherits AuthorizedComponentBase
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BlazorServer.Permissions
@@ -126,7 +127,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        hasPermission = await PermissionService.HasPermissionAsync(PermissionSection.Contract, PermissionFunction.Create);
+        await RequirePermission(PermissionSection.Contract, PermissionFunction.Create);
         await LoadOperators();
     }
 

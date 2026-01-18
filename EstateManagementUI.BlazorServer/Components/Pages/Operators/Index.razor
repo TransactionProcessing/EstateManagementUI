@@ -4,6 +4,7 @@
 @using EstateManagementUI.BlazorServer.Permissions
 @using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
+@inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 @inject IPermissionKeyProvider PermissionKeyProvider
 
@@ -119,6 +120,8 @@
     {
         try
         {
+            await RequirePermission(PermissionSection.Operator, PermissionFunction.List);
+
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             var accessToken = "stubbed-token";

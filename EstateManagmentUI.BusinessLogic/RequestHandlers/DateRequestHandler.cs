@@ -31,7 +31,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<EstateModel>> Handle(Queries.GetEstateQuery request,
                                                       CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockEstate());
+            return await this.ApiClient.GetEstate(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.AddOperatorToEstateCommand request,

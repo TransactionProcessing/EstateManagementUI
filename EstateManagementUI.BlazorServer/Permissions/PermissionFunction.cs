@@ -9,5 +9,6 @@ public enum PermissionFunction
     Create,
     Edit,
     Delete,
-    MakeDeposit
+    MakeDeposit,
+    List
 }

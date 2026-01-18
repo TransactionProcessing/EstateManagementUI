@@ -1,6 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Operators;
 using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
@@ -12,20 +13,8 @@ using OperatorModel = EstateManagementUI.BusinessLogic.Models.OperatorModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
 
-public class OperatorsViewPageTests : TestContext
+public class OperatorsViewPageTests : BaseTest
 {
-    private readonly Mock<IMediator> _mockMediator;
-    private readonly Mock<NavigationManager> _mockNavigationManager;
-
-    public OperatorsViewPageTests()
-    {
-        _mockMediator = new Mock<IMediator>();
-        _mockNavigationManager = new Mock<NavigationManager>();
-        
-        Services.AddSingleton(_mockMediator.Object);
-        Services.AddSingleton(_mockNavigationManager.Object);
-    }
-
     [Fact]
     public void OperatorsView_RendersCorrectly()
     {

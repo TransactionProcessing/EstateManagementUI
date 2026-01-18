@@ -5,6 +5,7 @@
 @using EstateManagementUI.BlazorServer.Permissions
 @using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
+@inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService
 
@@ -146,11 +147,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        hasPermission = await PermissionService.HasPermissionAsync(PermissionSection.Operator, PermissionFunction.Edit);
-        if (hasPermission)
-        {
-            await LoadOperator();
-        }
+        await RequirePermission(PermissionSection.Operator, PermissionFunction.Edit);
+        await LoadOperator();
+
     }
 
     private async Task LoadOperator()

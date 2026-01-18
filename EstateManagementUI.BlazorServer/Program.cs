@@ -21,6 +21,7 @@ using System.Security.Cryptography.X509Certificates;
 using ClientProxyBase;
 using SecurityService.Client;
 using Shared.General;
+using TransactionProcessor.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -237,6 +238,7 @@ else
 
     builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
     builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
+    builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
 }
 
 WebApplication app = builder.Build();

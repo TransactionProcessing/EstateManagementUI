@@ -1,8 +1,11 @@
 @page "/estate"
-@using EstateManagementUI.BlazorServer.Factories
-@using EstateManagementUI.BusinessLogic.Requests
+@using EstateManagementUI.BlazorServer.Common
+@inherits AuthorizedComponentBase
 @rendermode InteractiveServer
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
 @inject IMediator Mediator
+@inject IPermissionService PermissionService
 
 <PageTitle>Estate Management</PageTitle>
 
@@ -24,10 +27,10 @@
         <div class="bg-white rounded-lg shadow-md">
             <div class="border-b border-gray-200">
                 <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
-                    <button type="button" @onclick='() => SetActiveTab("overview")' class="@GetTabClass("overview")">
+                    <button type="button" @onclick='() => SetActiveTab("overview")' class="@Helpers.GetTabClass(activeTab, "overview")">
                         Overview
                     </button>
-                    <button type="button" @onclick='() => SetActiveTab("operators")' class="@GetTabClass("operators")">
+                    <button type="button" @onclick='() => SetActiveTab("operators")' class="@Helpers.GetTabClass(activeTab, "operators")">
                         Operators
                     </button>
                 </nav>
@@ -258,167 +261,3 @@
         </div>
     }
 </div>
-
-@code {
-    private bool isLoading = true;
-    private EstateModel? estate;
-    private List<MerchantModel>? merchants;
-    private List<OperatorModel>? availableOperators;
-    private List<OperatorModel> assignedOperators = new();
-    private List<ContractModel>? contracts;
-    private string activeTab = "overview";
-    private bool showAddOperator = false;
-    private string? selectedOperatorId;
-    private string? successMessage;
-    private string? errorMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            // Use stubbed mediator to get data
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var estateResult = await Mediator.Send(new Queries.GetEstateQuery(correlationId, accessToken, estateId));
-            if (estateResult.IsSuccess)
-            {
-                estate = ModelFactory.ConvertFrom(estateResult.Data);
-                // Load assigned operators from estate model
-                if (estate.Operators != null)
-                {
-                    assignedOperators = estate.Operators.Select(o => new OperatorModel
-                    {
-                        OperatorId = o.OperatorId,
-                        Name = o.Name,
-                        RequireCustomMerchantNumber = o.RequireCustomMerchantNumber,
-                        RequireCustomTerminalNumber = o.RequireCustomTerminalNumber
-                    }).ToList();
-                }
-            }
-
-            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
-            if (merchantsResult.IsSuccess)
-            {
-                merchants = ModelFactory.ConvertFrom(merchantsResult.Data);
-            }
-
-            var operatorsResult = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
-            if (operatorsResult.IsSuccess)
-            {
-                availableOperators = ModelFactory.ConvertFrom(operatorsResult.Data);
-            }
-
-            var contractsResult = await Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
-            if (contractsResult.IsSuccess)
-            {
-                contracts = ModelFactory.ConvertFrom(contractsResult.Data);
-            }
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private string GetTabClass(string tab)
-    {
-        return activeTab == tab
-            ? "border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-            : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
-    }
-
-    private void SetActiveTab(string tab)
-    {
-        activeTab = tab;
-        ClearMessages();
-    }
-
-    private void ClearMessages()
-    {
-        successMessage = null;
-        errorMessage = null;
-    }
-
-    private async Task AddOperatorToEstate()
-    {
-        if (string.IsNullOrEmpty(selectedOperatorId)) return;
-
-        ClearMessages();
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            var operatorId = Guid.Parse(selectedOperatorId);
-
-            var command = new Commands.AddOperatorToEstateCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                operatorId
-            );
-
-            var result = await Mediator.Send(command);
-
-            if (result.IsSuccess)
-            {
-                successMessage = "Operator added successfully";
-                selectedOperatorId = null;
-                showAddOperator = false;
-                
-                // Add to assigned list
-                var op = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
-                if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId))
-                {
-                    assignedOperators.Add(op);
-                }
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to add operator";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-    }
-
-    private async Task RemoveOperatorFromEstate(Guid operatorId)
-    {
-        ClearMessages();
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var command = new Commands.RemoveOperatorFromEstateCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                operatorId
-            );
-
-            var result = await Mediator.Send(command);
-
-            if (result.IsSuccess)
-            {
-                successMessage = "Operator removed successfully";
-                assignedOperators.RemoveAll(o => o.OperatorId == operatorId);
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to remove operator";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-    }
-}
