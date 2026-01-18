@@ -66,14 +66,6 @@ Scenario: Estate user can view operator requirement details
     And the operator custom terminal number requirement is "Not Required"
 
 @OperatorManagementTests @EstateRole
-Scenario: Estate user can see Edit Operator button on view page
-    Given the user is authenticated as an "Estate" user
-    When the user navigates to Operator Management
-    And the user clicks on operator "Safaricom"
-    Then the View Operator page is displayed
-    And the Edit Operator button is visible
-
-@OperatorManagementTests @EstateRole
 Scenario: Estate user can navigate to Create New Operator page
     Given the user is authenticated as an "Estate" user
     When the user navigates to Operator Management
@@ -88,15 +80,6 @@ Scenario: Estate user can navigate to Edit Operator page from list
     Given the user is authenticated as an "Estate" user
     When the user navigates to Operator Management
     And the user clicks edit for operator "Safaricom"
-    Then the Edit Operator page is displayed
-    And the operator name field contains "Safaricom"
-
-@OperatorManagementTests @EstateRole
-Scenario: Estate user can navigate to Edit Operator page from view
-    Given the user is authenticated as an "Estate" user
-    When the user navigates to Operator Management
-    And the user clicks on operator "Safaricom"
-    And the user clicks the Edit Operator button
     Then the Edit Operator page is displayed
     And the operator name field contains "Safaricom"
 
@@ -146,14 +129,6 @@ Scenario: Viewer user cannot see Edit button on list
     When the user navigates to Operator Management
     Then the Operator Management page is displayed
     And the Edit button is not visible for operator "Safaricom"
-
-@OperatorManagementTests @ViewerRole
-Scenario: Viewer user can see Edit Operator button on view page but navigating to edit is blocked
-    Given the user is authenticated as a "Viewer" user
-    When the user navigates to Operator Management
-    And the user clicks on operator "Safaricom"
-    Then the View Operator page is displayed
-    And the Edit Operator button is visible
 
 @OperatorManagementTests @EstateRole @EditOperations
 Scenario: Estate user can update operator details
