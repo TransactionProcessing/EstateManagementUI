@@ -75,6 +75,6 @@
 
     protected override void OnInitialized()
     {
-        SupportEmail = Configuration.GetValue<string>("AppSettings:SupportEmail", DefaultSupportEmail) ?? DefaultSupportEmail;
+        SupportEmail = Configuration.GetValue("AppSettings:SupportEmail", DefaultSupportEmail);
     }
 }
