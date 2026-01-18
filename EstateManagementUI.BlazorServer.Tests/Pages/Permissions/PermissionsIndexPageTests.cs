@@ -1,6 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,28 +11,8 @@ using PermissionsIndex = EstateManagementUI.BlazorServer.Components.Pages.Permis
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Permissions;
 
-public class PermissionsIndexPageTests : TestContext
+public class PermissionsIndexPageTests : BaseTest
 {
-    private readonly Mock<IPermissionStore> _mockPermissionStore;
-    private readonly Mock<NavigationManager> _mockNavigationManager;
-    private readonly Mock<IPermissionKeyProvider> _mockPermissionKeyProvider;
-
-    public PermissionsIndexPageTests()
-    {
-        _mockPermissionStore = new Mock<IPermissionStore>();
-        _mockNavigationManager = new Mock<NavigationManager>();
-        _mockPermissionKeyProvider = new Mock<IPermissionKeyProvider>();
-        
-        _mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
-        
-        Services.AddSingleton(_mockPermissionStore.Object);
-        Services.AddSingleton(_mockNavigationManager.Object);
-        Services.AddSingleton(_mockPermissionKeyProvider.Object);
-        
-        ComponentFactories.AddStub<RequirePermission>();
-        ComponentFactories.AddStub<RequireSectionAccess>();
-    }
-
     [Fact]
     public void PermissionsIndex_RendersCorrectly()
     {

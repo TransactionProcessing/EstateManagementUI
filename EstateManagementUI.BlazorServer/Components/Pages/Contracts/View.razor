@@ -2,6 +2,7 @@
 @using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
+@inherits AuthorizedComponentBase
 @inject IMediator Mediator
 @inject NavigationManager NavigationManager
 
@@ -145,6 +146,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await RequirePermission(PermissionSection.Contract, PermissionFunction.View);
         await LoadContract();
     }
 

@@ -1,6 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
@@ -8,20 +9,8 @@ using ReportingIndex = EstateManagementUI.BlazorServer.Components.Pages.Reportin
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Reporting;
 
-public class ReportingIndexPageTests : TestContext
+public class ReportingIndexPageTests : BaseTest
 {
-    private readonly Mock<IPermissionKeyProvider> _mockPermissionKeyProvider;
-
-    public ReportingIndexPageTests()
-    {
-        _mockPermissionKeyProvider = new Mock<IPermissionKeyProvider>();
-        _mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
-        
-        Services.AddSingleton(_mockPermissionKeyProvider.Object);
-        
-        ComponentFactories.AddStub<RequireSectionAccess>();
-    }
-
     [Fact]
     public void ReportingIndex_RendersCorrectly()
     {

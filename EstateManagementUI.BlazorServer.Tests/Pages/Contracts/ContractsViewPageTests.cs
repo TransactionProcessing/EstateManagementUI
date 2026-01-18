@@ -2,6 +2,7 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
@@ -13,27 +14,8 @@ using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
 
-public class ContractsViewPageTests : TestContext
+public class ContractsViewPageTests : BaseTest
 {
-    private readonly Mock<IMediator> _mockMediator;
-    private readonly Mock<NavigationManager> _mockNavigationManager;
-    private readonly Mock<IPermissionKeyProvider> _mockPermissionKeyProvider;
-
-    public ContractsViewPageTests()
-    {
-        _mockMediator = new Mock<IMediator>();
-        _mockNavigationManager = new Mock<NavigationManager>();
-        _mockPermissionKeyProvider = new Mock<IPermissionKeyProvider>();
-        
-        _mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
-        
-        Services.AddSingleton(_mockMediator.Object);
-        Services.AddSingleton(_mockNavigationManager.Object);
-        Services.AddSingleton(_mockPermissionKeyProvider.Object);
-        
-        ComponentFactories.AddStub<RequirePermission>();
-    }
-
     [Fact]
     public void ContractsView_RendersCorrectly()
     {

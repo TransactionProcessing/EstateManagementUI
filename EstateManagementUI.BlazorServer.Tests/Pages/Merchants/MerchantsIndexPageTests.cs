@@ -1,6 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
@@ -13,28 +14,8 @@ using MerchantsIndex = EstateManagementUI.BlazorServer.Components.Pages.Merchant
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
-public class MerchantsIndexPageTests : TestContext
+public class MerchantsIndexPageTests : BaseTest
 {
-    private readonly Mock<IMediator> _mockMediator;
-    private readonly Mock<IPermissionKeyProvider> _mockPermissionKeyProvider;
-    private readonly Mock<NavigationManager> _mockNavigationManager;
-
-    public MerchantsIndexPageTests()
-    {
-        _mockMediator = new Mock<IMediator>();
-        _mockPermissionKeyProvider = new Mock<IPermissionKeyProvider>();
-        _mockNavigationManager = new Mock<NavigationManager>();
-        
-        _mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
-        
-        Services.AddSingleton(_mockMediator.Object);
-        Services.AddSingleton(_mockPermissionKeyProvider.Object);
-        Services.AddSingleton(_mockNavigationManager.Object);
-        
-        // Add required permission components
-        ComponentFactories.AddStub<RequirePermission>();
-    }
-
     [Fact]
     public void MerchantsIndex_InitialState_ShowsLoadingIndicator()
     {
