@@ -21,7 +21,9 @@ public static class StubTestData {
             MerchantReference = "MERCH001",
             Balance = 10000.00m,
             AvailableBalance = 8500.00m,
-            SettlementSchedule = "Immediate"
+            SettlementSchedule = "Immediate",
+            Region = "North Region",
+            PostalCode = "12345"
         },
         new MerchantModel
         {
@@ -30,7 +32,9 @@ public static class StubTestData {
             MerchantReference = "MERCH002",
             Balance = 5000.00m,
             AvailableBalance = 4200.00m,
-            SettlementSchedule = "Weekly"
+            SettlementSchedule = "Weekly",
+            Region = "South Region",
+            PostalCode = "67890"
         },
         new MerchantModel
         {
@@ -39,7 +43,108 @@ public static class StubTestData {
             MerchantReference = "MERCH003",
             Balance = 15000.00m,
             AvailableBalance = 12000.00m,
-            SettlementSchedule = "Monthly"
+            SettlementSchedule = "Monthly",
+            Region = "East Region",
+            PostalCode = "54321"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222225"),
+            MerchantName = "Test Merchant 4",
+            MerchantReference = "MERCH004",
+            Balance = 7500.00m,
+            AvailableBalance = 6000.00m,
+            SettlementSchedule = "Weekly",
+            Region = "West Region",
+            PostalCode = "11111"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222226"),
+            MerchantName = "Test Merchant 5",
+            MerchantReference = "MERCH005",
+            Balance = 9000.00m,
+            AvailableBalance = 7500.00m,
+            SettlementSchedule = "Immediate",
+            Region = "North Region",
+            PostalCode = "22222"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222227"),
+            MerchantName = "Test Merchant 6",
+            MerchantReference = "MERCH006",
+            Balance = 12000.00m,
+            AvailableBalance = 10000.00m,
+            SettlementSchedule = "Monthly",
+            Region = "South Region",
+            PostalCode = "33333"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222228"),
+            MerchantName = "Test Merchant 7",
+            MerchantReference = "MERCH007",
+            Balance = 8500.00m,
+            AvailableBalance = 7000.00m,
+            SettlementSchedule = "Weekly",
+            Region = "East Region",
+            PostalCode = "44444"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222229"),
+            MerchantName = "Test Merchant 8",
+            MerchantReference = "MERCH008",
+            Balance = 11000.00m,
+            AvailableBalance = 9000.00m,
+            SettlementSchedule = "Immediate",
+            Region = "West Region",
+            PostalCode = "55555"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222230"),
+            MerchantName = "Test Merchant 9",
+            MerchantReference = "MERCH009",
+            Balance = 6500.00m,
+            AvailableBalance = 5500.00m,
+            SettlementSchedule = "Monthly",
+            Region = "North Region",
+            PostalCode = "66666"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222231"),
+            MerchantName = "Test Merchant 10",
+            MerchantReference = "MERCH010",
+            Balance = 13000.00m,
+            AvailableBalance = 11000.00m,
+            SettlementSchedule = "Weekly",
+            Region = "South Region",
+            PostalCode = "77777"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222232"),
+            MerchantName = "Test Merchant 11",
+            MerchantReference = "MERCH011",
+            Balance = 9500.00m,
+            AvailableBalance = 8000.00m,
+            SettlementSchedule = "Immediate",
+            Region = "East Region",
+            PostalCode = "88888"
+        },
+        new MerchantModel
+        {
+            MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222233"),
+            MerchantName = "Test Merchant 12",
+            MerchantReference = "MERCH012",
+            Balance = 14000.00m,
+            AvailableBalance = 12500.00m,
+            SettlementSchedule = "Monthly",
+            Region = "West Region",
+            PostalCode = "99999"
         }
     };
 
