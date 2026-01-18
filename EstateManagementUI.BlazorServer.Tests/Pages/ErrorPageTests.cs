@@ -14,7 +14,6 @@ public class ErrorPageTests : BaseTest
 {
     public ErrorPageTests() :base() {
         Mock<IWebHostEnvironment> _mockWebHostEnvironment = new();
-        Mock<IConfiguration> _mockConfiguration = new();
         _mockWebHostEnvironment.Setup(x => x.EnvironmentName).Returns(Environments.Development);
         
         Services.AddSingleton(_mockWebHostEnvironment.Object);
