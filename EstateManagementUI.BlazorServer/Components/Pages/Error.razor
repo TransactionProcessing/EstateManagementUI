@@ -1,5 +1,7 @@
 ﻿@page "/Error"
 @using System.Diagnostics
+@inject IConfiguration Configuration
+@inject IWebHostEnvironment Environment
 
 <PageTitle>Error</PageTitle>
 
@@ -52,7 +54,7 @@
                 <div class="mt-8 pt-6 border-t border-gray-200">
                     <p class="text-sm text-gray-500">
                         Need help? Contact our support team at 
-                        <a href="mailto:support@example.com" class="text-admin-primary hover:underline">support@example.com</a>
+                        <a href="mailto:@SupportEmail" class="text-admin-primary hover:underline">@SupportEmail</a>
                     </p>
                 </div>
             </div>
@@ -103,8 +105,13 @@
 
     private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-    private bool ShowDevelopmentInfo { get; set; } = false; // Can be toggled based on environment
+    private bool ShowDevelopmentInfo { get; set; }
+    private string SupportEmail { get; set; } = "support@example.com";
 
-    protected override void OnInitialized() =>
+    protected override void OnInitialized()
+    {
         RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+        ShowDevelopmentInfo = Environment.IsDevelopment();
+        SupportEmail = Configuration.GetValue<string>("AppSettings:SupportEmail", "support@example.com") ?? "support@example.com";
+    }
 }
