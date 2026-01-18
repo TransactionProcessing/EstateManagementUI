@@ -150,6 +150,12 @@ namespace EstateManagementUI.BlazorServer.Common
         {
             navigationManager.NavigateTo("/error", replace: true);
         }
+        
+        public static void NavigateToAccessDeniedPage(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo("/access-denied", replace: true);
+        }
+        
         public static void NavigateToEntryPage(this NavigationManager navigationManager)
         {
             navigationManager.NavigateTo("/entry", replace: true);

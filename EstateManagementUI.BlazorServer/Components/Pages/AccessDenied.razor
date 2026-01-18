@@ -1,0 +1,80 @@
+@page "/access-denied"
+@inject IConfiguration Configuration
+
+<PageTitle>Access Denied</PageTitle>
+
+<div class="flex items-center justify-center min-h-[60vh]">
+    <div class="max-w-2xl w-full mx-auto px-4">
+        <div class="card shadow-admin-lg">
+            <div class="card-body text-center py-12">
+                <!-- Access Denied Icon -->
+                <div class="mb-6">
+                    <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-100">
+                        <svg class="w-16 h-16 text-admin-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Access Denied Title -->
+                <h1 class="text-3xl font-bold text-gray-900 mb-3">Access Denied</h1>
+                
+                <!-- Access Denied Message -->
+                <p class="text-lg text-gray-600 mb-6">
+                    You don't have permission to access this page or perform this action. 
+                    If you believe this is an error, please contact your administrator.
+                </p>
+
+                <!-- Information Box -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <div class="flex items-start text-left">
+                        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-blue-800 mb-1">Why am I seeing this?</p>
+                            <p class="text-sm text-blue-700">
+                                Your current role or permissions do not allow access to this resource. 
+                                Contact your system administrator to request the necessary permissions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+                    <a href="/" class="btn btn-primary">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        Go to Home
+                    </a>
+                    <button onclick="window.history.back()" class="btn btn-secondary">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Go Back
+                    </button>
+                </div>
+
+                <!-- Help Text -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <p class="text-sm text-gray-500">
+                        Need help? Contact your administrator or support team at 
+                        <a href="mailto:@SupportEmail" class="text-admin-primary hover:underline">@SupportEmail</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private const string DefaultSupportEmail = "support@example.com";
+    private string SupportEmail { get; set; } = DefaultSupportEmail;
+
+    protected override void OnInitialized()
+    {
+        SupportEmail = Configuration.GetValue("AppSettings:SupportEmail", DefaultSupportEmail);
+    }
+}
