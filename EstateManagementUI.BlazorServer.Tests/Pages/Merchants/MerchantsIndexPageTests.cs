@@ -150,4 +150,99 @@ public class MerchantsIndexPageTests : BaseTest
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
+
+    [Fact]
+    public void MerchantsIndex_WithMerchants_DisplaysFilters()
+    {
+        // Arrange
+        var merchants = new List<MerchantModel>
+        {
+            new MerchantModel
+            {
+                MerchantId = Guid.NewGuid(),
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001",
+                Balance = 1000m,
+                AvailableBalance = 500m,
+                SettlementSchedule = "Daily",
+                Region = "North",
+                PostalCode = "12345"
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
+        
+        // Act
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert
+        cut.Markup.ShouldContain("Filters");
+        cut.Markup.ShouldContain("Name");
+        cut.Markup.ShouldContain("Reference");
+        cut.Markup.ShouldContain("Settlement Schedule");
+        cut.Markup.ShouldContain("Region");
+        cut.Markup.ShouldContain("Postcode");
+    }
+
+    [Fact]
+    public void MerchantsIndex_WithManyMerchants_DisplaysPagination()
+    {
+        // Arrange - Create more than 10 merchants to trigger pagination
+        var merchants = Enumerable.Range(1, 12).Select(i => new MerchantModel
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = $"Merchant {i}",
+            MerchantReference = $"REF{i:000}",
+            Balance = 1000m * i,
+            AvailableBalance = 500m * i,
+            SettlementSchedule = "Daily",
+            Region = "North",
+            PostalCode = "12345"
+        }).ToList();
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
+        
+        // Act
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert
+        cut.Markup.ShouldContain("Page");
+        cut.Markup.ShouldContain("Showing");
+        cut.Markup.ShouldContain("results");
+    }
+
+    [Fact]
+    public void MerchantsIndex_WithMerchants_DisplaysRegionAndPostcode()
+    {
+        // Arrange
+        var merchants = new List<MerchantModel>
+        {
+            new MerchantModel
+            {
+                MerchantId = Guid.NewGuid(),
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001",
+                Balance = 1000m,
+                AvailableBalance = 500m,
+                SettlementSchedule = "Daily",
+                Region = "North Region",
+                PostalCode = "12345"
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
+        
+        // Act
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert
+        cut.Markup.ShouldContain("North Region");
+        cut.Markup.ShouldContain("12345");
+    }
 }
