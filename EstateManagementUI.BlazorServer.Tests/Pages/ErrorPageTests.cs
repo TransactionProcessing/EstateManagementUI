@@ -1,11 +1,37 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Moq;
 using Shouldly;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
-public class ErrorPageTests : TestContext
+public class ErrorPageTests : BaseTest
 {
+    public ErrorPageTests() :base() {
+        Mock<IWebHostEnvironment> _mockWebHostEnvironment = new();
+        Mock<IConfiguration> _mockConfiguration = new();
+        _mockWebHostEnvironment.Setup(x => x.EnvironmentName).Returns(Environments.Development);
+        
+        Services.AddSingleton(_mockWebHostEnvironment.Object);
+
+        // Use a real IConfiguration with an in-memory value so GetSection/GetValue work as expected
+        var inMemorySettings = new Dictionary<string, string?>
+        {
+            { "AppSettings:SupportEmail", "support@example.com" }
+        };
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(inMemorySettings)
+            .Build();
+
+        Services.AddSingleton<IConfiguration>(configuration);
+
+    }
+
     [Fact]
     public void Error_RendersCorrectly()
     {
