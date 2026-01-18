@@ -28,8 +28,7 @@ public abstract class AuthorizedComponentBase : ComponentBase
         Boolean hasPermission = await this.PermissionService.HasPermissionAsync(permissionSection, permissionFunction);
         if (hasPermission == false)
         {
-            // TODO: Navigate to access denied page
-            this.NavigationManager.NavigateToErrorPage();
+            this.NavigationManager.NavigateToAccessDeniedPage();
             return;
         }
     }
