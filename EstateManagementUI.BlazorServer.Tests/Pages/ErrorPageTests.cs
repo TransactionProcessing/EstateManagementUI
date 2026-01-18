@@ -13,8 +13,8 @@ public class ErrorPageTests : TestContext
         var cut = RenderComponent<Error>();
         
         // Assert
-        cut.Find("h1").TextContent.ShouldBe("Error.");
-        cut.Find("h2").TextContent.ShouldBe("An error occurred while processing your request.");
+        cut.Find("h1").TextContent.ShouldContain("Oops! Something went wrong");
+        cut.Markup.ShouldContain("We encountered an unexpected error");
     }
     
     [Fact]
@@ -24,7 +24,7 @@ public class ErrorPageTests : TestContext
         var cut = RenderComponent<Error>();
         
         // Assert
-        cut.FindAll("strong").ShouldNotContain(e => e.TextContent.Contains("Request ID:"));
+        cut.Markup.ShouldNotContain("Reference ID for support:");
     }
     
     [Fact]
@@ -34,7 +34,7 @@ public class ErrorPageTests : TestContext
         var cut = RenderComponent<Error>();
         
         // Assert
-        cut.Markup.ShouldContain("Development Mode");
+        cut.Markup.ShouldContain("Development Mode Information");
         cut.Markup.ShouldContain("ASPNETCORE_ENVIRONMENT");
     }
     
@@ -47,5 +47,37 @@ public class ErrorPageTests : TestContext
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
+    }
+    
+    [Fact]
+    public void Error_HasHomePageLink()
+    {
+        // Act
+        var cut = RenderComponent<Error>();
+        
+        // Assert
+        var homeLink = cut.Find("a[href='/']");
+        homeLink.TextContent.ShouldContain("Go to Home");
+    }
+    
+    [Fact]
+    public void Error_HasBackButton()
+    {
+        // Act
+        var cut = RenderComponent<Error>();
+        
+        // Assert
+        var backButton = cut.Find("button[onclick='window.history.back()']");
+        backButton.TextContent.ShouldContain("Go Back");
+    }
+    
+    [Fact]
+    public void Error_HasSupportEmail()
+    {
+        // Act
+        var cut = RenderComponent<Error>();
+        
+        // Assert
+        cut.Markup.ShouldContain("support@example.com");
     }
 }
