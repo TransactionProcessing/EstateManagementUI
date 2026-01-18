@@ -147,9 +147,16 @@
         {
             <div class="flex items-center justify-between bg-white rounded-lg shadow-md p-4">
                 <div class="text-sm text-gray-700">
-                    Showing <span class="font-medium">@Math.Min((currentPage - 1) * pageSize + 1, filteredMerchants.Count)</span> to 
-                    <span class="font-medium">@Math.Min(currentPage * pageSize, filteredMerchants.Count)</span> of 
-                    <span class="font-medium">@filteredMerchants.Count</span> results
+                    @if (filteredMerchants.Count > 0)
+                    {
+                        <span>Showing <span class="font-medium">@((currentPage - 1) * pageSize + 1)</span> to 
+                        <span class="font-medium">@Math.Min(currentPage * pageSize, filteredMerchants.Count)</span> of 
+                        <span class="font-medium">@filteredMerchants.Count</span> results</span>
+                    }
+                    else
+                    {
+                        <span>Showing <span class="font-medium">0</span> to <span class="font-medium">0</span> of <span class="font-medium">0</span> results</span>
+                    }
                 </div>
                 <div class="flex items-center space-x-2">
                     <button @onclick="FirstPage" disabled="@(currentPage == 1)" class="btn btn-secondary" title="First Page">
@@ -214,19 +221,51 @@
     private List<MerchantModel>? allMerchants;
     
     // Filter fields
-    private string filterName = "";
-    private string filterReference = "";
-    private string filterSettlementSchedule = "";
-    private string filterRegion = "";
-    private string filterPostcode = "";
+    private string _filterName = "";
+    private string filterName
+    {
+        get => _filterName;
+        set { _filterName = value; currentPage = 1; UpdateFilteredMerchants(); }
+    }
+    
+    private string _filterReference = "";
+    private string filterReference
+    {
+        get => _filterReference;
+        set { _filterReference = value; currentPage = 1; UpdateFilteredMerchants(); }
+    }
+    
+    private string _filterSettlementSchedule = "";
+    private string filterSettlementSchedule
+    {
+        get => _filterSettlementSchedule;
+        set { _filterSettlementSchedule = value; currentPage = 1; UpdateFilteredMerchants(); }
+    }
+    
+    private string _filterRegion = "";
+    private string filterRegion
+    {
+        get => _filterRegion;
+        set { _filterRegion = value; currentPage = 1; UpdateFilteredMerchants(); }
+    }
+    
+    private string _filterPostcode = "";
+    private string filterPostcode
+    {
+        get => _filterPostcode;
+        set { _filterPostcode = value; currentPage = 1; UpdateFilteredMerchants(); }
+    }
     
     // Pagination fields
     private int currentPage = 1;
     private int pageSize = 10;
     
-    private List<MerchantModel> filteredMerchants => GetFilteredMerchants();
+    // Cached filtered and paged results
+    private List<MerchantModel> _filteredMerchants = new();
+    private List<MerchantModel> filteredMerchants => _filteredMerchants;
+    
     private List<MerchantModel> pagedMerchants => GetPagedMerchants();
-    private int totalPages => (int)Math.Ceiling(filteredMerchants.Count / (double)pageSize);
+    private int totalPages => _filteredMerchants.Count > 0 ? (int)Math.Ceiling(_filteredMerchants.Count / (double)pageSize) : 1;
 
     protected override async Task OnInitializedAsync()
     {
@@ -241,6 +280,7 @@
             if (result.IsSuccess)
             {
                 allMerchants = ModelFactory.ConvertFrom(result.Data);
+                UpdateFilteredMerchants();
             }
         }
         finally
@@ -249,55 +289,64 @@
         }
     }
 
-    private List<MerchantModel> GetFilteredMerchants()
+    private void UpdateFilteredMerchants()
     {
         if (allMerchants == null)
-            return new List<MerchantModel>();
+        {
+            _filteredMerchants = new List<MerchantModel>();
+            return;
+        }
             
         var filtered = allMerchants.AsEnumerable();
         
-        if (!string.IsNullOrWhiteSpace(filterName))
+        if (!string.IsNullOrWhiteSpace(_filterName))
         {
-            filtered = filtered.Where(m => m.MerchantName?.Contains(filterName, StringComparison.OrdinalIgnoreCase) ?? false);
+            filtered = filtered.Where(m => m.MerchantName?.Contains(_filterName, StringComparison.OrdinalIgnoreCase) ?? false);
         }
         
-        if (!string.IsNullOrWhiteSpace(filterReference))
+        if (!string.IsNullOrWhiteSpace(_filterReference))
         {
-            filtered = filtered.Where(m => m.MerchantReference?.Contains(filterReference, StringComparison.OrdinalIgnoreCase) ?? false);
+            filtered = filtered.Where(m => m.MerchantReference?.Contains(_filterReference, StringComparison.OrdinalIgnoreCase) ?? false);
         }
         
-        if (!string.IsNullOrWhiteSpace(filterSettlementSchedule))
+        if (!string.IsNullOrWhiteSpace(_filterSettlementSchedule))
         {
-            filtered = filtered.Where(m => m.SettlementSchedule?.Equals(filterSettlementSchedule, StringComparison.OrdinalIgnoreCase) ?? false);
+            filtered = filtered.Where(m => m.SettlementSchedule?.Equals(_filterSettlementSchedule, StringComparison.OrdinalIgnoreCase) ?? false);
         }
         
-        if (!string.IsNullOrWhiteSpace(filterRegion))
+        if (!string.IsNullOrWhiteSpace(_filterRegion))
         {
-            filtered = filtered.Where(m => m.Region?.Contains(filterRegion, StringComparison.OrdinalIgnoreCase) ?? false);
+            filtered = filtered.Where(m => m.Region?.Contains(_filterRegion, StringComparison.OrdinalIgnoreCase) ?? false);
         }
         
-        if (!string.IsNullOrWhiteSpace(filterPostcode))
+        if (!string.IsNullOrWhiteSpace(_filterPostcode))
         {
-            filtered = filtered.Where(m => m.PostalCode?.Contains(filterPostcode, StringComparison.OrdinalIgnoreCase) ?? false);
+            filtered = filtered.Where(m => m.PostalCode?.Contains(_filterPostcode, StringComparison.OrdinalIgnoreCase) ?? false);
         }
         
-        return filtered.ToList();
+        _filteredMerchants = filtered.ToList();
+        
+        // Ensure currentPage is valid
+        if (currentPage > totalPages && totalPages > 0)
+        {
+            currentPage = totalPages;
+        }
     }
     
     private List<MerchantModel> GetPagedMerchants()
     {
-        var filtered = filteredMerchants;
-        return filtered.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
+        return _filteredMerchants.Skip((currentPage - 1) * pageSize).Take(pageSize).ToList();
     }
     
     private void ClearFilters()
     {
-        filterName = "";
-        filterReference = "";
-        filterSettlementSchedule = "";
-        filterRegion = "";
-        filterPostcode = "";
+        _filterName = "";
+        _filterReference = "";
+        _filterSettlementSchedule = "";
+        _filterRegion = "";
+        _filterPostcode = "";
         currentPage = 1;
+        UpdateFilteredMerchants();
     }
     
     private void FirstPage()
@@ -319,7 +368,7 @@
     
     private void LastPage()
     {
-        currentPage = totalPages;
+        currentPage = totalPages > 0 ? totalPages : 1;
     }
 
     private void ViewMerchant(Guid merchantId)
