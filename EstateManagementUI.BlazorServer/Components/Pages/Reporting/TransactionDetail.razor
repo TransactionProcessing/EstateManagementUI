@@ -479,15 +479,48 @@
             var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
             var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
             
-            List<Guid>? merchantIds = _selectedMerchantIds.Any() 
-                ? _selectedMerchantIds.Select(id => Guid.Parse(id)).ToList() 
-                : null;
-            List<Guid>? operatorIds = _selectedOperatorIds.Any() 
-                ? _selectedOperatorIds.Select(id => Guid.Parse(id)).ToList() 
-                : null;
-            List<Guid>? productIds = _selectedProductIds.Any() 
-                ? _selectedProductIds.Select(id => Guid.Parse(id)).ToList() 
-                : null;
+            // Parse selected IDs with error handling
+            List<Guid>? merchantIds = null;
+            if (_selectedMerchantIds.Any())
+            {
+                merchantIds = new List<Guid>();
+                foreach (var id in _selectedMerchantIds)
+                {
+                    if (Guid.TryParse(id, out var guid))
+                    {
+                        merchantIds.Add(guid);
+                    }
+                }
+                if (!merchantIds.Any()) merchantIds = null;
+            }
+            
+            List<Guid>? operatorIds = null;
+            if (_selectedOperatorIds.Any())
+            {
+                operatorIds = new List<Guid>();
+                foreach (var id in _selectedOperatorIds)
+                {
+                    if (Guid.TryParse(id, out var guid))
+                    {
+                        operatorIds.Add(guid);
+                    }
+                }
+                if (!operatorIds.Any()) operatorIds = null;
+            }
+            
+            List<Guid>? productIds = null;
+            if (_selectedProductIds.Any())
+            {
+                productIds = new List<Guid>();
+                foreach (var id in _selectedProductIds)
+                {
+                    if (Guid.TryParse(id, out var guid))
+                    {
+                        productIds.Add(guid);
+                    }
+                }
+                if (!productIds.Any()) productIds = null;
+            }
             
             var result = await Mediator.Send(new Queries.GetTransactionDetailQuery(
                 correlationId, 
@@ -706,6 +739,10 @@
         {
             _selectedMerchantIds = selectedValues.ToList();
         }
+        else
+        {
+            _selectedMerchantIds = new List<string>();
+        }
     }
     
     private void OnOperatorSelectionChanged(ChangeEventArgs e)
@@ -714,6 +751,10 @@
         {
             _selectedOperatorIds = selectedValues.ToList();
         }
+        else
+        {
+            _selectedOperatorIds = new List<string>();
+        }
     }
     
     private void OnProductSelectionChanged(ChangeEventArgs e)
@@ -721,6 +762,10 @@
         if (e.Value is string[] selectedValues)
         {
             _selectedProductIds = selectedValues.ToList();
+        }
+        else
+        {
+            _selectedProductIds = new List<string>();
         }
     }
 }
