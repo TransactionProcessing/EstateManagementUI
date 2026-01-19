@@ -533,11 +533,17 @@ public static class StubTestData {
             var feesCommission = Math.Round(grossAmount * feePercentage, 2);
             var netAmount = grossAmount - feesCommission;
 
-            // Settlement reference (70% have one for successful transactions)
+            // Response code
+            string? responseCode = transactionStatus == "Successful" ? "0000" : $"{random.Next(1001, 9999)}";
+
+            // Settlement reference and datetime (70% have one for successful transactions)
             string? settlementReference = null;
+            DateTime? settlementDateTime = null;
             if (transactionStatus == "Successful" && random.NextDouble() < 0.7)
             {
                 settlementReference = $"STL-{transactionDate:yyyyMMdd}-{random.Next(1000, 9999)}";
+                // Settlement usually occurs 1-3 days after transaction
+                settlementDateTime = transactionDate.AddDays(random.Next(1, 4));
             }
 
             transactions.Add(new TransactionDetailModel
@@ -555,7 +561,9 @@ public static class StubTestData {
                 GrossAmount = grossAmount,
                 FeesCommission = feesCommission,
                 NetAmount = netAmount,
-                SettlementReference = settlementReference
+                SettlementReference = settlementReference,
+                ResponseCode = responseCode,
+                SettlementDateTime = settlementDateTime
             });
         }
 
