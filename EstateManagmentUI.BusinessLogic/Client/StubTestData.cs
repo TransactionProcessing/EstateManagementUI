@@ -560,22 +560,24 @@ public static class StubTestData {
         }
 
         // Apply filters
-        if (query.MerchantId.HasValue)
+        IEnumerable<TransactionDetailModel> filteredTransactions = transactions;
+        
+        if (query.MerchantIds != null && query.MerchantIds.Any())
         {
-            transactions = transactions.Where(t => t.MerchantId == query.MerchantId.Value).ToList();
+            filteredTransactions = filteredTransactions.Where(t => query.MerchantIds.Contains(t.MerchantId));
         }
 
-        if (query.OperatorId.HasValue)
+        if (query.OperatorIds != null && query.OperatorIds.Any())
         {
-            transactions = transactions.Where(t => t.OperatorId == query.OperatorId.Value).ToList();
+            filteredTransactions = filteredTransactions.Where(t => query.OperatorIds.Contains(t.OperatorId));
         }
 
-        if (query.ProductId.HasValue)
+        if (query.ProductIds != null && query.ProductIds.Any())
         {
-            transactions = transactions.Where(t => t.ProductId == query.ProductId.Value).ToList();
+            filteredTransactions = filteredTransactions.Where(t => query.ProductIds.Contains(t.ProductId));
         }
 
-        // Sort by transaction date descending (most recent first)
-        return transactions.OrderByDescending(t => t.TransactionDateTime).ToList();
+        // Sort by transaction date descending (most recent first) and materialize
+        return filteredTransactions.OrderByDescending(t => t.TransactionDateTime).ToList();
     }
 }
