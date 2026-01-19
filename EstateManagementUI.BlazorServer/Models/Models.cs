@@ -229,6 +229,8 @@ public class TransactionDetailModel
     public decimal FeesCommission { get; set; }
     public decimal NetAmount { get; set; }
     public string? SettlementReference { get; set; }
+    public string? ResponseCode { get; set; }
+    public DateTime? SettlementDateTime { get; set; }
 }
 
 public class RecentMerchantsModel

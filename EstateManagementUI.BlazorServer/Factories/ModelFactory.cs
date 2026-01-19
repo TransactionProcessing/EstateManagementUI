@@ -249,6 +249,8 @@ namespace EstateManagementUI.BlazorServer.Factories {
                 OperatorName = model.OperatorName,
                 TransactionDateTime = model.TransactionDateTime,
                 NetAmount = model.NetAmount,
+                ResponseCode = model.ResponseCode,
+                SettlementDateTime = model.SettlementDateTime
             };
 
 
