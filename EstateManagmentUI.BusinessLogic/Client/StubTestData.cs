@@ -466,6 +466,251 @@ public static class StubTestData {
         SettlementValue = 123750.00m
     };
 
+    // Generates demo settlement history data specifically for Test Merchant 1
+    private static List<TransactionDetailModel> GetDemoMerchantTransactions()
+    {
+        var demoMerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"); // Test Merchant 1
+        var operators = GetMockOperators();
+        var contracts = GetMockContracts();
+        
+        var productList = contracts
+            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .Where(p => !string.IsNullOrEmpty(p.ProductName))
+            .ToList();
+
+        var demoTransactions = new List<TransactionDetailModel>();
+        var baseDate = DateTime.Today.AddDays(-7); // Last 7 days
+
+        // Day 1: Multiple successful transactions
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddHours(9).AddMinutes(15),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[0].Name,
+            OperatorId = operators[0].OperatorId,
+            ProductName = "Mobile Topup",
+            ProductId = productList[0].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 50.00m,
+            FeesCommission = 0.75m,
+            NetAmount = 49.25m,
+            SettlementReference = $"STL-{baseDate:yyyyMMdd}-1001",
+            ResponseCode = "0000",
+            SettlementDateTime = baseDate.AddDays(2)
+        });
+
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddHours(11).AddMinutes(32),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[0].Name,
+            OperatorId = operators[0].OperatorId,
+            ProductName = "Mobile Topup",
+            ProductId = productList[0].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 100.00m,
+            FeesCommission = 1.50m,
+            NetAmount = 98.50m,
+            SettlementReference = $"STL-{baseDate:yyyyMMdd}-1002",
+            ResponseCode = "0000",
+            SettlementDateTime = baseDate.AddDays(2)
+        });
+
+        // Day 2: Mix of successful and failed
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(1).AddHours(10).AddMinutes(20),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[1].Name,
+            OperatorId = operators[1].OperatorId,
+            ProductName = "Bill Payment",
+            ProductId = productList[1].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Failed",
+            GrossAmount = 75.00m,
+            FeesCommission = 1.13m,
+            NetAmount = 73.87m,
+            SettlementReference = null,
+            ResponseCode = "1051",
+            SettlementDateTime = null
+        });
+
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(1).AddHours(14).AddMinutes(45),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[0].Name,
+            OperatorId = operators[0].OperatorId,
+            ProductName = "Mobile Topup",
+            ProductId = productList[0].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 25.00m,
+            FeesCommission = 0.38m,
+            NetAmount = 24.62m,
+            SettlementReference = null, // Not yet settled
+            ResponseCode = "0000",
+            SettlementDateTime = null
+        });
+
+        // Day 3: Successful with settlement
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(2).AddHours(8).AddMinutes(10),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[2].Name,
+            OperatorId = operators[2].OperatorId,
+            ProductName = "Voucher Purchase",
+            ProductId = productList[2].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 200.00m,
+            FeesCommission = 3.00m,
+            NetAmount = 197.00m,
+            SettlementReference = $"STL-{baseDate.AddDays(2):yyyyMMdd}-2001",
+            ResponseCode = "0000",
+            SettlementDateTime = baseDate.AddDays(4)
+        });
+
+        // Day 4: Reversal
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(3).AddHours(13).AddMinutes(25),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[0].Name,
+            OperatorId = operators[0].OperatorId,
+            ProductName = "Mobile Topup",
+            ProductId = productList[0].ContractProductId,
+            TransactionType = "Reversal",
+            TransactionStatus = "Reversed",
+            GrossAmount = 50.00m,
+            FeesCommission = 0.75m,
+            NetAmount = 49.25m,
+            SettlementReference = $"STL-{baseDate.AddDays(3):yyyyMMdd}-3001",
+            ResponseCode = "9999",
+            SettlementDateTime = baseDate.AddDays(5)
+        });
+
+        // Day 5: Multiple successful transactions
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(4).AddHours(9).AddMinutes(30),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[1].Name,
+            OperatorId = operators[1].OperatorId,
+            ProductName = "Bill Payment",
+            ProductId = productList[1].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 150.00m,
+            FeesCommission = 2.25m,
+            NetAmount = 147.75m,
+            SettlementReference = $"STL-{baseDate.AddDays(4):yyyyMMdd}-4001",
+            ResponseCode = "0000",
+            SettlementDateTime = baseDate.AddDays(6)
+        });
+
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(4).AddHours(15).AddMinutes(50),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[0].Name,
+            OperatorId = operators[0].OperatorId,
+            ProductName = "Mobile Topup",
+            ProductId = productList[0].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 30.00m,
+            FeesCommission = 0.45m,
+            NetAmount = 29.55m,
+            SettlementReference = $"STL-{baseDate.AddDays(4):yyyyMMdd}-4002",
+            ResponseCode = "0000",
+            SettlementDateTime = baseDate.AddDays(6)
+        });
+
+        // Day 6: Recent transactions (not yet settled)
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(5).AddHours(10).AddMinutes(15),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[2].Name,
+            OperatorId = operators[2].OperatorId,
+            ProductName = "Voucher Purchase",
+            ProductId = productList[2].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 120.00m,
+            FeesCommission = 1.80m,
+            NetAmount = 118.20m,
+            SettlementReference = null,
+            ResponseCode = "0000",
+            SettlementDateTime = null
+        });
+
+        // Day 7: Today's transactions (pending)
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(6).AddHours(8).AddMinutes(45),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[0].Name,
+            OperatorId = operators[0].OperatorId,
+            ProductName = "Mobile Topup",
+            ProductId = productList[0].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Successful",
+            GrossAmount = 40.00m,
+            FeesCommission = 0.60m,
+            NetAmount = 39.40m,
+            SettlementReference = null,
+            ResponseCode = "0000",
+            SettlementDateTime = null
+        });
+
+        demoTransactions.Add(new TransactionDetailModel
+        {
+            TransactionId = Guid.NewGuid(),
+            TransactionDateTime = baseDate.AddDays(6).AddHours(12).AddMinutes(20),
+            MerchantName = "Test Merchant 1",
+            MerchantId = demoMerchantId,
+            OperatorName = operators[1].Name,
+            OperatorId = operators[1].OperatorId,
+            ProductName = "Bill Payment",
+            ProductId = productList[1].ContractProductId,
+            TransactionType = "Sale",
+            TransactionStatus = "Failed",
+            GrossAmount = 85.00m,
+            FeesCommission = 1.28m,
+            NetAmount = 83.72m,
+            SettlementReference = null,
+            ResponseCode = "2043",
+            SettlementDateTime = null
+        });
+
+        return demoTransactions;
+    }
+
     public static List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
     {
         var merchants = GetMockMerchants();
@@ -483,6 +728,13 @@ public static class StubTestData {
 
         var random = new Random(42); // Use seed for consistent data
         var transactions = new List<TransactionDetailModel>();
+
+        // Add demo transactions for Test Merchant 1 if they're in the date range
+        var demoTransactions = GetDemoMerchantTransactions();
+        var demoInRange = demoTransactions.Where(t => 
+            t.TransactionDateTime >= query.StartDate && 
+            t.TransactionDateTime <= query.EndDate).ToList();
+        transactions.AddRange(demoInRange);
 
         // Calculate days in date range
         var daysInRange = (query.EndDate - query.StartDate).Days + 1;
