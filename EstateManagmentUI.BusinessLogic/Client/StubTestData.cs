@@ -533,8 +533,14 @@ public static class StubTestData {
             var feesCommission = Math.Round(grossAmount * feePercentage, 2);
             var netAmount = grossAmount - feesCommission;
 
-            // Response code
-            string? responseCode = transactionStatus == "Successful" ? "0000" : $"{random.Next(1001, 9999)}";
+            // Response code based on transaction status
+            string? responseCode = transactionStatus switch
+            {
+                "Successful" => "0000",
+                "Failed" => $"{random.Next(1001, 9999)}",
+                "Reversed" => "9999", // Specific code for reversals
+                _ => $"{random.Next(1001, 9999)}"
+            };
 
             // Settlement reference and datetime (70% have one for successful transactions)
             string? settlementReference = null;
