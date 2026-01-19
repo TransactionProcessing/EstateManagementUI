@@ -143,20 +143,31 @@
         </div>
 
         <!-- Pagination Controls -->
-        @if (totalPages > 1)
+        @if (totalPages > 1 || filteredMerchants.Count > 0)
         {
             <div class="flex items-center justify-between bg-white rounded-lg shadow-md p-4">
-                <div class="text-sm text-gray-700">
-                    @if (filteredMerchants.Count > 0)
-                    {
-                        <span>Showing <span class="font-medium">@((currentPage - 1) * pageSize + 1)</span> to 
-                        <span class="font-medium">@Math.Min(currentPage * pageSize, filteredMerchants.Count)</span> of 
-                        <span class="font-medium">@filteredMerchants.Count</span> results</span>
-                    }
-                    else
-                    {
-                        <span>Showing <span class="font-medium">0</span> to <span class="font-medium">0</span> of <span class="font-medium">0</span> results</span>
-                    }
+                <div class="flex items-center space-x-4">
+                    <div class="text-sm text-gray-700">
+                        @if (filteredMerchants.Count > 0)
+                        {
+                            <span>Showing <span class="font-medium">@((currentPage - 1) * pageSize + 1)</span> to 
+                            <span class="font-medium">@Math.Min(currentPage * pageSize, filteredMerchants.Count)</span> of 
+                            <span class="font-medium">@filteredMerchants.Count</span> results</span>
+                        }
+                        else
+                        {
+                            <span>Showing <span class="font-medium">0</span> to <span class="font-medium">0</span> of <span class="font-medium">0</span> results</span>
+                        }
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm text-gray-700">Items per page:</label>
+                        <select @bind="pageSize" class="form-control w-20">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-2">
                     <button @onclick="FirstPage" disabled="@(currentPage == 1)" class="btn btn-secondary" title="First Page">
@@ -263,7 +274,13 @@
         get => _currentPage;
         set { _currentPage = value; UpdatePagedMerchants(); }
     }
-    private int pageSize = 10;
+    
+    private int _pageSize = 10;
+    private int pageSize
+    {
+        get => _pageSize;
+        set { _pageSize = value; _currentPage = 1; UpdateFilteredMerchants(); }
+    }
     
     // Cached results
     private List<MerchantModel> _filteredMerchants = new();
@@ -316,7 +333,7 @@
             (string.IsNullOrWhiteSpace(_filterPostcode) || (m.PostalCode?.Contains(_filterPostcode, StringComparison.OrdinalIgnoreCase) ?? false))
         ).ToList();
         
-        _totalPages = _filteredMerchants.Count > 0 ? (int)Math.Ceiling(_filteredMerchants.Count / (double)pageSize) : 1;
+        _totalPages = _filteredMerchants.Count > 0 ? (int)Math.Ceiling(_filteredMerchants.Count / (double)_pageSize) : 1;
         
         // Ensure currentPage is valid
         if (_currentPage > _totalPages && _totalPages > 0)
@@ -329,7 +346,7 @@
     
     private void UpdatePagedMerchants()
     {
-        _pagedMerchants = _filteredMerchants.Skip((_currentPage - 1) * pageSize).Take(pageSize).ToList();
+        _pagedMerchants = _filteredMerchants.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
     }
     
     private void ClearFilters()
