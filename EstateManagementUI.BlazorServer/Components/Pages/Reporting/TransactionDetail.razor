@@ -480,47 +480,9 @@
             var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
             
             // Parse selected IDs with error handling
-            List<Guid>? merchantIds = null;
-            if (_selectedMerchantIds.Any())
-            {
-                merchantIds = new List<Guid>();
-                foreach (var id in _selectedMerchantIds)
-                {
-                    if (Guid.TryParse(id, out var guid))
-                    {
-                        merchantIds.Add(guid);
-                    }
-                }
-                if (!merchantIds.Any()) merchantIds = null;
-            }
-            
-            List<Guid>? operatorIds = null;
-            if (_selectedOperatorIds.Any())
-            {
-                operatorIds = new List<Guid>();
-                foreach (var id in _selectedOperatorIds)
-                {
-                    if (Guid.TryParse(id, out var guid))
-                    {
-                        operatorIds.Add(guid);
-                    }
-                }
-                if (!operatorIds.Any()) operatorIds = null;
-            }
-            
-            List<Guid>? productIds = null;
-            if (_selectedProductIds.Any())
-            {
-                productIds = new List<Guid>();
-                foreach (var id in _selectedProductIds)
-                {
-                    if (Guid.TryParse(id, out var guid))
-                    {
-                        productIds.Add(guid);
-                    }
-                }
-                if (!productIds.Any()) productIds = null;
-            }
+            var merchantIds = ParseGuidList(_selectedMerchantIds);
+            var operatorIds = ParseGuidList(_selectedOperatorIds);
+            var productIds = ParseGuidList(_selectedProductIds);
             
             var result = await Mediator.Send(new Queries.GetTransactionDetailQuery(
                 correlationId, 
@@ -548,6 +510,21 @@
             errorMessage = $"Failed to load transaction detail data: {ex.Message}";
             Logger.LogError(ex, "Error loading transaction detail data");
         }
+    }
+    
+    private List<Guid>? ParseGuidList(List<string> stringIds)
+    {
+        if (!stringIds.Any()) return null;
+        
+        var guids = new List<Guid>();
+        foreach (var id in stringIds)
+        {
+            if (Guid.TryParse(id, out var guid))
+            {
+                guids.Add(guid);
+            }
+        }
+        return guids.Any() ? guids : null;
     }
     
     private void CalculateKPIs()
