@@ -77,7 +77,7 @@
                     <!-- Merchant Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
-                        <select @onchange="OnMerchantSelectionChanged" multiple class="form-control multiselect-filter" size="5">
+                        <select @onchange="OnMerchantSelectionChanged" multiple class="form-control multiselect-filter" size="5" aria-label="Select one or more merchants">
                             @if (merchants != null)
                             {
                                 @foreach (var merchant in merchants)
@@ -92,7 +92,7 @@
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <select @onchange="OnOperatorSelectionChanged" multiple class="form-control multiselect-filter" size="5">
+                        <select @onchange="OnOperatorSelectionChanged" multiple class="form-control multiselect-filter" size="5" aria-label="Select one or more operators">
                             @if (operators != null)
                             {
                                 @foreach (var op in operators)
@@ -109,7 +109,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Product</label>
-                        <select @onchange="OnProductSelectionChanged" multiple class="form-control multiselect-filter" size="5">
+                        <select @onchange="OnProductSelectionChanged" multiple class="form-control multiselect-filter" size="5" aria-label="Select one or more products">
                             @if (products != null)
                             {
                                 @foreach (var product in products)
@@ -737,6 +737,8 @@
         {
             return selectedValues.ToList();
         }
+        
+        Logger.LogWarning("Unexpected value type in multi-select change event: {ValueType}", e.Value?.GetType().Name ?? "null");
         return new List<string>();
     }
 }
