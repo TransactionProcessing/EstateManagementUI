@@ -10,6 +10,12 @@
 
 <PageTitle>Transaction Detail Report</PageTitle>
 
+<style>
+    .multiselect-filter {
+        height: auto !important;
+    }
+</style>
+
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex items-center justify-between">
@@ -71,7 +77,7 @@
                     <!-- Merchant Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
-                        <select @onchange="OnMerchantSelectionChanged" multiple class="form-control" size="5" style="height: auto;">
+                        <select @onchange="OnMerchantSelectionChanged" multiple class="form-control multiselect-filter" size="5">
                             @if (merchants != null)
                             {
                                 @foreach (var merchant in merchants)
@@ -86,7 +92,7 @@
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <select @onchange="OnOperatorSelectionChanged" multiple class="form-control" size="5" style="height: auto;">
+                        <select @onchange="OnOperatorSelectionChanged" multiple class="form-control multiselect-filter" size="5">
                             @if (operators != null)
                             {
                                 @foreach (var op in operators)
@@ -103,7 +109,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Product</label>
-                        <select @onchange="OnProductSelectionChanged" multiple class="form-control" size="5" style="height: auto;">
+                        <select @onchange="OnProductSelectionChanged" multiple class="form-control multiselect-filter" size="5">
                             @if (products != null)
                             {
                                 @foreach (var product in products)
@@ -712,37 +718,25 @@
     
     private void OnMerchantSelectionChanged(ChangeEventArgs e)
     {
-        if (e.Value is string[] selectedValues)
-        {
-            _selectedMerchantIds = selectedValues.ToList();
-        }
-        else
-        {
-            _selectedMerchantIds = new List<string>();
-        }
+        _selectedMerchantIds = UpdateSelectionList(e);
     }
     
     private void OnOperatorSelectionChanged(ChangeEventArgs e)
     {
-        if (e.Value is string[] selectedValues)
-        {
-            _selectedOperatorIds = selectedValues.ToList();
-        }
-        else
-        {
-            _selectedOperatorIds = new List<string>();
-        }
+        _selectedOperatorIds = UpdateSelectionList(e);
     }
     
     private void OnProductSelectionChanged(ChangeEventArgs e)
     {
+        _selectedProductIds = UpdateSelectionList(e);
+    }
+    
+    private List<string> UpdateSelectionList(ChangeEventArgs e)
+    {
         if (e.Value is string[] selectedValues)
         {
-            _selectedProductIds = selectedValues.ToList();
+            return selectedValues.ToList();
         }
-        else
-        {
-            _selectedProductIds = new List<string>();
-        }
+        return new List<string>();
     }
 }
