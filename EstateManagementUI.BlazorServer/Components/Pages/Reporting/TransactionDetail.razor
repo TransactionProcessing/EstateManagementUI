@@ -719,15 +719,4 @@
     {
         _selectedProductIds = selectedIds;
     }
-    
-    private List<string> UpdateSelectionList(ChangeEventArgs e)
-    {
-        if (e.Value is string[] selectedValues)
-        {
-            return selectedValues.ToList();
-        }
-        
-        Logger.LogWarning("Unexpected value type in multi-select change event: {ValueType}", e.Value?.GetType().Name ?? "null");
-        return new List<string>();
-    }
 }
