@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using System.Text
 @using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BlazorServer.Components.Shared
 @using EstateManagementUI.BusinessLogic.Requests
 @inject IMediator Mediator
 @inject NavigationManager Navigation
@@ -9,12 +10,6 @@
 @inject IJSRuntime JSRuntime
 
 <PageTitle>Transaction Detail Report</PageTitle>
-
-<style>
-    .multiselect-filter {
-        height: auto !important;
-    }
-</style>
 
 <div class="space-y-6">
     <!-- Page Header -->
@@ -77,31 +72,27 @@
                     <!-- Merchant Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
-                        <select @onchange="OnMerchantSelectionChanged" multiple class="form-control multiselect-filter" size="5" aria-label="Select one or more merchants">
-                            @if (merchants != null)
-                            {
-                                @foreach (var merchant in merchants)
-                                {
-                                    <option value="@merchant.MerchantId" selected="@_selectedMerchantIds.Contains(merchant.MerchantId.ToString())">@merchant.MerchantName</option>
-                                }
-                            }
-                        </select>
-                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                        <MultiSelectDropdown TItem="MerchantModel"
+                                           Items="merchants"
+                                           SelectedItems="_selectedMerchantIds"
+                                           SelectedItemsChanged="OnMerchantSelectionChanged"
+                                           GetItemId="m => m.MerchantId.ToString()"
+                                           GetItemText="m => m.MerchantName ?? string.Empty"
+                                           Placeholder="All Merchants"
+                                           AriaLabel="Select one or more merchants" />
                     </div>
                     
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <select @onchange="OnOperatorSelectionChanged" multiple class="form-control multiselect-filter" size="5" aria-label="Select one or more operators">
-                            @if (operators != null)
-                            {
-                                @foreach (var op in operators)
-                                {
-                                    <option value="@op.OperatorId" selected="@_selectedOperatorIds.Contains(op.OperatorId.ToString())">@op.Name</option>
-                                }
-                            }
-                        </select>
-                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                        <MultiSelectDropdown TItem="OperatorModel"
+                                           Items="operators"
+                                           SelectedItems="_selectedOperatorIds"
+                                           SelectedItemsChanged="OnOperatorSelectionChanged"
+                                           GetItemId="o => o.OperatorId.ToString()"
+                                           GetItemText="o => o.Name ?? string.Empty"
+                                           Placeholder="All Operators"
+                                           AriaLabel="Select one or more operators" />
                     </div>
                 </div>
                 
@@ -109,16 +100,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Product</label>
-                        <select @onchange="OnProductSelectionChanged" multiple class="form-control multiselect-filter" size="5" aria-label="Select one or more products">
-                            @if (products != null)
-                            {
-                                @foreach (var product in products)
-                                {
-                                    <option value="@product.ContractProductId" selected="@_selectedProductIds.Contains(product.ContractProductId.ToString())">@product.ProductName</option>
-                                }
-                            }
-                        </select>
-                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
+                        <MultiSelectDropdown TItem="ContractProductModel"
+                                           Items="products"
+                                           SelectedItems="_selectedProductIds"
+                                           SelectedItemsChanged="OnProductSelectionChanged"
+                                           GetItemId="p => p.ContractProductId.ToString()"
+                                           GetItemText="p => p.ProductName ?? string.Empty"
+                                           Placeholder="All Products"
+                                           AriaLabel="Select one or more products" />
                     </div>
                 </div>
                 
@@ -716,19 +705,19 @@
         return "Back to Reporting";
     }
     
-    private void OnMerchantSelectionChanged(ChangeEventArgs e)
+    private void OnMerchantSelectionChanged(List<string> selectedIds)
     {
-        _selectedMerchantIds = UpdateSelectionList(e);
+        _selectedMerchantIds = selectedIds;
     }
     
-    private void OnOperatorSelectionChanged(ChangeEventArgs e)
+    private void OnOperatorSelectionChanged(List<string> selectedIds)
     {
-        _selectedOperatorIds = UpdateSelectionList(e);
+        _selectedOperatorIds = selectedIds;
     }
     
-    private void OnProductSelectionChanged(ChangeEventArgs e)
+    private void OnProductSelectionChanged(List<string> selectedIds)
     {
-        _selectedProductIds = UpdateSelectionList(e);
+        _selectedProductIds = selectedIds;
     }
     
     private List<string> UpdateSelectionList(ChangeEventArgs e)

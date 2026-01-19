@@ -1,0 +1,108 @@
+@typeparam TItem
+@using System.Linq.Expressions
+
+<div class="relative" @ref="dropdownRef">
+    <!-- Dropdown Button -->
+    <button type="button" 
+            @onclick="ToggleDropdown" 
+            class="form-control flex items-center justify-between cursor-pointer"
+            aria-label="@AriaLabel"
+            aria-expanded="@isOpen">
+        <span class="truncate">
+            @if (SelectedItems.Any())
+            {
+                <text>@SelectedItems.Count item@(SelectedItems.Count != 1 ? "s" : "") selected</text>
+            }
+            else
+            {
+                <text>@Placeholder</text>
+            }
+        </span>
+        <svg class="w-4 h-4 ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+
+    <!-- Dropdown Menu -->
+    @if (isOpen)
+    {
+        <div class="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+            @if (Items != null && Items.Any())
+            {
+                @foreach (var item in Items)
+                {
+                    var itemId = GetItemId(item);
+                    var isSelected = SelectedItems.Contains(itemId);
+                    
+                    <label class="flex items-center px-3 py-2 hover:bg-gray-100 cursor-pointer">
+                        <input type="checkbox" 
+                               checked="@isSelected"
+                               @onchange="@(() => ToggleItem(itemId))"
+                               class="form-checkbox h-4 w-4 text-admin-primary rounded border-gray-300 focus:ring-admin-primary" />
+                        <span class="ml-2 text-sm text-gray-700">@GetItemText(item)</span>
+                    </label>
+                }
+            }
+            else
+            {
+                <div class="px-3 py-2 text-sm text-gray-500">No items available</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private ElementReference dropdownRef;
+    private bool isOpen = false;
+
+    [Parameter]
+    public List<TItem>? Items { get; set; }
+
+    [Parameter]
+    public List<string> SelectedItems { get; set; } = new List<string>();
+
+    [Parameter]
+    public EventCallback<List<string>> SelectedItemsChanged { get; set; }
+
+    [Parameter]
+    public Func<TItem, string> GetItemId { get; set; } = item => item?.ToString() ?? "";
+
+    [Parameter]
+    public Func<TItem, string> GetItemText { get; set; } = item => item?.ToString() ?? "";
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Select items...";
+
+    [Parameter]
+    public string AriaLabel { get; set; } = "Select items";
+
+    protected override void OnInitialized()
+    {
+        if (SelectedItems == null)
+        {
+            SelectedItems = new List<string>();
+        }
+    }
+
+    private void ToggleDropdown()
+    {
+        isOpen = !isOpen;
+    }
+
+    private async Task ToggleItem(string itemId)
+    {
+        if (SelectedItems.Contains(itemId))
+        {
+            SelectedItems.Remove(itemId);
+        }
+        else
+        {
+            SelectedItems.Add(itemId);
+        }
+
+        await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+    // Close dropdown when clicking outside (would need JS interop for full implementation)
+    // For now, we'll keep it simple and let users close by clicking the button again
+}
