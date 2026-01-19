@@ -914,19 +914,19 @@ public class TestMediatorService : IMediator
         }
         
         // Apply filters
-        if (query.MerchantId.HasValue)
+        if (query.MerchantIds != null && query.MerchantIds.Any())
         {
-            transactions = transactions.Where(t => t.MerchantId == query.MerchantId.Value).ToList();
+            transactions = transactions.Where(t => query.MerchantIds.Contains(t.MerchantId)).ToList();
         }
         
-        if (query.OperatorId.HasValue)
+        if (query.OperatorIds != null && query.OperatorIds.Any())
         {
-            transactions = transactions.Where(t => t.OperatorId == query.OperatorId.Value).ToList();
+            transactions = transactions.Where(t => query.OperatorIds.Contains(t.OperatorId)).ToList();
         }
         
-        if (query.ProductId.HasValue)
+        if (query.ProductIds != null && query.ProductIds.Any())
         {
-            transactions = transactions.Where(t => t.ProductId == query.ProductId.Value).ToList();
+            transactions = transactions.Where(t => query.ProductIds.Contains(t.ProductId)).ToList();
         }
         
         // Sort by transaction date descending (most recent first)

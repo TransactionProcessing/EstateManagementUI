@@ -71,8 +71,7 @@
                     <!-- Merchant Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
-                        <select @bind="_selectedMerchantId" class="form-control">
-                            <option value="">All Merchants</option>
+                        <select @bind="_selectedMerchantIds" multiple class="form-control" size="5" style="height: auto;">
                             @if (merchants != null)
                             {
                                 @foreach (var merchant in merchants)
@@ -81,13 +80,13 @@
                                 }
                             }
                         </select>
+                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
                     </div>
                     
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <select @bind="_selectedOperatorId" class="form-control">
-                            <option value="">All Operators</option>
+                        <select @bind="_selectedOperatorIds" multiple class="form-control" size="5" style="height: auto;">
                             @if (operators != null)
                             {
                                 @foreach (var op in operators)
@@ -96,6 +95,7 @@
                                 }
                             }
                         </select>
+                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
                     </div>
                 </div>
                 
@@ -103,8 +103,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Product</label>
-                        <select @bind="_selectedProductId" class="form-control">
-                            <option value="">All Products</option>
+                        <select @bind="_selectedProductIds" multiple class="form-control" size="5" style="height: auto;">
                             @if (products != null)
                             {
                                 @foreach (var product in products)
@@ -113,6 +112,7 @@
                                 }
                             }
                         </select>
+                        <p class="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
                     </div>
                 </div>
                 
@@ -330,9 +330,9 @@
     // Filter states
     private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
     private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
-    private string _selectedMerchantId = "";
-    private string _selectedOperatorId = "";
-    private string _selectedProductId = "";
+    private List<string> _selectedMerchantIds = new List<string>();
+    private List<string> _selectedOperatorIds = new List<string>();
+    private List<string> _selectedProductIds = new List<string>();
     
     // Data
     private List<TransactionDetailModel>? detailData;
@@ -396,7 +396,7 @@
         
         if (!string.IsNullOrEmpty(query["merchantId"]))
         {
-            _selectedMerchantId = query["merchantId"];
+            _selectedMerchantIds = new List<string> { query["merchantId"] };
         }
         
         if (!string.IsNullOrEmpty(query["startDate"]))
@@ -479,9 +479,15 @@
             var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
             var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
             
-            Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
-            Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
-            Guid? productId = string.IsNullOrEmpty(_selectedProductId) ? null : Guid.Parse(_selectedProductId);
+            List<Guid>? merchantIds = _selectedMerchantIds.Any() 
+                ? _selectedMerchantIds.Select(id => Guid.Parse(id)).ToList() 
+                : null;
+            List<Guid>? operatorIds = _selectedOperatorIds.Any() 
+                ? _selectedOperatorIds.Select(id => Guid.Parse(id)).ToList() 
+                : null;
+            List<Guid>? productIds = _selectedProductIds.Any() 
+                ? _selectedProductIds.Select(id => Guid.Parse(id)).ToList() 
+                : null;
             
             var result = await Mediator.Send(new Queries.GetTransactionDetailQuery(
                 correlationId, 
@@ -489,9 +495,9 @@
                 estateId, 
                 startDate, 
                 endDate, 
-                merchantId, 
-                operatorId, 
-                productId
+                merchantIds, 
+                operatorIds, 
+                productIds
             ));
             
             if (result.IsSuccess && result.Data != null)
@@ -538,9 +544,9 @@
     {
         _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
         _endDate = DateOnly.FromDateTime(DateTime.Now);
-        _selectedMerchantId = "";
-        _selectedOperatorId = "";
-        _selectedProductId = "";
+        _selectedMerchantIds = new List<string>();
+        _selectedOperatorIds = new List<string>();
+        _selectedProductIds = new List<string>();
         _currentPage = 1; // Reset to first page when filters are cleared
         await LoadDetailData();
     }
