@@ -56,7 +56,7 @@
                     <button @onclick='() => activeTab = "transactions"' class="@GetTabClass("transactions")">
                         Transaction History
                     </button>
-                    <button @onclick='() => activeTab = "settlements"' class="@GetTabClass("settlements")">
+                    <button @onclick="OnSettlementsTabClick" class="@GetTabClass("settlements")">
                         Settlement History
                     </button>
                 </nav>
@@ -357,15 +357,6 @@
         await RequirePermission(PermissionSection.Merchant, PermissionFunction.View);
         await LoadMerchant();
     }
-    
-    protected override async Task OnParametersSetAsync()
-    {
-        // Load settlement transactions when the settlements tab is active
-        if (activeTab == "settlements" && settlementTransactions == null)
-        {
-            await LoadSettlementTransactions();
-        }
-    }
 
     private async Task LoadMerchant()
     {
@@ -485,6 +476,15 @@
     private string GetSettlementStatusText(string? settlementReference)
     {
         return string.IsNullOrEmpty(settlementReference) ? "Pending" : "Settled";
+    }
+
+    private async Task OnSettlementsTabClick()
+    {
+        activeTab = "settlements";
+        if (settlementTransactions == null)
+        {
+            await LoadSettlementTransactions();
+        }
     }
 
     private string GetTabClass(string tab)
