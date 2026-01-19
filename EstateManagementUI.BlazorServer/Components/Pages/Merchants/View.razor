@@ -276,7 +276,7 @@
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        @foreach (var transaction in settlementTransactions.Take(50))
+                                        @foreach (var transaction in GetPagedSettlementTransactions())
                                         {
                                             <tr class="hover:bg-gray-50">
                                                 <td class="px-3 py-3 text-sm text-gray-900">@transaction.TransactionDateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
@@ -305,15 +305,36 @@
                                 </table>
                             </div>
                             
-                            @if (settlementTransactions.Count > 50)
+                            @if (settlementTotalPages > 1)
                             {
-                                <div class="text-center mt-4">
-                                    <p class="text-gray-600 text-sm">
-                                        Showing 50 of @settlementTransactions.Count transactions. 
-                                        <a href="/reporting/transaction-detail?merchantId=@MerchantId" class="text-blue-600 hover:text-blue-800 font-medium">
-                                            View all →
-                                        </a>
-                                    </p>
+                                <div class="mt-4 flex items-center justify-between border-t pt-4">
+                                    <div class="flex items-center gap-2">
+                                        <label class="text-sm text-gray-700">Rows per page:</label>
+                                        <select @bind="settlementPageSize" @bind:after="() => { settlementCurrentPage = 1; }" class="form-control w-20">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <button @onclick="SettlementPreviousPage" disabled="@(settlementCurrentPage == 1)" class="btn btn-sm btn-secondary" title="Previous page">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                            </svg>
+                                        </button>
+                                        
+                                        <span class="text-sm text-gray-700">
+                                            Page @settlementCurrentPage of @settlementTotalPages
+                                        </span>
+                                        
+                                        <button @onclick="SettlementNextPage" disabled="@(settlementCurrentPage == settlementTotalPages)" class="btn btn-sm btn-secondary" title="Next page">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             }
                         }
@@ -351,6 +372,11 @@
     // Settlement transaction history data
     private List<TransactionDetailModel>? settlementTransactions;
     private bool loadingSettlementTransactions = false;
+    
+    // Pagination for settlement transactions
+    private int settlementCurrentPage = 1;
+    private int settlementPageSize = 25;
+    private int settlementTotalPages = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -485,6 +511,31 @@
         {
             await LoadSettlementTransactions();
         }
+    }
+
+    private List<TransactionDetailModel> GetPagedSettlementTransactions()
+    {
+        if (settlementTransactions == null || !settlementTransactions.Any())
+            return new List<TransactionDetailModel>();
+        
+        settlementTotalPages = (int)Math.Ceiling(settlementTransactions.Count / (double)settlementPageSize);
+        
+        return settlementTransactions
+            .Skip((settlementCurrentPage - 1) * settlementPageSize)
+            .Take(settlementPageSize)
+            .ToList();
+    }
+
+    private void SettlementNextPage()
+    {
+        if (settlementCurrentPage < settlementTotalPages)
+            settlementCurrentPage++;
+    }
+
+    private void SettlementPreviousPage()
+    {
+        if (settlementCurrentPage > 1)
+            settlementCurrentPage--;
     }
 
     private string GetTabClass(string tab)
