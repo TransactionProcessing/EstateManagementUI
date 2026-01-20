@@ -35,6 +35,8 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetAssignedOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
 
         // Act
         var cut = RenderComponent<EstateIndex>();
@@ -63,6 +65,8 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetAssignedOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
 
         // Act
         var cut = RenderComponent<EstateIndex>();
@@ -82,6 +86,8 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetAssignedOperatorsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
 
         // Act
