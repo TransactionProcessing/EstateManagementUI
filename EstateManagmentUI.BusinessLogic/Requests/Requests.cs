@@ -14,6 +14,7 @@ public static class CorrelationIdHelper
 public static class Queries
 {
     public record GetEstateQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<EstateModel>>;
+    public record GetAssignedOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
     public record GetMerchantsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<MerchantModel>>>;
     public record GetRecentMerchantsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentMerchantsModel>>>;
     public record GetRecentContractsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentContractModel>>>;

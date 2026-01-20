@@ -60,8 +60,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             if (merchantResult.IsFailed)
                 return ResultHelpers.CreateFailure(merchantResult);
 
-            // Note: API returns merchants in creation order (newest first)
-            // If ordering is incorrect, would need CreatedDate field in the model
             this.merchants = ModelFactory.ConvertFrom(merchantResult.Data);
 
             Result<List<BusinessLogic.Models.RecentContractModel>> contractResult = await Mediator.Send(new Queries.GetRecentContractsQuery(correlationId, estateId));
@@ -69,9 +67,14 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             if (contractResult.IsFailed)
                 return ResultHelpers.CreateFailure(contractResult);
 
-            // Note: API returns merchants in creation order (newest first)
-            // If ordering is incorrect, would need CreatedDate field in the model
             this.contracts = ModelFactory.ConvertFrom(contractResult.Data);
+
+            Result<List<BusinessLogic.Models.OperatorModel>> assignedOperatorsResult = await Mediator.Send(new Queries.GetAssignedOperatorsQuery(correlationId, estateId));
+
+            if (assignedOperatorsResult.IsFailed)
+                return ResultHelpers.CreateFailure(assignedOperatorsResult);
+
+            this.assignedOperators = ModelFactory.ConvertFrom(assignedOperatorsResult.Data);
 
             return Result.Success();
         }

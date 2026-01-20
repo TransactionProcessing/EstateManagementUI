@@ -133,4 +133,17 @@ public static class APIModelFactory {
 
         return contracts;
     }
+
+    public static List<OperatorModel> ConvertFrom(List<EstateOperator> apiResultData) {
+        List<OperatorModel> operators = new();
+        foreach (EstateOperator estateOperator in apiResultData) {
+            operators.Add(new OperatorModel() {
+                Name = estateOperator.Name,
+                OperatorId = estateOperator.OperatorId,
+                RequireCustomMerchantNumber = estateOperator.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = estateOperator.RequireCustomTerminalNumber
+            });
+        }
+        return operators;
+    }
 }
