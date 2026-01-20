@@ -62,7 +62,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(merchants?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.Merchants?.Count ?? 0)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -74,7 +74,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Operators</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(assignedOperators?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.Operators?.Count ?? 0)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
@@ -86,7 +86,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Contracts</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(contracts?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.Operators?.Count ?? 0)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -98,7 +98,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Users</p>
-                                        <p class="text-3xl font-bold text-gray-900">5</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.Users?.Count ?? 0)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
@@ -118,12 +118,12 @@
                                 @if (merchants != null && merchants.Any())
                                 {
                                     <div class="space-y-3">
-                                        @foreach (var merchant in merchants.Take(5))
+                                        @foreach (var merchant in merchants)
                                         {
                                             <div class="flex items-center justify-between p-3 bg-white rounded-lg">
                                                 <div>
-                                                    <p class="font-medium text-gray-900">@merchant.MerchantName</p>
-                                                    <p class="text-sm text-gray-600">@merchant.MerchantReference</p>
+                                                    <p class="text-gray-900 font-medium">@merchant.Name (@merchant.Reference)</p>
+                                                    <p class="text-sm text-gray-500">@merchant.CreatedDateTime.ToString("dd/MM/yyyy HH:mm")</p>
                                                 </div>
                                                 <a href="/merchants/@merchant.MerchantId" class="text-blue-600 hover:text-blue-800">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

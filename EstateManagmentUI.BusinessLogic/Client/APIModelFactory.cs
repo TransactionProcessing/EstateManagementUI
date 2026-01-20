@@ -68,23 +68,69 @@ public static class APIModelFactory {
         return merchants;
     }
 
-    public static EstateModel ConvertFrom(EstateResponse apiResultData) {
-        EstateModel model = new EstateModel {
-            Reference = apiResultData.EstateReference,
+    public static EstateModel ConvertFrom(Estate apiResultData) {
+        EstateModel model = new() {
+            Reference = apiResultData.Reference,
             EstateId = apiResultData.EstateId,
             EstateName = apiResultData.EstateName,
-            Operators = new List<EstateOperatorModel>()
+            Operators = new(),
+            Users = new(),
+            Contracts = new(),
+            Merchants = new ()
         };
 
-        foreach (EstateOperatorResponse estateOperatorResponse in apiResultData.Operators) {
+        foreach (var estateOperator in apiResultData.Operators) {
             model.Operators.Add(new EstateOperatorModel {
-                Name = estateOperatorResponse.Name,
-                OperatorId = estateOperatorResponse.OperatorId,
-                RequireCustomMerchantNumber = estateOperatorResponse.RequireCustomMerchantNumber,
-                RequireCustomTerminalNumber = estateOperatorResponse.RequireCustomTerminalNumber,
+                Name = estateOperator.Name,
+                OperatorId = estateOperator.OperatorId,
+                RequireCustomMerchantNumber = estateOperator.RequireCustomMerchantNumber,
+                RequireCustomTerminalNumber = estateOperator.RequireCustomTerminalNumber,
+            });
+        }
+        foreach (var estateMerchant in apiResultData.Merchants)
+        {
+            model.Merchants.Add(new EstateMerchantModel()
+            {
+                Name = estateMerchant.Name,
+                Reference = estateMerchant.Reference,
+                MerchantId = estateMerchant.MerchantId
+            });
+        }
+        foreach (var estateContract in apiResultData.Contracts)
+        {
+            model.Contracts.Add(new EstateContractModel()
+            {
+                Name = estateContract.Name,
+                OperatorId = estateContract.OperatorId,
+                ContractId = estateContract.ContractId,
+                OperatorName = estateContract.OperatorName
+            });
+        }
+        foreach (var estateUser in apiResultData.Users)
+        {
+            model.Users.Add(new EstateUserModel()
+            {
+                CreatedDateTime = estateUser.CreatedDateTime,
+                EmailAddress = estateUser.EmailAddress,
+                UserId = estateUser.UserId
+            });
+        }
+        
+
+        return model;
+    }
+
+    public static List<RecentContractModel> ConvertFrom(List<Contract> apiResultData) {
+        List<RecentContractModel> contracts = new();
+
+        foreach (Contract contract in apiResultData) {
+            contracts.Add(new RecentContractModel {
+                ContractId = contract.ContractId,
+                Description = contract.Description,
+                OperatorName = contract.OperatorName
             });
         }
 
-        return model;
+        return contracts;
     }
 }

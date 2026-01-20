@@ -9,12 +9,17 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
 {
     public interface IEstateReportingApiClient
     {
+        Task<Result<Estate>> GetEstate(String accessToken, Guid estateId, CancellationToken cancellationToken);
+
         Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken, Guid estateId, CancellationToken cancellationToken);
         Task<Result<MerchantKpi>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
 
         Task<Result<List<Merchant>>> GetRecentMerchants(String accessToken,
                                                         Guid estateId,
                                                         CancellationToken cancellationToken);
+
+        Task<Result<List<Contract>>> GetRecentContracts(String accessToken,
+                                                        Guid estateId, CancellationToken cancellationToken);
         Task<Result<TodaysSales>> GetTodaysSales(String accessToken,
                                                  Guid estateId,
                                                  Int32 merchantReportingId,
@@ -32,6 +37,33 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
         public EstateReportingApiClient(Func<String, String> baseAddressResolver,
                                         HttpClient httpClient) : base(httpClient) {
             this.BaseAddressResolver = baseAddressResolver;
+        }
+
+        public async Task<Result<Estate>> GetEstate(String accessToken,
+                                                    Guid estateId,
+                                                    CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl("/api/estates");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+
+                Result<Estate> result = await this.SendHttpGetRequest<Estate>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
         }
 
         public async Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken,
@@ -96,6 +128,32 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
                 Result<List<Merchant>> result = await this.SendHttpGetRequest<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting recent merchants for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<Contract>>> GetRecentContracts(String accessToken,
+                                                                     Guid estateId,
+                                                                     CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl("/api/contracts/recent");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<Contract>> result = await this.SendHttpGetRequest<List<Contract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);

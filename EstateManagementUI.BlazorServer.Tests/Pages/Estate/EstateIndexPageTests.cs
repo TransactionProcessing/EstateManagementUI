@@ -29,12 +29,10 @@ public class EstateIndexPageTests : BaseTest
         
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(estate));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<ContractModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
         
         // Act
         var cut = RenderComponent<EstateIndex>();
@@ -57,18 +55,15 @@ public class EstateIndexPageTests : BaseTest
 
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(estate));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<ContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
+
         // Act
         var cut = RenderComponent<EstateIndex>();
-        //cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-
+        
         // Assert
-        //cut.Markup.ShouldContain("Test Estate");
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Estate"), timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -78,13 +73,11 @@ public class EstateIndexPageTests : BaseTest
         // Arrange
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<ContractModel>()));
-        
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
+
         // Act
         var cut = RenderComponent<EstateIndex>();
         
