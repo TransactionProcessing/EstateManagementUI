@@ -208,7 +208,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<List<OperatorModel>>> Handle(Queries.GetOperatorsQuery request,
                                                               CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockOperators());
+            return await this.ApiClient.GetOperators(request, cancellationToken);
         }
         public async Task<Result<OperatorModel>> Handle(Queries.GetOperatorQuery request,
                                                         CancellationToken cancellationToken) {

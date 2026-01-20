@@ -50,32 +50,36 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
 
         private async Task<Result> LoadEstateData(CorrelationId correlationId, Guid estateId)
         {
-            Result<BusinessLogic.Models.EstateModel> estateResult = await Mediator.Send(new Queries.GetEstateQuery(correlationId, estateId));
-            if (estateResult.IsFailed)
-                return ResultHelpers.CreateFailure(estateResult);
-            estate = ModelFactory.ConvertFrom(estateResult.Data);
+            Task<Result<BusinessLogic.Models.EstateModel>> estateTask = Mediator.Send(new Queries.GetEstateQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.RecentMerchantsModel>>> merchantTask = Mediator.Send(new Queries.GetRecentMerchantsQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.RecentContractModel>>> contractsTask = Mediator.Send(new Queries.GetRecentContractsQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.OperatorModel>>> assignedOperatorsTask = Mediator.Send(new Queries.GetAssignedOperatorsQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.OperatorModel>>> allOperatorsTask= Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
+
+            await Task.WhenAll(estateTask, merchantTask, contractsTask, assignedOperatorsTask, allOperatorsTask);
             
-            Result<List<BusinessLogic.Models.RecentMerchantsModel>> merchantResult = await Mediator.Send(new Queries.GetRecentMerchantsQuery(correlationId, estateId));
+            if (estateTask.Result.IsFailed)
+                return ResultHelpers.CreateFailure(estateTask.Result);
+            estate = ModelFactory.ConvertFrom(estateTask.Result.Data);
 
-            if (merchantResult.IsFailed)
-                return ResultHelpers.CreateFailure(merchantResult);
+            if (merchantTask.Result.IsFailed)
+                return ResultHelpers.CreateFailure(merchantTask.Result);
+            this.merchants = ModelFactory.ConvertFrom(merchantTask.Result.Data);
 
-            this.merchants = ModelFactory.ConvertFrom(merchantResult.Data);
+            if (contractsTask.Result.IsFailed)
+                return ResultHelpers.CreateFailure(contractsTask.Result);
+            this.contracts = ModelFactory.ConvertFrom(contractsTask.Result.Data);
 
-            Result<List<BusinessLogic.Models.RecentContractModel>> contractResult = await Mediator.Send(new Queries.GetRecentContractsQuery(correlationId, estateId));
+            if (assignedOperatorsTask.Result.IsFailed)
+                return ResultHelpers.CreateFailure(assignedOperatorsTask.Result);
+            this.assignedOperators = ModelFactory.ConvertFrom(assignedOperatorsTask.Result.Data);
 
-            if (contractResult.IsFailed)
-                return ResultHelpers.CreateFailure(contractResult);
+            if (allOperatorsTask.Result.IsFailed)
+                return ResultHelpers.CreateFailure(allOperatorsTask.Result);
 
-            this.contracts = ModelFactory.ConvertFrom(contractResult.Data);
-
-            Result<List<BusinessLogic.Models.OperatorModel>> assignedOperatorsResult = await Mediator.Send(new Queries.GetAssignedOperatorsQuery(correlationId, estateId));
-
-            if (assignedOperatorsResult.IsFailed)
-                return ResultHelpers.CreateFailure(assignedOperatorsResult);
-
-            this.assignedOperators = ModelFactory.ConvertFrom(assignedOperatorsResult.Data);
-
+            List<OperatorModel> unfiltered = ModelFactory.ConvertFrom(allOperatorsTask.Result.Data);
+            this.availableOperators = unfiltered.Where(u => this.assignedOperators.Select(a => a.OperatorId).Contains(u.OperatorId) == false).ToList();
+            
             return Result.Success();
         }
 

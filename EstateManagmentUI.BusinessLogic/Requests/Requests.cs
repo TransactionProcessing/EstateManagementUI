@@ -18,7 +18,7 @@ public static class Queries
     public record GetMerchantsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<MerchantModel>>>;
     public record GetRecentMerchantsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentMerchantsModel>>>;
     public record GetRecentContractsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentContractModel>>>;
-    public record GetOperatorsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
+    public record GetOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
     public record GetContractsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<List<ContractModel>>>;
     public record GetOperatorQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
     public record GetContractQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;

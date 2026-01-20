@@ -281,7 +281,7 @@
             
             // Load filter options
             var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
-            var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, accessToken, estateId));
+            var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
             
             await Task.WhenAll(merchantsTask, operatorsTask);
             
