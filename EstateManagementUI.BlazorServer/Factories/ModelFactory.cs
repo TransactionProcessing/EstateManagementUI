@@ -62,6 +62,13 @@ namespace EstateManagementUI.BlazorServer.Factories {
             };
         }
 
+        public static List<OperatorModel> ConvertFrom(List<BusinessLogic.Models.OperatorModel> models)
+        {
+            List<OperatorModel> result = new List<OperatorModel>();
+            models.ForEach(m => result.Add(ConvertFrom(m)));
+            return result;
+        }
+
         public static OperatorModel ConvertFrom(BusinessLogic.Models.OperatorModel model) {
             return new OperatorModel() { OperatorId = model.OperatorId, Name = model.Name, RequireCustomMerchantNumber = model.RequireCustomMerchantNumber, RequireCustomTerminalNumber = model.RequireCustomTerminalNumber };
         }
@@ -220,11 +227,7 @@ namespace EstateManagementUI.BlazorServer.Factories {
             return new ProductPerformanceModel() { PercentageContribution = model.PercentageContribution, ProductName = model.ProductName, TransactionCount = model.TransactionCount, TransactionValue = model.TransactionValue };
         }
 
-        public static List<OperatorModel> ConvertFrom(List<BusinessLogic.Models.OperatorModel> models) {
-            List<OperatorModel> result = new List<OperatorModel>();
-            models.ForEach(m => result.Add(ConvertFrom(m)));
-            return result;
-        }
+        
 
         public static List<MerchantModel> ConvertFrom(List<BusinessLogic.Models.MerchantModel> models) {
             List<MerchantModel> result = new List<MerchantModel>();
@@ -355,7 +358,7 @@ namespace EstateManagementUI.BlazorServer.Factories {
             models.ForEach(m => result.Add(ConvertFrom(m)));
             return result;
         }
-
+        
         private static RecentContractModel ConvertFrom(BusinessLogic.Models.RecentContractModel model) {
             return new RecentContractModel { OperatorName = model.OperatorName, Description = model.Description, ContractId = model.ContractId };
         }

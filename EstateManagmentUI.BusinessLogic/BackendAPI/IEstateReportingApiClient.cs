@@ -11,6 +11,9 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
     {
         Task<Result<Estate>> GetEstate(String accessToken, Guid estateId, CancellationToken cancellationToken);
 
+        Task<Result<List<EstateOperator>>> GetEstateAssignedOperators(String accessToken,
+                                                                      Guid estateId,
+                                                                      CancellationToken cancellationToken);
         Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken, Guid estateId, CancellationToken cancellationToken);
         Task<Result<MerchantKpi>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
 
@@ -61,6 +64,34 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<EstateOperator>>> GetEstateAssignedOperators(String accessToken,
+                                                                                   Guid estateId,
+                                                                                   CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl("/api/estates/operators");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+
+                Result<List<EstateOperator>> result = await this.SendHttpGetRequest<List<EstateOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting estate assigned operators {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

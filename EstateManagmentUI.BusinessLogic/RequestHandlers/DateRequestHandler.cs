@@ -21,8 +21,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
     public class EstateRequestHandler : IRequestHandler<Queries.GetEstateQuery, Result<EstateModel>>,
         IRequestHandler<Commands.AddOperatorToEstateCommand, Result>,
-        IRequestHandler<Commands.RemoveOperatorFromEstateCommand, Result>
-    {
+        IRequestHandler<Commands.RemoveOperatorFromEstateCommand, Result>,
+        IRequestHandler<Queries.GetAssignedOperatorsQuery, Result<List<OperatorModel>>> {
         private readonly IApiClient ApiClient;
 
         public EstateRequestHandler(IApiClient apiClient) {
@@ -42,6 +42,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         public async Task<Result> Handle(Commands.RemoveOperatorFromEstateCommand request,
                                          CancellationToken cancellationToken) {
             return Result.Success();
+        }
+
+        public async Task<Result<List<OperatorModel>>> Handle(Queries.GetAssignedOperatorsQuery request,
+                                                              CancellationToken cancellationToken) {
+            return await this.ApiClient.GetEstateAssignedOperators(request, cancellationToken);
         }
     }
 

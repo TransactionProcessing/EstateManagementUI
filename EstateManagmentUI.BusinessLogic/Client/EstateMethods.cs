@@ -13,6 +13,9 @@ namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {
         Task<Result<EstateModel>> GetEstate(Queries.GetEstateQuery request,
                                             CancellationToken cancellationToken);
+
+        Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(Queries.GetAssignedOperatorsQuery request,
+                                                                           CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -31,6 +34,22 @@ namespace EstateManagementUI.BusinessLogic.Client {
             EstateModel estate = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(estate);
+        }
+
+        public async Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(Queries.GetAssignedOperatorsQuery request,
+                                                                                        CancellationToken cancellationToken) {
+            // Get a token here 
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<List<EstateOperator>>? apiResult = await this.EstateReportingApiClient.GetEstateAssignedOperators(token.Data, request.EstateId, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            List<OperatorModel> estateOperators = APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(estateOperators);
         }
     }
 }
