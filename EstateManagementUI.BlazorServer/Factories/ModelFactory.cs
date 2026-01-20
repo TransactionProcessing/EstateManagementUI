@@ -3,12 +3,39 @@
 namespace EstateManagementUI.BlazorServer.Factories {
     public static class ModelFactory {
         public static EstateModel ConvertFrom(BusinessLogic.Models.EstateModel model) {
-            EstateModel result = new EstateModel { EstateId = model.EstateId, EstateName = model.EstateName, Operators = new List<EstateOperatorModel>(), Reference = model.Reference };
+            EstateModel result = new EstateModel { EstateId = model.EstateId, EstateName = model.EstateName, 
+                Operators = new List<EstateOperatorModel>(), 
+                Contracts = new(),
+                Merchants = new(),
+                Users = new(),
+                Reference = model.Reference };
             if (model.Operators != null && model.Operators.Any()) {
                 model.Operators.ForEach((o) => result.Operators.Add(ConvertFrom(o)));
             }
+            if (model.Merchants != null && model.Merchants.Any()) {
+                model.Merchants.ForEach((m) => result.Merchants.Add(ConvertFrom(m)));
+            }
+            if (model.Contracts != null && model.Contracts.Any()) {
+                model.Contracts.ForEach((m) => result.Contracts.Add(ConvertFrom(m)));
+            }
+            if (model.Users != null && model.Users.Any())
+            {
+                model.Users.ForEach((m) => result.Users.Add(ConvertFrom(m)));
+            }
 
             return result;
+        }
+
+        private static EstateUserModel ConvertFrom(BusinessLogic.Models.EstateUserModel model) {
+            return new EstateUserModel() { CreatedDateTime = model.CreatedDateTime, EmailAddress = model.EmailAddress, UserId = model.UserId };
+        }
+
+        private static EstateContractModel ConvertFrom(BusinessLogic.Models.EstateContractModel model) {
+            return new EstateContractModel() { ContractId = model.ContractId, Name = model.Name, OperatorId = model.OperatorId, OperatorName = model.OperatorName };
+        }
+
+        private static EstateMerchantModel ConvertFrom(BusinessLogic.Models.EstateMerchantModel model) {
+            return new EstateMerchantModel() { Reference = model.Reference, Name = model.Name, MerchantId = model.MerchantId };
         }
 
         public static EstateOperatorModel ConvertFrom(BusinessLogic.Models.EstateOperatorModel model) {
@@ -299,7 +326,7 @@ namespace EstateManagementUI.BlazorServer.Factories {
             return result;
         }
 
-        public static List<RecentMerchantsModel>? ConvertFrom(List<BusinessLogic.Models.RecentMerchantsModel> models) {
+        public static List<RecentMerchantsModel> ConvertFrom(List<BusinessLogic.Models.RecentMerchantsModel> models) {
             List<RecentMerchantsModel> result = new List<RecentMerchantsModel>();
             models.ForEach(m => result.Add(ConvertFrom(m)));
             return result;
@@ -321,6 +348,16 @@ namespace EstateManagementUI.BlazorServer.Factories {
                 Town = model.Town
             };
             return result;
+        }
+
+        public static List<RecentContractModel> ConvertFrom(List<BusinessLogic.Models.RecentContractModel> models) {
+            List<RecentContractModel> result = new List<RecentContractModel>();
+            models.ForEach(m => result.Add(ConvertFrom(m)));
+            return result;
+        }
+
+        private static RecentContractModel ConvertFrom(BusinessLogic.Models.RecentContractModel model) {
+            return new RecentContractModel { OperatorName = model.OperatorName, Description = model.Description, ContractId = model.ContractId };
         }
     }
 }

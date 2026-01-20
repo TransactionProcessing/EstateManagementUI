@@ -4,6 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
+using Shared.Results;
 using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
@@ -12,10 +13,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
     {
         private bool isLoading = true;
         private EstateModel? estate;
-        private List<MerchantModel>? merchants;
+        private List<RecentMerchantsModel> merchants;
         private List<OperatorModel>? availableOperators;
         private List<OperatorModel> assignedOperators = new();
-        private List<ContractModel>? contracts;
+        private List<RecentContractModel> contracts;
         private string activeTab = "overview";
         private bool showAddOperator = false;
         private string? selectedOperatorId;
@@ -35,41 +36,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
                 await RequirePermission(PermissionSection.Estate, PermissionFunction.View);
                 CorrelationId correlationId = new(Guid.NewGuid());
                 Guid estateId = await this.GetEstateId();
-
-                Result<BusinessLogic.Models.EstateModel> estateResult = await Mediator.Send(new Queries.GetEstateQuery(correlationId, estateId));
-                if (estateResult.IsSuccess)
-                {
-                    estate = ModelFactory.ConvertFrom(estateResult.Data);
-                    // Load assigned operators from estate model
-                    if (estate.Operators != null)
-                    {
-                        assignedOperators = estate.Operators.Select(o => new OperatorModel
-                        {
-                            OperatorId = o.OperatorId,
-                            Name = o.Name,
-                            RequireCustomMerchantNumber = o.RequireCustomMerchantNumber,
-                            RequireCustomTerminalNumber = o.RequireCustomTerminalNumber
-                        }).ToList();
-                    }
-                }
-
-                // TODO: Make these calls concurrent...
-                var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
-                if (merchantsResult.IsSuccess)
-                {
-                    merchants = ModelFactory.ConvertFrom(merchantsResult.Data);
-                }
-
-                var operatorsResult = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, String.Empty, estateId));
-                if (operatorsResult.IsSuccess)
-                {
-                    availableOperators = ModelFactory.ConvertFrom(operatorsResult.Data);
-                }
-
-                var contractsResult = await Mediator.Send(new Queries.GetContractsQuery(correlationId, String.Empty, estateId));
-                if (contractsResult.IsSuccess)
-                {
-                    contracts = ModelFactory.ConvertFrom(contractsResult.Data);
+                var result = await this.LoadEstateData(correlationId, estateId);
+                if (result.IsFailed) {
+                    this.NavigationManager.NavigateToErrorPage();
                 }
             }
             finally
@@ -78,6 +47,35 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
                 this.StateHasChanged();
             }
         }
+
+        private async Task<Result> LoadEstateData(CorrelationId correlationId, Guid estateId)
+        {
+            Result<BusinessLogic.Models.EstateModel> estateResult = await Mediator.Send(new Queries.GetEstateQuery(correlationId, estateId));
+            if (estateResult.IsFailed)
+                return ResultHelpers.CreateFailure(estateResult);
+            estate = ModelFactory.ConvertFrom(estateResult.Data);
+            
+            Result<List<BusinessLogic.Models.RecentMerchantsModel>> merchantResult = await Mediator.Send(new Queries.GetRecentMerchantsQuery(correlationId, estateId));
+
+            if (merchantResult.IsFailed)
+                return ResultHelpers.CreateFailure(merchantResult);
+
+            // Note: API returns merchants in creation order (newest first)
+            // If ordering is incorrect, would need CreatedDate field in the model
+            this.merchants = ModelFactory.ConvertFrom(merchantResult.Data);
+
+            Result<List<BusinessLogic.Models.RecentContractModel>> contractResult = await Mediator.Send(new Queries.GetRecentContractsQuery(correlationId, estateId));
+
+            if (contractResult.IsFailed)
+                return ResultHelpers.CreateFailure(contractResult);
+
+            // Note: API returns merchants in creation order (newest first)
+            // If ordering is incorrect, would need CreatedDate field in the model
+            this.contracts = ModelFactory.ConvertFrom(contractResult.Data);
+
+            return Result.Success();
+        }
+
 
         private void SetActiveTab(string tab)
         {

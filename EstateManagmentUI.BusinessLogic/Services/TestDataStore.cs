@@ -1,5 +1,6 @@
-using System.Collections.Concurrent;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
+using System.Collections.Concurrent;
 
 namespace EstateManagementUI.BusinessLogic.Services;
 
@@ -35,6 +36,28 @@ public class TestDataStore : ITestDataStore
                     RequireCustomTerminalNumber = o.RequireCustomTerminalNumber
                 }).ToList();
             }
+            if (this._contracts.TryGetValue(estateId, out var contractDict))
+            {
+                estate.Contracts = contractDict.Values.Select(o => new EstateContractModel()
+                {
+                    OperatorId = o.OperatorId,
+                    Name = o.Description,
+                    OperatorName = o.OperatorName,
+                    ContractId = o.ContractId
+                }).ToList();
+            }
+            if (this._merchants.TryGetValue(estateId, out var merchantDict))
+            {
+                estate.Merchants = merchantDict.Values.Select(o => new EstateMerchantModel()
+                {
+                    Name = o.MerchantName,
+                    Reference = o.MerchantReference,
+                    MerchantId = o.MerchantId
+                }).ToList();
+            }
+
+            estate.Users = [new EstateUserModel { CreatedDateTime = DateTime.Now, EmailAddress = "estatedevuser1@estate.co.uk", UserId = Guid.Parse("61BFC7DC-FDB4-408A-9CAA-B9F0CF690130") }];
+
             return estate;
         }
         
@@ -207,7 +230,7 @@ public class TestDataStore : ITestDataStore
         {
             EstateId = estateId,
             EstateName = "Test Estate",
-            Reference = "Test Estate"
+            Reference = "Test Estate",
         };
         this.SetEstate(estate);
 

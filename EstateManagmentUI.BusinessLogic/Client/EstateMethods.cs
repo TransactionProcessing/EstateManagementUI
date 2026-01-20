@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Text;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using Shared.Results;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 
@@ -23,7 +24,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
-            Result<EstateResponse>? apiResult = await this.TransactionProcessorClient.GetEstate(token.Data, request.EstateId, cancellationToken);
+            Result<Estate>? apiResult = await this.EstateReportingApiClient.GetEstate(token.Data, request.EstateId, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 

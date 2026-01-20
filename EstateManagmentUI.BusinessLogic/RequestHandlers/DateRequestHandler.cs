@@ -148,7 +148,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                             IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>,
                                             IRequestHandler<Commands.CreateContractCommand, Result>,
                                             IRequestHandler<Commands.AddProductToContractCommand, Result>,
-                                            IRequestHandler<Commands.AddTransactionFeeForProductToContractCommand, Result> {
+                                            IRequestHandler<Commands.AddTransactionFeeForProductToContractCommand, Result>,
+    IRequestHandler<Queries.GetRecentContractsQuery, Result<List<RecentContractModel>>> {
 
         private readonly IApiClient ApiClient;
 
@@ -180,6 +181,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         public async Task<Result> Handle(Commands.AddTransactionFeeForProductToContractCommand request,
                                          CancellationToken cancellationToken) {
             return Result.Success();
+        }
+
+        public async Task<Result<List<RecentContractModel>>> Handle(Queries.GetRecentContractsQuery request,
+                                                                    CancellationToken cancellationToken) {
+            return await this.ApiClient.GetRecentContracts(request, cancellationToken);
         }
     }
 

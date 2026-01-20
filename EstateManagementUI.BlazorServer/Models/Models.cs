@@ -7,6 +7,16 @@ public class EstateModel
     public string? EstateName { get; set; }
     public string? Reference { get; set; }
     public List<EstateOperatorModel>? Operators { get; set; }
+    public List<EstateMerchantModel>? Merchants { get; set; }
+    public List<EstateContractModel>? Contracts { get; set; }
+    public List<EstateUserModel>? Users { get; set; }
+}
+
+public class EstateUserModel
+{
+    public Guid UserId { get; set; }
+    public string? EmailAddress { get; set; }
+    public DateTime CreatedDateTime { get; set; }
 }
 
 public class EstateOperatorModel
@@ -15,6 +25,23 @@ public class EstateOperatorModel
     public string? Name { get; set; }
     public bool RequireCustomMerchantNumber { get; set; }
     public bool RequireCustomTerminalNumber { get; set; }
+    public DateTime CreatedDateTime { get; set; }
+}
+
+public class EstateContractModel
+{
+    public Guid OperatorId { get; set; }
+    public Guid ContractId { get; set; }
+    public string? Name { get; set; }
+    public string? OperatorName { get; set; }
+}
+
+
+public class EstateMerchantModel
+{
+    public Guid MerchantId { get; set; }
+    public string? Name { get; set; }
+    public string? Reference { get; set; }
 }
 
 // Merchant Models
@@ -247,4 +274,11 @@ public class RecentMerchantsModel
     public String Reference { get; set; }
     public String Region { get; set; }
     public String Town { get; set; }
+}
+
+public class RecentContractModel
+{
+    public Guid ContractId { get; set; }
+    public string? Description { get; set; }
+    public string? OperatorName { get; set; }
 }
