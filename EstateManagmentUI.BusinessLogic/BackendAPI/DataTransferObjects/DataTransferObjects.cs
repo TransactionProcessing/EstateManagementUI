@@ -157,4 +157,16 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects
         [JsonProperty("reference")]
         public string? Reference { get; set; }
     }
+
+    public class Operator
+    {
+        [JsonProperty("estate_reporting_id")]
+        public Int32 EstateReportingId { get; set; }
+        [JsonProperty("operator_id")]
+        public Guid OperatorId { get; set; }
+        [JsonProperty("name")]
+        public String Name { get; set; }
+        [JsonProperty("operator_reporting_id")]
+        public Int32 OperatorReportingId { get; set; }
+    }
 }

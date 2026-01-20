@@ -146,4 +146,17 @@ public static class APIModelFactory {
         }
         return operators;
     }
+
+    public static List<OperatorModel> ConvertFrom(List<Operator> apiResultData) {
+        List<OperatorModel> operators = new();
+        foreach (Operator op in apiResultData)
+        {
+            operators.Add(new OperatorModel()
+            {
+                Name = op.Name,
+                OperatorId = op.OperatorId
+            });
+        }
+        return operators;
+    }
 }
