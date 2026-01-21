@@ -1,6 +1,7 @@
 ﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.Client;
 
@@ -62,6 +63,29 @@ public static class APIModelFactory {
                 Reference = merchant.Reference,
                 Region = merchant.Region,
                 Town = merchant.Town
+            });
+        }
+
+        return merchants;
+    }
+
+    public static List<MerchantListModel> ConvertFromX(List<Merchant> apiResultData)
+    {
+        List<MerchantListModel> merchants = new();
+
+        foreach (Merchant merchant in apiResultData)
+        {
+            merchants.Add(new MerchantListModel
+            {
+                CreatedDateTime = merchant.CreatedDateTime,
+                MerchantId = merchant.MerchantId,
+                Balance = merchant.Balance,
+                AvailableBalance = 0, // TODO: remove this
+                MerchantName= merchant.Name,
+                PostalCode = merchant.PostCode,
+                MerchantReference = merchant.Reference,
+                Region = merchant.Region,
+                SettlementSchedule = ((SettlementSchedule)merchant.SettlementSchedule).ToString(),
             });
         }
 

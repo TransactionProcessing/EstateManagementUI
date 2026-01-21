@@ -25,6 +25,14 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
         Task<Result<List<Merchant>>> GetRecentMerchants(String accessToken,
                                                         Guid estateId,
                                                         CancellationToken cancellationToken);
+        Task<Result<List<Merchant>>> GetMerchants(String accessToken,
+                                                        Guid estateId,
+                                                        String? name,
+                                                        String? reference,
+                                                        Int32? settlementSchedule,
+                                                        String? region,
+                                                        String? postCode,
+                                                        CancellationToken cancellationToken);
 
         Task<Result<List<Contract>>> GetRecentContracts(String accessToken,
                                                         Guid estateId, CancellationToken cancellationToken);
@@ -201,6 +209,44 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting recent merchants for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<Merchant>>> GetMerchants(String accessToken,
+                                                               Guid estateId,
+                                                               String? name,
+                                                               String? reference,
+                                                               Int32? settlementSchedule,
+                                                               String? region,
+                                                               String? postCode,
+                                                               CancellationToken cancellationToken) {
+            QueryStringBuilder builder = new QueryStringBuilder();
+            builder.AddParameter("name",name);
+            builder.AddParameter("reference", reference);
+            builder.AddParameter("settlementSchedule", settlementSchedule);
+            builder.AddParameter("region", region);
+            builder.AddParameter("postCode", postCode);
+
+            String requestUri = this.BuildRequestUrl($"/api/merchants?{builder.BuildQueryString()}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<Merchant>> result = await this.SendHttpGetRequest<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting merchants for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

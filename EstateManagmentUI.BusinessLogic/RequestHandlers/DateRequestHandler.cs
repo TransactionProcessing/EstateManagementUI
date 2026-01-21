@@ -50,7 +50,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         }
     }
 
-    public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantModel>>>,
+    public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantListModel>>>,
                                         IRequestHandler<Queries.GetMerchantQuery, Result<MerchantModel>>,
                                         IRequestHandler<Commands.AddMerchantDeviceCommand, Result>,
                                         IRequestHandler<Commands.AddOperatorToMerchantCommand, Result>,
@@ -73,9 +73,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<Result<List<MerchantModel>>> Handle(Queries.GetMerchantsQuery request,
-                                                              CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockMerchants());
+        public async Task<Result<List<MerchantListModel>>> Handle(Queries.GetMerchantsQuery request,
+                                                                  CancellationToken cancellationToken) {
+            return await this.ApiClient.GetMerchants(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.AddMerchantDeviceCommand request,

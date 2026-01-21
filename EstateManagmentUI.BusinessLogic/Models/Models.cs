@@ -64,6 +64,19 @@ public class MerchantModel
     public DateTime CreatedDateTime { get; set; }
 }
 
+public class MerchantListModel
+{
+    public Guid MerchantId { get; set; }
+    public string? MerchantName { get; set; }
+    public string? MerchantReference { get; set; }
+    public decimal? Balance { get; set; }
+    public decimal? AvailableBalance { get; set; }
+    public string? SettlementSchedule { get; set; }
+    public string? Region { get; set; }
+    public string? PostalCode { get; set; }
+    public DateTime CreatedDateTime { get; set; }
+}
+
 // Operator Models
 public class OperatorModel
 {

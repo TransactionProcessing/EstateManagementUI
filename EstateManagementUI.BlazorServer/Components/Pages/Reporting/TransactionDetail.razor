@@ -426,7 +426,7 @@
             var accessToken = DEFAULT_ACCESS_TOKEN;
             
             // Load filter options
-            var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
+            var merchantsTask = Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId, null, null, null, null, null));
             var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
             var contractsTask = Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
             

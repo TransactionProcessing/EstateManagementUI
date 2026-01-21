@@ -269,7 +269,7 @@
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             
             // Load filter options
-            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
+            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId, null, null, null, null, null));
             
             if (merchantsResult.IsSuccess)
                 merchants = ModelFactory.ConvertFrom(merchantsResult.Data);

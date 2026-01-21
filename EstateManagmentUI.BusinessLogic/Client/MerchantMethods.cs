@@ -12,6 +12,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<MerchantKpiModel>> GetMerchantKpi(Queries.GetMerchantKpiQuery request, CancellationToken cancellationToken);
         Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(Queries.GetRecentMerchantsQuery request, CancellationToken cancellationToken);
         Task<Result<List<RecentContractModel>>> GetRecentContracts(Queries.GetRecentContractsQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantListModel>>> GetMerchants(Queries.GetMerchantsQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -63,6 +64,24 @@ namespace EstateManagementUI.BusinessLogic.Client
             List<RecentContractModel> recentContractModels = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(recentContractModels);
+        }
+
+        public async Task<Result<List<MerchantListModel>>> GetMerchants(Queries.GetMerchantsQuery request,
+                                                                        CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<List<Merchant>> apiResult = await this.EstateReportingApiClient.GetMerchants(token.Data, request.EstateId, 
+                request.Name, request.Reference, request.SettlementSchedule, request.Region, request.PostCode,cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            List<MerchantListModel> recentMerchantsModels = APIModelFactory.ConvertFromX(apiResult.Data);
+
+            return Result.Success(recentMerchantsModels);
         }
     }
 }

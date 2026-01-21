@@ -44,7 +44,6 @@ public class EstateMerchantModel
     public string? Reference { get; set; }
 }
 
-// Merchant Models
 public class MerchantModel
 {
     public Guid MerchantId { get; set; }
