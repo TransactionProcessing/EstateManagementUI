@@ -54,7 +54,7 @@ public static class Commands
 {
     public record AddMerchantDeviceCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string DeviceIdentifier) : IRequest<Result>;
     public record AddOperatorToMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid OperatorId, string? MerchantNumber, string? TerminalNumber) : IRequest<Result>;
-    public record AddOperatorToEstateCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result>;
+    public record AddOperatorToEstateCommand(CorrelationId CorrelationId, Guid EstateId, Guid OperatorId) : IRequest<Result>;
     public record AssignContractToMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
     public record CreateContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Description, Guid OperatorId) : IRequest<Result>;
     public record CreateMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, string ContactName, string ContactEmail) : IRequest<Result>;
@@ -63,7 +63,7 @@ public static class Commands
     public record MakeMerchantDepositCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, decimal Amount, DateTime Date, string Reference) : IRequest<Result>;
     public record RemoveContractFromMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
     public record RemoveOperatorFromMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid OperatorId) : IRequest<Result>;
-    public record RemoveOperatorFromEstateCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result>;
+    public record RemoveOperatorFromEstateCommand(CorrelationId CorrelationId, Guid EstateId, Guid OperatorId) : IRequest<Result>;
     public record SetMerchantSettlementScheduleCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string Schedule) : IRequest<Result>;
     public record SwapMerchantDeviceCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string OldDevice, string NewDevice) : IRequest<Result>;
     public record UpdateMerchantAddressCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string AddressLine1, string Town, string Region, string PostalCode, string Country) : IRequest<Result>;
