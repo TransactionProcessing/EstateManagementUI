@@ -7,6 +7,7 @@ using System.Diagnostics.Tracing;
 using System.Text;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using Shared.Results;
+using TransactionProcessor.DataTransferObjects.Requests.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 
 namespace EstateManagementUI.BusinessLogic.Client {
@@ -16,6 +17,11 @@ namespace EstateManagementUI.BusinessLogic.Client {
 
         Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(Queries.GetAssignedOperatorsQuery request,
                                                                            CancellationToken cancellationToken);
+
+        Task<Result> RemoveEstateOperator(Commands.RemoveOperatorFromEstateCommand request,
+                                            CancellationToken cancellationToken);
+        Task<Result> AddEstateOperator(Commands.AddOperatorToEstateCommand request,
+                                          CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -50,6 +56,40 @@ namespace EstateManagementUI.BusinessLogic.Client {
             List<OperatorModel> estateOperators = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(estateOperators);
+        }
+
+        public async Task<Result> RemoveEstateOperator(Commands.RemoveOperatorFromEstateCommand request,
+                                                       CancellationToken cancellationToken) {
+            // Get a token here 
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result? apiResult = await this.TransactionProcessorClient.RemoveOperatorFromEstate(token.Data, request.EstateId, request.OperatorId, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> AddEstateOperator(Commands.AddOperatorToEstateCommand request,
+                                                       CancellationToken cancellationToken)
+        {
+            // Get a token here 
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            AssignOperatorRequest assignOperatorRequest = new AssignOperatorRequest
+            {
+                OperatorId = request.OperatorId
+            };
+
+            Result? apiResult = await this.TransactionProcessorClient.AssignOperatorToEstate(token.Data, request.EstateId, assignOperatorRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
         }
     }
 }

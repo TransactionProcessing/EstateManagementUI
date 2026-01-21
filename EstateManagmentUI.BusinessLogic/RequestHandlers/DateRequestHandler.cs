@@ -36,12 +36,12 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result> Handle(Commands.AddOperatorToEstateCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.AddEstateOperator(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.RemoveOperatorFromEstateCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.RemoveEstateOperator(request, cancellationToken);
         }
 
         public async Task<Result<List<OperatorModel>>> Handle(Queries.GetAssignedOperatorsQuery request,

@@ -105,13 +105,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+                Guid estateId = await this.GetEstateId();
                 var operatorId = Guid.Parse(selectedOperatorId);
 
                 var command = new Commands.AddOperatorToEstateCommand(
                     correlationId,
-                    accessToken,
                     estateId,
                     operatorId
                 );
@@ -149,12 +147,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
-
+                Guid estateId = await this.GetEstateId();
                 var command = new Commands.RemoveOperatorFromEstateCommand(
                     correlationId,
-                    accessToken,
                     estateId,
                     operatorId
                 );
