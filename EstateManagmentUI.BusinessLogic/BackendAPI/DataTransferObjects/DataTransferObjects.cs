@@ -66,7 +66,11 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects
         public String Region { get; set; }
         [JsonProperty("town")]
         public String Town { get; set; }
-
+        [JsonProperty("balance")]
+        public Decimal Balance { get; set; }
+        [JsonProperty("settlement_schedule")]
+        public Int32 SettlementSchedule { get; set; }
+        
         #endregion
     }
 

@@ -1,4 +1,30 @@
-﻿using EstateManagementUI.BlazorServer.Models;
+﻿using EstateManagementUI.BusinessLogic.Models;
+using ComparisonDateModel = EstateManagementUI.BlazorServer.Models.ComparisonDateModel;
+using ContractModel = EstateManagementUI.BlazorServer.Models.ContractModel;
+using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel;
+using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractProductTransactionFeeModel;
+using EstateContractModel = EstateManagementUI.BlazorServer.Models.EstateContractModel;
+using EstateMerchantModel = EstateManagementUI.BlazorServer.Models.EstateMerchantModel;
+using EstateModel = EstateManagementUI.BlazorServer.Models.EstateModel;
+using EstateOperatorModel = EstateManagementUI.BlazorServer.Models.EstateOperatorModel;
+using EstateUserModel = EstateManagementUI.BlazorServer.Models.EstateUserModel;
+using FileDetailsModel = EstateManagementUI.BlazorServer.Models.FileDetailsModel;
+using FileImportLogModel = EstateManagementUI.BlazorServer.Models.FileImportLogModel;
+using MerchantKpiModel = EstateManagementUI.BlazorServer.Models.MerchantKpiModel;
+using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModel;
+using MerchantSettlementHistoryModel = EstateManagementUI.BlazorServer.Models.MerchantSettlementHistoryModel;
+using MerchantTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.MerchantTransactionSummaryModel;
+using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel;
+using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel;
+using ProductPerformanceModel = EstateManagementUI.BlazorServer.Models.ProductPerformanceModel;
+using RecentContractModel = EstateManagementUI.BlazorServer.Models.RecentContractModel;
+using RecentMerchantsModel = EstateManagementUI.BlazorServer.Models.RecentMerchantsModel;
+using SettlementSummaryModel = EstateManagementUI.BlazorServer.Models.SettlementSummaryModel;
+using TodaysSalesCountByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesCountByHourModel;
+using TodaysSalesModel = EstateManagementUI.BlazorServer.Models.TodaysSalesModel;
+using TodaysSalesValueByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesValueByHourModel;
+using TodaysSettlementModel = EstateManagementUI.BlazorServer.Models.TodaysSettlementModel;
+using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
 
 namespace EstateManagementUI.BlazorServer.Factories {
     public static class ModelFactory {
@@ -338,17 +364,9 @@ namespace EstateManagementUI.BlazorServer.Factories {
         private static RecentMerchantsModel ConvertFrom(BusinessLogic.Models.RecentMerchantsModel model) {
             RecentMerchantsModel result = new RecentMerchantsModel() {
                 CreatedDateTime = model.CreatedDateTime,
-                EstateReportingId = model.EstateReportingId,
-                LastSale = model.LastSale,
-                LastSaleDateTime = model.LastSaleDateTime,
-                LastStatement = model.LastStatement,
                 MerchantId = model.MerchantId,
-                MerchantReportingId = model.MerchantReportingId,
                 Name = model.Name,
-                PostCode = model.PostCode,
-                Reference = model.Reference,
-                Region = model.Region,
-                Town = model.Town
+                Reference = model.Reference
             };
             return result;
         }
@@ -361,6 +379,36 @@ namespace EstateManagementUI.BlazorServer.Factories {
         
         private static RecentContractModel ConvertFrom(BusinessLogic.Models.RecentContractModel model) {
             return new RecentContractModel { OperatorName = model.OperatorName, Description = model.Description, ContractId = model.ContractId };
+        }
+
+        public static List<MerchantListModel>? ConvertFrom(List<MerchantListModel> resultData) {
+            List<MerchantListModel> merchantList = new();
+            foreach (MerchantListModel merchantListModel in resultData) {
+                merchantList.Add(new MerchantListModel {
+                    CreatedDateTime = merchantListModel.CreatedDateTime,
+                    AvailableBalance = merchantListModel.AvailableBalance,
+                    Balance = merchantListModel.Balance,
+                    MerchantId = merchantListModel.MerchantId,
+                    MerchantName = merchantListModel.MerchantName,
+                    MerchantReference = merchantListModel.MerchantReference,
+                    Region = merchantListModel.Region,
+                    PostalCode = merchantListModel.PostalCode,
+                    SettlementSchedule = merchantListModel.SettlementSchedule
+                });
+            }
+
+            return merchantList;
+        }
+
+        public static List<MerchantDropDownModel>? ConvertFrom(List<MerchantDropDownModel> resultData) {
+            List<MerchantDropDownModel> merchantList = new();
+            foreach (MerchantDropDownModel merchantDropDownModel in resultData) {
+                merchantList.Add(new MerchantDropDownModel {
+                    MerchantId = merchantDropDownModel.MerchantId,
+                    MerchantName = merchantDropDownModel.MerchantName
+                });
+            }
+            return merchantList;
         }
     }
 }

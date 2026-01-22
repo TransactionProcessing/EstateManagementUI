@@ -1,6 +1,8 @@
 @page "/reporting/settlement-summary"
 @using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BusinessLogic.Models
 @using EstateManagementUI.BusinessLogic.Requests
+@using SettlementSummaryModel = EstateManagementUI.BlazorServer.Models.SettlementSummaryModel
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager Navigation
@@ -244,7 +246,7 @@
     
     // Data
     private List<SettlementSummaryModel>? summaryData;
-    private List<MerchantModel>? merchants;
+    private List<MerchantDropDownModel>? merchants;
     
     // KPIs
     private int totalMerchants = 0;
@@ -269,7 +271,7 @@
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             
             // Load filter options
-            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
+            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsForDropDownQuery(correlationId, estateId));
             
             if (merchantsResult.IsSuccess)
                 merchants = ModelFactory.ConvertFrom(merchantsResult.Data);

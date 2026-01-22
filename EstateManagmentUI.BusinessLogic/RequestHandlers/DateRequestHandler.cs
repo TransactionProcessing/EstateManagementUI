@@ -50,7 +50,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         }
     }
 
-    public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantModel>>>,
+    public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantListModel>>>,
                                         IRequestHandler<Queries.GetMerchantQuery, Result<MerchantModel>>,
                                         IRequestHandler<Commands.AddMerchantDeviceCommand, Result>,
                                         IRequestHandler<Commands.AddOperatorToMerchantCommand, Result>,
@@ -64,8 +64,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<Commands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<Commands.UpdateMerchantContactCommand, Result>,
                                         IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
-                                        IRequestHandler<Queries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>
-    {
+                                        IRequestHandler<Queries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
+                                        IRequestHandler<Queries.GetMerchantsForDropDownQuery, Result<List<MerchantDropDownModel>>> {
         private readonly IApiClient ApiClient;
 
         public MerchantRequestHandler(IApiClient apiClient)
@@ -73,9 +73,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<Result<List<MerchantModel>>> Handle(Queries.GetMerchantsQuery request,
-                                                              CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockMerchants());
+        public async Task<Result<List<MerchantListModel>>> Handle(Queries.GetMerchantsQuery request,
+                                                                  CancellationToken cancellationToken) {
+            return await this.ApiClient.GetMerchants(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.AddMerchantDeviceCommand request,
@@ -146,6 +146,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         public async Task<Result<List<RecentMerchantsModel>>> Handle(Queries.GetRecentMerchantsQuery request,
                                                         CancellationToken cancellationToken) {
             return await this.ApiClient.GetRecentMerchants(request, cancellationToken);
+        }
+
+        public async Task<Result<List<MerchantDropDownModel>>> Handle(Queries.GetMerchantsForDropDownQuery request,
+                                                                      CancellationToken cancellationToken) {
+            throw new NotImplementedException();
         }
     }
 

@@ -322,7 +322,7 @@ public static class Extensions{
     }
 
     public static void RegisterMerchantRequestHandler(this IServiceCollection services) {
-        services.AddSingleton<IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantModel>>>, MerchantRequestHandler>();
+        services.AddSingleton<IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantListModel>>>, MerchantRequestHandler>();
         services.AddSingleton<IRequestHandler<Queries.GetMerchantQuery, Result<MerchantModel>>, MerchantRequestHandler>();
         services.AddSingleton<IRequestHandler<Commands.CreateMerchantCommand, Result>, MerchantRequestHandler>();
         services.AddSingleton<IRequestHandler<Commands.UpdateMerchantCommand, Result>, MerchantRequestHandler>();

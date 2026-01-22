@@ -23,6 +23,53 @@
             </button>
         </RequirePermission>
     </div>
+    
+    <!-- Filters Card -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Filters</h3>
+        </div>
+        <div class="card-body">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                    <input type="text" @bind="filterName" placeholder="Filter by name..." class="form-control" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Reference</label>
+                    <input type="text" @bind="filterReference" placeholder="Filter by reference..." class="form-control" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Settlement Schedule</label>
+                    <select @bind="filterSettlementSchedule" class="form-control">
+                        <option value="-1">All</option>
+                        <option value="0">Immediate</option>
+                        <option value="1">Weekly</option>
+                        <option value="2">Monthly</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Region</label>
+                    <input type="text" @bind="filterRegion" placeholder="Filter by region..." class="form-control" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Postcode</label>
+                    <input type="text" @bind="filterPostcode" placeholder="Filter by postcode..." class="form-control" />
+                </div>
+            </div>
+            <div class="mt-4 flex items-end space-x-2">
+                <button @onclick="LoadMerchants" class="btn btn-primary">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    Apply Filters
+                </button>
+                <button @onclick="ClearFilters" class="btn btn-secondary">
+                    Clear Filters
+                </button>
+            </div>
+        </div>
+    </div>
 
     @if (isLoading)
     {
@@ -32,47 +79,6 @@
     }
     else if (allMerchants != null && allMerchants.Any())
     {
-        <!-- Filters Card -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Filters</h3>
-            </div>
-            <div class="card-body">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Name</label>
-                        <input type="text" @bind="filterName" placeholder="Filter by name..." class="form-control" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Reference</label>
-                        <input type="text" @bind="filterReference" placeholder="Filter by reference..." class="form-control" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Settlement Schedule</label>
-                        <select @bind="filterSettlementSchedule" class="form-control">
-                            <option value="">All</option>
-                            <option value="Immediate">Immediate</option>
-                            <option value="Weekly">Weekly</option>
-                            <option value="Monthly">Monthly</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Region</label>
-                        <input type="text" @bind="filterRegion" placeholder="Filter by region..." class="form-control" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Postcode</label>
-                        <input type="text" @bind="filterPostcode" placeholder="Filter by postcode..." class="form-control" />
-                    </div>
-                </div>
-                <div class="mt-4">
-                    <button @onclick="ClearFilters" class="btn btn-secondary">
-                        Clear Filters
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- Merchants Table -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <table id="merchantList" class="table">
@@ -143,16 +149,17 @@
         </div>
 
         <!-- Pagination Controls -->
-        @if (totalPages > 1 || filteredMerchants.Count > 0)
+        @if (totalPages > 1 || pagedMerchants.Count > 0)
         {
             <div class="flex items-center justify-between bg-white rounded-lg shadow-md p-4">
                 <div class="flex items-center space-x-4">
                     <div class="text-sm text-gray-700">
-                        @if (filteredMerchants.Count > 0)
+                        @if (pagedMerchants.Count > 0)
                         {
                             <span>Showing <span class="font-medium">@((currentPage - 1) * pageSize + 1)</span> to 
-                            <span class="font-medium">@Math.Min(currentPage * pageSize, filteredMerchants.Count)</span> of 
-                            <span class="font-medium">@filteredMerchants.Count</span> results</span>
+                            <span class="font-medium">@Math.Min(currentPage * pageSize, pagedMerchants.Count)</span> of 
+                                <span class="font-medium">@pagedMerchants.Count</span> results
+                            </span>
                         }
                         else
                         {
@@ -201,15 +208,15 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white rounded-lg shadow-md p-6">
                 <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
-                <p class="text-3xl font-bold text-gray-900">@filteredMerchants.Count</p>
+                <p class="text-3xl font-bold text-gray-900">@pagedMerchants.Count</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6">
                 <p class="text-sm text-gray-600 mb-1">Total Balance</p>
-                <p class="text-3xl font-bold text-green-600">@filteredMerchants.Sum(m => m.Balance ?? 0).ToString("C")</p>
+                <p class="text-3xl font-bold text-green-600">@pagedMerchants.Sum(m => m.Balance ?? 0).ToString("C")</p>
             </div>
             <div class="bg-white rounded-lg shadow-md p-6">
                 <p class="text-sm text-gray-600 mb-1">Available Balance</p>
-                <p class="text-3xl font-bold text-blue-600">@filteredMerchants.Sum(m => m.AvailableBalance ?? 0).ToString("C")</p>
+                <p class="text-3xl font-bold text-blue-600">@pagedMerchants.Sum(m => m.AvailableBalance ?? 0).ToString("C")</p>
             </div>
         </div>
     }
@@ -227,193 +234,3 @@
     }
 </div>
 
-@code {
-    private bool isLoading = true;
-    private List<MerchantModel>? allMerchants;
-    
-    // Filter fields
-    private string _filterName = "";
-    private string filterName
-    {
-        get => _filterName;
-        set { _filterName = value; currentPage = 1; UpdateFilteredMerchants(); }
-    }
-    
-    private string _filterReference = "";
-    private string filterReference
-    {
-        get => _filterReference;
-        set { _filterReference = value; currentPage = 1; UpdateFilteredMerchants(); }
-    }
-    
-    private string _filterSettlementSchedule = "";
-    private string filterSettlementSchedule
-    {
-        get => _filterSettlementSchedule;
-        set { _filterSettlementSchedule = value; currentPage = 1; UpdateFilteredMerchants(); }
-    }
-    
-    private string _filterRegion = "";
-    private string filterRegion
-    {
-        get => _filterRegion;
-        set { _filterRegion = value; currentPage = 1; UpdateFilteredMerchants(); }
-    }
-    
-    private string _filterPostcode = "";
-    private string filterPostcode
-    {
-        get => _filterPostcode;
-        set { _filterPostcode = value; currentPage = 1; UpdateFilteredMerchants(); }
-    }
-    
-    // Pagination fields
-    private int _currentPage = 1;
-    private int currentPage
-    {
-        get => _currentPage;
-        set { _currentPage = value; UpdatePagedMerchants(); }
-    }
-    
-    private int _pageSize = 10;
-    private int pageSize
-    {
-        get => _pageSize;
-        set { _pageSize = value; _currentPage = 1; UpdateFilteredMerchants(); }
-    }
-    
-    // Cached results
-    private List<MerchantModel> _filteredMerchants = new();
-    private List<MerchantModel> filteredMerchants => _filteredMerchants;
-    
-    private List<MerchantModel> _pagedMerchants = new();
-    private List<MerchantModel> pagedMerchants => _pagedMerchants;
-    
-    private int _totalPages = 1;
-    private int totalPages => _totalPages;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await RequirePermission(PermissionSection.Merchant, PermissionFunction.List);
-
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-
-            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId));
-            if (result.IsSuccess)
-            {
-                allMerchants = ModelFactory.ConvertFrom(result.Data);
-                UpdateFilteredMerchants();
-            }
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    private void UpdateFilteredMerchants()
-    {
-        if (allMerchants == null)
-        {
-            _filteredMerchants = new List<MerchantModel>();
-            _totalPages = 1;
-            UpdatePagedMerchants();
-            return;
-        }
-        
-        // Apply all filters in a single pass using a combined predicate
-        _filteredMerchants = allMerchants.Where(m =>
-            (string.IsNullOrWhiteSpace(_filterName) || (m.MerchantName?.Contains(_filterName, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-            (string.IsNullOrWhiteSpace(_filterReference) || (m.MerchantReference?.Contains(_filterReference, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-            (string.IsNullOrWhiteSpace(_filterSettlementSchedule) || (m.SettlementSchedule?.Equals(_filterSettlementSchedule, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-            (string.IsNullOrWhiteSpace(_filterRegion) || (m.Region?.Contains(_filterRegion, StringComparison.OrdinalIgnoreCase) ?? false)) &&
-            (string.IsNullOrWhiteSpace(_filterPostcode) || (m.PostalCode?.Contains(_filterPostcode, StringComparison.OrdinalIgnoreCase) ?? false))
-        ).ToList();
-        
-        _totalPages = _filteredMerchants.Count > 0 ? (int)Math.Ceiling(_filteredMerchants.Count / (double)_pageSize) : 1;
-        
-        // Ensure currentPage is valid
-        if (_currentPage > _totalPages && _totalPages > 0)
-        {
-            _currentPage = _totalPages;
-        }
-        
-        UpdatePagedMerchants();
-    }
-    
-    private void UpdatePagedMerchants()
-    {
-        _pagedMerchants = _filteredMerchants.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
-    }
-    
-    private void ClearFilters()
-    {
-        _filterName = "";
-        _filterReference = "";
-        _filterSettlementSchedule = "";
-        _filterRegion = "";
-        _filterPostcode = "";
-        _currentPage = 1;
-        UpdateFilteredMerchants();
-    }
-    
-    private void FirstPage()
-    {
-        if (_currentPage != 1)
-        {
-            _currentPage = 1;
-            UpdatePagedMerchants();
-        }
-    }
-    
-    private void PreviousPage()
-    {
-        if (_currentPage > 1)
-        {
-            _currentPage--;
-            UpdatePagedMerchants();
-        }
-    }
-    
-    private void NextPage()
-    {
-        if (_currentPage < _totalPages)
-        {
-            _currentPage++;
-            UpdatePagedMerchants();
-        }
-    }
-    
-    private void LastPage()
-    {
-        var lastPage = _totalPages > 0 ? _totalPages : 1;
-        if (_currentPage != lastPage)
-        {
-            _currentPage = lastPage;
-            UpdatePagedMerchants();
-        }
-    }
-
-    private void ViewMerchant(Guid merchantId)
-    {
-        NavigationManager.NavigateTo($"/merchants/{merchantId}");
-    }
-
-    private void EditMerchant(Guid merchantId)
-    {
-        NavigationManager.NavigateTo($"/merchants/{merchantId}/edit");
-    }
-
-    private void MakeDeposit(Guid merchantId)
-    {
-        NavigationManager.NavigateTo($"/merchants/{merchantId}/deposit");
-    }
-
-    private void NavigateToNewMerchant()
-    {
-        NavigationManager.NavigateTo("/merchants/new");
-    }
-}
