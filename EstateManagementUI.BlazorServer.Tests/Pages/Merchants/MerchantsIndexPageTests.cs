@@ -2,6 +2,7 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
@@ -20,18 +21,18 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_InitialState_ShowsLoadingIndicator()
     {
         // Arrange
-        var merchants = new List<MerchantDropDownModel>
+        var merchants = new List<MerchantListModel>
         {
-            new MerchantDropDownModel
+            new MerchantListModel
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant"
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
-        
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         
@@ -43,10 +44,10 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithNoMerchants_ShowsEmptyState()
     {
         // Arrange
-        var emptyList = new List<MerchantDropDownModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(emptyList));
-        
+        var merchants = new List<MerchantListModel>();
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(merchants));
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
@@ -59,23 +60,25 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysMerchantList()
     {
         // Arrange
-        var merchants = new List<MerchantDropDownModel>
+        var merchants = new List<MerchantListModel>
         {
-            new MerchantDropDownModel()
+            new MerchantListModel()
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant 1"
+                MerchantName = "Test Merchant 1",
+                MerchantReference = "REF001"
             },
-            new MerchantDropDownModel
+            new MerchantListModel()
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant 2"
+                MerchantName = "Test Merchant 2",
+                MerchantReference = "REF002"
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
-        
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -91,23 +94,23 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysSummaryCards()
     {
         // Arrange
-        var merchants = new List<MerchantDropDownModel>
+        var merchants = new List<MerchantListModel>
         {
-            new MerchantDropDownModel
+            new()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Merchant 1"
             },
-            new MerchantDropDownModel
+            new()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Merchant 2"
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
-        
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -122,8 +125,8 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantDropDownModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<MerchantListModel>()));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -137,18 +140,18 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysFilters()
     {
         // Arrange
-        var merchants = new List<MerchantDropDownModel>
+        var merchants = new List<MerchantListModel>
         {
-            new MerchantDropDownModel
+            new MerchantListModel()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant"
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
-        
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -166,15 +169,15 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithManyMerchants_DisplaysPagination()
     {
         // Arrange - Create more than 10 merchants to trigger pagination
-        var merchants = Enumerable.Range(1, 12).Select(i => new MerchantDropDownModel
+        var merchants = Enumerable.Range(1, 12).Select(i => new MerchantListModel()
         {
             MerchantId = Guid.NewGuid(),
             MerchantName = $"Merchant {i}"
         }).ToList();
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
-        
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -189,18 +192,20 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysRegionAndPostcode()
     {
         // Arrange
-        var merchants = new List<MerchantDropDownModel>
+        var merchants = new List<MerchantListModel>
         {
-            new MerchantDropDownModel
+            new MerchantListModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant"
+                MerchantName = "Test Merchant",
+                Region = "North Region",
+                PostalCode = "12345"
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
-        
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
