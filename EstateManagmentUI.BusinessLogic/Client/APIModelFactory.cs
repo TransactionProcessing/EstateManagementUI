@@ -45,52 +45,7 @@ public static class APIModelFactory {
         return model;
     }
 
-    public static List<RecentMerchantsModel> ConvertFrom(List<Merchant> apiResultData) {
-        List<RecentMerchantsModel> merchants = new();
-
-        foreach (Merchant merchant in apiResultData) {
-            merchants.Add(new RecentMerchantsModel
-            {
-                CreatedDateTime = merchant.CreatedDateTime,
-                EstateReportingId = merchant.EstateReportingId,
-                LastSale = merchant.LastSale,
-                LastSaleDateTime = merchant.LastSaleDateTime,
-                LastStatement = merchant.LastStatement,
-                MerchantId = merchant.MerchantId,
-                MerchantReportingId = merchant.MerchantReportingId,
-                Name = merchant.Name,
-                PostCode = merchant.PostCode,
-                Reference = merchant.Reference,
-                Region = merchant.Region,
-                Town = merchant.Town
-            });
-        }
-
-        return merchants;
-    }
-
-    public static List<MerchantListModel> ConvertFromX(List<Merchant> apiResultData)
-    {
-        List<MerchantListModel> merchants = new();
-
-        foreach (Merchant merchant in apiResultData)
-        {
-            merchants.Add(new MerchantListModel
-            {
-                CreatedDateTime = merchant.CreatedDateTime,
-                MerchantId = merchant.MerchantId,
-                Balance = merchant.Balance,
-                AvailableBalance = 0, // TODO: remove this
-                MerchantName= merchant.Name,
-                PostalCode = merchant.PostCode,
-                MerchantReference = merchant.Reference,
-                Region = merchant.Region,
-                SettlementSchedule = ((SettlementSchedule)merchant.SettlementSchedule).ToString(),
-            });
-        }
-
-        return merchants;
-    }
+    
 
     public static EstateModel ConvertFrom(Estate apiResultData) {
         EstateModel model = new() {
@@ -182,5 +137,68 @@ public static class APIModelFactory {
             });
         }
         return operators;
+    }
+}
+
+public  static class FactoryExtensions{
+    public static List<RecentMerchantsModel> ToRecentMerchant(this List<Merchant> apiResultData)
+    {
+        List<RecentMerchantsModel> merchants = new();
+
+        foreach (Merchant merchant in apiResultData)
+        {
+            merchants.Add(new RecentMerchantsModel
+            {
+                CreatedDateTime = merchant.CreatedDateTime,
+                MerchantId = merchant.MerchantId,
+                Name = merchant.Name,
+                Reference = merchant.Reference,
+            });
+        }
+
+        return merchants;
+    }
+
+    public static List<MerchantListModel> ToMerchantList(this List<Merchant> apiResultData)
+    {
+        List<MerchantListModel> merchants = new();
+
+        foreach (Merchant merchant in apiResultData)
+        {
+            merchants.Add(new MerchantListModel
+            {
+                CreatedDateTime = merchant.CreatedDateTime,
+                MerchantId = merchant.MerchantId,
+                Balance = merchant.Balance,
+                AvailableBalance = 0, // TODO: remove this
+                MerchantName = merchant.Name,
+                PostalCode = merchant.PostCode,
+                MerchantReference = merchant.Reference,
+                Region = merchant.Region,
+                SettlementSchedule = ((SettlementSchedule)merchant.SettlementSchedule).ToString(),
+            });
+        }
+
+        return merchants;
+    }
+
+    public static List<MerchantDropDownModel> ToMerchantDropDown(this List<Merchant> apiResultData)
+    {
+        List<MerchantDropDownModel> merchants = new();
+
+        foreach (Merchant merchant in apiResultData)
+        {
+            merchants.Add(new MerchantDropDownModel
+            {
+                MerchantId = merchant.MerchantId,
+                MerchantName = merchant.Name,
+            });
+        }
+
+        return merchants;
+    }
+
+    public static MerchantModel ToMerchant(this Merchant apiResultData) {
+        return default;
     }
 }

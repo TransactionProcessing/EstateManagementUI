@@ -20,20 +20,16 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_InitialState_ShowsLoadingIndicator()
     {
         // Arrange
-        var merchants = new List<MerchantModel>
+        var merchants = new List<MerchantDropDownModel>
         {
-            new MerchantModel
+            new MerchantDropDownModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant",
-                MerchantReference = "REF001",
-                Balance = 1000m,
-                AvailableBalance = 500m,
-                SettlementSchedule = "Daily"
+                MerchantName = "Test Merchant"
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
         
         // Act
@@ -47,8 +43,8 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithNoMerchants_ShowsEmptyState()
     {
         // Arrange
-        var emptyList = new List<MerchantModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        var emptyList = new List<MerchantDropDownModel>();
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(emptyList));
         
         // Act
@@ -63,29 +59,21 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysMerchantList()
     {
         // Arrange
-        var merchants = new List<MerchantModel>
+        var merchants = new List<MerchantDropDownModel>
         {
-            new MerchantModel
+            new MerchantDropDownModel()
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant 1",
-                MerchantReference = "REF001",
-                Balance = 1000m,
-                AvailableBalance = 500m,
-                SettlementSchedule = "Daily"
+                MerchantName = "Test Merchant 1"
             },
-            new MerchantModel
+            new MerchantDropDownModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant 2",
-                MerchantReference = "REF002",
-                Balance = 2000m,
-                AvailableBalance = 1500m,
-                SettlementSchedule = "Weekly"
+                MerchantName = "Test Merchant 2"
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
         
         // Act
@@ -103,27 +91,21 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysSummaryCards()
     {
         // Arrange
-        var merchants = new List<MerchantModel>
+        var merchants = new List<MerchantDropDownModel>
         {
-            new MerchantModel
+            new MerchantDropDownModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Merchant 1",
-                MerchantReference = "REF001",
-                Balance = 1000m,
-                AvailableBalance = 500m
+                MerchantName = "Merchant 1"
             },
-            new MerchantModel
+            new MerchantDropDownModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Merchant 2",
-                MerchantReference = "REF002",
-                Balance = 2000m,
-                AvailableBalance = 1500m
+                MerchantName = "Merchant 2"
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
         
         // Act
@@ -140,8 +122,8 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantModel>()));
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<MerchantDropDownModel>()));
         
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -155,22 +137,16 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysFilters()
     {
         // Arrange
-        var merchants = new List<MerchantModel>
+        var merchants = new List<MerchantDropDownModel>
         {
-            new MerchantModel
+            new MerchantDropDownModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant",
-                MerchantReference = "REF001",
-                Balance = 1000m,
-                AvailableBalance = 500m,
-                SettlementSchedule = "Daily",
-                Region = "North",
-                PostalCode = "12345"
+                MerchantName = "Test Merchant"
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
         
         // Act
@@ -190,19 +166,13 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithManyMerchants_DisplaysPagination()
     {
         // Arrange - Create more than 10 merchants to trigger pagination
-        var merchants = Enumerable.Range(1, 12).Select(i => new MerchantModel
+        var merchants = Enumerable.Range(1, 12).Select(i => new MerchantDropDownModel
         {
             MerchantId = Guid.NewGuid(),
-            MerchantName = $"Merchant {i}",
-            MerchantReference = $"REF{i:000}",
-            Balance = 1000m * i,
-            AvailableBalance = 500m * i,
-            SettlementSchedule = "Daily",
-            Region = "North",
-            PostalCode = "12345"
+            MerchantName = $"Merchant {i}"
         }).ToList();
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
         
         // Act
@@ -219,22 +189,16 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysRegionAndPostcode()
     {
         // Arrange
-        var merchants = new List<MerchantModel>
+        var merchants = new List<MerchantDropDownModel>
         {
-            new MerchantModel
+            new MerchantDropDownModel
             {
                 MerchantId = Guid.NewGuid(),
-                MerchantName = "Test Merchant",
-                MerchantReference = "REF001",
-                Balance = 1000m,
-                AvailableBalance = 500m,
-                SettlementSchedule = "Daily",
-                Region = "North Region",
-                PostalCode = "12345"
+                MerchantName = "Test Merchant"
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
         
         // Act

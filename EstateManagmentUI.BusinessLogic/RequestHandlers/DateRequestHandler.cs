@@ -64,8 +64,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<Commands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<Commands.UpdateMerchantContactCommand, Result>,
                                         IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
-                                        IRequestHandler<Queries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>
-    {
+                                        IRequestHandler<Queries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
+                                        IRequestHandler<Queries.GetMerchantsForDropDownQuery, Result<List<MerchantDropDownModel>>> {
         private readonly IApiClient ApiClient;
 
         public MerchantRequestHandler(IApiClient apiClient)
@@ -146,6 +146,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         public async Task<Result<List<RecentMerchantsModel>>> Handle(Queries.GetRecentMerchantsQuery request,
                                                         CancellationToken cancellationToken) {
             return await this.ApiClient.GetRecentMerchants(request, cancellationToken);
+        }
+
+        public async Task<Result<List<MerchantDropDownModel>>> Handle(Queries.GetMerchantsForDropDownQuery request,
+                                                                      CancellationToken cancellationToken) {
+            throw new NotImplementedException();
         }
     }
 

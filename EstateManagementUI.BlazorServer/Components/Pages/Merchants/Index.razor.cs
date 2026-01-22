@@ -27,7 +27,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             set { _filterReference = value; currentPage = 1; }
         }
 
-        private string _filterSettlementSchedule = "";
+        private string _filterSettlementSchedule = "-1";
         private string filterSettlementSchedule
         {
             get => _filterSettlementSchedule;
@@ -64,8 +64,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         }
 
         // Cached results
-        private List<MerchantListModel> _filteredMerchants = new();
-        private List<MerchantListModel> filteredMerchants => _filteredMerchants;
+        //private List<MerchantListModel> _filteredMerchants = new();
+        //private List<MerchantListModel> filteredMerchants => _filteredMerchants;
 
         private List<MerchantListModel> _pagedMerchants = new();
         private List<MerchantListModel> pagedMerchants => _pagedMerchants;
@@ -85,22 +85,29 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 await base.OnInitializedAsync();
 
                 await RequirePermission(PermissionSection.Merchant, PermissionFunction.List);
-                CorrelationId correlationId = new(Guid.NewGuid());
-                Guid estateId = await this.GetEstateId();
-                var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId, this._filterName, this._filterReference, Int32.Parse(_filterSettlementSchedule),
-                            this._filterRegion, this._filterPostcode));
-                if (result.IsFailed)
-                {
-                    this.NavigationManager.NavigateToErrorPage();
-                }
 
-                allMerchants = ModelFactory.ConvertFrom(result.Data);
+                await this.LoadMerchants();
+
             }
             finally
             {
                 isLoading = false;
                 this.StateHasChanged();
             }
+        }
+
+        private async Task LoadMerchants() {
+            CorrelationId correlationId = new(Guid.NewGuid());
+            Guid estateId = await this.GetEstateId();
+            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId, this._filterName, this._filterReference, Int32.Parse(_filterSettlementSchedule),
+                this._filterRegion, this._filterPostcode));
+            if (result.IsFailed)
+            {
+                this.NavigationManager.NavigateToErrorPage();
+            }
+
+            allMerchants = ModelFactory.ConvertFrom(result.Data);
+            this.UpdatePagedMerchants();
         }
 
         //protected override async Task OnInitializedAsync()
@@ -156,20 +163,20 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         //    UpdatePagedMerchants();
         //}
 
-        //private void UpdatePagedMerchants()
-        //{
-        //    _pagedMerchants = _filteredMerchants.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
-        //}
+        private void UpdatePagedMerchants()
+        {
+            _pagedMerchants = this.allMerchants.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList();
+        }
 
-        private void ClearFilters()
+        private async Task ClearFilters()
         {
             _filterName = "";
             _filterReference = "";
-            _filterSettlementSchedule = "";
+            _filterSettlementSchedule = "-1";
             _filterRegion = "";
             _filterPostcode = "";
             _currentPage = 1;
-            //UpdateFilteredMerchants();
+            await this.LoadMerchants();
         }
 
         private void FirstPage()

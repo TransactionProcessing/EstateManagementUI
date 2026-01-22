@@ -13,6 +13,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(Queries.GetRecentMerchantsQuery request, CancellationToken cancellationToken);
         Task<Result<List<RecentContractModel>>> GetRecentContracts(Queries.GetRecentContractsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantListModel>>> GetMerchants(Queries.GetMerchantsQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantDropDownModel>>> GetMerchants(Queries.GetMerchantsForDropDownQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -45,7 +46,7 @@ namespace EstateManagementUI.BusinessLogic.Client
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            List<RecentMerchantsModel> recentMerchantsModels = APIModelFactory.ConvertFrom(apiResult.Data);
+            List<RecentMerchantsModel> recentMerchantsModels = apiResult.Data.ToRecentMerchant();
 
             return Result.Success(recentMerchantsModels);
         }
@@ -79,9 +80,26 @@ namespace EstateManagementUI.BusinessLogic.Client
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            List<MerchantListModel> recentMerchantsModels = APIModelFactory.ConvertFromX(apiResult.Data);
+            List<MerchantListModel> merchantList = apiResult.Data.ToMerchantList();
 
-            return Result.Success(recentMerchantsModels);
+            return Result.Success(merchantList);
+        }
+
+        public async Task<Result<List<MerchantDropDownModel>>> GetMerchants(Queries.GetMerchantsForDropDownQuery request,
+                                                                            CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<List<Merchant>> apiResult = await this.EstateReportingApiClient.GetMerchants(token.Data, request.EstateId,null,null,null,null,
+                null, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            List<MerchantDropDownModel> merchantDropDownModels = apiResult.Data.ToMerchantDropDown();
+
+            return Result.Success(merchantDropDownModels);
         }
     }
 }

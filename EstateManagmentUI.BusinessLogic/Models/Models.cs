@@ -43,40 +43,6 @@ public class EstateMerchantModel {
 }
 
 
-// Merchant Models
-public class MerchantModel
-{
-    public Guid MerchantId { get; set; }
-    public string? MerchantName { get; set; }
-    public string? MerchantReference { get; set; }
-    public decimal? Balance { get; set; }
-    public decimal? AvailableBalance { get; set; }
-    public string? SettlementSchedule { get; set; }
-    public string? AddressLine1 { get; set; }
-    public string? AddressLine2 { get; set; }
-    public string? Town { get; set; }
-    public string? Region { get; set; }
-    public string? PostalCode { get; set; }
-    public string? Country { get; set; }
-    public string? ContactName { get; set; }
-    public string? ContactEmailAddress { get; set; }
-    public string? ContactPhoneNumber { get; set; }
-    public DateTime CreatedDateTime { get; set; }
-}
-
-public class MerchantListModel
-{
-    public Guid MerchantId { get; set; }
-    public string? MerchantName { get; set; }
-    public string? MerchantReference { get; set; }
-    public decimal? Balance { get; set; }
-    public decimal? AvailableBalance { get; set; }
-    public string? SettlementSchedule { get; set; }
-    public string? Region { get; set; }
-    public string? PostalCode { get; set; }
-    public DateTime CreatedDateTime { get; set; }
-}
-
 // Operator Models
 public class OperatorModel
 {
@@ -295,23 +261,6 @@ public class TransactionDetailModel
     public string? ResponseCode { get; set; }
     public DateTime? SettlementDateTime { get; set; }
 }
-
-public class RecentMerchantsModel
-{
-    public DateTime CreatedDateTime { get; set; }
-    public Int32 EstateReportingId { get; set; }
-    public DateTime LastSale { get; set; }
-    public DateTime LastSaleDateTime { get; set; }
-    public DateTime LastStatement { get; set; }
-    public Guid MerchantId { get; set; }
-    public Int32 MerchantReportingId { get; set; }
-    public String Name { get; set; }
-    public String PostCode { get; set; }
-    public String Reference { get; set; }
-    public String Region { get; set; }
-    public String Town { get; set; }
-}
-
 public class RecentContractModel
 {
     public Guid ContractId { get; set; }

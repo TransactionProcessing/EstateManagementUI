@@ -364,17 +364,9 @@ namespace EstateManagementUI.BlazorServer.Factories {
         private static RecentMerchantsModel ConvertFrom(BusinessLogic.Models.RecentMerchantsModel model) {
             RecentMerchantsModel result = new RecentMerchantsModel() {
                 CreatedDateTime = model.CreatedDateTime,
-                EstateReportingId = model.EstateReportingId,
-                LastSale = model.LastSale,
-                LastSaleDateTime = model.LastSaleDateTime,
-                LastStatement = model.LastStatement,
                 MerchantId = model.MerchantId,
-                MerchantReportingId = model.MerchantReportingId,
                 Name = model.Name,
-                PostCode = model.PostCode,
-                Reference = model.Reference,
-                Region = model.Region,
-                Town = model.Town
+                Reference = model.Reference
             };
             return result;
         }
@@ -405,6 +397,17 @@ namespace EstateManagementUI.BlazorServer.Factories {
                 });
             }
 
+            return merchantList;
+        }
+
+        public static List<MerchantDropDownModel>? ConvertFrom(List<MerchantDropDownModel> resultData) {
+            List<MerchantDropDownModel> merchantList = new();
+            foreach (MerchantDropDownModel merchantDropDownModel in resultData) {
+                merchantList.Add(new MerchantDropDownModel {
+                    MerchantId = merchantDropDownModel.MerchantId,
+                    MerchantName = merchantDropDownModel.MerchantName
+                });
+            }
             return merchantList;
         }
     }
