@@ -10,7 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using MerchantContractModel = EstateManagementUI.BusinessLogic.Models.MerchantContractModel;
+using MerchantDeviceModel = EstateManagementUI.BusinessLogic.Models.MerchantDeviceModel;
 using MerchantModel = EstateManagementUI.BusinessLogic.Models.MerchantModel;
+using MerchantOperatorModel = EstateManagementUI.BusinessLogic.Models.MerchantOperatorModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 

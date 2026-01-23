@@ -1,16 +1,11 @@
 ﻿using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Factories;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
-using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components;
 using Shared.Results;
 using SimpleResults;
-using ContractModel = EstateManagementUI.BlazorServer.Models.ContractModel;
-using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel;
-using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractProductTransactionFeeModel;
-using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModel;
-using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel;
 using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
@@ -27,7 +22,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         // Mock assigned data
         private List<MerchantOperatorModel> assignedOperators = new();
         private List<MerchantContractModel> assignedContracts = new();
-        private List<string> assignedDevices = new();
+        private List<MerchantDeviceModel> assignedDevices = new();
 
         // Settlement transaction history data
         private List<TransactionDetailModel>? settlementTransactions;
@@ -93,44 +88,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 if (devicesResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
 
-                assignedOperators = new List<MerchantOperatorModel>();
-                foreach (MerchantOperatorModel merchantOperatorModel in operatorsResultTask.Result.Data)
-                {
-                    this.assignedOperators.Add(new MerchantOperatorModel
-                    {
-                        OperatorName = merchantOperatorModel.OperatorName,
-                        OperatorId = merchantOperatorModel.OperatorId,
-                        MerchantNumber = merchantOperatorModel.MerchantNumber,
-                        TerminalNumber = merchantOperatorModel.TerminalNumber
-                    });
-                }
-
-                assignedContracts = new List<MerchantContractModel>();
-                foreach (MerchantContractModel merchantContractModel in contractsResultTask.Result.Data) {
-                    var cm = new MerchantContractModel {
-                        ContractId = merchantContractModel.ContractId,
-                        OperatorName = merchantContractModel.OperatorName,
-                        ContractName = merchantContractModel.ContractName,
-                        ContractProducts = new List<MerchantContractProductModel>()
-                    };
-                    foreach (MerchantContractProductModel merchantContractProductModel in merchantContractModel.ContractProducts) {
-                        cm.ContractProducts.Add(new MerchantContractProductModel
-                        {
-                            ProductName = merchantContractProductModel.ProductName,
-                            DisplayText = merchantContractProductModel.DisplayText,
-                            ProductId = merchantContractProductModel.ProductId,
-                            ProductType = merchantContractProductModel.ProductType,
-                            ContractId = merchantContractProductModel.ContractId,
-                            Value = merchantContractProductModel.Value,
-                            MerchantId = merchantContractProductModel.MerchantId
-                        });
-                    }
-                    this.assignedContracts.Add(cm);
-                }
-
-                foreach (var merchantDevice in devicesResultTask.Result.Data) {
-                    this.assignedDevices.Add(merchantDevice.DeviceIdentifier);
-                }
+                assignedOperators = ModelFactory.ConvertFrom(operatorsResultTask.Result.Data);
+                assignedContracts = ModelFactory.ConvertFrom(contractsResultTask.Result.Data);
+                this.assignedDevices = ModelFactory.ConvertFrom(devicesResultTask.Result.Data);
 
                 return Result.Success();
             }

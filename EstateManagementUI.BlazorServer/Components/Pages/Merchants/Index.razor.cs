@@ -4,6 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
+using MerchantListModel = EstateManagementUI.BlazorServer.Models.MerchantListModel;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {
