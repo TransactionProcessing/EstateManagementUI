@@ -6,6 +6,7 @@
 @using EstateManagementUI.BusinessLogic.Models
 @using EstateManagementUI.BusinessLogic.Requests
 @using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel
+@using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantDropDownModel
 @using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModel
 @using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel
 @using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel
@@ -431,7 +432,7 @@
             var accessToken = DEFAULT_ACCESS_TOKEN;
             
             // Load filter options
-            var merchantsTask = Mediator.Send(new Queries.GetMerchantsForDropDownQuery(correlationId, estateId));
+            var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
             var operatorsTask = Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
             var contractsTask = Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
             

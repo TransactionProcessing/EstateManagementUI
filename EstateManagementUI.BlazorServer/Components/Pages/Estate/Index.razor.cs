@@ -50,8 +50,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
 
         private async Task<Result> LoadEstateData(CorrelationId correlationId, Guid estateId)
         {
-            Task<Result<BusinessLogic.Models.EstateModel>> estateTask = Mediator.Send(new Queries.GetEstateQuery(correlationId, estateId));
-            Task<Result<List<BusinessLogic.Models.RecentMerchantsModel>>> merchantTask = Mediator.Send(new Queries.GetRecentMerchantsQuery(correlationId, estateId));
+            Task<Result<BusinessLogic.Models.EstateModel>> estateTask = Mediator.Send(new EstateQueries.GetEstateQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.RecentMerchantsModel>>> merchantTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.RecentContractModel>>> contractsTask = Mediator.Send(new Queries.GetRecentContractsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.OperatorModel>>> assignedOperatorsTask = Mediator.Send(new Queries.GetAssignedOperatorsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.OperatorModel>>> allOperatorsTask= Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
@@ -108,7 +108,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
                 Guid estateId = await this.GetEstateId();
                 var operatorId = Guid.Parse(selectedOperatorId);
 
-                var command = new Commands.AddOperatorToEstateCommand(
+                var command = new EstateCommands.AddOperatorToEstateCommand(
                     correlationId,
                     estateId,
                     operatorId
@@ -148,7 +148,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
                 Guid estateId = await this.GetEstateId();
-                var command = new Commands.RemoveOperatorFromEstateCommand(
+                var command = new EstateCommands.RemoveOperatorFromEstateCommand(
                     correlationId,
                     estateId,
                     operatorId

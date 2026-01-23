@@ -30,7 +30,7 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -45,7 +45,7 @@ public class MerchantsIndexPageTests : BaseTest
     {
         // Arrange
         var merchants = new List<MerchantListModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -76,7 +76,7 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -108,7 +108,7 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -125,7 +125,7 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<MerchantListModel>()));
         
         // Act
@@ -149,7 +149,7 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -175,7 +175,7 @@ public class MerchantsIndexPageTests : BaseTest
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -203,7 +203,7 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act

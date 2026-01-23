@@ -34,6 +34,11 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                         String? postCode,
                                                         CancellationToken cancellationToken);
 
+        Task<Result<Merchant>> GetMerchant(String accessToken,
+                                                  Guid estateId,
+                                                  Guid merchantId,
+                                                  CancellationToken cancellationToken);
+
         Task<Result<List<Contract>>> GetRecentContracts(String accessToken,
                                                         Guid estateId, CancellationToken cancellationToken);
         Task<Result<TodaysSales>> GetTodaysSales(String accessToken,
@@ -44,6 +49,21 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                  CancellationToken cancellationToken);
 
         Task<Result<TodaysSales>> GetTodaysFailedSales(String accessToken, Guid estateId, Int32 merchantReportingId, Int32 operatorReportingId, String responseCode, DateTime comparisonDate, CancellationToken cancellationToken);
+
+        Task<Result<List<MerchantContract>>> GetMerchantContracts(String accessToken,
+                                                                  Guid estateId,
+                                                                  Guid merchantId,
+                                                                  CancellationToken cancellationToken);
+
+        Task<Result<List<MerchantDevice>>> GetMerchantDevices(String accessToken,
+                                                              Guid estateId,
+                                                              Guid merchantId,
+                                                              CancellationToken cancellationToken);
+
+        Task<Result<List<MerchantOperator>>> GetMerchantOperators(String accessToken,
+                                                                  Guid estateId,
+                                                                  Guid merchantId,
+                                                                  CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -247,6 +267,117 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting merchants for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<Merchant>> GetMerchant(String accessToken,
+                                                        Guid estateId,
+                                                        Guid merchantId,
+                                                        CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<Merchant> result = await this.SendHttpGetRequest<Merchant>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting merchant id {merchantId} for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<MerchantContract>>> GetMerchantContracts(String accessToken,
+                                                        Guid estateId,
+                                                        Guid merchantId,
+                                                        CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/contracts");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<MerchantContract>> result = await this.SendHttpGetRequest<List<MerchantContract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting contracts merchant id {merchantId} for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<MerchantOperator>>> GetMerchantOperators(String accessToken,
+                                                                               Guid estateId,
+                                                                               Guid merchantId,
+                                                                               CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/operators");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<MerchantOperator>> result = await this.SendHttpGetRequest<List<MerchantOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting operators merchant id {merchantId} for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<MerchantDevice>>> GetMerchantDevices(String accessToken,
+                                                                               Guid estateId,
+                                                                               Guid merchantId,
+                                                                               CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/devices");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<MerchantDevice>> result = await this.SendHttpGetRequest<List<MerchantDevice>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting devices merchant id {merchantId} for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

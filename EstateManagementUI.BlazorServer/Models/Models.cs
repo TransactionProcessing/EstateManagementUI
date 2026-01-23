@@ -273,3 +273,61 @@ public class RecentContractModel
     public string? Description { get; set; }
     public string? OperatorName { get; set; }
 }
+
+public class MerchantOperatorModel
+{
+    public Guid MerchantId { get; set; }
+    public Guid OperatorId { get; set; }
+    public String OperatorName { get; set; }
+    public String MerchantNumber { get; set; }
+    public String TerminalNumber { get; set; }
+    public Boolean IsDeleted { get; set; }
+}
+
+public class MerchantContractModel
+{
+    public Guid MerchantId { get; set; }
+    public Guid ContractId { get; set; }
+    public String OperatorName { get; set; }
+    public String ContractName { get; set; }
+    public Boolean IsDeleted { get; set; }
+    public List<MerchantContractProductModel> ContractProducts { get; set; }
+}
+
+public class MerchantContractProductModel
+{
+    public Guid MerchantId { get; set; }
+    public Guid ContractId { get; set; }
+    public Guid ProductId { get; set; }
+    public String ProductName { get; set; }
+    public String DisplayText { get; set; }
+    public String ProductType { get; set; }
+    public Decimal? Value { get; set; }
+}
+
+public class MerchantDeviceModel
+{
+    public Guid MerchantId { get; set; }
+    public Guid DeviceId { get; set; }
+    public String DeviceIdentifier { get; set; }
+    public Boolean IsDeleted { get; set; }
+}
+
+public class MerchantDropDownModel
+{
+    public Guid MerchantId { get; set; }
+    public string? MerchantName { get; set; }
+}
+
+public class MerchantListModel
+{
+    public Guid MerchantId { get; set; }
+    public string? MerchantName { get; set; }
+    public string? MerchantReference { get; set; }
+    public decimal? Balance { get; set; }
+    public decimal? AvailableBalance { get; set; }
+    public string? SettlementSchedule { get; set; }
+    public string? Region { get; set; }
+    public string? PostalCode { get; set; }
+    public DateTime CreatedDateTime { get; set; }
+}

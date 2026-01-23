@@ -9,15 +9,19 @@ namespace EstateManagementUI.BusinessLogic.Client
 {
     public partial interface IApiClient
     {
-        Task<Result<MerchantKpiModel>> GetMerchantKpi(Queries.GetMerchantKpiQuery request, CancellationToken cancellationToken);
-        Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(Queries.GetRecentMerchantsQuery request, CancellationToken cancellationToken);
+        Task<Result<MerchantKpiModel>> GetMerchantKpi(MerchantQueries.GetMerchantKpiQuery request, CancellationToken cancellationToken);
+        Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(MerchantQueries.GetRecentMerchantsQuery request, CancellationToken cancellationToken);
         Task<Result<List<RecentContractModel>>> GetRecentContracts(Queries.GetRecentContractsQuery request, CancellationToken cancellationToken);
-        Task<Result<List<MerchantListModel>>> GetMerchants(Queries.GetMerchantsQuery request, CancellationToken cancellationToken);
-        Task<Result<List<MerchantDropDownModel>>> GetMerchants(Queries.GetMerchantsForDropDownQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantListModel>>> GetMerchants(MerchantQueries.GetMerchantsQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantDropDownModel>>> GetMerchants(MerchantQueries.GetMerchantsForDropDownQuery request, CancellationToken cancellationToken);
+        Task<Result<MerchantModel>> GetMerchant(MerchantQueries.GetMerchantQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantOperatorModel>>> GetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request, CancellationToken cancellationToken);
+        Task<Result<List<MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
-        public async Task<Result<MerchantKpiModel>> GetMerchantKpi(Queries.GetMerchantKpiQuery request,
+        public async Task<Result<MerchantKpiModel>> GetMerchantKpi(MerchantQueries.GetMerchantKpiQuery request,
                                                                    CancellationToken cancellationToken) {
 
             // Get a token here 
@@ -35,7 +39,7 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success(merchantKpiModel);
         }
 
-        public async Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(Queries.GetRecentMerchantsQuery request,
+        public async Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(MerchantQueries.GetRecentMerchantsQuery request,
                                                                              CancellationToken cancellationToken) {
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
@@ -67,7 +71,7 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success(recentContractModels);
         }
 
-        public async Task<Result<List<MerchantListModel>>> GetMerchants(Queries.GetMerchantsQuery request,
+        public async Task<Result<List<MerchantListModel>>> GetMerchants(MerchantQueries.GetMerchantsQuery request,
                                                                         CancellationToken cancellationToken)
         {
             Result<String> token = await this.GetToken(cancellationToken);
@@ -85,7 +89,72 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success(merchantList);
         }
 
-        public async Task<Result<List<MerchantDropDownModel>>> GetMerchants(Queries.GetMerchantsForDropDownQuery request,
+        public async Task<Result<MerchantModel>> GetMerchant(MerchantQueries.GetMerchantQuery request,
+                                                             CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<Merchant> apiResult = await this.EstateReportingApiClient.GetMerchant(token.Data, request.EstateId, request.MerchantId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            MerchantModel merchant = apiResult.Data.ToMerchant();
+
+            return Result.Success(merchant);
+        }
+
+        public async Task<Result<List<MerchantOperatorModel>>> GetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery request,
+                                                                                    CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.EstateReportingApiClient.GetMerchantOperators(token.Data, request.EstateId, request.MerchantId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            var merchantOperators = apiResult.Data.ToMerchantOperators();
+
+            return Result.Success(merchantOperators);
+        }
+
+        public async Task<Result<List<MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request,
+                                                                                    CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.EstateReportingApiClient.GetMerchantContracts(token.Data, request.EstateId, request.MerchantId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            var merchantContracts = apiResult.Data.ToMerchantContracts();
+
+            return Result.Success(merchantContracts);
+        }
+
+        public async Task<Result<List<MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request,
+                                                                                CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.EstateReportingApiClient.GetMerchantDevices(token.Data, request.EstateId, request.MerchantId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            var merchantDevices = apiResult.Data.ToMerchantDevices();
+
+            return Result.Success(merchantDevices);
+        }
+
+        public async Task<Result<List<MerchantDropDownModel>>> GetMerchants(MerchantQueries.GetMerchantsForDropDownQuery request,
                                                                             CancellationToken cancellationToken) {
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)

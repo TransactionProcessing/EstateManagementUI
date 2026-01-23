@@ -1,5 +1,6 @@
 ﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 
@@ -199,6 +200,94 @@ public  static class FactoryExtensions{
     }
 
     public static MerchantModel ToMerchant(this Merchant apiResultData) {
-        return default;
+        MerchantModel model = new MerchantModel {
+            CreatedDateTime = apiResultData.CreatedDateTime,
+            MerchantReference = apiResultData.Reference,
+            AddressLine1 = apiResultData.AddressLine1,
+            AddressLine2 = apiResultData.AddressLine2,
+            AvailableBalance = 0,
+            Balance = apiResultData.Balance,
+            ContactEmailAddress = apiResultData.ContactEmail,
+            ContactName = apiResultData.ContactName,
+            ContactPhoneNumber = apiResultData.ContactPhone,
+            Country = apiResultData.Country,
+            MerchantId = apiResultData.MerchantId,
+            MerchantName = apiResultData.Name,
+            Region = apiResultData.Region,
+            PostalCode = apiResultData.PostCode,
+            SettlementSchedule = ((SettlementSchedule)apiResultData.SettlementSchedule).ToString(),
+            Town = apiResultData.Town,
+        };
+        return model;
+    }
+
+    public static List<MerchantOperatorModel> ToMerchantOperators(this List<MerchantOperator> apiResultData)
+    {
+        List<MerchantOperatorModel> merchantOperators = new();
+        
+        foreach (MerchantOperator merchantOperator in apiResultData)
+        {
+            merchantOperators.Add(new MerchantOperatorModel
+            {
+                MerchantId = merchantOperator.MerchantId,
+                OperatorId = merchantOperator.OperatorId,
+                OperatorName = merchantOperator.OperatorName,
+                MerchantNumber = merchantOperator.MerchantNumber,
+                TerminalNumber = merchantOperator.TerminalNumber,
+                IsDeleted = merchantOperator.IsDeleted
+            });
+        }
+
+        return merchantOperators;
+    }
+
+    public static List<MerchantContractModel> ToMerchantContracts(this List<MerchantContract> apiResultData)
+    {
+        List<MerchantContractModel> merchantContracts = new();
+
+        foreach (MerchantContract merchantContract in apiResultData) {
+            MerchantContractModel c = new() {
+                ContractId = merchantContract.ContractId,
+                ContractName = merchantContract.ContractName,
+                OperatorName = merchantContract.OperatorName,
+                ContractProducts = new List<MerchantContractProductModel>(),
+                IsDeleted = merchantContract.IsDeleted,
+                MerchantId = merchantContract.MerchantId
+            };
+
+            foreach (MerchantContractProduct merchantContractContractProduct in merchantContract.ContractProducts) {
+                c.ContractProducts.Add(new MerchantContractProductModel
+                {
+                    MerchantId = merchantContractContractProduct.MerchantId,
+                    ContractId = merchantContractContractProduct.ContractId,
+                    DisplayText = merchantContractContractProduct.DisplayText,
+                    ProductId = merchantContractContractProduct.ProductId,
+                    ProductName = merchantContractContractProduct.ProductName,
+                    ProductType = ((ProductType)merchantContractContractProduct.ProductType).ToString(),
+                    Value = merchantContractContractProduct.Value
+                });
+            }
+            merchantContracts.Add(c);
+        }
+
+        return merchantContracts;
+    }
+
+    public static List<MerchantDeviceModel> ToMerchantDevices(this List<MerchantDevice> apiResultData)
+    {
+        List<MerchantDeviceModel> merchantDevices= new();
+
+        foreach (MerchantDevice merchantDevice in apiResultData)
+        {
+            merchantDevices.Add(new MerchantDeviceModel
+            {
+                MerchantId = merchantDevice.MerchantId,
+                DeviceId = merchantDevice.DeviceId,
+                DeviceIdentifier = merchantDevice.DeviceIdentifier,
+                IsDeleted = merchantDevice.IsDeleted
+            });
+        }
+
+        return merchantDevices;
     }
 }
