@@ -19,9 +19,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         }
     }
 
-    public class EstateRequestHandler : IRequestHandler<Queries.GetEstateQuery, Result<EstateModel>>,
-        IRequestHandler<Commands.AddOperatorToEstateCommand, Result>,
-        IRequestHandler<Commands.RemoveOperatorFromEstateCommand, Result>,
+    public class EstateRequestHandler : IRequestHandler<EstateQueries.GetEstateQuery, Result<EstateModel>>,
+        IRequestHandler<EstateCommands.AddOperatorToEstateCommand, Result>,
+        IRequestHandler<EstateCommands.RemoveOperatorFromEstateCommand, Result>,
         IRequestHandler<Queries.GetAssignedOperatorsQuery, Result<List<OperatorModel>>> {
         private readonly IApiClient ApiClient;
 
@@ -29,17 +29,17 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<Result<EstateModel>> Handle(Queries.GetEstateQuery request,
+        public async Task<Result<EstateModel>> Handle(EstateQueries.GetEstateQuery request,
                                                       CancellationToken cancellationToken) {
             return await this.ApiClient.GetEstate(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(Commands.AddOperatorToEstateCommand request,
+        public async Task<Result> Handle(EstateCommands.AddOperatorToEstateCommand request,
                                          CancellationToken cancellationToken) {
             return await this.ApiClient.AddEstateOperator(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(Commands.RemoveOperatorFromEstateCommand request,
+        public async Task<Result> Handle(EstateCommands.RemoveOperatorFromEstateCommand request,
                                          CancellationToken cancellationToken) {
             return await this.ApiClient.RemoveEstateOperator(request, cancellationToken);
         }
@@ -50,8 +50,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         }
     }
 
-    public class MerchantRequestHandler : IRequestHandler<Queries.GetMerchantsQuery, Result<List<MerchantListModel>>>,
-                                        IRequestHandler<Queries.GetMerchantQuery, Result<MerchantModel>>,
+    public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchantsQuery, Result<List<MerchantListModel>>>,
+                                        IRequestHandler<MerchantQueries.GetMerchantQuery, Result<MerchantModel>>,
                                         IRequestHandler<Commands.AddMerchantDeviceCommand, Result>,
                                         IRequestHandler<Commands.AddOperatorToMerchantCommand, Result>,
                                         IRequestHandler<Commands.CreateMerchantCommand, Result>,
@@ -64,8 +64,13 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<Commands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<Commands.UpdateMerchantContactCommand, Result>,
                                         IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
-                                        IRequestHandler<Queries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
-                                        IRequestHandler<Queries.GetMerchantsForDropDownQuery, Result<List<MerchantDropDownModel>>> {
+                                        IRequestHandler<MerchantQueries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
+                                        IRequestHandler<MerchantQueries.GetMerchantsForDropDownQuery, Result<List<MerchantDropDownModel>>>,
+                                        IRequestHandler<MerchantQueries.GetMerchantContractsQuery, Result<List<MerchantContractModel>>>,
+                                        IRequestHandler<MerchantQueries.GetMerchantOperatorsQuery, Result<List<MerchantOperatorModel>>>,
+                                        IRequestHandler<MerchantQueries.GetMerchantDevicesQuery, Result<List<MerchantDeviceModel>>>
+    {
+
         private readonly IApiClient ApiClient;
 
         public MerchantRequestHandler(IApiClient apiClient)
@@ -73,7 +78,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<Result<List<MerchantListModel>>> Handle(Queries.GetMerchantsQuery request,
+        public async Task<Result<List<MerchantListModel>>> Handle(MerchantQueries.GetMerchantsQuery request,
                                                                   CancellationToken cancellationToken) {
             return await this.ApiClient.GetMerchants(request, cancellationToken);
         }
@@ -133,9 +138,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success();
         }
 
-        public async Task<Result<MerchantModel>> Handle(Queries.GetMerchantQuery request,
+        public async Task<Result<MerchantModel>> Handle(MerchantQueries.GetMerchantQuery request,
                                                         CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockMerchant());
+            return await this.ApiClient.GetMerchant(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.AssignContractToMerchantCommand request,
@@ -143,14 +148,29 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success();
         }
 
-        public async Task<Result<List<RecentMerchantsModel>>> Handle(Queries.GetRecentMerchantsQuery request,
-                                                        CancellationToken cancellationToken) {
+        public async Task<Result<List<RecentMerchantsModel>>> Handle(MerchantQueries.GetRecentMerchantsQuery request,
+                                                                     CancellationToken cancellationToken) {
             return await this.ApiClient.GetRecentMerchants(request, cancellationToken);
         }
 
-        public async Task<Result<List<MerchantDropDownModel>>> Handle(Queries.GetMerchantsForDropDownQuery request,
+        public async Task<Result<List<MerchantDropDownModel>>> Handle(MerchantQueries.GetMerchantsForDropDownQuery request,
                                                                       CancellationToken cancellationToken) {
-            throw new NotImplementedException();
+            return await this.ApiClient.GetMerchants(request, cancellationToken);
+        }
+
+        public async Task<Result<List<MerchantContractModel>>> Handle(MerchantQueries.GetMerchantContractsQuery request,
+                                                                      CancellationToken cancellationToken) {
+            return await this.ApiClient.GetMerchantContracts(request, cancellationToken);
+        }
+
+        public async Task<Result<List<MerchantOperatorModel>>> Handle(MerchantQueries.GetMerchantOperatorsQuery request,
+                                                                      CancellationToken cancellationToken) {
+            return await this.ApiClient.GetMerchantOperators(request, cancellationToken);
+        }
+
+        public async Task<Result<List<MerchantDeviceModel>>> Handle(MerchantQueries.GetMerchantDevicesQuery request,
+                                                                    CancellationToken cancellationToken) {
+            return await this.ApiClient.GetMerchantDevices(request, cancellationToken);
         }
     }
 
@@ -260,7 +280,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         IRequestHandler<Queries.GetTodaysSettlementQuery, Result<TodaysSettlementModel>>,
         IRequestHandler<Queries.GetTodaysSalesCountByHourQuery, Result<List<TodaysSalesCountByHourModel>>>,
         IRequestHandler<Queries.GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>,
-        IRequestHandler<Queries.GetMerchantKpiQuery, Result<MerchantKpiModel>>,
+        IRequestHandler<MerchantQueries.GetMerchantKpiQuery, Result<MerchantKpiModel>>,
         IRequestHandler<Queries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>,
         IRequestHandler<Queries.GetTopProductDataQuery, Result<List<TopBottomProductDataModel>>>,
         IRequestHandler<Queries.GetBottomProductDataQuery, Result<List<TopBottomProductDataModel>>>,
@@ -299,7 +319,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success(StubTestData.GetMockSalesValueByHour());
         }
 
-        public async Task<Result<MerchantKpiModel>> Handle(Queries.GetMerchantKpiQuery request,
+        public async Task<Result<MerchantKpiModel>> Handle(MerchantQueries.GetMerchantKpiQuery request,
                                                            CancellationToken cancellationToken) {
             return await this.ApiClient.GetMerchantKpi(request, cancellationToken);
         }

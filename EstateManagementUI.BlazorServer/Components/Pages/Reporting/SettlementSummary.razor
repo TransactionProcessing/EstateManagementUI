@@ -271,7 +271,7 @@
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
             
             // Load filter options
-            var merchantsResult = await Mediator.Send(new Queries.GetMerchantsForDropDownQuery(correlationId, estateId));
+            var merchantsResult = await Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
             
             if (merchantsResult.IsSuccess)
                 merchants = ModelFactory.ConvertFrom(merchantsResult.Data);

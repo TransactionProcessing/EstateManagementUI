@@ -23,12 +23,12 @@ public class TestMediatorService : IMediator
         return request switch
         {
             // Estate Queries
-            Queries.GetEstateQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetEstate(query.EstateId))),
-            
+            EstateQueries.GetEstateQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetEstate(query.EstateId))),
+
             // Merchant Queries
-            Queries.GetMerchantsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetMerchants(query.EstateId))),
-            Queries.GetMerchantQuery query => Task.FromResult((TResponse)(object)this.GetMerchantResult(query.EstateId, query.MerchantId)),
-            Queries.GetRecentMerchantsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetRecentMerchants(query.EstateId))),
+            MerchantQueries.GetMerchantsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetMerchants(query.EstateId))),
+            MerchantQueries.GetMerchantQuery query => Task.FromResult((TResponse)(object)this.GetMerchantResult(query.EstateId, query.MerchantId)),
+            MerchantQueries.GetRecentMerchantsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetRecentMerchants(query.EstateId))),
 
             // Operator Queries
             Queries.GetOperatorsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetOperators(query.EstateId))),
@@ -49,7 +49,7 @@ public class TestMediatorService : IMediator
             Queries.GetTodaysSettlementQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysSettlement())),
             Queries.GetTodaysSalesCountByHourQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockSalesCountByHour())),
             Queries.GetTodaysSalesValueByHourQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockSalesValueByHour())),
-            Queries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockMerchantKpi())),
+            MerchantQueries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockMerchantKpi())),
             Queries.GetTodaysFailedSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysFailedSales(query.ComparisonDate))),
             Queries.GetTopProductDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTopProducts())),
             Queries.GetBottomProductDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockBottomProducts())),
@@ -79,8 +79,8 @@ public class TestMediatorService : IMediator
             Commands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
             Commands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
             Commands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
-            Commands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToEstate(cmd)),
-            Commands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromEstate(cmd)),
+            EstateCommands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToEstate(cmd)),
+            EstateCommands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromEstate(cmd)),
             Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
@@ -716,7 +716,7 @@ public class TestMediatorService : IMediator
         return products;
     }
 
-    private Result ExecuteAddOperatorToEstate(Commands.AddOperatorToEstateCommand cmd)
+    private Result ExecuteAddOperatorToEstate(EstateCommands.AddOperatorToEstateCommand cmd)
     {
         var operator1 = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operator1 == null)
@@ -727,7 +727,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteRemoveOperatorFromEstate(Commands.RemoveOperatorFromEstateCommand cmd)
+    private Result ExecuteRemoveOperatorFromEstate(EstateCommands.RemoveOperatorFromEstateCommand cmd)
     {
         var operator1 = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operator1 == null)

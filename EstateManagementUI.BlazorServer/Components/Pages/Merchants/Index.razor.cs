@@ -99,7 +99,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private async Task LoadMerchants() {
             CorrelationId correlationId = new(Guid.NewGuid());
             Guid estateId = await this.GetEstateId();
-            var result = await Mediator.Send(new Queries.GetMerchantsQuery(correlationId, estateId, this._filterName, this._filterReference, Int32.Parse(_filterSettlementSchedule),
+            var result = await Mediator.Send(new MerchantQueries.GetMerchantsQuery(correlationId, estateId, this._filterName, this._filterReference, Int32.Parse(_filterSettlementSchedule),
                 this._filterRegion, this._filterPostcode));
             if (result.IsFailed)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -49,5 +50,44 @@ namespace EstateManagementUI.BusinessLogic.Models
         public Guid MerchantId { get; set; }
         public String Name { get; set; }
         public String Reference { get; set; }
+    }
+
+    public class MerchantOperatorModel
+    {
+        public Guid MerchantId { get; set; }
+        public Guid OperatorId { get; set; }
+        public String OperatorName { get; set; }
+        public String MerchantNumber { get; set; }
+        public String TerminalNumber { get; set; }
+        public Boolean IsDeleted { get; set; }
+    }
+
+    public class MerchantContractModel
+    {
+        public Guid MerchantId { get; set; }
+        public Guid ContractId { get; set; }
+        public String OperatorName { get; set; }
+        public String ContractName { get; set; }
+        public Boolean IsDeleted { get; set; }
+        public List<MerchantContractProductModel> ContractProducts { get; set; }
+    }
+
+    public class MerchantContractProductModel
+    {
+        public Guid MerchantId { get; set; }
+        public Guid ContractId { get; set; }
+        public Guid ProductId { get; set; }
+        public String ProductName { get; set; }
+        public String DisplayText { get; set; }
+        public String ProductType { get; set; }
+        public Decimal? Value { get; set; }
+    }
+
+    public class MerchantDeviceModel
+    {
+        public Guid MerchantId { get; set; }
+        public Guid DeviceId { get; set; }
+        public String DeviceIdentifier { get; set; }
+        public Boolean IsDeleted { get; set; }
     }
 }

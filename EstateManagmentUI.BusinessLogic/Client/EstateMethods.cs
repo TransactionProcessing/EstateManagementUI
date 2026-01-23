@@ -12,21 +12,21 @@ using TransactionProcessor.DataTransferObjects.Responses.Estate;
 
 namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {
-        Task<Result<EstateModel>> GetEstate(Queries.GetEstateQuery request,
+        Task<Result<EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
                                             CancellationToken cancellationToken);
 
         Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(Queries.GetAssignedOperatorsQuery request,
                                                                            CancellationToken cancellationToken);
 
-        Task<Result> RemoveEstateOperator(Commands.RemoveOperatorFromEstateCommand request,
+        Task<Result> RemoveEstateOperator(EstateCommands.RemoveOperatorFromEstateCommand request,
                                             CancellationToken cancellationToken);
-        Task<Result> AddEstateOperator(Commands.AddOperatorToEstateCommand request,
-                                          CancellationToken cancellationToken);
+        Task<Result> AddEstateOperator(EstateCommands.AddOperatorToEstateCommand request,
+                                       CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
 
-        public async Task<Result<EstateModel>> GetEstate(Queries.GetEstateQuery request,
+        public async Task<Result<EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
                                                          CancellationToken cancellationToken) {
             // Get a token here 
             Result<String> token = await this.GetToken(cancellationToken);
@@ -58,7 +58,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             return Result.Success(estateOperators);
         }
 
-        public async Task<Result> RemoveEstateOperator(Commands.RemoveOperatorFromEstateCommand request,
+        public async Task<Result> RemoveEstateOperator(EstateCommands.RemoveOperatorFromEstateCommand request,
                                                        CancellationToken cancellationToken) {
             // Get a token here 
             Result<String> token = await this.GetToken(cancellationToken);
@@ -72,8 +72,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
             return Result.Success();
         }
 
-        public async Task<Result> AddEstateOperator(Commands.AddOperatorToEstateCommand request,
-                                                       CancellationToken cancellationToken)
+        public async Task<Result> AddEstateOperator(EstateCommands.AddOperatorToEstateCommand request,
+                                                    CancellationToken cancellationToken)
         {
             // Get a token here 
             Result<String> token = await this.GetToken(cancellationToken);

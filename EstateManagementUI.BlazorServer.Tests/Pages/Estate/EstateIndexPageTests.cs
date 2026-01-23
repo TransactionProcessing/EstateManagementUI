@@ -27,9 +27,9 @@ public class EstateIndexPageTests : BaseTest
             Reference = "EST001"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetEstateQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(estate));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
@@ -57,9 +57,9 @@ public class EstateIndexPageTests : BaseTest
             Operators = new List<EstateOperatorModel>()
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetEstateQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(estate));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
@@ -79,9 +79,9 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetEstateQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentMerchantsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));

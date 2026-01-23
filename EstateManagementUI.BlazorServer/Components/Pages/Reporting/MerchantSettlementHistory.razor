@@ -219,7 +219,7 @@
         try
         {
             var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111"); // Test estate ID
-            var query = new Queries.GetMerchantsForDropDownQuery(
+            var query = new MerchantQueries.GetMerchantsForDropDownQuery(
                 CorrelationIdHelper.New(),estateId);
 
             var result = await Mediator.Send(query);
