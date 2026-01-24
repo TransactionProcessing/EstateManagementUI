@@ -2,6 +2,7 @@
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
+using Shared.Results;
 using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers
@@ -58,11 +59,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<Commands.MakeMerchantDepositCommand, Result>,
                                         IRequestHandler<Commands.RemoveContractFromMerchantCommand, Result>,
                                         IRequestHandler<Commands.RemoveOperatorFromMerchantCommand, Result>,
-                                        IRequestHandler<Commands.SetMerchantSettlementScheduleCommand, Result>,
                                         IRequestHandler<Commands.SwapMerchantDeviceCommand, Result>,
-                                        IRequestHandler<Commands.UpdateMerchantAddressCommand, Result>,
-                                        IRequestHandler<Commands.UpdateMerchantCommand, Result>,
-                                        IRequestHandler<Commands.UpdateMerchantContactCommand, Result>,
+                                        IRequestHandler<MerchantCommands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
                                         IRequestHandler<MerchantQueries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
                                         IRequestHandler<MerchantQueries.GetMerchantsForDropDownQuery, Result<List<MerchantDropDownModel>>>,
@@ -113,28 +111,25 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success();
         }
 
-        public async Task<Result> Handle(Commands.SetMerchantSettlementScheduleCommand request,
-                                         CancellationToken cancellationToken) {
-            return Result.Success();
-        }
-
         public async Task<Result> Handle(Commands.SwapMerchantDeviceCommand request,
                                          CancellationToken cancellationToken) {
             return Result.Success();
         }
 
-        public async Task<Result> Handle(Commands.UpdateMerchantAddressCommand request,
-                                         CancellationToken cancellationToken) {
-            return Result.Success();
-        }
 
-        public async Task<Result> Handle(Commands.UpdateMerchantCommand request,
+        public async Task<Result> Handle(MerchantCommands.UpdateMerchantCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
-        }
+            Result updateMerchantResult = await this.ApiClient.UpdateMerchant(request, cancellationToken);
+            if (updateMerchantResult.IsFailed)
+                return ResultHelpers.CreateFailure(updateMerchantResult);
 
-        public async Task<Result> Handle(Commands.UpdateMerchantContactCommand request,
-                                         CancellationToken cancellationToken) {
+            Result updateMerchantAddressResult = await this.ApiClient.UpdateMerchantAddress(request, cancellationToken);
+            if (updateMerchantAddressResult.IsFailed)
+                return ResultHelpers.CreateFailure(updateMerchantAddressResult);
+            Result updateMerchantContactResult = await this.ApiClient.UpdateMerchantContact(request, cancellationToken);
+            if (updateMerchantContactResult.IsFailed)
+                return ResultHelpers.CreateFailure(updateMerchantContactResult);
+
             return Result.Success();
         }
 

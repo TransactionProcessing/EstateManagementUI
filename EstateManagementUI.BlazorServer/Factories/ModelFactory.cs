@@ -59,7 +59,9 @@ namespace EstateManagementUI.BlazorServer.Factories {
                 Country = model.Country,
                 ContactName = model.ContactName,
                 ContactEmailAddress = model.ContactEmailAddress,
-                ContactPhoneNumber = model.ContactPhoneNumber
+                ContactPhoneNumber = model.ContactPhoneNumber,
+                AddressId = model.AddressId,
+                ContactId = model.ContactId
             };
         }
 

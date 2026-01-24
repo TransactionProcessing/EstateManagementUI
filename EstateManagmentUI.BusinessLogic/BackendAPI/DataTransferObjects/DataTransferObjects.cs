@@ -55,6 +55,8 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects
         [JsonProperty("created_date_time")]
         public DateTime CreatedDateTime { get; set; }
 
+        [JsonProperty("address_id")]
+        public Guid AddressId { get; set; }
         [JsonProperty("address_line1")]
         public String AddressLine1 { get; set; }
         [JsonProperty("address_line2")]
@@ -68,6 +70,8 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects
         [JsonProperty("country")]
         public String Country { get; set; }
 
+        [JsonProperty("contact_id")]
+        public Guid ContactId { get; set; }
         [JsonProperty("contact_name")]
         public String ContactName { get; set; }
         [JsonProperty("contact_email")]

@@ -52,11 +52,13 @@ public class MerchantModel
     public decimal? Balance { get; set; }
     public decimal? AvailableBalance { get; set; }
     public string? SettlementSchedule { get; set; }
+    public Guid AddressId { get; set; }
     public string? AddressLine1 { get; set; }
     public string? AddressLine2 { get; set; }
     public string? Town { get; set; }
     public string? Region { get; set; }
     public string? PostalCode { get; set; }
+    public Guid ContactId { get; set; }
     public string? Country { get; set; }
     public string? ContactName { get; set; }
     public string? ContactEmailAddress { get; set; }

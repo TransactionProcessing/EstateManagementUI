@@ -2,6 +2,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.Services;
 
@@ -67,9 +68,7 @@ public class TestMediatorService : IMediator
             
             // Commands - execute against test data store
             Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
-            Commands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchant(cmd)),
-            Commands.UpdateMerchantAddressCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchantAddress(cmd)),
-            Commands.UpdateMerchantContactCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchantContact(cmd)),
+            MerchantCommands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchant(cmd)),
             Commands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
             Commands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
             Commands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
@@ -85,7 +84,6 @@ public class TestMediatorService : IMediator
             Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteMakeMerchantDeposit(cmd)),
-            Commands.SetMerchantSettlementScheduleCommand => Task.FromResult((TResponse)(object)Result.Success()),
             
             _ => throw new NotImplementedException($"Request type {request.GetType().Name} is not implemented in test mediator")
         };
@@ -161,7 +159,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteUpdateMerchant(Commands.UpdateMerchantCommand cmd)
+    private Result ExecuteUpdateMerchant(MerchantCommands.UpdateMerchantCommand cmd)
     {
         var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
@@ -171,35 +169,7 @@ public class TestMediatorService : IMediator
         this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
         return Result.Success();
     }
-
-    private Result ExecuteUpdateMerchantAddress(Commands.UpdateMerchantAddressCommand cmd)
-    {
-        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
-        if (merchant == null)
-            return Result.Failure($"Merchant {cmd.MerchantId} not found");
-        
-        merchant.AddressLine1 = cmd.AddressLine1;
-        merchant.Town = cmd.Town;
-        merchant.Region = cmd.Region;
-        merchant.PostalCode = cmd.PostalCode;
-        merchant.Country = cmd.Country;
-        this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
-        return Result.Success();
-    }
-
-    private Result ExecuteUpdateMerchantContact(Commands.UpdateMerchantContactCommand cmd)
-    {
-        var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
-        if (merchant == null)
-            return Result.Failure($"Merchant {cmd.MerchantId} not found");
-        
-        merchant.ContactName = cmd.ContactName;
-        merchant.ContactEmailAddress = cmd.ContactEmail;
-        merchant.ContactPhoneNumber = cmd.ContactPhone;
-        this._testDataStore.UpdateMerchant(cmd.EstateId, merchant);
-        return Result.Success();
-    }
-
+    
     private Result ExecuteCreateOperator(Commands.CreateOperatorCommand cmd)
     {
         var operatorModel = new OperatorModel
