@@ -446,5 +446,18 @@ namespace EstateManagementUI.BlazorServer.Factories {
             }
             return merchantContracts;
         }
+
+        public static List<ContractDropDownModel> ConvertFrom(List<BusinessLogic.Models.ContractDropDownModel> resultData) {
+            List<ContractDropDownModel> contractList = new();
+            foreach (BusinessLogic.Models.ContractDropDownModel contractDropDownModel in resultData) {
+                contractList.Add(new ContractDropDownModel() {
+                    ContractId = contractDropDownModel.ContractId,
+                    Description = contractDropDownModel.Description,
+                    OperatorName = contractDropDownModel.OperatorName
+                });
+            }
+
+            return contractList;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.BusinessLogic.Client;
+﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
@@ -61,7 +62,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
                                         IRequestHandler<Commands.SwapMerchantDeviceCommand, Result>,
                                         IRequestHandler<MerchantCommands.UpdateMerchantCommand, Result>,
-                                        IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
+                                        IRequestHandler<MerchantCommands.AssignContractToMerchantCommand, Result>,
                                         IRequestHandler<MerchantQueries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
                                         IRequestHandler<MerchantQueries.GetMerchantsForDropDownQuery, Result<List<MerchantDropDownModel>>>,
                                         IRequestHandler<MerchantQueries.GetMerchantContractsQuery, Result<List<MerchantContractModel>>>,
@@ -138,9 +139,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return await this.ApiClient.GetMerchant(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(Commands.AssignContractToMerchantCommand request,
+        public async Task<Result> Handle(MerchantCommands.AssignContractToMerchantCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.AddContractToMerchant(request, cancellationToken);
         }
 
         public async Task<Result<List<RecentMerchantsModel>>> Handle(MerchantQueries.GetRecentMerchantsQuery request,
@@ -169,12 +170,14 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         }
     }
 
-    public class ContractRequestHandler : IRequestHandler<Queries.GetContractsQuery, Result<List<ContractModel>>>,
-                                            IRequestHandler<Queries.GetContractQuery, Result<ContractModel>>,
+    public class ContractRequestHandler : IRequestHandler<ContractQueries.GetContractsQuery, Result<List<ContractModel>>>,
+                                            IRequestHandler<ContractQueries.GetContractQuery, Result<ContractModel>>,
                                             IRequestHandler<Commands.CreateContractCommand, Result>,
                                             IRequestHandler<Commands.AddProductToContractCommand, Result>,
                                             IRequestHandler<Commands.AddTransactionFeeForProductToContractCommand, Result>,
-    IRequestHandler<Queries.GetRecentContractsQuery, Result<List<RecentContractModel>>> {
+    IRequestHandler<ContractQueries.GetRecentContractsQuery, Result<List<RecentContractModel>>>,
+    IRequestHandler<ContractQueries.GetContractsForDropDownQuery, Result<List<ContractDropDownModel>>>
+    {
 
         private readonly IApiClient ApiClient;
 
@@ -183,12 +186,12 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<Result<List<ContractModel>>> Handle(Queries.GetContractsQuery request,
+        public async Task<Result<List<ContractModel>>> Handle(ContractQueries.GetContractsQuery request,
                                                               CancellationToken cancellationToken) {
             return Result.Success(StubTestData.GetMockContracts());
         }
 
-        public async Task<Result<ContractModel>> Handle(Queries.GetContractQuery request,
+        public async Task<Result<ContractModel>> Handle(ContractQueries.GetContractQuery request,
                                                         CancellationToken cancellationToken) {
             return Result.Success(StubTestData.GetMockContract());
         }
@@ -208,9 +211,14 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success();
         }
 
-        public async Task<Result<List<RecentContractModel>>> Handle(Queries.GetRecentContractsQuery request,
+        public async Task<Result<List<RecentContractModel>>> Handle(ContractQueries.GetRecentContractsQuery request,
                                                                     CancellationToken cancellationToken) {
             return await this.ApiClient.GetRecentContracts(request, cancellationToken);
+        }
+
+        public async Task<Result<List<ContractDropDownModel>>> Handle(ContractQueries.GetContractsForDropDownQuery request,
+                                                                      CancellationToken cancellationToken) {
+            return await this.ApiClient.GetContracts(request, cancellationToken);
         }
     }
 

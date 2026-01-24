@@ -27,13 +27,20 @@ public static class EstateQueries {
     public record GetAssignedOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
 }
 
+public static class ContractQueries {
+    public record GetRecentContractsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentContractModel>>>;
+    public record GetContractsForDropDownQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<ContractDropDownModel>>>;
+    public record GetContractsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<List<ContractModel>>>;
+    public record GetContractQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;
+}
+
 public static class Queries
 {
-    public record GetRecentContractsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentContractModel>>>;
+    
     public record GetOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
-    public record GetContractsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<List<ContractModel>>>;
+    
     public record GetOperatorQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
-    public record GetContractQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;
+    
     public record GetFileImportLogsListQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, DateTime StartDate, DateTime EndDate)
         : IRequest<Result<List<FileImportLogModel>>>;
     public record GetFileImportLogQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid FileImportLogId)
@@ -74,12 +81,12 @@ public static class MerchantCommands {
     public record RemoveOperatorFromMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid OperatorId) : IRequest<Result>;
     public record AddOperatorToMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid OperatorId, string? MerchantNumber, string? TerminalNumber) : IRequest<Result>;
     public record RemoveContractFromMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
+    public record AssignContractToMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
 }
 
 public static class Commands
 {
     public record AddMerchantDeviceCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string DeviceIdentifier) : IRequest<Result>;
-    public record AssignContractToMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
     public record CreateContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Description, Guid OperatorId) : IRequest<Result>;
     public record CreateMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, string ContactName, string ContactEmail) : IRequest<Result>;
     public record CreateMerchantUserCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string EmailAddress, string Password) : IRequest<Result>;

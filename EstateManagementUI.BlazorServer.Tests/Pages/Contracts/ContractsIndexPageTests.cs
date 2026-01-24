@@ -32,7 +32,7 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
             .ReturnsAsync(Result.Success(contracts));
         
         // Act
@@ -47,7 +47,7 @@ public class ContractsIndexPageTests : BaseTest
     {
         // Arrange
         var emptyList = new List<ContractModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
             .ReturnsAsync(Result.Success(emptyList));
         
         // Act
@@ -82,7 +82,7 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
             .ReturnsAsync(Result.Success(contracts));
         
         // Act
@@ -116,7 +116,7 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
             .ReturnsAsync(Result.Success(contracts));
         
         // Act
@@ -131,7 +131,7 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<ContractModel>()));
         
         // Act

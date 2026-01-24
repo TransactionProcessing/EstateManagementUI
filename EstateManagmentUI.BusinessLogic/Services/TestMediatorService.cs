@@ -34,10 +34,10 @@ public class TestMediatorService : IMediator
             // Operator Queries
             Queries.GetOperatorsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetOperators(query.EstateId))),
             Queries.GetOperatorQuery query => Task.FromResult((TResponse)(object)this.GetOperatorResult(query.EstateId, query.OperatorId)),
-            
+
             // Contract Queries
-            Queries.GetContractsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetContracts(query.EstateId))),
-            Queries.GetContractQuery query => Task.FromResult((TResponse)(object)this.GetContractResult(query.EstateId, query.ContractId)),
+            ContractQueries.GetContractsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetContracts(query.EstateId))),
+            ContractQueries.GetContractQuery query => Task.FromResult((TResponse)(object)this.GetContractResult(query.EstateId, query.ContractId)),
             
             // File Processing Queries - return mock data
             Queries.GetFileImportLogsListQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockFileImportLogs())),
@@ -74,7 +74,7 @@ public class TestMediatorService : IMediator
             Commands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
             Commands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
             Commands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
-            Commands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
+            MerchantCommands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
             MerchantCommands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
             MerchantCommands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
             MerchantCommands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
@@ -261,7 +261,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteAssignContractToMerchant(Commands.AssignContractToMerchantCommand cmd)
+    private Result ExecuteAssignContractToMerchant(MerchantCommands.AssignContractToMerchantCommand cmd)
     {
         var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)

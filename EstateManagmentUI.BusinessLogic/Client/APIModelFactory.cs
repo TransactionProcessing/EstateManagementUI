@@ -99,21 +99,7 @@ public static class APIModelFactory {
 
         return model;
     }
-
-    public static List<RecentContractModel> ConvertFrom(List<Contract> apiResultData) {
-        List<RecentContractModel> contracts = new();
-
-        foreach (Contract contract in apiResultData) {
-            contracts.Add(new RecentContractModel {
-                ContractId = contract.ContractId,
-                Description = contract.Description,
-                OperatorName = contract.OperatorName
-            });
-        }
-
-        return contracts;
-    }
-
+    
     public static List<OperatorModel> ConvertFrom(List<EstateOperator> apiResultData) {
         List<OperatorModel> operators = new();
         foreach (EstateOperator estateOperator in apiResultData) {
@@ -291,5 +277,39 @@ public  static class FactoryExtensions{
         }
 
         return merchantDevices;
+    }
+
+    public static List<RecentContractModel> ToRecentContracts(this List<Contract> apiResultData)
+    {
+        List<RecentContractModel> contracts = new();
+
+        foreach (Contract contract in apiResultData)
+        {
+            contracts.Add(new RecentContractModel
+            {
+                ContractId = contract.ContractId,
+                Description = contract.Description,
+                OperatorName = contract.OperatorName
+            });
+        }
+
+        return contracts;
+    }
+    public static List<ContractDropDownModel> ToContractDropDown(this List<Contract> apiResultData)
+    {
+        List<ContractDropDownModel> contracts = new();
+
+        foreach (Contract contract in apiResultData)
+        {
+            var c = new ContractDropDownModel
+            {
+                ContractId = contract.ContractId,
+                Description = contract.Description,
+                OperatorName = contract.OperatorName
+            };
+            contracts.Add(c);
+        }
+
+        return contracts;
     }
 }

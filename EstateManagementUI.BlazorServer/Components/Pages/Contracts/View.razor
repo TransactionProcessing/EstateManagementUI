@@ -155,7 +155,7 @@
         try
         {
             isLoading = true;
-            var result = await Mediator.Send(new Queries.GetContractQuery(CorrelationIdHelper.New(), "stubbed-token", Guid.Parse("11111111-1111-1111-1111-111111111111"), ContractId));
+            var result = await Mediator.Send(new ContractQueries.GetContractQuery(CorrelationIdHelper.New(), "stubbed-token", Guid.Parse("11111111-1111-1111-1111-111111111111"), ContractId));
             
             if (result.IsSuccess && result.Data != null)
             {
