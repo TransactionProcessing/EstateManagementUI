@@ -15,6 +15,9 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                                       Guid estateId,
                                                                       CancellationToken cancellationToken);
 
+        Task<Result<List<MerchantOperator>>> GetMerchantAssignedOperators(String accessToken,
+                                                                      Guid estateId, Guid merchantId,
+                                                                      CancellationToken cancellationToken);
         Task<Result<List<Operator>>> GetOperators(String accessToken,
                                                                       Guid estateId,
                                                                       CancellationToken cancellationToken);
@@ -97,6 +100,34 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<MerchantOperator>>> GetMerchantAssignedOperators(String accessToken,
+                                                                                       Guid estateId,
+                                                                                       Guid merchantId,
+                                                                                       CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/operators");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+
+                Result<List<MerchantOperator>> result = await this.SendHttpGetRequest<List<MerchantOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting estate assigned operators {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

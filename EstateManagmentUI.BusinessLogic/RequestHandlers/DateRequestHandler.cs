@@ -23,7 +23,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
     public class EstateRequestHandler : IRequestHandler<EstateQueries.GetEstateQuery, Result<EstateModel>>,
         IRequestHandler<EstateCommands.AddOperatorToEstateCommand, Result>,
         IRequestHandler<EstateCommands.RemoveOperatorFromEstateCommand, Result>,
-        IRequestHandler<Queries.GetAssignedOperatorsQuery, Result<List<OperatorModel>>> {
+        IRequestHandler<EstateQueries.GetAssignedOperatorsQuery, Result<List<OperatorModel>>> {
         private readonly IApiClient ApiClient;
 
         public EstateRequestHandler(IApiClient apiClient) {
@@ -45,7 +45,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return await this.ApiClient.RemoveEstateOperator(request, cancellationToken);
         }
 
-        public async Task<Result<List<OperatorModel>>> Handle(Queries.GetAssignedOperatorsQuery request,
+        public async Task<Result<List<OperatorModel>>> Handle(EstateQueries.GetAssignedOperatorsQuery request,
                                                               CancellationToken cancellationToken) {
             return await this.ApiClient.GetEstateAssignedOperators(request, cancellationToken);
         }
@@ -58,7 +58,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<Commands.CreateMerchantCommand, Result>,
                                         IRequestHandler<Commands.MakeMerchantDepositCommand, Result>,
                                         IRequestHandler<Commands.RemoveContractFromMerchantCommand, Result>,
-                                        IRequestHandler<Commands.RemoveOperatorFromMerchantCommand, Result>,
+                                        IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
                                         IRequestHandler<Commands.SwapMerchantDeviceCommand, Result>,
                                         IRequestHandler<MerchantCommands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<Commands.AssignContractToMerchantCommand, Result>,
@@ -106,9 +106,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success();
         }
 
-        public async Task<Result> Handle(Commands.RemoveOperatorFromMerchantCommand request,
+        public async Task<Result> Handle(MerchantCommands.RemoveOperatorFromMerchantCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.RemoveOperatorFromMerchant(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.SwapMerchantDeviceCommand request,

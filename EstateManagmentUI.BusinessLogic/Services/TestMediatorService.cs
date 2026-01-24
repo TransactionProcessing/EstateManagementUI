@@ -77,7 +77,7 @@ public class TestMediatorService : IMediator
             Commands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
             Commands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
             Commands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
-            Commands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
+            MerchantCommands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
             EstateCommands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToEstate(cmd)),
             EstateCommands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromEstate(cmd)),
             Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
@@ -290,7 +290,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteRemoveOperatorFromMerchant(Commands.RemoveOperatorFromMerchantCommand cmd)
+    private Result ExecuteRemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand cmd)
     {
         var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)

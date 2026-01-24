@@ -21,15 +21,26 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<List<MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchant(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
-
-        Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request,
-                                           CancellationToken cancellationToken);
-
-        Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request,
-                                           CancellationToken cancellationToken);
+        Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
+
+        public async Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request,
+                                                             CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.TransactionProcessorClient.RemoveOperatorFromMerchant(token.Data, request.EstateId, request.MerchantId, request.OperatorId, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
         public async Task<Result<MerchantKpiModel>> GetMerchantKpi(MerchantQueries.GetMerchantKpiQuery request,
                                                                    CancellationToken cancellationToken) {
 
