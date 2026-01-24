@@ -24,10 +24,26 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> AddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
 
+        public async Task<Result> AddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand request,
+                                                             CancellationToken cancellationToken)
+        {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiRequest = new AssignOperatorRequest { TerminalNumber = request.TerminalNumber, MerchantNumber = request.MerchantNumber, OperatorId = request.OperatorId };
+
+            var apiResult = await this.TransactionProcessorClient.AssignOperatorToMerchant(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
         public async Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request,
                                                              CancellationToken cancellationToken) {
             var token = await this.GetToken(cancellationToken);

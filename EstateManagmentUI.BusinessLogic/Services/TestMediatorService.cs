@@ -76,7 +76,7 @@ public class TestMediatorService : IMediator
             Commands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
             Commands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
             Commands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
-            Commands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
+            MerchantCommands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
             MerchantCommands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
             EstateCommands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToEstate(cmd)),
             EstateCommands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromEstate(cmd)),
@@ -281,7 +281,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteAddOperatorToMerchant(Commands.AddOperatorToMerchantCommand cmd)
+    private Result ExecuteAddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand cmd)
     {
         var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)
