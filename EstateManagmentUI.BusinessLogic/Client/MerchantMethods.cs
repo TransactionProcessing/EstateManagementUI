@@ -25,6 +25,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> AddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> RemoveContractFromMerchant(MerchantCommands.RemoveContractFromMerchantCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -37,13 +38,27 @@ namespace EstateManagementUI.BusinessLogic.Client
                 return ResultHelpers.CreateFailure(token);
 
             var apiRequest = new AssignOperatorRequest { TerminalNumber = request.TerminalNumber, MerchantNumber = request.MerchantNumber, OperatorId = request.OperatorId };
-
+            
             var apiResult = await this.TransactionProcessorClient.AssignOperatorToMerchant(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
             return Result.Success();
         }
+
+        public async Task<Result> RemoveContractFromMerchant(MerchantCommands.RemoveContractFromMerchantCommand request,
+                                                             CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.TransactionProcessorClient.RemoveContractFromMerchant(token.Data, request.EstateId, request.MerchantId, request.ContractId, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
         public async Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request,
                                                              CancellationToken cancellationToken) {
             var token = await this.GetToken(cancellationToken);
@@ -274,3 +289,4 @@ namespace EstateManagementUI.BusinessLogic.Client
         }
     }
 }
+

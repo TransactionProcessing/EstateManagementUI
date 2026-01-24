@@ -73,6 +73,7 @@ public static class MerchantCommands {
     public record UpdateMerchantCommand(CorrelationId CorrelationId,Guid EstateId, Guid MerchantId, string Name, String SettlementSchedule, MerchantAddress MerchantAddress, MerchantContact MerchantContact) : IRequest<Result>;
     public record RemoveOperatorFromMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid OperatorId) : IRequest<Result>;
     public record AddOperatorToMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid OperatorId, string? MerchantNumber, string? TerminalNumber) : IRequest<Result>;
+    public record RemoveContractFromMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
 }
 
 public static class Commands
@@ -84,7 +85,6 @@ public static class Commands
     public record CreateMerchantUserCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string EmailAddress, string Password) : IRequest<Result>;
     public record CreateOperatorCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
     public record MakeMerchantDepositCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, decimal Amount, DateTime Date, string Reference) : IRequest<Result>;
-    public record RemoveContractFromMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
     
     public record SwapMerchantDeviceCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string OldDevice, string NewDevice) : IRequest<Result>;
     public record UpdateOperatorCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
