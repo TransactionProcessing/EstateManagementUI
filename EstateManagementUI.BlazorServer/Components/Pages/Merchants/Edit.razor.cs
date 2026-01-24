@@ -172,8 +172,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 return ResultHelpers.CreateFailure(result);
             }
             
-            availableContracts = ModelFactory.ConvertFrom(result.Data);
-            
+            var unfiltered = ModelFactory.ConvertFrom(result.Data);
+            this.availableContracts = unfiltered.Where(u => this.assignedContracts.Select(a => a.ContractId).Contains(u.ContractId) == false).ToList();
+
             return Result.Success();
         }
 
@@ -457,12 +458,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+                var estateId = await this.GetEstateId();
 
-                var command = new Commands.RemoveContractFromMerchantCommand(
+                var command = new MerchantCommands.RemoveContractFromMerchantCommand(
                     correlationId,
-                    accessToken,
                     estateId,
                     MerchantId,
                     contractId
