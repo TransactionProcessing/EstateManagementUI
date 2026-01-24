@@ -61,13 +61,18 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
                 await RequirePermission(PermissionSection.Merchant, PermissionFunction.Edit);
 
-                var loadMerchantTask = LoadMerchant();
+                var loadMerchantResult = await LoadMerchant();
+
+                if (loadMerchantResult.IsFailed) {
+                    this.NavigationManager.NavigateToErrorPage();
+                }
+
                 var loadOperatorsTask = LoadOperators();
                 var loadContractsTask = LoadContracts();
 
-                await Task.WhenAll(loadMerchantTask, loadOperatorsTask, loadContractsTask);
+                await Task.WhenAll(loadOperatorsTask, loadContractsTask);
 
-                if (loadMerchantTask.Result.IsFailed || loadOperatorsTask.Result.IsFailed || loadContractsTask.Result.IsFailed) {
+                if (loadOperatorsTask.Result.IsFailed || loadContractsTask.Result.IsFailed) {
                     this.NavigationManager.NavigateToErrorPage();
                 }
 
@@ -146,9 +151,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             var result = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
 
             if (result.IsFailed) {
+                return ResultHelpers.CreateFailure(result);
             }
 
-            availableOperators = ModelFactory.ConvertFrom(result.Data);
+            var unfiltered = ModelFactory.ConvertFrom(result.Data);
+            this.availableOperators = unfiltered.Where(u => this.assignedOperators.Select(a => a.OperatorId).Contains(u.OperatorId) == false).ToList();
 
             return Result.Success();
         }
@@ -160,11 +167,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             var accessToken = "stubbed-token";
 
             var result = await Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
-
-            if (result.IsSuccess)
+            if (result.IsFailed)
             {
-                availableContracts = ModelFactory.ConvertFrom(result.Data);
+                return ResultHelpers.CreateFailure(result);
             }
+            
+            availableContracts = ModelFactory.ConvertFrom(result.Data);
+            
             return Result.Success();
         }
 
@@ -309,13 +318,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+                var estateId = await this.GetEstateId();
                 var operatorId = Guid.Parse(selectedOperatorId);
 
-                var command = new Commands.AddOperatorToMerchantCommand(
+                var command = new MerchantCommands.AddOperatorToMerchantCommand(
                     correlationId,
-                    accessToken,
                     estateId,
                     MerchantId,
                     operatorId,
