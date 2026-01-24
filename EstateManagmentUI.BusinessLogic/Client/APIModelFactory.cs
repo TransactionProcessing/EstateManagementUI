@@ -203,10 +203,12 @@ public  static class FactoryExtensions{
         MerchantModel model = new MerchantModel {
             CreatedDateTime = apiResultData.CreatedDateTime,
             MerchantReference = apiResultData.Reference,
+            AddressId = apiResultData.AddressId,
             AddressLine1 = apiResultData.AddressLine1,
             AddressLine2 = apiResultData.AddressLine2,
             AvailableBalance = 0,
             Balance = apiResultData.Balance,
+            ContactId = apiResultData.ContactId,
             ContactEmailAddress = apiResultData.ContactEmail,
             ContactName = apiResultData.ContactName,
             ContactPhoneNumber = apiResultData.ContactPhone,

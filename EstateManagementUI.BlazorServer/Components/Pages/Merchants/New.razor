@@ -212,44 +212,44 @@
             // Get the newly created merchant ID (in real implementation, this would be returned from the create command)
             var merchantId = Guid.NewGuid();
 
-            // Update address
-            var addressCommand = new Commands.UpdateMerchantAddressCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                merchantId,
-                model.AddressLine1!,
-                model.Town!,
-                model.Region!,
-                model.PostCode!,
-                model.Country!
-            );
+            // // Update address
+            // var addressCommand = new Commands.UpdateMerchantAddressCommand(
+            //     correlationId,
+            //     accessToken,
+            //     estateId,
+            //     merchantId,
+            //     model.AddressLine1!,
+            //     model.Town!,
+            //     model.Region!,
+            //     model.PostCode!,
+            //     model.Country!
+            // );
 
-            await Mediator.Send(addressCommand);
+            // await Mediator.Send(addressCommand);
 
-            // Update contact (including phone)
-            var contactCommand = new Commands.UpdateMerchantContactCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                merchantId,
-                model.ContactName!,
-                model.EmailAddress!,
-                model.PhoneNumber!
-            );
+            // // Update contact (including phone)
+            // var contactCommand = new Commands.UpdateMerchantContactCommand(
+            //     correlationId,
+            //     accessToken,
+            //     estateId,
+            //     merchantId,
+            //     model.ContactName!,
+            //     model.EmailAddress!,
+            //     model.PhoneNumber!
+            // );
 
-            await Mediator.Send(contactCommand);
+            // await Mediator.Send(contactCommand);
 
-            // Set settlement schedule
-            var scheduleCommand = new Commands.SetMerchantSettlementScheduleCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                merchantId,
-                model.SettlementSchedule!
-            );
+            // // Set settlement schedule
+            // var scheduleCommand = new Commands.SetMerchantSettlementScheduleCommand(
+            //     correlationId,
+            //     accessToken,
+            //     estateId,
+            //     merchantId,
+            //     model.SettlementSchedule!
+            // );
 
-            await Mediator.Send(scheduleCommand);
+            // await Mediator.Send(scheduleCommand);
 
             // Navigate to merchant list
             NavigationManager.NavigateTo($"/merchants");

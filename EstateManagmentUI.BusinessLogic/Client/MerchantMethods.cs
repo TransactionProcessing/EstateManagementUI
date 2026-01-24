@@ -4,6 +4,8 @@ using EstateManagementUI.BusinessLogic.Requests;
 using SecurityService.DataTransferObjects.Responses;
 using Shared.Results;
 using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.Client
 {
@@ -18,6 +20,13 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<List<MerchantOperatorModel>>> GetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request, CancellationToken cancellationToken);
+        Task<Result> UpdateMerchant(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
+
+        Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request,
+                                           CancellationToken cancellationToken);
+
+        Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request,
+                                           CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -152,6 +161,72 @@ namespace EstateManagementUI.BusinessLogic.Client
             var merchantDevices = apiResult.Data.ToMerchantDevices();
 
             return Result.Success(merchantDevices);
+        }
+
+        public async Task<Result> UpdateMerchant(MerchantCommands.UpdateMerchantCommand request,
+                                                 CancellationToken cancellationToken) {
+
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            SettlementSchedule settlementSchedule = Enum.Parse<SettlementSchedule>(request.SettlementSchedule);
+
+            UpdateMerchantRequest apiRequest = new() { SettlementSchedule = settlementSchedule, Name = request.Name };
+
+            Result? apiResult = await this.TransactionProcessorClient.UpdateMerchant(token.Data, request.EstateId, request.MerchantId,apiRequest,cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request,
+                                                 CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Address apiRequest = new() {
+                AddressLine1 = request.MerchantAddress.AddressLine1, Town = request.MerchantAddress.Town,
+                Country = request.MerchantAddress.Country, PostalCode = request.MerchantAddress.PostalCode,
+                Region = request.MerchantAddress.Region
+            };
+
+            Result? apiResult = await this.TransactionProcessorClient.UpdateMerchantAddress(token.Data, request.EstateId, request.MerchantId,request.MerchantAddress.AddressId,
+                apiRequest, cancellationToken);
+            ;
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request,
+                                                        CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Contact apiRequest = new()
+            {
+                ContactName = request.MerchantContact.ContactName,
+                EmailAddress = request.MerchantContact.ContactEmail,
+                PhoneNumber = request.MerchantContact.ContactPhone
+            };
+
+            Result? apiResult = await this.TransactionProcessorClient.UpdateMerchantContact(token.Data, request.EstateId, request.MerchantId, request.MerchantContact.ContactId,
+                apiRequest, cancellationToken);
+            ;
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
         }
 
         public async Task<Result<List<MerchantDropDownModel>>> GetMerchants(MerchantQueries.GetMerchantsForDropDownQuery request,
