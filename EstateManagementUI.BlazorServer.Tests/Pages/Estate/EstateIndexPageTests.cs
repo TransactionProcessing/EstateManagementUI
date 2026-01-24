@@ -33,7 +33,7 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetAssignedOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
@@ -63,7 +63,7 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetAssignedOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
@@ -85,7 +85,7 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetRecentContractsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetAssignedOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));

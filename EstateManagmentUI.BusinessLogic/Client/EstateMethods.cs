@@ -15,7 +15,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
         Task<Result<EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
                                             CancellationToken cancellationToken);
 
-        Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(Queries.GetAssignedOperatorsQuery request,
+        Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(EstateQueries.GetAssignedOperatorsQuery request,
                                                                            CancellationToken cancellationToken);
 
         Task<Result> RemoveEstateOperator(EstateCommands.RemoveOperatorFromEstateCommand request,
@@ -42,8 +42,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
             return Result.Success(estate);
         }
 
-        public async Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(Queries.GetAssignedOperatorsQuery request,
-                                                                                        CancellationToken cancellationToken) {
+        public async Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(EstateQueries.GetAssignedOperatorsQuery request,
+                                                                                  CancellationToken cancellationToken) {
             // Get a token here 
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)

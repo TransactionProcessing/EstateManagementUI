@@ -5,6 +5,7 @@ using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Shared.Results;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
 
@@ -27,7 +28,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         // Operators
         private List<OperatorModel>? availableOperators;
-        private List<OperatorModel> assignedOperators = new();
+        private List<MerchantOperatorModel> assignedOperators = new();
         private bool showAddOperator = false;
         private string? selectedOperatorId;
         private OperatorModel? selectedOperator;
@@ -38,12 +39,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         // Contracts
         private List<ContractModel>? availableContracts;
-        private List<ContractModel> assignedContracts = new();
+        private List<MerchantContractModel> assignedContracts = new();
         private bool showAddContract = false;
         private string? selectedContractId;
 
         // Devices
-        private List<string> assignedDevices = new();
+        private List<MerchantDeviceModel> assignedDevices = new();
         private bool showAddDevice = false;
         private string? deviceIdentifier;
 
@@ -86,43 +87,49 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 var correlationId = new CorrelationId(Guid.NewGuid());
                 var estateId = await this.GetEstateId();
 
-                var result = await Mediator.Send(new MerchantQueries.GetMerchantQuery(correlationId, estateId, MerchantId));
+                var getMerchantResult = await Mediator.Send(new MerchantQueries.GetMerchantQuery(correlationId, estateId, MerchantId));
 
-                if (result.IsSuccess && result.Data != null)
+                if (getMerchantResult.IsFailed)
+                    return ResultHelpers.CreateFailure(getMerchantResult);
+
+                merchant = ModelFactory.ConvertFrom(getMerchantResult.Data);
+
+                // Initialize unified model with current values
+                merchantEditModel = new MerchantEditModel
                 {
-                    merchant = ModelFactory.ConvertFrom(result.Data);
-
-                    // Initialize unified model with current values
-                    merchantEditModel = new MerchantEditModel
-                    {
-                        MerchantName = merchant.MerchantName,
-                        SettlementSchedule = merchant.SettlementSchedule ?? "Immediate",
-                        AddressId = this.merchant.AddressId,
-                        AddressLine1 = merchant.AddressLine1,
-                        AddressLine2 = merchant.AddressLine2,
-                        Town = merchant.Town,
-                        Region = merchant.Region,
-                        PostalCode = merchant.PostalCode,
-                        Country = merchant.Country,
-                        ContactId = this.merchant.ContactId,
-                        ContactName = merchant.ContactName,
-                        ContactEmailAddress = merchant.ContactEmailAddress,
-                        ContactPhoneNumber = merchant.ContactPhoneNumber,
-                    };
-
-                    // Mock some assigned data
-                    assignedOperators = new List<OperatorModel>
-                {
-                    new OperatorModel { OperatorId = Guid.NewGuid(), Name = "Safaricom" }
+                    MerchantName = merchant.MerchantName,
+                    SettlementSchedule = merchant.SettlementSchedule ?? "Immediate",
+                    AddressId = this.merchant.AddressId,
+                    AddressLine1 = merchant.AddressLine1,
+                    AddressLine2 = merchant.AddressLine2,
+                    Town = merchant.Town,
+                    Region = merchant.Region,
+                    PostalCode = merchant.PostalCode,
+                    Country = merchant.Country,
+                    ContactId = this.merchant.ContactId,
+                    ContactName = merchant.ContactName,
+                    ContactEmailAddress = merchant.ContactEmailAddress,
+                    ContactPhoneNumber = merchant.ContactPhoneNumber,
                 };
 
-                    assignedContracts = new List<ContractModel>
-                {
-                    new ContractModel { ContractId = Guid.NewGuid(), Description = "Standard Transaction Contract", OperatorName = "Safaricom" }
-                };
+                var operatorsResultTask = Mediator.Send(new MerchantQueries.GetMerchantOperatorsQuery(correlationId, estateId, MerchantId));
+                var contractsResultTask = Mediator.Send(new MerchantQueries.GetMerchantContractsQuery(correlationId, estateId, MerchantId));
+                var devicesResultTask = Mediator.Send(new MerchantQueries.GetMerchantDevicesQuery(correlationId, estateId, MerchantId));
 
-                    assignedDevices = new List<string> { "DEVICE001", "DEVICE002" };
-                }
+                await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask);
+
+                if (operatorsResultTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(operatorsResultTask.Result);
+
+                if (contractsResultTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(contractsResultTask.Result);
+
+                if (devicesResultTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(devicesResultTask.Result);
+
+                assignedOperators = ModelFactory.ConvertFrom(operatorsResultTask.Result.Data);
+                assignedContracts = ModelFactory.ConvertFrom(contractsResultTask.Result.Data);
+                this.assignedDevices = ModelFactory.ConvertFrom(devicesResultTask.Result.Data);
 
                 return Result.Success();
             }
@@ -333,7 +340,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                     var op = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
                     if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId))
                     {
-                        assignedOperators.Add(op);
+                        assignedOperators.Add(new MerchantOperatorModel() {
+                            OperatorId = op.OperatorId,
+                            OperatorName = op.Name
+                        });
                     }
                 }
                 else
@@ -354,12 +364,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+                var estateId = await this.GetEstateId();
 
-                var command = new Commands.RemoveOperatorFromMerchantCommand(
+                var command = new MerchantCommands.RemoveOperatorFromMerchantCommand(
                     correlationId,
-                    accessToken,
                     estateId,
                     MerchantId,
                     operatorId
@@ -416,7 +424,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                     var contract = availableContracts?.FirstOrDefault(c => c.ContractId == contractId);
                     if (contract != null && !assignedContracts.Any(a => a.ContractId == contractId))
                     {
-                        assignedContracts.Add(contract);
+                        assignedContracts.Add(new MerchantContractModel() {
+                            OperatorName = contract.OperatorName,
+                            ContractName = contract.Description,
+                            ContractId = contract.ContractId
+                            // TODO: products
+                        });
                     }
                 }
                 else
@@ -491,7 +504,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 if (result.IsSuccess)
                 {
                     successMessage = "Device added successfully";
-                    assignedDevices.Add(deviceIdentifier);
+                    assignedDevices.Add(new MerchantDeviceModel() {
+                        DeviceIdentifier = this.deviceIdentifier
+                    });
                     deviceIdentifier = null;
                     showAddDevice = false;
                 }
@@ -509,7 +524,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private void RemoveDevice(string device)
         {
             ClearMessages();
-            assignedDevices.Remove(device);
+            var d = this.assignedDevices.Single(d => d.DeviceIdentifier == device);
+            assignedDevices.Remove(d);
             successMessage = "Device removed successfully";
         }
 

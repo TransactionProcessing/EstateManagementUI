@@ -241,7 +241,7 @@
                     <div class="space-y-2">
                         @foreach (var op in assignedOperators) {
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <span class="font-medium">@op.Name</span>
+                                <span class="font-medium">@op.OperatorName</span>
                                 <button type="button" @onclick="() => RemoveOperatorFromMerchant(op.OperatorId)" class="text-red-600 hover:text-red-800">
                                     Remove
                                 </button>
@@ -287,7 +287,7 @@
                         @foreach (var contract in assignedContracts) {
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <div>
-                                    <p class="font-medium">@contract.Description</p>
+                                    <p class="font-medium">@contract.ContractName</p>
                                     <p class="text-sm text-gray-600">Operator: @contract.OperatorName</p>
                                 </div>
                                 <button type="button" @onclick="() => RemoveContractFromMerchant(contract.ContractId)" class="text-red-600 hover:text-red-800">
@@ -328,7 +328,7 @@
                         @foreach (var device in assignedDevices) {
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                 <span class="font-mono">@device</span>
-                                <button type="button" @onclick="() => RemoveDevice(device)" class="text-red-600 hover:text-red-800">
+                                <button type="button" @onclick="() => RemoveDevice(device.DeviceIdentifier)" class="text-red-600 hover:text-red-800">
                                     Remove
                                 </button>
                             </div>
