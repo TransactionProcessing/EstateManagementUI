@@ -74,6 +74,13 @@ public class OperatorModel
     public bool RequireCustomTerminalNumber { get; set; }
 }
 
+public class ContractDropDownModel
+{
+    public Guid ContractId { get; set; }
+    public string? Description { get; set; }
+    public string? OperatorName { get; set; }
+}
+
 // Contract Models
 public class ContractModel
 {

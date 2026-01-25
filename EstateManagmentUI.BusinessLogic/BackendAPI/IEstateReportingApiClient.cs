@@ -44,6 +44,9 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
 
         Task<Result<List<Contract>>> GetRecentContracts(String accessToken,
                                                         Guid estateId, CancellationToken cancellationToken);
+
+        Task<Result<List<Contract>>> GetContracts(String accessToken,
+                                                        Guid estateId, CancellationToken cancellationToken);
         Task<Result<TodaysSales>> GetTodaysSales(String accessToken,
                                                  Guid estateId,
                                                  Int32 merchantReportingId,
@@ -414,6 +417,33 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             }
         }
 
+        public async Task<Result<List<Contract>>> GetContracts(String accessToken,
+                                                                     Guid estateId,
+                                                                     CancellationToken cancellationToken)
+        {
+            String requestUri = this.BuildRequestUrl("/api/contracts");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<Contract>> result = await this.SendHttpGetRequest<List<Contract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting contracts for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
         public async Task<Result<List<Contract>>> GetRecentContracts(String accessToken,
                                                                      Guid estateId,
                                                                      CancellationToken cancellationToken) {
@@ -434,7 +464,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             catch (Exception ex)
             {
                 // An exception has occurred, add some additional information to the message
-                Exception exception = new Exception($"Error getting recent merchants for estate {estateId}.", ex);
+                Exception exception = new Exception($"Error getting recent contracts for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

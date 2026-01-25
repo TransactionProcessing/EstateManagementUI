@@ -62,6 +62,13 @@ public class ContractModel
     public List<ContractProductModel>? Products { get; set; }
 }
 
+public class ContractDropDownModel
+{
+    public Guid ContractId { get; set; }
+    public string? Description { get; set; }
+    public string? OperatorName { get; set; }
+}
+
 public class ContractProductModel
 {
     public Guid ContractProductId { get; set; }

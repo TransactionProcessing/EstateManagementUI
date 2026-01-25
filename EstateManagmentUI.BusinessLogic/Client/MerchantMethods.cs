@@ -13,7 +13,6 @@ namespace EstateManagementUI.BusinessLogic.Client
     {
         Task<Result<MerchantKpiModel>> GetMerchantKpi(MerchantQueries.GetMerchantKpiQuery request, CancellationToken cancellationToken);
         Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(MerchantQueries.GetRecentMerchantsQuery request, CancellationToken cancellationToken);
-        Task<Result<List<RecentContractModel>>> GetRecentContracts(Queries.GetRecentContractsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantListModel>>> GetMerchants(MerchantQueries.GetMerchantsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantDropDownModel>>> GetMerchants(MerchantQueries.GetMerchantsForDropDownQuery request, CancellationToken cancellationToken);
         Task<Result<MerchantModel>> GetMerchant(MerchantQueries.GetMerchantQuery request, CancellationToken cancellationToken);
@@ -26,6 +25,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> AddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> RemoveContractFromMerchant(MerchantCommands.RemoveContractFromMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> AddContractToMerchant(MerchantCommands.AssignContractToMerchantCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -53,6 +53,21 @@ namespace EstateManagementUI.BusinessLogic.Client
                 return ResultHelpers.CreateFailure(token);
 
             var apiResult = await this.TransactionProcessorClient.RemoveContractFromMerchant(token.Data, request.EstateId, request.MerchantId, request.ContractId, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> AddContractToMerchant(MerchantCommands.AssignContractToMerchantCommand request,
+                                                          CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            AddMerchantContractRequest apiRequest = new() { ContractId = request.ContractId };
+
+            var apiResult = await this.TransactionProcessorClient.AddContractToMerchant(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
@@ -105,23 +120,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
             return Result.Success(recentMerchantsModels);
         }
-
-        public async Task<Result<List<RecentContractModel>>> GetRecentContracts(Queries.GetRecentContractsQuery request,
-                                                                                CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
-            if (token.IsFailed)
-                return ResultHelpers.CreateFailure(token);
-
-            Result<List<Contract>> apiResult = await this.EstateReportingApiClient.GetRecentContracts(token.Data, request.EstateId, cancellationToken);
-
-            if (apiResult.IsFailed)
-                return ResultHelpers.CreateFailure(apiResult);
-
-            List<RecentContractModel> recentContractModels = APIModelFactory.ConvertFrom(apiResult.Data);
-
-            return Result.Success(recentContractModels);
-        }
-
+        
         public async Task<Result<List<MerchantListModel>>> GetMerchants(MerchantQueries.GetMerchantsQuery request,
                                                                         CancellationToken cancellationToken)
         {

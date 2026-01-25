@@ -38,7 +38,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private string? terminalNumberError;
 
         // Contracts
-        private List<ContractModel>? availableContracts;
+        private List<ContractDropDownModel>? availableContracts;
         private List<MerchantContractModel> assignedContracts = new();
         private bool showAddContract = false;
         private string? selectedContractId;
@@ -163,10 +163,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private async Task<Result> LoadContracts()
         {
             var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
+            var estateId = await this.GetEstateId();
 
-            var result = await Mediator.Send(new Queries.GetContractsQuery(correlationId, accessToken, estateId));
+            var result = await Mediator.Send(new ContractQueries.GetContractsForDropDownQuery(correlationId,  estateId));
             if (result.IsFailed)
             {
                 return ResultHelpers.CreateFailure(result);
@@ -174,7 +173,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             
             var unfiltered = ModelFactory.ConvertFrom(result.Data);
             this.availableContracts = unfiltered.Where(u => this.assignedContracts.Select(a => a.ContractId).Contains(u.ContractId) == false).ToList();
-
+            
             return Result.Success();
         }
 
@@ -408,13 +407,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+                var estateId = await this.GetEstateId();
                 var contractId = Guid.Parse(selectedContractId);
 
-                var command = new Commands.AssignContractToMerchantCommand(
+                var command = new MerchantCommands.AssignContractToMerchantCommand(
                     correlationId,
-                    accessToken,
                     estateId,
                     MerchantId,
                     contractId
@@ -433,7 +430,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                     if (contract != null && !assignedContracts.Any(a => a.ContractId == contractId))
                     {
                         assignedContracts.Add(new MerchantContractModel() {
-                            OperatorName = contract.OperatorName,
                             ContractName = contract.Description,
                             ContractId = contract.ContractId
                             // TODO: products

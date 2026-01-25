@@ -28,7 +28,7 @@ public class ContractsViewPageTests : BaseTest
             OperatorName = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
             .ReturnsAsync(Result.Success(contract));
         
         // Act
@@ -51,7 +51,7 @@ public class ContractsViewPageTests : BaseTest
             OperatorName = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
             .ReturnsAsync(Result.Success(contract));
         
         // Act
@@ -68,7 +68,7 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetContractQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
             .ReturnsAsync(Result.Success(new ContractModel { ContractId = contractId }));
         
         // Act
