@@ -323,7 +323,7 @@
                 @if (assignedDevices == null || !assignedDevices.Any()) {
                     <p class="text-gray-500 text-center py-8">No devices assigned</p>
                 }
-                else {
+            @* else {
                     <div class="space-y-2">
                         @foreach (var device in assignedDevices) {
                             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -334,7 +334,42 @@
                             </div>
                         }
                     </div>
-                }
+                } *@
+            else {
+                <div class="space-y-2">
+                    @foreach (var device in assignedDevices) {
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <span class="font-mono">@device.DeviceIdentifier</span>
+                            </div>
+
+                            @if (selectedDeviceToSwap == device.DeviceIdentifier) {
+                                <div class="flex items-center space-x-2">
+                                    <input @bind="swapDeviceIdentifier" type="text" class="input" placeholder="Enter new device identifier" />
+                                    <button type="button" @onclick="() => SwapDeviceConfirm(device.DeviceIdentifier)" class="btn btn-primary">
+                                        Confirm
+                                    </button>
+                                    <button type="button" @onclick="CancelSwapDevice" class="btn btn-secondary">
+                                        Cancel
+                                    </button>
+                                </div>
+                            }
+                            else {
+                                <div>
+                                                    <button type="button" @onclick="() => StartSwapDevice(device.DeviceIdentifier)" class="btn btn-secondary">
+                                        Swap
+                                    </button>
+                                </div>
+                            }
+                        </div>
+
+                                        @if (selectedDeviceToSwap == device.DeviceIdentifier && !string.IsNullOrEmpty(swapDeviceError))
+                                        {
+                            <p class="text-red-600 text-sm mt-1">@swapDeviceError</p>
+                        }
+                    }
+                </div>
+            }
             </div>
         }
         </div>

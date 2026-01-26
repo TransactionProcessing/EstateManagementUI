@@ -80,8 +80,8 @@ public class TestMediatorService : IMediator
             MerchantCommands.RemoveOperatorFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromMerchant(cmd)),
             EstateCommands.AddOperatorToEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToEstate(cmd)),
             EstateCommands.RemoveOperatorFromEstateCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveOperatorFromEstate(cmd)),
-            Commands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
+            MerchantCommands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
+            MerchantCommands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteMakeMerchantDeposit(cmd)),
             
