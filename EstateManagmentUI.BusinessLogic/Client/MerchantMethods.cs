@@ -28,6 +28,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> AddContractToMerchant(MerchantCommands.AssignContractToMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> AddDeviceToMerchant(MerchantCommands.AddMerchantDeviceCommand request, CancellationToken cancellationToken);
         Task<Result> SwapMerchantDevice(MerchantCommands.SwapMerchantDeviceCommand request, CancellationToken cancellationToken);
+        Task<Result> MakeMerchantDeposit(MerchantCommands.MakeMerchantDepositCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -100,6 +101,21 @@ namespace EstateManagementUI.BusinessLogic.Client
             SwapMerchantDeviceRequest apiRequest = new() { NewDeviceIdentifier  = request.NewDevice};
 
             var apiResult = await this.TransactionProcessorClient.SwapDeviceForMerchant(token.Data, request.EstateId, request.MerchantId, request.OldDevice,apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> MakeMerchantDeposit(MerchantCommands.MakeMerchantDepositCommand request,
+                                                      CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            MakeMerchantDepositRequest apiRequest = new() { Amount = request.Amount, DepositDateTime = request.Date, Reference = request.Reference};
+
+            var apiResult = await this.TransactionProcessorClient.MakeMerchantDeposit(token.Data, request.EstateId, request.MerchantId,apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 

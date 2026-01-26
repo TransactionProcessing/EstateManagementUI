@@ -57,7 +57,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                         IRequestHandler<MerchantCommands.AddMerchantDeviceCommand, Result>,
                                         IRequestHandler<MerchantCommands.AddOperatorToMerchantCommand, Result>,
                                         IRequestHandler<Commands.CreateMerchantCommand, Result>,
-                                        IRequestHandler<Commands.MakeMerchantDepositCommand, Result>,
+                                        IRequestHandler<MerchantCommands.MakeMerchantDepositCommand, Result>,
                                         IRequestHandler<MerchantCommands.RemoveContractFromMerchantCommand, Result>,
                                         IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
                                         IRequestHandler<MerchantCommands.SwapMerchantDeviceCommand, Result>,
@@ -97,9 +97,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return Result.Success();
         }
 
-        public async Task<Result> Handle(Commands.MakeMerchantDepositCommand request,
+        public async Task<Result> Handle(MerchantCommands.MakeMerchantDepositCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.MakeMerchantDeposit(request, cancellationToken);
         }
 
         public async Task<Result> Handle(MerchantCommands.RemoveContractFromMerchantCommand request,
