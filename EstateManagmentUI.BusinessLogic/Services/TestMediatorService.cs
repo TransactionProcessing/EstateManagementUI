@@ -65,9 +65,9 @@ public class TestMediatorService : IMediator
             Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockMerchantSettlementHistory(query))),
             Queries.GetSettlementSummaryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockSettlementSummary(query))),
             Queries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result.Success(this.GetMockTransactionDetails(q))),
-            
+
             // Commands - execute against test data store
-            Commands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
+            MerchantCommands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
             MerchantCommands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchant(cmd)),
             Commands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
             Commands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
@@ -145,14 +145,14 @@ public class TestMediatorService : IMediator
     }
 
     // Command execution methods
-    private Result ExecuteCreateMerchant(Commands.CreateMerchantCommand cmd)
+    private Result ExecuteCreateMerchant(MerchantCommands.CreateMerchantCommand cmd)
     {
         var merchant = new MerchantModel
         {
             MerchantId = Guid.NewGuid(),
             MerchantName = cmd.Name,
-            ContactName = cmd.ContactName,
-            ContactEmailAddress = cmd.ContactEmail,
+            ContactName = cmd.MerchantContact.ContactName,
+            ContactEmailAddress = cmd.MerchantContact.ContactEmail,
             SettlementSchedule = "Immediate"
         };
         this._testDataStore.AddMerchant(cmd.EstateId, merchant);
