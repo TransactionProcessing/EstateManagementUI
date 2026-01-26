@@ -29,6 +29,14 @@
             <p class="text-sm">@errorMessage</p>
         </div>
     }
+    
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <p class="font-medium">Success</p>
+            <p class="text-sm">@successMessage</p>
+        </div>
+    }
 
     <!-- Form -->
     <div class="bg-white rounded-lg shadow-md p-6">
@@ -169,139 +177,3 @@
         </EditForm>
     </div>
 </div>
-
-@code {
-    private readonly New.CreateMerchantModel model = new();
-    private bool isSaving = false;
-    private string? errorMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RequirePermission(PermissionSection.Merchant, PermissionFunction.Create);
-    }
-
-    private async Task HandleSubmit()
-    {
-        isSaving = true;
-        errorMessage = null;
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            // Create merchant
-            var createCommand = new Commands.CreateMerchantCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                model.MerchantName!,
-                model.ContactName!,
-                model.EmailAddress!
-            );
-
-            var createResult = await Mediator.Send(createCommand);
-
-            if (!createResult.IsSuccess)
-            {
-                errorMessage = createResult.Message ?? "Failed to create merchant";
-                return;
-            }
-
-            // Get the newly created merchant ID (in real implementation, this would be returned from the create command)
-            var merchantId = Guid.NewGuid();
-
-            // // Update address
-            // var addressCommand = new Commands.UpdateMerchantAddressCommand(
-            //     correlationId,
-            //     accessToken,
-            //     estateId,
-            //     merchantId,
-            //     model.AddressLine1!,
-            //     model.Town!,
-            //     model.Region!,
-            //     model.PostCode!,
-            //     model.Country!
-            // );
-
-            // await Mediator.Send(addressCommand);
-
-            // // Update contact (including phone)
-            // var contactCommand = new Commands.UpdateMerchantContactCommand(
-            //     correlationId,
-            //     accessToken,
-            //     estateId,
-            //     merchantId,
-            //     model.ContactName!,
-            //     model.EmailAddress!,
-            //     model.PhoneNumber!
-            // );
-
-            // await Mediator.Send(contactCommand);
-
-            // // Set settlement schedule
-            // var scheduleCommand = new Commands.SetMerchantSettlementScheduleCommand(
-            //     correlationId,
-            //     accessToken,
-            //     estateId,
-            //     merchantId,
-            //     model.SettlementSchedule!
-            // );
-
-            // await Mediator.Send(scheduleCommand);
-
-            // Navigate to merchant list
-            NavigationManager.NavigateTo($"/merchants");
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            isSaving = false;
-        }
-    }
-
-    private void Cancel()
-    {
-        NavigationManager.NavigateTo("/merchants");
-    }
-
-    public class CreateMerchantModel
-    {
-        [Required(ErrorMessage = "Merchant name is required")]
-        public string? MerchantName { get; set; }
-
-        [Required(ErrorMessage = "Settlement schedule is required")]
-        public string? SettlementSchedule { get; set; }
-
-        [Required(ErrorMessage = "Address line 1 is required")]
-        public string? AddressLine1 { get; set; }
-
-        public string? AddressLine2 { get; set; }
-
-        [Required(ErrorMessage = "Town is required")]
-        public string? Town { get; set; }
-
-        [Required(ErrorMessage = "Region is required")]
-        public string? Region { get; set; }
-
-        [Required(ErrorMessage = "PostCode is required")]
-        public string? PostCode { get; set; }
-
-        [Required(ErrorMessage = "Country is required")]
-        public string? Country { get; set; }
-
-        [Required(ErrorMessage = "Contact name is required")]
-        public string? ContactName { get; set; }
-
-        [Required(ErrorMessage = "Email address is required")]
-        [EmailAddress(ErrorMessage = "Invalid email address")]
-        public string? EmailAddress { get; set; }
-
-        [Required(ErrorMessage = "Phone number is required")]
-        public string? PhoneNumber { get; set; }
-    }
-}

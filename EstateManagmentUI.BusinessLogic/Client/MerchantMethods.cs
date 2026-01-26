@@ -29,6 +29,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> AddDeviceToMerchant(MerchantCommands.AddMerchantDeviceCommand request, CancellationToken cancellationToken);
         Task<Result> SwapMerchantDevice(MerchantCommands.SwapMerchantDeviceCommand request, CancellationToken cancellationToken);
         Task<Result> MakeMerchantDeposit(MerchantCommands.MakeMerchantDepositCommand request, CancellationToken cancellationToken);
+        Task<Result> CreateMerchant(MerchantCommands.CreateMerchantCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -116,6 +117,34 @@ namespace EstateManagementUI.BusinessLogic.Client
             MakeMerchantDepositRequest apiRequest = new() { Amount = request.Amount, DepositDateTime = request.Date, Reference = request.Reference};
 
             var apiResult = await this.TransactionProcessorClient.MakeMerchantDeposit(token.Data, request.EstateId, request.MerchantId,apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> CreateMerchant(MerchantCommands.CreateMerchantCommand request,
+                                                 CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            SettlementSchedule settlementSchedule = Enum.Parse<SettlementSchedule>(request.SettlementSchedule);
+            CreateMerchantRequest apiRequest = new() { MerchantId = request.MerchantId, Name = request.Name,SettlementSchedule = settlementSchedule, Address = new Address {
+                AddressLine1 = request.MerchantAddress.AddressLine1,
+                Town = request.MerchantAddress.Town,
+                Country = request.MerchantAddress.Country,
+                PostalCode = request.MerchantAddress.PostalCode,
+                Region = request.MerchantAddress.Region
+            },
+                Contact = new Contact {
+                    ContactName = request.MerchantContact.ContactName,
+                    EmailAddress = request.MerchantContact.ContactEmail,
+                    PhoneNumber = request.MerchantContact.ContactPhone
+                }
+            };
+
+            var apiResult = await this.TransactionProcessorClient.CreateMerchant(token.Data, request.EstateId, apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
