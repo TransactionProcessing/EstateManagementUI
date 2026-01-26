@@ -2,7 +2,9 @@
 using EstateManagementUI.BlazorServer.Factories;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
+using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Shared.Results;
@@ -490,21 +492,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             try
             {
                 var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+                var estateId = await this.GetEstateId();
 
-                var command = new Commands.AddMerchantDeviceCommand(
-                    correlationId,
-                    accessToken,
-                    estateId,
-                    MerchantId,
-                    deviceIdentifier
-                );
-
+                IRequest<Result> command = new MerchantCommands.AddMerchantDeviceCommand(correlationId, estateId, MerchantId, deviceIdentifier);
                 var result = await Mediator.Send(command);
 
-                if (result.IsSuccess)
-                {
+                if (result.IsSuccess) {
                     successMessage = "Device added successfully";
                     assignedDevices.Add(new MerchantDeviceModel() {
                         DeviceIdentifier = this.deviceIdentifier
@@ -523,15 +516,71 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             }
         }
 
-        private void RemoveDevice(string device)
-        {
-            ClearMessages();
-            var d = this.assignedDevices.Single(d => d.DeviceIdentifier == device);
-            assignedDevices.Remove(d);
-            successMessage = "Device removed successfully";
+    // inside partial class Edit (add the following fields and methods)
+
+        // Swap device UI state
+        private string? selectedDeviceToSwap;
+    private string? swapDeviceIdentifier;
+    private string? swapDeviceError;
+
+    private void StartSwapDevice(string device)
+    {
+        ClearMessages();
+        selectedDeviceToSwap = device;
+        swapDeviceIdentifier = string.Empty;
+        swapDeviceError = null;
+    }
+
+    private void CancelSwapDevice()
+    {
+        swapDeviceIdentifier = null;
+        swapDeviceError = null;
+        selectedDeviceToSwap = null;
+    }
+
+    private async Task SwapDeviceConfirm(string originalDevice)
+    {
+        ClearMessages();
+
+        var newId = swapDeviceIdentifier?.Trim();
+
+        // Validation
+        if (string.IsNullOrWhiteSpace(newId)) {
+            swapDeviceError = "New device identifier is required.";
+            return;
         }
 
-        private void ClearMessages()
+        // Case-insensitive comparison for equality/duplicates
+        if (string.Equals(originalDevice?.Trim(), newId, StringComparison.OrdinalIgnoreCase)) {
+            swapDeviceError = "New device identifier cannot be the same as the current device.";
+            return;
+        }
+
+        if (assignedDevices.Any(d => string.Equals(d.DeviceIdentifier.Trim(), newId, StringComparison.OrdinalIgnoreCase))) {
+            swapDeviceError = "The specified device identifier is already assigned.";
+            return;
+        }
+
+        var correlationId = new CorrelationId(Guid.NewGuid());
+        var estateId = await this.GetEstateId();
+        var command = new MerchantCommands.SwapMerchantDeviceCommand(correlationId, estateId, this.MerchantId, this.assignedDevices.Single().DeviceIdentifier, newId);
+
+        var result = await Mediator.Send(command);
+
+        if (result.IsSuccess) {
+                successMessage = $"Device {originalDevice} swapped for {newId}.";
+            }
+            else {
+                swapDeviceError = "Original device not found.";
+            }
+
+            // Reset swap UI
+            CancelSwapDevice();
+            StateHasChanged();
+    }
+
+
+    private void ClearMessages()
         {
             errorMessage = null;
             successMessage = null;

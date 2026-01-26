@@ -82,18 +82,20 @@ public static class MerchantCommands {
     public record AddOperatorToMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid OperatorId, string? MerchantNumber, string? TerminalNumber) : IRequest<Result>;
     public record RemoveContractFromMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
     public record AssignContractToMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, Guid ContractId) : IRequest<Result>;
+    public record AddMerchantDeviceCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, string DeviceIdentifier) : IRequest<Result>;
+    public record SwapMerchantDeviceCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, string OldDevice, string NewDevice) : IRequest<Result>;
 }
 
 public static class Commands
 {
-    public record AddMerchantDeviceCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string DeviceIdentifier) : IRequest<Result>;
+    
     public record CreateContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Description, Guid OperatorId) : IRequest<Result>;
     public record CreateMerchantCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, string ContactName, string ContactEmail) : IRequest<Result>;
     public record CreateMerchantUserCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string EmailAddress, string Password) : IRequest<Result>;
     public record CreateOperatorCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
     public record MakeMerchantDepositCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, decimal Amount, DateTime Date, string Reference) : IRequest<Result>;
     
-    public record SwapMerchantDeviceCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string OldDevice, string NewDevice) : IRequest<Result>;
+    
     public record UpdateOperatorCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
     public record AddProductToContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId, string ProductName, string DisplayText, decimal? Value) : IRequest<Result>;
     public record AddTransactionFeeForProductToContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId, Guid ProductId, string Description, decimal Value) : IRequest<Result>;

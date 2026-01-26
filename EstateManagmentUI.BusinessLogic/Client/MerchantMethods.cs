@@ -26,6 +26,8 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> AddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> RemoveContractFromMerchant(MerchantCommands.RemoveContractFromMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> AddContractToMerchant(MerchantCommands.AssignContractToMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> AddDeviceToMerchant(MerchantCommands.AddMerchantDeviceCommand request, CancellationToken cancellationToken);
+        Task<Result> SwapMerchantDevice(MerchantCommands.SwapMerchantDeviceCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -68,6 +70,36 @@ namespace EstateManagementUI.BusinessLogic.Client
             AddMerchantContractRequest apiRequest = new() { ContractId = request.ContractId };
 
             var apiResult = await this.TransactionProcessorClient.AddContractToMerchant(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> AddDeviceToMerchant(MerchantCommands.AddMerchantDeviceCommand request,
+                                                      CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            AddMerchantDeviceRequest apiRequest = new() { DeviceIdentifier = request.DeviceIdentifier};
+
+            var apiResult = await this.TransactionProcessorClient.AddDeviceToMerchant(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> SwapMerchantDevice(MerchantCommands.SwapMerchantDeviceCommand request,
+                                                     CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            SwapMerchantDeviceRequest apiRequest = new() { NewDeviceIdentifier  = request.NewDevice};
+
+            var apiResult = await this.TransactionProcessorClient.SwapDeviceForMerchant(token.Data, request.EstateId, request.MerchantId, request.OldDevice,apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 

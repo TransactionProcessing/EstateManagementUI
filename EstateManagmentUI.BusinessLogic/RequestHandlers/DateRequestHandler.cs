@@ -54,13 +54,13 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
     public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchantsQuery, Result<List<MerchantListModel>>>,
                                         IRequestHandler<MerchantQueries.GetMerchantQuery, Result<MerchantModel>>,
-                                        IRequestHandler<Commands.AddMerchantDeviceCommand, Result>,
+                                        IRequestHandler<MerchantCommands.AddMerchantDeviceCommand, Result>,
                                         IRequestHandler<MerchantCommands.AddOperatorToMerchantCommand, Result>,
                                         IRequestHandler<Commands.CreateMerchantCommand, Result>,
                                         IRequestHandler<Commands.MakeMerchantDepositCommand, Result>,
                                         IRequestHandler<MerchantCommands.RemoveContractFromMerchantCommand, Result>,
                                         IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
-                                        IRequestHandler<Commands.SwapMerchantDeviceCommand, Result>,
+                                        IRequestHandler<MerchantCommands.SwapMerchantDeviceCommand, Result>,
                                         IRequestHandler<MerchantCommands.UpdateMerchantCommand, Result>,
                                         IRequestHandler<MerchantCommands.AssignContractToMerchantCommand, Result>,
                                         IRequestHandler<MerchantQueries.GetRecentMerchantsQuery, Result<List<RecentMerchantsModel>>>,
@@ -82,9 +82,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return await this.ApiClient.GetMerchants(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(Commands.AddMerchantDeviceCommand request,
+        public async Task<Result> Handle(MerchantCommands.AddMerchantDeviceCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.AddDeviceToMerchant(request, cancellationToken);
         }
 
         public async Task<Result> Handle(MerchantCommands.AddOperatorToMerchantCommand request,
@@ -112,9 +112,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return await this.ApiClient.RemoveOperatorFromMerchant(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(Commands.SwapMerchantDeviceCommand request,
+        public async Task<Result> Handle(MerchantCommands.SwapMerchantDeviceCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.SwapMerchantDevice(request, cancellationToken);
         }
 
 
