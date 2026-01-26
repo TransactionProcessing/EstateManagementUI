@@ -83,7 +83,7 @@ public class TestMediatorService : IMediator
             MerchantCommands.AddMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             MerchantCommands.SwapMerchantDeviceCommand => Task.FromResult((TResponse)(object)Result.Success()),
             Commands.CreateMerchantUserCommand => Task.FromResult((TResponse)(object)Result.Success()),
-            Commands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteMakeMerchantDeposit(cmd)),
+            MerchantCommands.MakeMerchantDepositCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteMakeMerchantDeposit(cmd)),
             
             _ => throw new NotImplementedException($"Request type {request.GetType().Name} is not implemented in test mediator")
         };
@@ -299,7 +299,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteMakeMerchantDeposit(Commands.MakeMerchantDepositCommand cmd)
+    private Result ExecuteMakeMerchantDeposit(MerchantCommands.MakeMerchantDepositCommand cmd)
     {
         var merchant = this._testDataStore.GetMerchant(cmd.EstateId, cmd.MerchantId);
         if (merchant == null)

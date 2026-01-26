@@ -10,24 +10,6 @@
 
 <PageTitle>Make Merchant Deposit</PageTitle>
 
-@if (!hasPermission)
-{
-    <div class="space-y-6">
-        <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-8 rounded-lg text-center">
-            <svg class="w-16 h-16 mx-auto mb-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-            <h2 class="text-2xl font-bold mb-2">Access Denied</h2>
-            <p class="text-lg mb-4">You don't have permission to make deposits.</p>
-            <p class="mb-6">This operation requires the MakeDeposit permission for the Merchant section.</p>
-            <button class="btn btn-primary" @onclick="@(() => NavigationManager.NavigateTo("/merchants"))">
-                Back to Merchants
-            </button>
-        </div>
-    </div>
-}
-else
-{
     <div class="space-y-6">
         <!-- Page Header -->
         <div class="flex items-center justify-between">
@@ -48,6 +30,14 @@ else
             <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 <p class="font-medium">Error</p>
                 <p class="text-sm">@errorMessage</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Success</p>
+                <p class="text-sm">@successMessage</p>
             </div>
         }
 
@@ -104,118 +94,3 @@ else
             </EditForm>
         </div>
     </div>
-}
-
-@code {
-    [Parameter]
-    public Guid MerchantId { get; set; }
-
-    private DepositModel model = new();
-    private bool isSaving = false;
-    private string? errorMessage;
-    private string? merchantName;
-    private bool hasPermission = false;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RequirePermission(PermissionSection.Merchant, PermissionFunction.MakeDeposit);
-        
-        // Set default date to today
-        model.Date = DateTime.Today;
-
-        // Load merchant name
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var result = await Mediator.Send(new MerchantQueries.GetMerchantQuery(correlationId, estateId, MerchantId));
-            if (result.IsSuccess && result.Data != null)
-            {
-                merchantName = result.Data.MerchantName;
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load merchant details: {ex.Message}";
-        }
-    }
-
-    private async Task HandleSubmit()
-    {
-        isSaving = true;
-        errorMessage = null;
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var command = new Commands.MakeMerchantDepositCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                MerchantId,
-                model.Amount,
-                model.Date,
-                model.Reference!
-            );
-
-            var result = await Mediator.Send(command);
-
-            if (!result.IsSuccess)
-            {
-                errorMessage = result.Message ?? "Failed to make deposit";
-                return;
-            }
-
-            // Navigate back to merchant list on success
-            NavigationManager.NavigateTo("/merchants");
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            isSaving = false;
-        }
-    }
-
-    private void Cancel()
-    {
-        NavigationManager.NavigateTo("/merchants");
-    }
-
-    public class DepositModel
-    {
-        [Required(ErrorMessage = "Deposit amount is required")]
-        [Range(1, int.MaxValue, ErrorMessage = "Deposit amount must be greater than 0")]
-        public int Amount { get; set; }
-
-        [Required(ErrorMessage = "Date of deposit is required")]
-        [DateNotInFuture(ErrorMessage = "Date cannot be in the future")]
-        public DateTime Date { get; set; } = DateTime.Today;
-
-        [Required(ErrorMessage = "Reference is required")]
-        public string? Reference { get; set; }
-    }
-
-    // Custom validation attribute for date not in future
-    private class DateNotInFutureAttribute : ValidationAttribute
-    {
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-        {
-            if (value is DateTime date)
-            {
-                if (date.Date > DateTime.Today)
-                {
-                    return new ValidationResult(ErrorMessage ?? "Date cannot be in the future");
-                }
-            }
-            return ValidationResult.Success;
-        }
-    }
-}
