@@ -53,7 +53,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            List<OperatorModel> estateOperators = APIModelFactory.ConvertFrom(apiResult.Data);
+            List<OperatorModel> estateOperators = apiResult.Data.ToOperator();
 
             return Result.Success(estateOperators);
         }

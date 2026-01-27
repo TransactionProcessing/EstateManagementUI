@@ -133,7 +133,7 @@ else
     }
 </div>
 
-@code {
+    @code {
     [Parameter]
     public Guid OperatorId { get; set; }
 
@@ -145,11 +145,16 @@ else
     private string? errorMessage;
     private string? successMessage;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            return;
+        }
+
         await RequirePermission(PermissionSection.Operator, PermissionFunction.Edit);
         await LoadOperator();
-
     }
 
     private async Task LoadOperator()
@@ -158,10 +163,9 @@ else
         {
             isLoading = true;
             var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
+            var estateId = await GetEstateId();
 
-            var result = await Mediator.Send(new OperatorQueries.GetOperatorQuery(correlationId, accessToken, estateId, OperatorId));
+            var result = await Mediator.Send(new OperatorQueries.GetOperatorQuery(correlationId,  estateId, OperatorId));
             
             if (result.IsSuccess && result.Data != null)
             {

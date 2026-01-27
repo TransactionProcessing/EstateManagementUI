@@ -99,11 +99,37 @@ public static class APIModelFactory {
 
         return model;
     }
-    
-    public static List<OperatorModel> ConvertFrom(List<EstateOperator> apiResultData) {
+}
+
+public  static class FactoryExtensions{
+
+    public static OperatorModel ToOperator(this Operator apiResultData) {
+        OperatorModel model = new() {
+            Name = apiResultData.Name,
+            OperatorId = apiResultData.OperatorId,
+            RequireCustomMerchantNumber = apiResultData.RequireCustomMerchantNumber,
+            RequireCustomTerminalNumber = apiResultData.RequireCustomTerminalNumber
+        };
+        return model;
+    }
+
+    public static List<OperatorModel> ToOperator(this List<Operator> apiResultData)
+    {
         List<OperatorModel> operators = new();
-        foreach (EstateOperator estateOperator in apiResultData) {
-            operators.Add(new OperatorModel() {
+        foreach (Operator op in apiResultData) {
+            operators.Add(op.ToOperator());
+        }
+
+        return operators;
+    }
+
+    public static List<OperatorModel> ToOperator(this List<EstateOperator> apiResultData)
+    {
+        List<OperatorModel> operators = new();
+        foreach (EstateOperator estateOperator in apiResultData)
+        {
+            operators.Add(new OperatorModel()
+            {
                 Name = estateOperator.Name,
                 OperatorId = estateOperator.OperatorId,
                 RequireCustomMerchantNumber = estateOperator.RequireCustomMerchantNumber,
@@ -113,21 +139,6 @@ public static class APIModelFactory {
         return operators;
     }
 
-    public static List<OperatorModel> ConvertFrom(List<Operator> apiResultData) {
-        List<OperatorModel> operators = new();
-        foreach (Operator op in apiResultData)
-        {
-            operators.Add(new OperatorModel()
-            {
-                Name = op.Name,
-                OperatorId = op.OperatorId
-            });
-        }
-        return operators;
-    }
-}
-
-public  static class FactoryExtensions{
     public static List<RecentMerchantsModel> ToRecentMerchant(this List<Merchant> apiResultData)
     {
         List<RecentMerchantsModel> merchants = new();

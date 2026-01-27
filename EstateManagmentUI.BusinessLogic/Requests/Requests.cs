@@ -36,7 +36,7 @@ public static class ContractQueries {
 
 public class OperatorQueries {
     public record GetOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
-    public record GetOperatorQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
+    public record GetOperatorQuery(CorrelationId CorrelationId, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
 }
 
 public static class Queries
