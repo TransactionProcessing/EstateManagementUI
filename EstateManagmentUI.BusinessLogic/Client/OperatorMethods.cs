@@ -19,6 +19,9 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         Task<Result> UpdateOperator(OperatorCommands.UpdateOperatorCommand request,
                                                 CancellationToken cancellationToken);
+
+        Task<Result> CreateOperator(OperatorCommands.CreateOperatorCommand request,
+                                    CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -66,6 +69,22 @@ namespace EstateManagementUI.BusinessLogic.Client
             var apiRequest = new UpdateOperatorRequest() { Name= request.Name, RequireCustomMerchantNumber = request.RequireCustomMerchantNumber, RequireCustomTerminalNumber = request.RequireCustomTerminalNumber};
 
             var apiResult = await this.TransactionProcessorClient.UpdateOperator(token.Data, request.EstateId, request.OperatorId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> CreateOperator(OperatorCommands.CreateOperatorCommand request,
+                                                 CancellationToken cancellationToken)
+        {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiRequest = new CreateOperatorRequest() { Name = request.Name, RequireCustomMerchantNumber = request.RequireCustomMerchantNumber, RequireCustomTerminalNumber = request.RequireCustomTerminalNumber };
+
+            var apiResult = await this.TransactionProcessorClient.CreateOperator(token.Data, request.EstateId, apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 

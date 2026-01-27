@@ -69,7 +69,7 @@ public class TestMediatorService : IMediator
             // Commands - execute against test data store
             MerchantCommands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
             MerchantCommands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchant(cmd)),
-            Commands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
+            OperatorCommands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
             OperatorCommands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
             Commands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
             Commands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
@@ -170,7 +170,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
     
-    private Result ExecuteCreateOperator(Commands.CreateOperatorCommand cmd)
+    private Result ExecuteCreateOperator(OperatorCommands.CreateOperatorCommand cmd)
     {
         var operatorModel = new OperatorModel
         {
