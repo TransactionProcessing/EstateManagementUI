@@ -22,6 +22,11 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                                       Guid estateId,
                                                                       CancellationToken cancellationToken);
 
+        Task<Result<Operator>> GetOperator(String accessToken,
+                                                  Guid estateId,
+                                                  Guid operatorId,
+                                                  CancellationToken cancellationToken);
+
         Task<Result<List<ComparisonDate>>> GetComparisonDates(String accessToken, Guid estateId, CancellationToken cancellationToken);
         Task<Result<MerchantKpi>> GetMerchantKpi(String accessToken, Guid estateId, CancellationToken cancellationToken);
 
@@ -79,6 +84,34 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
         public EstateReportingApiClient(Func<String, String> baseAddressResolver,
                                         HttpClient httpClient) : base(httpClient) {
             this.BaseAddressResolver = baseAddressResolver;
+        }
+
+        public async Task<Result<Operator>> GetOperator(String accessToken,
+                                                              Guid estateId,
+                                                              Guid operatorId,
+                                                              CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/operators/{operatorId}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+
+                Result<Operator> result = await this.SendHttpGetRequest<Operator>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting operators {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
         }
 
         public async Task<Result<Estate>> GetEstate(String accessToken,
