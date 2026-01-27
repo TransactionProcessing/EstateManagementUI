@@ -32,8 +32,8 @@ public class TestMediatorService : IMediator
             MerchantQueries.GetRecentMerchantsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetRecentMerchants(query.EstateId))),
 
             // Operator Queries
-            Queries.GetOperatorsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetOperators(query.EstateId))),
-            Queries.GetOperatorQuery query => Task.FromResult((TResponse)(object)this.GetOperatorResult(query.EstateId, query.OperatorId)),
+            OperatorQueries.GetOperatorsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetOperators(query.EstateId))),
+            OperatorQueries.GetOperatorQuery query => Task.FromResult((TResponse)(object)this.GetOperatorResult(query.EstateId, query.OperatorId)),
 
             // Contract Queries
             ContractQueries.GetContractsQuery query => Task.FromResult((TResponse)(object)Result.Success(this._testDataStore.GetContracts(query.EstateId))),

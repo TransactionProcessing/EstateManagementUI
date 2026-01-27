@@ -150,7 +150,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = await this.GetEstateId();
 
-            var result = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
+            var result = await Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
 
             if (result.IsFailed) {
                 return ResultHelpers.CreateFailure(result);

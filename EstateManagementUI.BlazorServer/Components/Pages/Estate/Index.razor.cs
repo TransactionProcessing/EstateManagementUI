@@ -54,7 +54,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             Task<Result<List<BusinessLogic.Models.RecentMerchantsModel>>> merchantTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.RecentContractModel>>> contractsTask = Mediator.Send(new ContractQueries.GetRecentContractsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.OperatorModel>>> assignedOperatorsTask = Mediator.Send(new EstateQueries.GetAssignedOperatorsQuery(correlationId, estateId));
-            Task<Result<List<BusinessLogic.Models.OperatorModel>>> allOperatorsTask= Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.OperatorModel>>> allOperatorsTask= Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
 
             await Task.WhenAll(estateTask, merchantTask, contractsTask, assignedOperatorsTask, allOperatorsTask);
             

@@ -34,13 +34,13 @@ public static class ContractQueries {
     public record GetContractQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;
 }
 
+public class OperatorQueries {
+    public record GetOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
+    public record GetOperatorQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
+}
+
 public static class Queries
 {
-    
-    public record GetOperatorsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<OperatorModel>>>;
-    
-    public record GetOperatorQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId) : IRequest<Result<OperatorModel>>;
-    
     public record GetFileImportLogsListQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, DateTime StartDate, DateTime EndDate)
         : IRequest<Result<List<FileImportLogModel>>>;
     public record GetFileImportLogQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, Guid FileImportLogId)

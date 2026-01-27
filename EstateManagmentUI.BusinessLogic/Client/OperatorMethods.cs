@@ -10,12 +10,12 @@ namespace EstateManagementUI.BusinessLogic.Client
 {
     public partial interface IApiClient
     {
-        Task<Result<List<OperatorModel>>> GetOperators(Queries.GetOperatorsQuery request,
+        Task<Result<List<OperatorModel>>> GetOperators(OperatorQueries.GetOperatorsQuery request,
                                                                      CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
-        public async Task<Result<List<OperatorModel>>> GetOperators(Queries.GetOperatorsQuery request,
+        public async Task<Result<List<OperatorModel>>> GetOperators(OperatorQueries.GetOperatorsQuery request,
                                                                     CancellationToken cancellationToken) {
             // Get a token here 
             var token = await this.GetToken(cancellationToken);
