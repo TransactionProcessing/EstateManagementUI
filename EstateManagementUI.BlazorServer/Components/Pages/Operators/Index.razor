@@ -113,28 +113,5 @@
 </div>
 
 @code {
-    private bool isLoading = true;
-    private List<OperatorModel> operators;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await RequirePermission(PermissionSection.Operator, PermissionFunction.List);
-
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            var result = await Mediator.Send(new Queries.GetOperatorsQuery(correlationId, estateId));
-            if (result.IsSuccess)
-            {
-                operators = ModelFactory.ConvertFrom(result.Data);
-            }
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
+    
 }

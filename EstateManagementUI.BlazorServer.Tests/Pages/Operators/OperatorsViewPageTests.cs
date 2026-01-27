@@ -26,7 +26,7 @@ public class OperatorsViewPageTests : BaseTest
             Name = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
             .ReturnsAsync(Result.Success(operatorModel));
         
         // Act
@@ -48,7 +48,7 @@ public class OperatorsViewPageTests : BaseTest
             Name = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
             .ReturnsAsync(Result.Success(operatorModel));
         
         // Act
@@ -65,7 +65,7 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
             .ReturnsAsync(Result.Success(new OperatorModel { OperatorId = operatorId }));
         
         // Act

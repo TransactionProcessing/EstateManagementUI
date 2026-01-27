@@ -222,8 +222,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
         }
     }
 
-    public class OperatorRequestHandler : IRequestHandler<Queries.GetOperatorsQuery, Result<List<OperatorModel>>>,
-                                            IRequestHandler<Queries.GetOperatorQuery, Result<OperatorModel>>,
+    public class OperatorRequestHandler : IRequestHandler<OperatorQueries.GetOperatorsQuery, Result<List<OperatorModel>>>,
+                                            IRequestHandler<OperatorQueries.GetOperatorQuery, Result<OperatorModel>>,
                                             IRequestHandler<Commands.CreateOperatorCommand, Result>,
                                             IRequestHandler<Commands.UpdateOperatorCommand, Result>
     {
@@ -234,11 +234,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             this.ApiClient = apiClient;
         }
 
-        public async Task<Result<List<OperatorModel>>> Handle(Queries.GetOperatorsQuery request,
+        public async Task<Result<List<OperatorModel>>> Handle(OperatorQueries.GetOperatorsQuery request,
                                                               CancellationToken cancellationToken) {
             return await this.ApiClient.GetOperators(request, cancellationToken);
         }
-        public async Task<Result<OperatorModel>> Handle(Queries.GetOperatorQuery request,
+        public async Task<Result<OperatorModel>> Handle(OperatorQueries.GetOperatorQuery request,
                                                         CancellationToken cancellationToken) {
             return Result.Success(StubTestData.GetMockOperator());
         }

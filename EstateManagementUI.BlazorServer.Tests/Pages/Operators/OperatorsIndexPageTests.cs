@@ -31,7 +31,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(operators));
         
         // Act
@@ -46,7 +46,7 @@ public class OperatorsIndexPageTests : BaseTest
     {
         // Arrange
         var emptyList = new List<OperatorModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(emptyList));
         
         // Act
@@ -79,7 +79,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(operators));
         
         // Act
@@ -106,7 +106,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(operators));
         
         // Act
@@ -122,7 +122,7 @@ public class OperatorsIndexPageTests : BaseTest
     public void OperatorsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<Queries.GetOperatorsQuery>(), default))
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorModel>()));
         
         // Act
