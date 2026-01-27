@@ -70,7 +70,7 @@ public class TestMediatorService : IMediator
             MerchantCommands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
             MerchantCommands.UpdateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateMerchant(cmd)),
             Commands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
-            Commands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
+            OperatorCommands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
             Commands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
             Commands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
             Commands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
@@ -183,7 +183,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteUpdateOperator(Commands.UpdateOperatorCommand cmd)
+    private Result ExecuteUpdateOperator(OperatorCommands.UpdateOperatorCommand cmd)
     {
         var operatorModel = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
         if (operatorModel == null)

@@ -230,7 +230,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                     return;
                 }
 
+                // Show success message briefly before navigating away
                 successMessage = "Merchant details updated successfully";
+                StateHasChanged();
+
+                // Small delay so user sees confirmation (adjust duration as needed)
+                await Task.Delay(2500);
+                
                 // Navigate to edit page
                 NavigationManager.NavigateTo($"/merchants");
             }
