@@ -329,44 +329,46 @@ public  static class FactoryExtensions{
     {
         List<ContractModel> contracts = new();
 
-        foreach (Contract contract in apiResultData)
-        {
-            var c = new ContractModel
-            {
-                ContractId = contract.ContractId,
-                Description = contract.Description,
-                OperatorName = contract.OperatorName,
-                OperatorId = contract.OperatorId,
-                Products = new List<ContractProductModel>()
-            };
-
-            foreach (var contractProduct in contract.Products) {
-                var cp = new ContractProductModel {
-                    ProductType = ((ProductType)contractProduct.ProductType).ToString(),
-                    Value = contractProduct.Value.HasValue ? contractProduct.Value.Value.ToString("F2") : "Variable",
-                    DisplayText = contractProduct.DisplayText,
-                    ProductName = contractProduct.ProductName,
-                    ContractProductId = contractProduct.ProductId,
-                    NumberOfFees = contractProduct.TransactionFees.Count,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
-                };
-
-                foreach (ContractProductTransactionFee contractProductTransactionFee in contractProduct.TransactionFees) {
-                    cp.TransactionFees.Add(new ContractProductTransactionFeeModel {
-                        Value = contractProductTransactionFee.Value,
-                        Description = contractProductTransactionFee.Description,
-                        CalculationType = contractProductTransactionFee.CalculationType,
-                        FeeType = contractProductTransactionFee.FeeType,
-                        TransactionFeeId = contractProductTransactionFee.TransactionFeeId
-                    });
-                }
-
-                c.Products.Add(cp);
-            }
-
-            contracts.Add(c);
+        foreach (Contract contract in apiResultData) {
+            contracts.Add(contract.ToContract());
         }
 
         return contracts;
+    }
+
+    public static ContractModel ToContract(this Contract apiResultData) {
+        var contract = new ContractModel {
+            ContractId = apiResultData.ContractId,
+            Description = apiResultData.Description,
+            OperatorName = apiResultData.OperatorName,
+            OperatorId = apiResultData.OperatorId,
+            Products = new List<ContractProductModel>()
+        };
+
+        foreach (var contractProduct in apiResultData.Products) {
+            var cp = new ContractProductModel {
+                ProductType = ((ProductType)contractProduct.ProductType).ToString(),
+                Value = contractProduct.Value.HasValue ? contractProduct.Value.Value.ToString("F2") : "Variable",
+                DisplayText = contractProduct.DisplayText,
+                ProductName = contractProduct.ProductName,
+                ContractProductId = contractProduct.ProductId,
+                NumberOfFees = contractProduct.TransactionFees.Count,
+                TransactionFees = new List<ContractProductTransactionFeeModel>()
+            };
+
+            foreach (ContractProductTransactionFee contractProductTransactionFee in contractProduct.TransactionFees) {
+                cp.TransactionFees.Add(new ContractProductTransactionFeeModel {
+                    Value = contractProductTransactionFee.Value,
+                    Description = contractProductTransactionFee.Description,
+                    CalculationType = contractProductTransactionFee.CalculationType,
+                    FeeType = contractProductTransactionFee.FeeType,
+                    TransactionFeeId = contractProductTransactionFee.TransactionFeeId
+                });
+            }
+
+            contract.Products.Add(cp);
+        }
+
+        return contract;
     }
 }

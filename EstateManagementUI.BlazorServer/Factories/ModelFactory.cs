@@ -1,5 +1,6 @@
 ﻿
 using EstateManagementUI.BlazorServer.Models;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BlazorServer.Factories {
     public static class ModelFactory {
@@ -107,7 +108,7 @@ namespace EstateManagementUI.BlazorServer.Factories {
                 DisplayText = model.DisplayText,
                 Value = model.Value,
                 NumberOfFees = model.NumberOfFees,
-                ProductType = model.ProductType,
+                ProductType = Enum.Parse<ProductType>(model.ProductType),
                 TransactionFees = new List<ContractProductTransactionFeeModel>()
             };
             if (model.TransactionFees != null && model.TransactionFees.Any()) {
@@ -119,9 +120,9 @@ namespace EstateManagementUI.BlazorServer.Factories {
 
         public static ContractProductTransactionFeeModel ConvertFrom(BusinessLogic.Models.ContractProductTransactionFeeModel model) {
             return new ContractProductTransactionFeeModel() {
-                CalculationType = model.CalculationType,
+                CalculationType = (CalculationType)model.CalculationType,
                 Description = model.Description,
-                FeeType = model.FeeType,
+                FeeType = (FeeType)model.FeeType,
                 TransactionFeeId = model.TransactionFeeId,
                 Value = model.Value
             };

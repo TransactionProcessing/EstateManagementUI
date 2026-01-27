@@ -16,6 +16,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
                                                                CancellationToken cancellationToken);
         Task<Result<List<ContractModel>>> GetContracts(ContractQueries.GetContractsQuery request,
                                                                CancellationToken cancellationToken);
+        Task<Result<ContractModel>> GetContract(ContractQueries.GetContractQuery request,
+                                                       CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -67,6 +69,23 @@ namespace EstateManagementUI.BusinessLogic.Client {
             List<ContractModel> contractModels = apiResult.Data.ToContract();
 
             return Result.Success(contractModels);
+        }
+
+        public async Task<Result<ContractModel>> GetContract(ContractQueries.GetContractQuery request,
+                                                                    CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<Contract> apiResult = await this.EstateReportingApiClient.GetContract(token.Data, request.EstateId, request.ContractId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            ContractModel contractModel = apiResult.Data.ToContract();
+
+            return Result.Success(contractModel);
         }
     }
 }

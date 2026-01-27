@@ -110,8 +110,8 @@ public class ContractsIndexPageTests : BaseTest
                 OperatorId = Guid.NewGuid(),
                 Products = new List<ContractProductModel>
                 {
-                    new ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 1" },
-                    new ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 2" }
+                    new ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 1", ProductType = "NotSet"},
+                    new ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 2", ProductType = "NotSet" }
                 }
             }
         };
