@@ -5,6 +5,7 @@ using SimpleResults;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TransactionProcessor.DataTransferObjects.Requests.Operator;
 
 namespace EstateManagementUI.BusinessLogic.Client
 {
@@ -14,6 +15,9 @@ namespace EstateManagementUI.BusinessLogic.Client
                                                                      CancellationToken cancellationToken);
 
         Task<Result<OperatorModel>> GetOperator(OperatorQueries.GetOperatorQuery request,
+                                                CancellationToken cancellationToken);
+
+        Task<Result> UpdateOperator(OperatorCommands.UpdateOperatorCommand request,
                                                 CancellationToken cancellationToken);
     }
 
@@ -51,6 +55,21 @@ namespace EstateManagementUI.BusinessLogic.Client
             OperatorModel operatorModels = apiResult.Data.ToOperator();
 
             return Result.Success(operatorModels);
+        }
+
+        public async Task<Result> UpdateOperator(OperatorCommands.UpdateOperatorCommand request,
+                                                 CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiRequest = new UpdateOperatorRequest() { Name= request.Name, RequireCustomMerchantNumber = request.RequireCustomMerchantNumber, RequireCustomTerminalNumber = request.RequireCustomTerminalNumber};
+
+            var apiResult = await this.TransactionProcessorClient.UpdateOperator(token.Data, request.EstateId, request.OperatorId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
         }
     }
 }

@@ -88,6 +88,10 @@ public static class MerchantCommands {
     public record CreateMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, string Name, String SettlementSchedule, MerchantAddress MerchantAddress, MerchantContact MerchantContact) : IRequest<Result>;
 }
 
+public static class OperatorCommands {
+    public record UpdateOperatorCommand(CorrelationId CorrelationId,Guid EstateId, Guid OperatorId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
+}
+
 public static class Commands
 {
     
@@ -97,7 +101,6 @@ public static class Commands
     
     
     
-    public record UpdateOperatorCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid OperatorId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
     public record AddProductToContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId, string ProductName, string DisplayText, decimal? Value) : IRequest<Result>;
     public record AddTransactionFeeForProductToContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId, Guid ProductId, string Description, decimal Value) : IRequest<Result>;
 }
