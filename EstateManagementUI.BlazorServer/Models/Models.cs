@@ -108,8 +108,8 @@ public class ContractProductTransactionFeeModel
 {
     public Guid TransactionFeeId { get; set; }
     public string? Description { get; set; }
-    public string? CalculationType { get; set; }
-    public string? FeeType { get; set; }
+    public Int32 CalculationType { get; set; }
+    public Int32 FeeType { get; set; }
     public decimal Value { get; set; }
 }
 

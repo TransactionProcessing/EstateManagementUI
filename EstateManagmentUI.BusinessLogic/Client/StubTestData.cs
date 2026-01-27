@@ -275,16 +275,16 @@ public static class StubTestData {
                     {
                         TransactionFeeId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
                         Description = "Merchant Commission",
-                        CalculationType = "Fixed",
-                        FeeType = "Merchant",
+                        CalculationType = 0,
+                        FeeType = 0,
                         Value = 0.50m
                     },
                     new ContractProductTransactionFeeModel
                     {
                         TransactionFeeId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
                         Description = "Service Provider Fee",
-                        CalculationType = "Percentage",
-                        FeeType = "Service Provider",
+                        CalculationType = 1,
+                        FeeType = 1,
                         Value = 2.5m
                     }
                 }
@@ -303,8 +303,8 @@ public static class StubTestData {
                     {
                         TransactionFeeId = Guid.Parse("99999999-9999-9999-9999-999999999999"),
                         Description = "Transaction Fee",
-                        CalculationType = "Fixed",
-                        FeeType = "Merchant",
+                        CalculationType = 0,
+                        FeeType = 0,
                         Value = 1.00m
                     }
                 }

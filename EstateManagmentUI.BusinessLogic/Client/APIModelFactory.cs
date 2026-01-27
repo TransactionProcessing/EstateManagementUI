@@ -3,6 +3,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using ContractProductTransactionFee = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.ContractProductTransactionFee;
 
 namespace EstateManagementUI.BusinessLogic.Client;
 
@@ -318,6 +319,51 @@ public  static class FactoryExtensions{
                 Description = contract.Description,
                 OperatorName = contract.OperatorName
             };
+            contracts.Add(c);
+        }
+
+        return contracts;
+    }
+
+    public static List<ContractModel> ToContract(this List<Contract> apiResultData)
+    {
+        List<ContractModel> contracts = new();
+
+        foreach (Contract contract in apiResultData)
+        {
+            var c = new ContractModel
+            {
+                ContractId = contract.ContractId,
+                Description = contract.Description,
+                OperatorName = contract.OperatorName,
+                OperatorId = contract.OperatorId,
+                Products = new List<ContractProductModel>()
+            };
+
+            foreach (var contractProduct in contract.Products) {
+                var cp = new ContractProductModel {
+                    ProductType = ((ProductType)contractProduct.ProductType).ToString(),
+                    Value = contractProduct.Value.HasValue ? contractProduct.Value.Value.ToString("F2") : "Variable",
+                    DisplayText = contractProduct.DisplayText,
+                    ProductName = contractProduct.ProductName,
+                    ContractProductId = contractProduct.ProductId,
+                    NumberOfFees = contractProduct.TransactionFees.Count,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                };
+
+                foreach (ContractProductTransactionFee contractProductTransactionFee in contractProduct.TransactionFees) {
+                    cp.TransactionFees.Add(new ContractProductTransactionFeeModel {
+                        Value = contractProductTransactionFee.Value,
+                        Description = contractProductTransactionFee.Description,
+                        CalculationType = contractProductTransactionFee.CalculationType,
+                        FeeType = contractProductTransactionFee.FeeType,
+                        TransactionFeeId = contractProductTransactionFee.TransactionFeeId
+                    });
+                }
+
+                c.Products.Add(cp);
+            }
+
             contracts.Add(c);
         }
 

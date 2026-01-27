@@ -188,7 +188,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
         public async Task<Result<List<ContractModel>>> Handle(ContractQueries.GetContractsQuery request,
                                                               CancellationToken cancellationToken) {
-            return Result.Success(StubTestData.GetMockContracts());
+            return await this.ApiClient.GetContracts(request, cancellationToken);
         }
 
         public async Task<Result<ContractModel>> Handle(ContractQueries.GetContractQuery request,
