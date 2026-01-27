@@ -29,6 +29,14 @@
             <p class="text-sm">@errorMessage</p>
         </div>
     }
+    
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <p class="font-medium">Success</p>
+            <p class="text-sm">@successMessage</p>
+        </div>
+    }
 
     <!-- Form -->
     <div class="bg-white rounded-lg shadow-md p-6">
@@ -85,71 +93,3 @@
         </EditForm>
     </div>
 </div>
-
-@code {
-    private CreateOperatorModel model = new();
-    private bool isSaving = false;
-    private string? errorMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RequirePermission(PermissionSection.Operator, PermissionFunction.Create);
-    }
-
-    private async Task HandleSubmit()
-    {
-        isSaving = true;
-        errorMessage = null;
-
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-
-            // Create operator
-            var createCommand = new Commands.CreateOperatorCommand(
-                correlationId,
-                accessToken,
-                estateId,
-                model.OperatorName!,
-                model.RequireCustomMerchantNumber,
-                model.RequireCustomTerminalNumber
-            );
-
-            var createResult = await Mediator.Send(createCommand);
-
-            if (!createResult.IsSuccess)
-            {
-                errorMessage = createResult.Message ?? "Failed to create operator";
-                return;
-            }
-
-            // Navigate to operators list with success
-            NavigationManager.NavigateTo("/operators");
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            isSaving = false;
-        }
-    }
-
-    private void Cancel()
-    {
-        NavigationManager.NavigateTo("/operators");
-    }
-
-    public class CreateOperatorModel
-    {
-        [Required(ErrorMessage = "Operator name is required")]
-        public string? OperatorName { get; set; }
-
-        public bool RequireCustomMerchantNumber { get; set; }
-
-        public bool RequireCustomTerminalNumber { get; set; }
-    }
-}

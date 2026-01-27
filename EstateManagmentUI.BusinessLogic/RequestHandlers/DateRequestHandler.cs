@@ -224,7 +224,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
 
     public class OperatorRequestHandler : IRequestHandler<OperatorQueries.GetOperatorsQuery, Result<List<OperatorModel>>>,
                                             IRequestHandler<OperatorQueries.GetOperatorQuery, Result<OperatorModel>>,
-                                            IRequestHandler<Commands.CreateOperatorCommand, Result>,
+                                            IRequestHandler<OperatorCommands.CreateOperatorCommand, Result>,
                                             IRequestHandler<OperatorCommands.UpdateOperatorCommand, Result>
     {
         private readonly IApiClient ApiClient;
@@ -242,9 +242,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                                         CancellationToken cancellationToken) {
             return await this.ApiClient.GetOperator(request, cancellationToken);
         }
-        public async Task<Result> Handle(Commands.CreateOperatorCommand request,
+        public async Task<Result> Handle(OperatorCommands.CreateOperatorCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.CreateOperator(request, cancellationToken);
         }
         public async Task<Result> Handle(OperatorCommands.UpdateOperatorCommand request,
                                          CancellationToken cancellationToken) {
