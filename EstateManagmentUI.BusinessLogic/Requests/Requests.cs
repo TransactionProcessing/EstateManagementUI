@@ -30,7 +30,7 @@ public static class EstateQueries {
 public static class ContractQueries {
     public record GetRecentContractsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<RecentContractModel>>>;
     public record GetContractsForDropDownQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<ContractDropDownModel>>>;
-    public record GetContractsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<List<ContractModel>>>;
+    public record GetContractsQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<ContractModel>>>;
     public record GetContractQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId) : IRequest<Result<ContractModel>>;
 }
 

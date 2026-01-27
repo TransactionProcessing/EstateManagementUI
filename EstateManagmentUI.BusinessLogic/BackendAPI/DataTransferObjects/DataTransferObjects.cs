@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects
 {
@@ -100,7 +101,42 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects
         [JsonProperty("operator_reporting_id")]
         public Int32 OperatorReportingId { get; set; }
 
+        [JsonProperty("products")]
+        public List<ContractProduct> Products { get; set; }
+
         #endregion
+    }
+
+    public class ContractProduct
+    {
+        [JsonProperty("contract_id")]
+        public Guid ContractId { get; set; }
+        [JsonProperty("product_id")]
+        public Guid ProductId { get; set; }
+        [JsonProperty("product_name")]
+        public String ProductName { get; set; }
+        [JsonProperty("display_text")]
+        public String DisplayText { get; set; }
+        [JsonProperty("product_type")]
+        public Int32 ProductType { get; set; }
+        [JsonProperty("value")]
+        public Decimal? Value { get; set; }
+        [JsonProperty("transaction_fees")]
+        public List<ContractProductTransactionFee> TransactionFees { get; set; }
+    }
+
+    public class ContractProductTransactionFee
+    {
+        [JsonProperty("transaction_fee_id")] 
+        public Guid TransactionFeeId { get; set; }
+        [JsonProperty("description")] 
+        public string? Description { get; set; }
+        [JsonProperty("calculation_type")] 
+        public Int32 CalculationType { get; set; }
+        [JsonProperty("fee_type")] 
+        public Int32 FeeType { get; set; }
+        [JsonProperty("value")] 
+        public Decimal Value { get; set; }
     }
 
     public class Estate
