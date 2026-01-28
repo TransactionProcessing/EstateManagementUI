@@ -95,10 +95,12 @@ public static class OperatorCommands {
     public record CreateOperatorCommand(CorrelationId CorrelationId, Guid EstateId, string Name, bool RequireCustomMerchantNumber, bool RequireCustomTerminalNumber) : IRequest<Result>;
 }
 
+public static class ContractCommands {
+    public record CreateContractCommand(CorrelationId CorrelationId, Guid EstateId, string Description, Guid OperatorId) : IRequest<Result>;
+}
+
 public static class Commands
 {
-    
-    public record CreateContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, string Description, Guid OperatorId) : IRequest<Result>;
     public record CreateMerchantUserCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, string EmailAddress, string Password) : IRequest<Result>;
     
     

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using TransactionProcessor.DataTransferObjects.Requests.Contract;
 
 namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {
@@ -18,6 +19,9 @@ namespace EstateManagementUI.BusinessLogic.Client {
                                                                CancellationToken cancellationToken);
         Task<Result<ContractModel>> GetContract(ContractQueries.GetContractQuery request,
                                                        CancellationToken cancellationToken);
+
+        Task<Result> CreateContract(ContractCommands.CreateContractCommand request,
+                                    CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -86,6 +90,21 @@ namespace EstateManagementUI.BusinessLogic.Client {
             ContractModel contractModel = apiResult.Data.ToContract();
 
             return Result.Success(contractModel);
+        }
+
+        public async Task<Result> CreateContract(ContractCommands.CreateContractCommand request,
+                                                 CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiRequest = new CreateContractRequest() { Description = request.Description, OperatorId = request.OperatorId };
+
+            var apiResult = await this.TransactionProcessorClient.CreateContract(token.Data, request.EstateId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
         }
     }
 }
