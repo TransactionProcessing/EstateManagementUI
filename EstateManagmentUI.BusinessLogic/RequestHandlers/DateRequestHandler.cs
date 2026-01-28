@@ -173,7 +173,7 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
     public class ContractRequestHandler : IRequestHandler<ContractQueries.GetContractsQuery, Result<List<ContractModel>>>,
                                             IRequestHandler<ContractQueries.GetContractQuery, Result<ContractModel>>,
                                             IRequestHandler<ContractCommands.CreateContractCommand, Result>,
-                                            IRequestHandler<Commands.AddProductToContractCommand, Result>,
+                                            IRequestHandler<ContractCommands.AddProductToContractCommand, Result>,
                                             IRequestHandler<Commands.AddTransactionFeeForProductToContractCommand, Result>,
     IRequestHandler<ContractQueries.GetRecentContractsQuery, Result<List<RecentContractModel>>>,
     IRequestHandler<ContractQueries.GetContractsForDropDownQuery, Result<List<ContractDropDownModel>>>
@@ -201,9 +201,9 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return await this.ApiClient.CreateContract(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(Commands.AddProductToContractCommand request,
+        public async Task<Result> Handle(ContractCommands.AddProductToContractCommand request,
                                          CancellationToken cancellationToken) {
-            return Result.Success();
+            return await this.ApiClient.AddProductToContract(request, cancellationToken);
         }
 
         public async Task<Result> Handle(Commands.AddTransactionFeeForProductToContractCommand request,

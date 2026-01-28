@@ -72,7 +72,7 @@ public class TestMediatorService : IMediator
             OperatorCommands.CreateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateOperator(cmd)),
             OperatorCommands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
             ContractCommands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
-            Commands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
+            ContractCommands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
             Commands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
             MerchantCommands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
             MerchantCommands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
@@ -216,7 +216,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteAddProductToContract(Commands.AddProductToContractCommand cmd)
+    private Result ExecuteAddProductToContract(ContractCommands.AddProductToContractCommand cmd)
     {
         var contract = this._testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
         if (contract == null)
