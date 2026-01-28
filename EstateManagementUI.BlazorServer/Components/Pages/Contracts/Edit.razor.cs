@@ -111,14 +111,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             isAddingProduct = true;
             productErrorMessage = null;
 
-            try
-            {
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+            try {
+                var estateId = await this.GetEstateId();
 
-                var command = new Commands.AddProductToContractCommand(
+                var command = new ContractCommands.AddProductToContractCommand(
                     CorrelationIdHelper.New(),
-                    accessToken,
                     estateId,
                     ContractId,
                     productModel.ProductName!,
@@ -132,7 +129,14 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
                 {
                     successMessage = "Product added successfully";
                     CloseAddProductModal();
+                    
+                    // Small delay so user sees confirmation (adjust duration as needed)
+                    await Task.Delay(2500);
+
                     await LoadContract();
+
+                    StateHasChanged();
+
                 }
                 else
                 {
