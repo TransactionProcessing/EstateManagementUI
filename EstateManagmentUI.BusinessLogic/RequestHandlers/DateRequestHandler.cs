@@ -174,7 +174,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
                                             IRequestHandler<ContractQueries.GetContractQuery, Result<ContractModel>>,
                                             IRequestHandler<ContractCommands.CreateContractCommand, Result>,
                                             IRequestHandler<ContractCommands.AddProductToContractCommand, Result>,
-                                            IRequestHandler<ContractCommands.AddTransactionFeeForProductToContractCommand, Result>,
+                                            IRequestHandler<ContractCommands.AddTransactionFeeToProductCommand, Result>,
+                                            IRequestHandler<ContractCommands.RemoveTransactionFeeFromProductCommand, Result>,
     IRequestHandler<ContractQueries.GetRecentContractsQuery, Result<List<RecentContractModel>>>,
     IRequestHandler<ContractQueries.GetContractsForDropDownQuery, Result<List<ContractDropDownModel>>>
     {
@@ -206,9 +207,15 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers
             return await this.ApiClient.AddProductToContract(request, cancellationToken);
         }
 
-        public async Task<Result> Handle(ContractCommands.AddTransactionFeeForProductToContractCommand request,
+        public async Task<Result> Handle(ContractCommands.AddTransactionFeeToProductCommand request,
                                          CancellationToken cancellationToken) {
-            return await this.ApiClient.AddTransactionFeeForProductToContract(request, cancellationToken);
+            return await this.ApiClient.AddTransactionFeeToProduct(request, cancellationToken);
+        }
+
+        public async Task<Result> Handle(ContractCommands.RemoveTransactionFeeFromProductCommand request,
+                                         CancellationToken cancellationToken)
+        {
+            return await this.ApiClient.RemoveTransactionFeeFromProduct(request, cancellationToken);
         }
 
         public async Task<Result<List<RecentContractModel>>> Handle(ContractQueries.GetRecentContractsQuery request,

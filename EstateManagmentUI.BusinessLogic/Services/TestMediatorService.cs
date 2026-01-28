@@ -73,7 +73,7 @@ public class TestMediatorService : IMediator
             OperatorCommands.UpdateOperatorCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteUpdateOperator(cmd)),
             ContractCommands.CreateContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateContract(cmd)),
             ContractCommands.AddProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddProductToContract(cmd)),
-            ContractCommands.AddTransactionFeeForProductToContractCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
+            ContractCommands.AddTransactionFeeToProductCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddTransactionFee(cmd)),
             MerchantCommands.AssignContractToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAssignContractToMerchant(cmd)),
             MerchantCommands.RemoveContractFromMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteRemoveContractFromMerchant(cmd)),
             MerchantCommands.AddOperatorToMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteAddOperatorToMerchant(cmd)),
@@ -237,7 +237,7 @@ public class TestMediatorService : IMediator
         return Result.Success();
     }
 
-    private Result ExecuteAddTransactionFee(ContractCommands.AddTransactionFeeForProductToContractCommand cmd)
+    private Result ExecuteAddTransactionFee(ContractCommands.AddTransactionFeeToProductCommand cmd)
     {
         var contract = this._testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
         if (contract == null)
@@ -257,6 +257,26 @@ public class TestMediatorService : IMediator
             Value = cmd.Value
         });
         
+        this._testDataStore.UpdateContract(cmd.EstateId, contract);
+        return Result.Success();
+    }
+
+    private Result ExecuteAddTransactionFee(ContractCommands.RemoveTransactionFeeFromProductCommand cmd)
+    {
+        var contract = this._testDataStore.GetContract(cmd.EstateId, cmd.ContractId);
+        if (contract == null)
+            return Result.Failure($"Contract {cmd.ContractId} not found");
+
+        var product = contract.Products?.FirstOrDefault(p => p.ContractProductId == cmd.ProductId);
+        if (product == null)
+            return Result.Failure($"Product {cmd.ProductId} not found in contract");
+
+        if (product.TransactionFees == null)
+            product.TransactionFees = new List<ContractProductTransactionFeeModel>();
+
+        var fee = product.TransactionFees.Single(f => f.TransactionFeeId == cmd.FeeId);
+        product.TransactionFees.Remove(fee);
+
         this._testDataStore.UpdateContract(cmd.EstateId, contract);
         return Result.Success();
     }

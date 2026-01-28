@@ -177,7 +177,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             try {
                 var estateId = await this.GetEstateId();
 
-                var command = new ContractCommands.AddTransactionFeeForProductToContractCommand(
+                var command = new ContractCommands.AddTransactionFeeToProductCommand(
                     CorrelationIdHelper.New(),
                     estateId,
                     ContractId,
@@ -225,32 +225,45 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
 
         private async Task RemoveProduct(Guid productId)
         {
-            if (contractModel == null || contractModel.Products == null) return;
+            //if (contractModel == null || contractModel.Products == null) return;
 
-            var product = contractModel.Products.FirstOrDefault(p => p.ContractProductId == productId);
-            if (product != null)
-            {
+            //var product = contractModel.Products.FirstOrDefault(p => p.ContractProductId == productId);
+            //if (product != null)
+            //{
                 // Note: Backend API for product removal not yet implemented
                 // For now, show a message to the user
                 errorMessage = "Product removal is not yet supported by the backend API. This feature will be available once the backend endpoint is implemented.";
-            }
+            //}
         }
 
         private async Task RemoveFee(Guid productId, Guid feeId)
         {
-            if (contractModel == null || contractModel.Products == null) return;
+            var estateId = await this.GetEstateId();
 
-            var product = contractModel.Products.FirstOrDefault(p => p.ContractProductId == productId);
-            if (product?.TransactionFees != null)
+            var command = new ContractCommands.RemoveTransactionFeeFromProductCommand(
+                CorrelationIdHelper.New(),
+                estateId,
+                ContractId,
+                productId, feeId
+            );
+
+            var result = await Mediator.Send(command);
+
+            if (result.IsSuccess)
             {
-                var fee = product.TransactionFees.FirstOrDefault(f => f.TransactionFeeId == feeId);
-                if (fee != null)
-                {
-                    // Note: Backend API for fee removal not yet implemented
-                    // For now, show a message to the user
-                    errorMessage = "Transaction fee removal is not yet supported by the backend API. This feature will be available once the backend endpoint is implemented.";
-                }
+                successMessage = "Transaction fee removed successfully";
+                
+                // Small delay so user sees confirmation (adjust duration as needed)
+                await Task.Delay(2500);
+
+                await LoadContract();
             }
+            else
+            {
+                feeErrorMessage = result.Message ?? "Failed to remove transaction fee";
+            }
+
+            StateHasChanged();
         }
 
         private void BackToView()
