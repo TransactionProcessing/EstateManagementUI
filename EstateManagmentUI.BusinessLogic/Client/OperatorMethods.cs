@@ -14,6 +14,9 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<List<OperatorModel>>> GetOperators(OperatorQueries.GetOperatorsQuery request,
                                                                      CancellationToken cancellationToken);
 
+        Task<Result<List<OperatorDropDownModel>>> GetOperators(OperatorQueries.GetOperatorsForDropDownQuery request,
+                                                       CancellationToken cancellationToken);
+
         Task<Result<OperatorModel>> GetOperator(OperatorQueries.GetOperatorQuery request,
                                                 CancellationToken cancellationToken);
 
@@ -38,6 +41,24 @@ namespace EstateManagementUI.BusinessLogic.Client
                 return ResultHelpers.CreateFailure(apiResult);
 
             List<OperatorModel> operatorModels = apiResult.Data.ToOperator();
+
+            return Result.Success(operatorModels);
+        }
+
+        public async Task<Result<List<OperatorDropDownModel>>> GetOperators(OperatorQueries.GetOperatorsForDropDownQuery request,
+                                                                    CancellationToken cancellationToken)
+        {
+            // Get a token here 
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.EstateReportingApiClient.GetOperators(token.Data, request.EstateId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            List<OperatorDropDownModel> operatorModels = apiResult.Data.ToOperatorDropDown();
 
             return Result.Success(operatorModels);
         }

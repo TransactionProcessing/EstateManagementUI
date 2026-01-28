@@ -8,6 +8,7 @@
 @using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel
 @using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantDropDownModel
 @using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModel
+@using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorDropDownModel
 @using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel
 @using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel
 @inject IMediator Mediator
@@ -91,12 +92,12 @@
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <MultiSelectDropdown TItem="OperatorModel"
+                        <MultiSelectDropdown TItem="OperatorDropDownModel"
                                            Items="operators"
                                            SelectedItems="_selectedOperatorIds"
                                            SelectedItemsChanged="OnOperatorSelectionChanged"
                                            GetItemId="o => o.OperatorId.ToString()"
-                                           GetItemText="o => o.Name ?? string.Empty"
+                                           GetItemText="o => o.OperatorName ?? string.Empty"
                                            Placeholder="All Operators"
                                            AriaLabel="Select one or more operators" />
                     </div>
@@ -338,7 +339,7 @@
     // Data
     private List<TransactionDetailModel>? detailData;
     private List<MerchantDropDownModel>? merchants;
-    private List<OperatorModel>? operators;
+    private List<OperatorDropDownModel>? operators;
     private List<ContractProductModel>? products;
     
     // KPIs
@@ -433,7 +434,7 @@
             
             // Load filter options
             var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
+            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
             var contractsTask = Mediator.Send(new ContractQueries.GetContractsQuery(correlationId, estateId));
             
             await Task.WhenAll(merchantsTask, operatorsTask, contractsTask);

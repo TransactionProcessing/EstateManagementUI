@@ -83,6 +83,12 @@ public class ContractDropDownModel
     public string? OperatorName { get; set; }
 }
 
+public class OperatorDropDownModel
+{
+    public Guid OperatorId { get; set; }
+    public string? OperatorName { get; set; }
+}
+
 // Contract Models
 public class ContractModel
 {

@@ -114,10 +114,31 @@ public  static class FactoryExtensions{
         return model;
     }
 
+    public static OperatorDropDownModel ToOperatorDropDown(this Operator apiResultData)
+    {
+        OperatorDropDownModel model = new()
+        {
+            OperatorName= apiResultData.Name,
+            OperatorId = apiResultData.OperatorId
+        };
+        return model;
+    }
+
+    public static List<OperatorDropDownModel> ToOperatorDropDown(this List<Operator> apiResultData)
+    {
+        List<OperatorDropDownModel> operators = new();
+        foreach (Operator op in apiResultData) {
+            operators.Add(op.ToOperatorDropDown());
+        }
+
+        return operators;
+    }
+
     public static List<OperatorModel> ToOperator(this List<Operator> apiResultData)
     {
         List<OperatorModel> operators = new();
-        foreach (Operator op in apiResultData) {
+        foreach (Operator op in apiResultData)
+        {
             operators.Add(op.ToOperator());
         }
 

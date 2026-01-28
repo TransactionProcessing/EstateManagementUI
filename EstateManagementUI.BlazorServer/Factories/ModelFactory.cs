@@ -1,6 +1,39 @@
-﻿
-using EstateManagementUI.BlazorServer.Models;
+﻿using EstateManagementUI.BusinessLogic.Models;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using ComparisonDateModel = EstateManagementUI.BlazorServer.Models.ComparisonDateModel;
+using ContractDropDownModel = EstateManagementUI.BlazorServer.Models.ContractDropDownModel;
+using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorDropDownModel;
+using ContractModel = EstateManagementUI.BlazorServer.Models.ContractModel;
+using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel;
+using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractProductTransactionFeeModel;
+using EstateContractModel = EstateManagementUI.BlazorServer.Models.EstateContractModel;
+using EstateMerchantModel = EstateManagementUI.BlazorServer.Models.EstateMerchantModel;
+using EstateModel = EstateManagementUI.BlazorServer.Models.EstateModel;
+using EstateOperatorModel = EstateManagementUI.BlazorServer.Models.EstateOperatorModel;
+using EstateUserModel = EstateManagementUI.BlazorServer.Models.EstateUserModel;
+using FileDetailsModel = EstateManagementUI.BlazorServer.Models.FileDetailsModel;
+using FileImportLogModel = EstateManagementUI.BlazorServer.Models.FileImportLogModel;
+using MerchantContractModel = EstateManagementUI.BlazorServer.Models.MerchantContractModel;
+using MerchantContractProductModel = EstateManagementUI.BlazorServer.Models.MerchantContractProductModel;
+using MerchantDeviceModel = EstateManagementUI.BlazorServer.Models.MerchantDeviceModel;
+using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantDropDownModel;
+using MerchantKpiModel = EstateManagementUI.BlazorServer.Models.MerchantKpiModel;
+using MerchantListModel = EstateManagementUI.BlazorServer.Models.MerchantListModel;
+using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModel;
+using MerchantOperatorModel = EstateManagementUI.BlazorServer.Models.MerchantOperatorModel;
+using MerchantSettlementHistoryModel = EstateManagementUI.BlazorServer.Models.MerchantSettlementHistoryModel;
+using MerchantTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.MerchantTransactionSummaryModel;
+using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel;
+using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel;
+using ProductPerformanceModel = EstateManagementUI.BlazorServer.Models.ProductPerformanceModel;
+using RecentContractModel = EstateManagementUI.BlazorServer.Models.RecentContractModel;
+using RecentMerchantsModel = EstateManagementUI.BlazorServer.Models.RecentMerchantsModel;
+using SettlementSummaryModel = EstateManagementUI.BlazorServer.Models.SettlementSummaryModel;
+using TodaysSalesCountByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesCountByHourModel;
+using TodaysSalesModel = EstateManagementUI.BlazorServer.Models.TodaysSalesModel;
+using TodaysSalesValueByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesValueByHourModel;
+using TodaysSettlementModel = EstateManagementUI.BlazorServer.Models.TodaysSettlementModel;
+using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
 
 namespace EstateManagementUI.BlazorServer.Factories {
     public static class ModelFactory {
@@ -459,6 +492,20 @@ namespace EstateManagementUI.BlazorServer.Factories {
             }
 
             return contractList;
+        }
+
+        public static List<OperatorDropDownModel>? ConvertFrom(List<BusinessLogic.Models.OperatorDropDownModel> resultData) {
+            List<OperatorDropDownModel> operatorList = new();
+            foreach (BusinessLogic.Models.OperatorDropDownModel operatorDropDownModel in resultData)
+            {
+                operatorList.Add(new OperatorDropDownModel()
+                {
+                    OperatorId = operatorDropDownModel.OperatorId,
+                    OperatorName = operatorDropDownModel.OperatorName
+                });
+            }
+
+            return operatorList;
         }
     }
 }
