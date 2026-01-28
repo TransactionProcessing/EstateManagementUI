@@ -44,13 +44,7 @@ public class EstateMerchantModel {
 
 
 // Operator Models
-public class OperatorModel
-{
-    public Guid OperatorId { get; set; }
-    public string? Name { get; set; }
-    public bool RequireCustomMerchantNumber { get; set; }
-    public bool RequireCustomTerminalNumber { get; set; }
-}
+
 
 // Contract Models
 public class ContractModel

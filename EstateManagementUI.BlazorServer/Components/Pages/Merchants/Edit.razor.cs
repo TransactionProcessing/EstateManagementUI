@@ -29,7 +29,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private MerchantEditModel merchantEditModel = new();
 
         // Operators
-        private List<OperatorModel>? availableOperators;
+        private List<OperatorDropDownModel>? availableOperators;
         private List<MerchantOperatorModel> assignedOperators = new();
         private bool showAddOperator = false;
         private string? selectedOperatorId;
@@ -150,7 +150,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = await this.GetEstateId();
 
-            var result = await Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
+            var result = await Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
 
             if (result.IsFailed) {
                 return ResultHelpers.CreateFailure(result);
@@ -250,7 +250,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             }
         }
 
-        private void OnOperatorSelected()
+        private async Task OnOperatorSelected()
         {
             if (string.IsNullOrEmpty(selectedOperatorId))
             {
@@ -263,7 +263,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             else
             {
                 var operatorId = Guid.Parse(selectedOperatorId);
-                selectedOperator = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
+                OperatorQueries.GetOperatorQuery query = new OperatorQueries.GetOperatorQuery(CorrelationIdHelper.New(), await this.GetEstateId(), operatorId);
+                var getOperatorResult = await this.Mediator.Send(query);
+                if (getOperatorResult.IsFailed)
+                    NavigationManager.NavigateToErrorPage();
+
+                selectedOperator = ModelFactory.ConvertFrom(getOperatorResult.Data);
                 merchantNumber = null;
                 terminalNumber = null;
                 merchantNumberError = null;
@@ -357,7 +362,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                     {
                         assignedOperators.Add(new MerchantOperatorModel() {
                             OperatorId = op.OperatorId,
-                            OperatorName = op.Name
+                            OperatorName = op.OperatorName,
                         });
                     }
                 }

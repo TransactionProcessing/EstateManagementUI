@@ -4,6 +4,7 @@
 @using EstateManagementUI.BusinessLogic.Requests
 @using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantDropDownModel
 @using MerchantTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.MerchantTransactionSummaryModel
+@using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorDropDownModel
 @using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel
 @rendermode InteractiveServer
 @inject IMediator Mediator
@@ -94,7 +95,7 @@
                             {
                                 @foreach (var op in operators)
                                 {
-                                    <option value="@op.OperatorId">@op.Name</option>
+                                    <option value="@op.OperatorId">@op.OperatorName</option>
                                 }
                             }
                         </select>
@@ -250,7 +251,7 @@
     // Data
     private List<MerchantTransactionSummaryModel>? summaryData;
     private List<MerchantDropDownModel>? merchants;
-    private List<OperatorModel>? operators;
+    private List<OperatorDropDownModel>? operators;
     
     // KPIs
     private int totalMerchants = 0;
@@ -277,7 +278,7 @@
             
             // Load filter options
             var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
+            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
             
             await Task.WhenAll(merchantsTask, operatorsTask);
             

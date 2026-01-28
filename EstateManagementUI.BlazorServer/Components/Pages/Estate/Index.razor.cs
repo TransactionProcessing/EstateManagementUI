@@ -14,7 +14,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
         private bool isLoading = true;
         private EstateModel? estate;
         private List<RecentMerchantsModel> merchants;
-        private List<OperatorModel>? availableOperators;
+        private List<OperatorDropDownModel>? availableOperators;
         private List<OperatorModel> assignedOperators = new();
         private List<RecentContractModel> contracts;
         private string activeTab = "overview";
@@ -54,7 +54,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             Task<Result<List<BusinessLogic.Models.RecentMerchantsModel>>> merchantTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.RecentContractModel>>> contractsTask = Mediator.Send(new ContractQueries.GetRecentContractsQuery(correlationId, estateId));
             Task<Result<List<BusinessLogic.Models.OperatorModel>>> assignedOperatorsTask = Mediator.Send(new EstateQueries.GetAssignedOperatorsQuery(correlationId, estateId));
-            Task<Result<List<BusinessLogic.Models.OperatorModel>>> allOperatorsTask= Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
+            Task<Result<List<BusinessLogic.Models.OperatorDropDownModel>>> allOperatorsTask= Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
 
             await Task.WhenAll(estateTask, merchantTask, contractsTask, assignedOperatorsTask, allOperatorsTask);
             
@@ -77,9 +77,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
             if (allOperatorsTask.Result.IsFailed)
                 return ResultHelpers.CreateFailure(allOperatorsTask.Result);
 
-            List<OperatorModel> unfiltered = ModelFactory.ConvertFrom(allOperatorsTask.Result.Data);
-            this.availableOperators = unfiltered.Where(u => this.assignedOperators.Select(a => a.OperatorId).Contains(u.OperatorId) == false).ToList();
-            
+            List<OperatorDropDownModel> unfiltered = ModelFactory.ConvertFrom(allOperatorsTask.Result.Data);
+            this.availableOperators = unfiltered
+                .Where(u => !this.assignedOperators.Any(a => a.OperatorId == u.OperatorId))
+                .Select(u => new OperatorDropDownModel
+                {
+                    OperatorId = u.OperatorId,
+                    OperatorName = u.OperatorName
+                })
+                .ToList();
+
+
             return Result.Success();
         }
 
@@ -124,9 +132,18 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
 
                     // Add to assigned list
                     var op = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
-                    if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId))
-                    {
-                        assignedOperators.Add(op);
+                    if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId)) {
+                        OperatorQueries.GetOperatorQuery query = new OperatorQueries.GetOperatorQuery(CorrelationIdHelper.New(), await this.GetEstateId(), operatorId);
+                        var operatorResult = await Mediator.Send(query);
+                        if (operatorResult.IsFailed) 
+                            this.NavigationManager.NavigateToErrorPage();
+
+                        assignedOperators.Add(new OperatorModel() {
+                            OperatorId = operatorResult.Data.OperatorId,
+                            Name = operatorResult.Data.Name,
+                            RequireCustomMerchantNumber = operatorResult.Data.RequireCustomMerchantNumber,
+                            RequireCustomTerminalNumber = operatorResult.Data.RequireCustomTerminalNumber
+                        });
                     }
                 }
                 else
