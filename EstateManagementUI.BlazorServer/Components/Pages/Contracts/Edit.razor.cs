@@ -214,7 +214,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             successMessage = null;
         }
 
-        private async void RemoveProduct(Guid productId)
+        private async Task RemoveProduct(Guid productId)
         {
             if (contractModel == null || contractModel.Products == null) return;
 
@@ -227,7 +227,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             }
         }
 
-        private async void RemoveFee(Guid productId, Guid feeId)
+        private async Task RemoveFee(Guid productId, Guid feeId)
         {
             if (contractModel == null || contractModel.Products == null) return;
 
