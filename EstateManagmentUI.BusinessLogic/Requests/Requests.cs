@@ -98,6 +98,7 @@ public static class OperatorCommands {
 public static class ContractCommands {
     public record CreateContractCommand(CorrelationId CorrelationId, Guid EstateId, string Description, Guid OperatorId) : IRequest<Result>;
     public record AddProductToContractCommand(CorrelationId CorrelationId, Guid EstateId, Guid ContractId, string ProductName, string DisplayText, decimal? Value) : IRequest<Result>;
+    public record AddTransactionFeeForProductToContractCommand(CorrelationId CorrelationId, Guid EstateId, Guid ContractId, Guid ProductId, string Description, decimal Value, String CalculationType, String FeeType) : IRequest<Result>;
 }
 
 public static class Commands
@@ -106,5 +107,4 @@ public static class Commands
     
     
     
-    public record AddTransactionFeeForProductToContractCommand(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid ContractId, Guid ProductId, string Description, decimal Value) : IRequest<Result>;
 }

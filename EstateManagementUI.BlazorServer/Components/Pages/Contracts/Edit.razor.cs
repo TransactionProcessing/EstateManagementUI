@@ -174,19 +174,18 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             isAddingFee = true;
             feeErrorMessage = null;
 
-            try
-            {
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
+            try {
+                var estateId = await this.GetEstateId();
 
-                var command = new Commands.AddTransactionFeeForProductToContractCommand(
+                var command = new ContractCommands.AddTransactionFeeForProductToContractCommand(
                     CorrelationIdHelper.New(),
-                    accessToken,
                     estateId,
                     ContractId,
                     currentProductId,
                     feeModel.Description!,
-                    feeModel.FeeValue!.Value
+                    feeModel.FeeValue!.Value,
+                    this.feeModel.CalculationType,
+                    this.feeModel.FeeType
                 );
 
                 var result = await Mediator.Send(command);
@@ -195,7 +194,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
                 {
                     successMessage = "Transaction fee added successfully";
                     CloseAddFeeModal();
+
+                    // Small delay so user sees confirmation (adjust duration as needed)
+                    await Task.Delay(2500);
+
                     await LoadContract();
+
+                    StateHasChanged();
                 }
                 else
                 {
