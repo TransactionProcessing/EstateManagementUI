@@ -25,6 +25,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
                                     CancellationToken cancellationToken);
         Task<Result> AddProductToContract(ContractCommands.AddProductToContractCommand request,
                                     CancellationToken cancellationToken);
+        Task<Result> AddTransactionFeeForProductToContract(ContractCommands.AddTransactionFeeForProductToContractCommand request,
+                                                           CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -119,6 +121,23 @@ namespace EstateManagementUI.BusinessLogic.Client {
             var apiRequest = new AddProductToContractRequest() { ProductType = ProductType.NotSet, Value = request.Value, DisplayText = request.DisplayText, ProductName = request.ProductName};
 
             var apiResult = await this.TransactionProcessorClient.AddProductToContract(token.Data, request.EstateId, request.ContractId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
+        public async Task<Result> AddTransactionFeeForProductToContract(ContractCommands.AddTransactionFeeForProductToContractCommand request,
+                                                                        CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiRequest = new AddTransactionFeeForProductToContractRequest() { Value = request.Value, 
+                CalculationType = Enum.Parse<CalculationType>(request.CalculationType), Description = request.Description, 
+                FeeType = Enum.Parse<FeeType>(request.FeeType)};
+
+            var apiResult = await this.TransactionProcessorClient.AddTransactionFeeForProductToContract(token.Data, request.EstateId, request.ContractId, request.ProductId, apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
