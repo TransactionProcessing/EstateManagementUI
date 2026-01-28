@@ -25,8 +25,11 @@ namespace EstateManagementUI.BusinessLogic.Client {
                                     CancellationToken cancellationToken);
         Task<Result> AddProductToContract(ContractCommands.AddProductToContractCommand request,
                                     CancellationToken cancellationToken);
-        Task<Result> AddTransactionFeeForProductToContract(ContractCommands.AddTransactionFeeForProductToContractCommand request,
+        Task<Result> AddTransactionFeeToProduct(ContractCommands.AddTransactionFeeToProductCommand request,
                                                            CancellationToken cancellationToken);
+        Task<Result> RemoveTransactionFeeFromProduct(ContractCommands.RemoveTransactionFeeFromProductCommand request,
+                                                     CancellationToken cancellationToken);
+
     }
 
     public partial class ApiClient : IApiClient {
@@ -127,8 +130,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
             return Result.Success();
         }
 
-        public async Task<Result> AddTransactionFeeForProductToContract(ContractCommands.AddTransactionFeeForProductToContractCommand request,
-                                                                        CancellationToken cancellationToken) {
+        public async Task<Result> AddTransactionFeeToProduct(ContractCommands.AddTransactionFeeToProductCommand request,
+                                                             CancellationToken cancellationToken) {
             var token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
@@ -138,6 +141,19 @@ namespace EstateManagementUI.BusinessLogic.Client {
                 FeeType = Enum.Parse<FeeType>(request.FeeType)};
 
             var apiResult = await this.TransactionProcessorClient.AddTransactionFeeForProductToContract(token.Data, request.EstateId, request.ContractId, request.ProductId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+        public async Task<Result> RemoveTransactionFeeFromProduct(ContractCommands.RemoveTransactionFeeFromProductCommand request,
+                                                                  CancellationToken cancellationToken)
+        {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.TransactionProcessorClient.DisableTransactionFeeForProduct(token.Data, request.EstateId, request.ContractId, request.ProductId, request.FeeId, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
