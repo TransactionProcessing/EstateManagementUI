@@ -23,30 +23,29 @@ jobs:
       run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
 
     - name: Build Code
-      run: dotnet build EstateManagementUI.sln --configuration Release
+      run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
 
-    - name: Run Unit Tests
-      run: |
-        echo "ASPNETCORE_ENVIRONMENT are > ${ASPNETCORE_ENVIRONMENT}"
-        dotnet test "EstateManagementUI.BusinessLogic.Tests\EstateManagementUI.BusinessLogic.Tests.csproj"  
+    # Note: Unit tests are executed in the pullrequest.yml workflow, not during release.
+
    
+    
     - name: Publish Images to Docker Hub - Pre Release
       if: ${{ github.event.release.prerelease == true }} 
       run: |
-        docker build . --file EstateManagementUI/Dockerfile --tag stuartferguson/estatemanagementui:dev
+        docker build . --file EstateManagementUI.BlazorServer/Dockerfile --tag stuartferguson/estatemanagementui:dev
         docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
         docker push stuartferguson/estatemanagementui:dev
 
     - name: Publish Images to Docker Hub - Formal Release
       if: ${{ github.event.release.prerelease == false }} 
       run: |
-        docker build . --file EstateManagementUI/Dockerfile --tag stuartferguson/estatemanagementui:latest
+        docker build . --file EstateManagementUI.BlazorServer/Dockerfile --tag stuartferguson/estatemanagementui:latest
         docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
         docker push stuartferguson/estatemanagementui:latest
     
     - name: Publish UI
       if: ${{ github.event.release.prerelease == false }} 
-      run: dotnet publish "EstateManagementUI\EstateManagementUI.csproj" --configuration Release --output publishOutput -r win-x64 --self-contained             
+      run: dotnet publish "EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj" --configuration Release --output publishOutput -r win-x64 --self-contained             
 
     - name: Build Release Package
       run: |
@@ -87,7 +86,7 @@ jobs:
       - name: Install as a Windows service
         run: |
           $serviceName = "Transaction Processing - Estate Management UI"
-          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.exe"
+          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.BlazorServer.exe"
                    
           New-Service -Name $serviceName -BinaryPathName $servicePath -Description $serviceName -DisplayName $serviceName -StartupType Automatic
           Start-Service -Name $serviceName  
@@ -120,7 +119,7 @@ jobs:
       - name: Install as a Windows service
         run: |
           $serviceName = "Transaction Processing - Estate Management UI"
-          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.exe"
+          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.BlazorServer.exe"
                    
           New-Service -Name $serviceName -BinaryPathName $servicePath -Description $serviceName -DisplayName $serviceName -StartupType Automatic
           Start-Service -Name $serviceName 
