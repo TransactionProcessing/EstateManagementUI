@@ -1,0 +1,329 @@
+@using Microsoft.AspNetCore.Components.Forms
+@inherits InputBase<string>
+
+<div class="relative" @ref="dropdownRef">
+    <!-- Dropdown Button -->
+    <button type="button" 
+            @onclick="ToggleDropdown" 
+            class="@CssClass flex items-center justify-between cursor-pointer w-full"
+            aria-label="Select country"
+            aria-expanded="@isOpen">
+        <span class="truncate flex items-center gap-2">
+            @if (!string.IsNullOrEmpty(Value))
+            {
+                var selected = Countries.FirstOrDefault(c => c.Name == Value);
+                if (selected != null)
+                {
+                    <span class="text-xl">@selected.Flag</span>
+                    <span>@selected.Name</span>
+                }
+                else
+                {
+                    <text>@Value</text>
+                }
+            }
+            else
+            {
+                <text>Select a country...</text>
+            }
+        </span>
+        <svg class="w-4 h-4 ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+    </button>
+
+    <!-- Dropdown Menu -->
+    @if (isOpen)
+    {
+        <div class="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+            @if (Countries != null && Countries.Any())
+            {
+                @foreach (var country in Countries)
+                {
+                    var isSelected = Value == country.Name;
+                    
+                    <button type="button"
+                            @onclick="@(() => SelectCountry(country.Name))"
+                            class="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer w-full text-left @(isSelected ? "bg-gray-50" : "")">
+                        <span class="text-xl">@country.Flag</span>
+                        <span class="text-sm text-gray-700">@country.Name</span>
+                        <span class="text-xs text-gray-500">@country.DialCode</span>
+                    </button>
+                }
+            }
+            else
+            {
+                <div class="px-3 py-2 text-sm text-gray-500">No countries available</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private ElementReference dropdownRef;
+    private bool isOpen = false;
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Select a country...";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    private void ToggleDropdown()
+    {
+        isOpen = !isOpen;
+    }
+
+    private void SelectCountry(string countryName)
+    {
+        CurrentValue = countryName;
+        isOpen = false;
+    }
+
+    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
+    {
+        result = value ?? string.Empty;
+        validationErrorMessage = null;
+        return true;
+    }
+
+    private class Country
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string Flag { get; set; } = string.Empty;
+        public string DialCode { get; set; } = string.Empty;
+    }
+
+    private static readonly List<Country> Countries = new()
+    {
+        new Country { Name = "Afghanistan", Code = "AF", Flag = "🇦🇫", DialCode = "+93" },
+        new Country { Name = "Albania", Code = "AL", Flag = "🇦🇱", DialCode = "+355" },
+        new Country { Name = "Algeria", Code = "DZ", Flag = "🇩🇿", DialCode = "+213" },
+        new Country { Name = "American Samoa", Code = "AS", Flag = "🇦🇸", DialCode = "+1" },
+        new Country { Name = "Andorra", Code = "AD", Flag = "🇦🇩", DialCode = "+376" },
+        new Country { Name = "Angola", Code = "AO", Flag = "🇦🇴", DialCode = "+244" },
+        new Country { Name = "Anguilla", Code = "AI", Flag = "🇦🇮", DialCode = "+1264" },
+        new Country { Name = "Antigua and Barbuda", Code = "AG", Flag = "🇦🇬", DialCode = "+1268" },
+        new Country { Name = "Argentina", Code = "AR", Flag = "🇦🇷", DialCode = "+54" },
+        new Country { Name = "Armenia", Code = "AM", Flag = "🇦🇲", DialCode = "+374" },
+        new Country { Name = "Aruba", Code = "AW", Flag = "🇦🇼", DialCode = "+297" },
+        new Country { Name = "Australia", Code = "AU", Flag = "🇦🇺", DialCode = "+61" },
+        new Country { Name = "Austria", Code = "AT", Flag = "🇦🇹", DialCode = "+43" },
+        new Country { Name = "Azerbaijan", Code = "AZ", Flag = "🇦🇿", DialCode = "+994" },
+        new Country { Name = "Bahamas", Code = "BS", Flag = "🇧🇸", DialCode = "+1242" },
+        new Country { Name = "Bahrain", Code = "BH", Flag = "🇧🇭", DialCode = "+973" },
+        new Country { Name = "Bangladesh", Code = "BD", Flag = "🇧🇩", DialCode = "+880" },
+        new Country { Name = "Barbados", Code = "BB", Flag = "🇧🇧", DialCode = "+1246" },
+        new Country { Name = "Belarus", Code = "BY", Flag = "🇧🇾", DialCode = "+375" },
+        new Country { Name = "Belgium", Code = "BE", Flag = "🇧🇪", DialCode = "+32" },
+        new Country { Name = "Belize", Code = "BZ", Flag = "🇧🇿", DialCode = "+501" },
+        new Country { Name = "Benin", Code = "BJ", Flag = "🇧🇯", DialCode = "+229" },
+        new Country { Name = "Bermuda", Code = "BM", Flag = "🇧🇲", DialCode = "+1441" },
+        new Country { Name = "Bhutan", Code = "BT", Flag = "🇧🇹", DialCode = "+975" },
+        new Country { Name = "Bolivia", Code = "BO", Flag = "🇧🇴", DialCode = "+591" },
+        new Country { Name = "Bosnia and Herzegovina", Code = "BA", Flag = "🇧🇦", DialCode = "+387" },
+        new Country { Name = "Botswana", Code = "BW", Flag = "🇧🇼", DialCode = "+267" },
+        new Country { Name = "Brazil", Code = "BR", Flag = "🇧🇷", DialCode = "+55" },
+        new Country { Name = "British Indian Ocean Territory", Code = "IO", Flag = "🇮🇴", DialCode = "+246" },
+        new Country { Name = "British Virgin Islands", Code = "VG", Flag = "🇻🇬", DialCode = "+1284" },
+        new Country { Name = "Brunei", Code = "BN", Flag = "🇧🇳", DialCode = "+673" },
+        new Country { Name = "Bulgaria", Code = "BG", Flag = "🇧🇬", DialCode = "+359" },
+        new Country { Name = "Burkina Faso", Code = "BF", Flag = "🇧🇫", DialCode = "+226" },
+        new Country { Name = "Burundi", Code = "BI", Flag = "🇧🇮", DialCode = "+257" },
+        new Country { Name = "Cambodia", Code = "KH", Flag = "🇰🇭", DialCode = "+855" },
+        new Country { Name = "Cameroon", Code = "CM", Flag = "🇨🇲", DialCode = "+237" },
+        new Country { Name = "Canada", Code = "CA", Flag = "🇨🇦", DialCode = "+1" },
+        new Country { Name = "Cape Verde", Code = "CV", Flag = "🇨🇻", DialCode = "+238" },
+        new Country { Name = "Cayman Islands", Code = "KY", Flag = "🇰🇾", DialCode = "+1345" },
+        new Country { Name = "Central African Republic", Code = "CF", Flag = "🇨🇫", DialCode = "+236" },
+        new Country { Name = "Chad", Code = "TD", Flag = "🇹🇩", DialCode = "+235" },
+        new Country { Name = "Chile", Code = "CL", Flag = "🇨🇱", DialCode = "+56" },
+        new Country { Name = "China", Code = "CN", Flag = "🇨🇳", DialCode = "+86" },
+        new Country { Name = "Colombia", Code = "CO", Flag = "🇨🇴", DialCode = "+57" },
+        new Country { Name = "Comoros", Code = "KM", Flag = "🇰🇲", DialCode = "+269" },
+        new Country { Name = "Congo", Code = "CG", Flag = "🇨🇬", DialCode = "+242" },
+        new Country { Name = "Cook Islands", Code = "CK", Flag = "🇨🇰", DialCode = "+682" },
+        new Country { Name = "Costa Rica", Code = "CR", Flag = "🇨🇷", DialCode = "+506" },
+        new Country { Name = "Croatia", Code = "HR", Flag = "🇭🇷", DialCode = "+385" },
+        new Country { Name = "Cuba", Code = "CU", Flag = "🇨🇺", DialCode = "+53" },
+        new Country { Name = "Cyprus", Code = "CY", Flag = "🇨🇾", DialCode = "+357" },
+        new Country { Name = "Czech Republic", Code = "CZ", Flag = "🇨🇿", DialCode = "+420" },
+        new Country { Name = "Democratic Republic of the Congo", Code = "CD", Flag = "🇨🇩", DialCode = "+243" },
+        new Country { Name = "Denmark", Code = "DK", Flag = "🇩🇰", DialCode = "+45" },
+        new Country { Name = "Djibouti", Code = "DJ", Flag = "🇩🇯", DialCode = "+253" },
+        new Country { Name = "Dominica", Code = "DM", Flag = "🇩🇲", DialCode = "+1767" },
+        new Country { Name = "Dominican Republic", Code = "DO", Flag = "🇩🇴", DialCode = "+1809" },
+        new Country { Name = "Ecuador", Code = "EC", Flag = "🇪🇨", DialCode = "+593" },
+        new Country { Name = "Egypt", Code = "EG", Flag = "🇪🇬", DialCode = "+20" },
+        new Country { Name = "El Salvador", Code = "SV", Flag = "🇸🇻", DialCode = "+503" },
+        new Country { Name = "Equatorial Guinea", Code = "GQ", Flag = "🇬🇶", DialCode = "+240" },
+        new Country { Name = "Eritrea", Code = "ER", Flag = "🇪🇷", DialCode = "+291" },
+        new Country { Name = "Estonia", Code = "EE", Flag = "🇪🇪", DialCode = "+372" },
+        new Country { Name = "Ethiopia", Code = "ET", Flag = "🇪🇹", DialCode = "+251" },
+        new Country { Name = "Falkland Islands", Code = "FK", Flag = "🇫🇰", DialCode = "+500" },
+        new Country { Name = "Faroe Islands", Code = "FO", Flag = "🇫🇴", DialCode = "+298" },
+        new Country { Name = "Fiji", Code = "FJ", Flag = "🇫🇯", DialCode = "+679" },
+        new Country { Name = "Finland", Code = "FI", Flag = "🇫🇮", DialCode = "+358" },
+        new Country { Name = "France", Code = "FR", Flag = "🇫🇷", DialCode = "+33" },
+        new Country { Name = "French Guiana", Code = "GF", Flag = "🇬🇫", DialCode = "+594" },
+        new Country { Name = "French Polynesia", Code = "PF", Flag = "🇵🇫", DialCode = "+689" },
+        new Country { Name = "Gabon", Code = "GA", Flag = "🇬🇦", DialCode = "+241" },
+        new Country { Name = "Gambia", Code = "GM", Flag = "🇬🇲", DialCode = "+220" },
+        new Country { Name = "Georgia", Code = "GE", Flag = "🇬🇪", DialCode = "+995" },
+        new Country { Name = "Germany", Code = "DE", Flag = "🇩🇪", DialCode = "+49" },
+        new Country { Name = "Ghana", Code = "GH", Flag = "🇬🇭", DialCode = "+233" },
+        new Country { Name = "Gibraltar", Code = "GI", Flag = "🇬🇮", DialCode = "+350" },
+        new Country { Name = "Greece", Code = "GR", Flag = "🇬🇷", DialCode = "+30" },
+        new Country { Name = "Greenland", Code = "GL", Flag = "🇬🇱", DialCode = "+299" },
+        new Country { Name = "Grenada", Code = "GD", Flag = "🇬🇩", DialCode = "+1473" },
+        new Country { Name = "Guadeloupe", Code = "GP", Flag = "🇬🇵", DialCode = "+590" },
+        new Country { Name = "Guam", Code = "GU", Flag = "🇬🇺", DialCode = "+1671" },
+        new Country { Name = "Guatemala", Code = "GT", Flag = "🇬🇹", DialCode = "+502" },
+        new Country { Name = "Guinea", Code = "GN", Flag = "🇬🇳", DialCode = "+224" },
+        new Country { Name = "Guinea-Bissau", Code = "GW", Flag = "🇬🇼", DialCode = "+245" },
+        new Country { Name = "Guyana", Code = "GY", Flag = "🇬🇾", DialCode = "+592" },
+        new Country { Name = "Haiti", Code = "HT", Flag = "🇭🇹", DialCode = "+509" },
+        new Country { Name = "Honduras", Code = "HN", Flag = "🇭🇳", DialCode = "+504" },
+        new Country { Name = "Hong Kong", Code = "HK", Flag = "🇭🇰", DialCode = "+852" },
+        new Country { Name = "Hungary", Code = "HU", Flag = "🇭🇺", DialCode = "+36" },
+        new Country { Name = "Iceland", Code = "IS", Flag = "🇮🇸", DialCode = "+354" },
+        new Country { Name = "India", Code = "IN", Flag = "🇮🇳", DialCode = "+91" },
+        new Country { Name = "Indonesia", Code = "ID", Flag = "🇮🇩", DialCode = "+62" },
+        new Country { Name = "Iran", Code = "IR", Flag = "🇮🇷", DialCode = "+98" },
+        new Country { Name = "Iraq", Code = "IQ", Flag = "🇮🇶", DialCode = "+964" },
+        new Country { Name = "Ireland", Code = "IE", Flag = "🇮🇪", DialCode = "+353" },
+        new Country { Name = "Israel", Code = "IL", Flag = "🇮🇱", DialCode = "+972" },
+        new Country { Name = "Italy", Code = "IT", Flag = "🇮🇹", DialCode = "+39" },
+        new Country { Name = "Ivory Coast", Code = "CI", Flag = "🇨🇮", DialCode = "+225" },
+        new Country { Name = "Jamaica", Code = "JM", Flag = "🇯🇲", DialCode = "+1876" },
+        new Country { Name = "Japan", Code = "JP", Flag = "🇯🇵", DialCode = "+81" },
+        new Country { Name = "Jordan", Code = "JO", Flag = "🇯🇴", DialCode = "+962" },
+        new Country { Name = "Kazakhstan", Code = "KZ", Flag = "🇰🇿", DialCode = "+7" },
+        new Country { Name = "Kenya", Code = "KE", Flag = "🇰🇪", DialCode = "+254" },
+        new Country { Name = "Kiribati", Code = "KI", Flag = "🇰🇮", DialCode = "+686" },
+        new Country { Name = "Kuwait", Code = "KW", Flag = "🇰🇼", DialCode = "+965" },
+        new Country { Name = "Kyrgyzstan", Code = "KG", Flag = "🇰🇬", DialCode = "+996" },
+        new Country { Name = "Laos", Code = "LA", Flag = "🇱🇦", DialCode = "+856" },
+        new Country { Name = "Latvia", Code = "LV", Flag = "🇱🇻", DialCode = "+371" },
+        new Country { Name = "Lebanon", Code = "LB", Flag = "🇱🇧", DialCode = "+961" },
+        new Country { Name = "Lesotho", Code = "LS", Flag = "🇱🇸", DialCode = "+266" },
+        new Country { Name = "Liberia", Code = "LR", Flag = "🇱🇷", DialCode = "+231" },
+        new Country { Name = "Libya", Code = "LY", Flag = "🇱🇾", DialCode = "+218" },
+        new Country { Name = "Liechtenstein", Code = "LI", Flag = "🇱🇮", DialCode = "+423" },
+        new Country { Name = "Lithuania", Code = "LT", Flag = "🇱🇹", DialCode = "+370" },
+        new Country { Name = "Luxembourg", Code = "LU", Flag = "🇱🇺", DialCode = "+352" },
+        new Country { Name = "Macao", Code = "MO", Flag = "🇲🇴", DialCode = "+853" },
+        new Country { Name = "Macedonia", Code = "MK", Flag = "🇲🇰", DialCode = "+389" },
+        new Country { Name = "Madagascar", Code = "MG", Flag = "🇲🇬", DialCode = "+261" },
+        new Country { Name = "Malawi", Code = "MW", Flag = "🇲🇼", DialCode = "+265" },
+        new Country { Name = "Malaysia", Code = "MY", Flag = "🇲🇾", DialCode = "+60" },
+        new Country { Name = "Maldives", Code = "MV", Flag = "🇲🇻", DialCode = "+960" },
+        new Country { Name = "Mali", Code = "ML", Flag = "🇲🇱", DialCode = "+223" },
+        new Country { Name = "Malta", Code = "MT", Flag = "🇲🇹", DialCode = "+356" },
+        new Country { Name = "Marshall Islands", Code = "MH", Flag = "🇲🇭", DialCode = "+692" },
+        new Country { Name = "Martinique", Code = "MQ", Flag = "🇲🇶", DialCode = "+596" },
+        new Country { Name = "Mauritania", Code = "MR", Flag = "🇲🇷", DialCode = "+222" },
+        new Country { Name = "Mauritius", Code = "MU", Flag = "🇲🇺", DialCode = "+230" },
+        new Country { Name = "Mayotte", Code = "YT", Flag = "🇾🇹", DialCode = "+262" },
+        new Country { Name = "Mexico", Code = "MX", Flag = "🇲🇽", DialCode = "+52" },
+        new Country { Name = "Micronesia", Code = "FM", Flag = "🇫🇲", DialCode = "+691" },
+        new Country { Name = "Moldova", Code = "MD", Flag = "🇲🇩", DialCode = "+373" },
+        new Country { Name = "Monaco", Code = "MC", Flag = "🇲🇨", DialCode = "+377" },
+        new Country { Name = "Mongolia", Code = "MN", Flag = "🇲🇳", DialCode = "+976" },
+        new Country { Name = "Montenegro", Code = "ME", Flag = "🇲🇪", DialCode = "+382" },
+        new Country { Name = "Montserrat", Code = "MS", Flag = "🇲🇸", DialCode = "+1664" },
+        new Country { Name = "Morocco", Code = "MA", Flag = "🇲🇦", DialCode = "+212" },
+        new Country { Name = "Mozambique", Code = "MZ", Flag = "🇲🇿", DialCode = "+258" },
+        new Country { Name = "Myanmar", Code = "MM", Flag = "🇲🇲", DialCode = "+95" },
+        new Country { Name = "Namibia", Code = "NA", Flag = "🇳🇦", DialCode = "+264" },
+        new Country { Name = "Nauru", Code = "NR", Flag = "🇳🇷", DialCode = "+674" },
+        new Country { Name = "Nepal", Code = "NP", Flag = "🇳🇵", DialCode = "+977" },
+        new Country { Name = "Netherlands", Code = "NL", Flag = "🇳🇱", DialCode = "+31" },
+        new Country { Name = "New Caledonia", Code = "NC", Flag = "🇳🇨", DialCode = "+687" },
+        new Country { Name = "New Zealand", Code = "NZ", Flag = "🇳🇿", DialCode = "+64" },
+        new Country { Name = "Nicaragua", Code = "NI", Flag = "🇳🇮", DialCode = "+505" },
+        new Country { Name = "Niger", Code = "NE", Flag = "🇳🇪", DialCode = "+227" },
+        new Country { Name = "Nigeria", Code = "NG", Flag = "🇳🇬", DialCode = "+234" },
+        new Country { Name = "Niue", Code = "NU", Flag = "🇳🇺", DialCode = "+683" },
+        new Country { Name = "Norfolk Island", Code = "NF", Flag = "🇳🇫", DialCode = "+672" },
+        new Country { Name = "North Korea", Code = "KP", Flag = "🇰🇵", DialCode = "+850" },
+        new Country { Name = "Northern Mariana Islands", Code = "MP", Flag = "🇲🇵", DialCode = "+1670" },
+        new Country { Name = "Norway", Code = "NO", Flag = "🇳🇴", DialCode = "+47" },
+        new Country { Name = "Oman", Code = "OM", Flag = "🇴🇲", DialCode = "+968" },
+        new Country { Name = "Pakistan", Code = "PK", Flag = "🇵🇰", DialCode = "+92" },
+        new Country { Name = "Palau", Code = "PW", Flag = "🇵🇼", DialCode = "+680" },
+        new Country { Name = "Palestine", Code = "PS", Flag = "🇵🇸", DialCode = "+970" },
+        new Country { Name = "Panama", Code = "PA", Flag = "🇵🇦", DialCode = "+507" },
+        new Country { Name = "Papua New Guinea", Code = "PG", Flag = "🇵🇬", DialCode = "+675" },
+        new Country { Name = "Paraguay", Code = "PY", Flag = "🇵🇾", DialCode = "+595" },
+        new Country { Name = "Peru", Code = "PE", Flag = "🇵🇪", DialCode = "+51" },
+        new Country { Name = "Philippines", Code = "PH", Flag = "🇵🇭", DialCode = "+63" },
+        new Country { Name = "Poland", Code = "PL", Flag = "🇵🇱", DialCode = "+48" },
+        new Country { Name = "Portugal", Code = "PT", Flag = "🇵🇹", DialCode = "+351" },
+        new Country { Name = "Puerto Rico", Code = "PR", Flag = "🇵🇷", DialCode = "+1787" },
+        new Country { Name = "Qatar", Code = "QA", Flag = "🇶🇦", DialCode = "+974" },
+        new Country { Name = "Reunion", Code = "RE", Flag = "🇷🇪", DialCode = "+262" },
+        new Country { Name = "Romania", Code = "RO", Flag = "🇷🇴", DialCode = "+40" },
+        new Country { Name = "Russia", Code = "RU", Flag = "🇷🇺", DialCode = "+7" },
+        new Country { Name = "Rwanda", Code = "RW", Flag = "🇷🇼", DialCode = "+250" },
+        new Country { Name = "Saint Kitts and Nevis", Code = "KN", Flag = "🇰🇳", DialCode = "+1869" },
+        new Country { Name = "Saint Lucia", Code = "LC", Flag = "🇱🇨", DialCode = "+1758" },
+        new Country { Name = "Saint Vincent and the Grenadines", Code = "VC", Flag = "🇻🇨", DialCode = "+1784" },
+        new Country { Name = "Samoa", Code = "WS", Flag = "🇼🇸", DialCode = "+685" },
+        new Country { Name = "San Marino", Code = "SM", Flag = "🇸🇲", DialCode = "+378" },
+        new Country { Name = "Sao Tome and Principe", Code = "ST", Flag = "🇸🇹", DialCode = "+239" },
+        new Country { Name = "Saudi Arabia", Code = "SA", Flag = "🇸🇦", DialCode = "+966" },
+        new Country { Name = "Senegal", Code = "SN", Flag = "🇸🇳", DialCode = "+221" },
+        new Country { Name = "Serbia", Code = "RS", Flag = "🇷🇸", DialCode = "+381" },
+        new Country { Name = "Seychelles", Code = "SC", Flag = "🇸🇨", DialCode = "+248" },
+        new Country { Name = "Sierra Leone", Code = "SL", Flag = "🇸🇱", DialCode = "+232" },
+        new Country { Name = "Singapore", Code = "SG", Flag = "🇸🇬", DialCode = "+65" },
+        new Country { Name = "Slovakia", Code = "SK", Flag = "🇸🇰", DialCode = "+421" },
+        new Country { Name = "Slovenia", Code = "SI", Flag = "🇸🇮", DialCode = "+386" },
+        new Country { Name = "Solomon Islands", Code = "SB", Flag = "🇸🇧", DialCode = "+677" },
+        new Country { Name = "Somalia", Code = "SO", Flag = "🇸🇴", DialCode = "+252" },
+        new Country { Name = "South Africa", Code = "ZA", Flag = "🇿🇦", DialCode = "+27" },
+        new Country { Name = "South Korea", Code = "KR", Flag = "🇰🇷", DialCode = "+82" },
+        new Country { Name = "South Sudan", Code = "SS", Flag = "🇸🇸", DialCode = "+211" },
+        new Country { Name = "Spain", Code = "ES", Flag = "🇪🇸", DialCode = "+34" },
+        new Country { Name = "Sri Lanka", Code = "LK", Flag = "🇱🇰", DialCode = "+94" },
+        new Country { Name = "Sudan", Code = "SD", Flag = "🇸🇩", DialCode = "+249" },
+        new Country { Name = "Suriname", Code = "SR", Flag = "🇸🇷", DialCode = "+597" },
+        new Country { Name = "Swaziland", Code = "SZ", Flag = "🇸🇿", DialCode = "+268" },
+        new Country { Name = "Sweden", Code = "SE", Flag = "🇸🇪", DialCode = "+46" },
+        new Country { Name = "Switzerland", Code = "CH", Flag = "🇨🇭", DialCode = "+41" },
+        new Country { Name = "Syria", Code = "SY", Flag = "🇸🇾", DialCode = "+963" },
+        new Country { Name = "Taiwan", Code = "TW", Flag = "🇹🇼", DialCode = "+886" },
+        new Country { Name = "Tajikistan", Code = "TJ", Flag = "🇹🇯", DialCode = "+992" },
+        new Country { Name = "Tanzania", Code = "TZ", Flag = "🇹🇿", DialCode = "+255" },
+        new Country { Name = "Thailand", Code = "TH", Flag = "🇹🇭", DialCode = "+66" },
+        new Country { Name = "Togo", Code = "TG", Flag = "🇹🇬", DialCode = "+228" },
+        new Country { Name = "Tokelau", Code = "TK", Flag = "🇹🇰", DialCode = "+690" },
+        new Country { Name = "Tonga", Code = "TO", Flag = "🇹🇴", DialCode = "+676" },
+        new Country { Name = "Trinidad and Tobago", Code = "TT", Flag = "🇹🇹", DialCode = "+1868" },
+        new Country { Name = "Tunisia", Code = "TN", Flag = "🇹🇳", DialCode = "+216" },
+        new Country { Name = "Turkey", Code = "TR", Flag = "🇹🇷", DialCode = "+90" },
+        new Country { Name = "Turkmenistan", Code = "TM", Flag = "🇹🇲", DialCode = "+993" },
+        new Country { Name = "Turks and Caicos Islands", Code = "TC", Flag = "🇹🇨", DialCode = "+1649" },
+        new Country { Name = "Tuvalu", Code = "TV", Flag = "🇹🇻", DialCode = "+688" },
+        new Country { Name = "Uganda", Code = "UG", Flag = "🇺🇬", DialCode = "+256" },
+        new Country { Name = "Ukraine", Code = "UA", Flag = "🇺🇦", DialCode = "+380" },
+        new Country { Name = "United Arab Emirates", Code = "AE", Flag = "🇦🇪", DialCode = "+971" },
+        new Country { Name = "United Kingdom", Code = "GB", Flag = "🇬🇧", DialCode = "+44" },
+        new Country { Name = "United States", Code = "US", Flag = "🇺🇸", DialCode = "+1" },
+        new Country { Name = "Uruguay", Code = "UY", Flag = "🇺🇾", DialCode = "+598" },
+        new Country { Name = "Uzbekistan", Code = "UZ", Flag = "🇺🇿", DialCode = "+998" },
+        new Country { Name = "Vanuatu", Code = "VU", Flag = "🇻🇺", DialCode = "+678" },
+        new Country { Name = "Vatican", Code = "VA", Flag = "🇻🇦", DialCode = "+379" },
+        new Country { Name = "Venezuela", Code = "VE", Flag = "🇻🇪", DialCode = "+58" },
+        new Country { Name = "Vietnam", Code = "VN", Flag = "🇻🇳", DialCode = "+84" },
+        new Country { Name = "Wallis and Futuna", Code = "WF", Flag = "🇼🇫", DialCode = "+681" },
+        new Country { Name = "Western Sahara", Code = "EH", Flag = "🇪🇭", DialCode = "+212" },
+        new Country { Name = "Yemen", Code = "YE", Flag = "🇾🇪", DialCode = "+967" },
+        new Country { Name = "Zambia", Code = "ZM", Flag = "🇿🇲", DialCode = "+260" },
+        new Country { Name = "Zimbabwe", Code = "ZW", Flag = "🇿🇼", DialCode = "+263" }
+    };
+}
