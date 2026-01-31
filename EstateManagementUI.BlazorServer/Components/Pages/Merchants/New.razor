@@ -120,7 +120,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">
                                 Country <span class="text-red-500">*</span>
                             </label>
-                            <InputText @bind-Value="model.Country" class="input w-full" placeholder="Enter country" name="Country" />
+                            <CountrySelector Value="model.Country" ValueChanged="@((string value) => model.Country = value)" ValueExpression="@(() => model.Country)" class="input w-full" name="Country" />
                             <ValidationMessage For="@(() => model.Country)" class="text-red-600 text-sm mt-1" />
                         </div>
                     </div>
