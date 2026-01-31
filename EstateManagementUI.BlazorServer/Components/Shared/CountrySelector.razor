@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @inherits InputBase<string>
 
-<div class="relative" @ref="dropdownRef">
+<div class="relative">
     <!-- Dropdown Button -->
     <button type="button" 
             @onclick="ToggleDropdown" 
@@ -60,16 +60,7 @@
 </div>
 
 @code {
-    private ElementReference dropdownRef;
     private bool isOpen = false;
-
-    [Parameter]
-    public string Placeholder { get; set; } = "Select a country...";
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-    }
 
     private void ToggleDropdown()
     {
@@ -216,7 +207,7 @@
         new Country { Name = "Lithuania", Code = "LT", Flag = "🇱🇹", DialCode = "+370" },
         new Country { Name = "Luxembourg", Code = "LU", Flag = "🇱🇺", DialCode = "+352" },
         new Country { Name = "Macao", Code = "MO", Flag = "🇲🇴", DialCode = "+853" },
-        new Country { Name = "Macedonia", Code = "MK", Flag = "🇲🇰", DialCode = "+389" },
+        new Country { Name = "North Macedonia", Code = "MK", Flag = "🇲🇰", DialCode = "+389" },
         new Country { Name = "Madagascar", Code = "MG", Flag = "🇲🇬", DialCode = "+261" },
         new Country { Name = "Malawi", Code = "MW", Flag = "🇲🇼", DialCode = "+265" },
         new Country { Name = "Malaysia", Code = "MY", Flag = "🇲🇾", DialCode = "+60" },
