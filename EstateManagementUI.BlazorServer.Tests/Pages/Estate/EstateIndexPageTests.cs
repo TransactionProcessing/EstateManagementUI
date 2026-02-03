@@ -107,9 +107,10 @@ public class EstateIndexPageTests : BaseTest
         var cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
-        // Act
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        // Act - Find operators button and click it
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Assigned Operators"), timeout: TimeSpan.FromSeconds(5));
@@ -124,12 +125,13 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators first
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Act - switch back to overview
-        var overviewTab = cut.Find("button:contains('Overview')");
-        overviewTab.Click();
+        var overviewButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
+        overviewButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Estate Name"), timeout: TimeSpan.FromSeconds(5));
@@ -165,8 +167,9 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Click Add Operator button
         var addOperatorButton = cut.Find("#addOperatorButton");
@@ -175,8 +178,9 @@ public class EstateIndexPageTests : BaseTest
         // Act - Select operator and add
         var selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
-        var addButton = cut.Find("button:contains('Add')");
-        addButton.Click();
+        var addButtons = cut.FindAll("button");
+        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
+        addButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator added successfully"), timeout: TimeSpan.FromSeconds(5));
@@ -202,8 +206,9 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Click Add Operator button
         var addOperatorButton = cut.Find("#addOperatorButton");
@@ -212,8 +217,9 @@ public class EstateIndexPageTests : BaseTest
         // Act - Select operator and add
         var selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
-        var addButton = cut.Find("button:contains('Add')");
-        addButton.Click();
+        var addButtons = cut.FindAll("button");
+        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
+        addButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to add operator"), timeout: TimeSpan.FromSeconds(5));
@@ -241,12 +247,14 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Act - Remove operator
-        var removeButton = cut.Find("button:contains('Remove')");
-        removeButton.Click();
+        var removeButtons = cut.FindAll("button");
+        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        removeButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
@@ -274,12 +282,14 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Act - Remove operator
-        var removeButton = cut.Find("button:contains('Remove')");
-        removeButton.Click();
+        var removeButtons = cut.FindAll("button");
+        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        removeButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to remove operator"), timeout: TimeSpan.FromSeconds(5));
@@ -497,8 +507,9 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Act - Switch to operators tab
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => {
@@ -517,8 +528,9 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Act - Switch to operators tab
-        var operatorsTab = cut.Find("button:contains('Operators')");
-        operatorsTab.Click();
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators assigned"), timeout: TimeSpan.FromSeconds(5));
