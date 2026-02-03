@@ -306,7 +306,7 @@ public class EstateIndexPageTests : BaseTest
                 MerchantId = Guid.NewGuid(),
                 Name = "Test Merchant",
                 Reference = "MERCH001",
-                CreatedDateTime = DateTime.Now
+                CreatedDateTime = new DateTime(2024, 1, 1, 12, 0, 0)
             }
         };
         
