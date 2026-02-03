@@ -696,73 +696,33 @@ public class EstateIndexPageTests : BaseTest
     }
 
     // Helper methods
-    private void SetupSuccessfulDataLoad()
+    private void SetupSuccessfulDataLoad(
+        List<RecentMerchantsModel>? merchants = null,
+        List<RecentContractModel>? contracts = null,
+        List<OperatorModel>? assignedOperators = null,
+        List<OperatorDropDownModel>? operators = null)
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
         _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
+            .ReturnsAsync(Result.Success(merchants ?? new List<RecentMerchantsModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
+            .ReturnsAsync(Result.Success(contracts ?? new List<RecentContractModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
+            .ReturnsAsync(Result.Success(assignedOperators ?? new List<OperatorModel>()));
         _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
+            .ReturnsAsync(Result.Success(operators ?? new List<OperatorDropDownModel>()));
     }
 
     private void SetupSuccessfulDataLoadWithOperators(List<OperatorDropDownModel> operators)
-    {
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(operators));
-    }
+        => SetupSuccessfulDataLoad(operators: operators);
 
     private void SetupSuccessfulDataLoadWithAssignedOperators(List<OperatorModel> assignedOperators)
-    {
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(assignedOperators));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-    }
+        => SetupSuccessfulDataLoad(assignedOperators: assignedOperators);
 
     private void SetupSuccessfulDataLoadWithMerchants(List<RecentMerchantsModel> merchants)
-    {
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(merchants));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-    }
+        => SetupSuccessfulDataLoad(merchants: merchants);
 
     private void SetupSuccessfulDataLoadWithContracts(List<RecentContractModel> contracts)
-    {
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(contracts));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-    }
+        => SetupSuccessfulDataLoad(contracts: contracts);
 }
