@@ -536,6 +536,165 @@ public class EstateIndexPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators assigned"), timeout: TimeSpan.FromSeconds(5));
     }
 
+    [Fact]
+    public void EstateIndex_AddOperator_WhenGetOperatorQueryFails_NavigatesToError()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var operatorToAdd = new OperatorDropDownModel
+        {
+            OperatorId = operatorId,
+            OperatorName = "Test Operator"
+        };
+        
+        SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
+            .ReturnsAsync(Result.Success());
+        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
+            .ReturnsAsync(Result.Failure("Failed to get operator details"));
+        
+        var cut = RenderComponent<EstateIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to operators tab
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
+        
+        // Click Add Operator button
+        var addOperatorButton = cut.Find("#addOperatorButton");
+        addOperatorButton.Click();
+        
+        // Act - Select operator and add
+        var selectElement = cut.Find("select");
+        selectElement.Change(operatorId.ToString());
+        var addButtons = cut.FindAll("button");
+        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
+        addButton?.Click();
+        
+        // Assert - Should navigate to error page
+        cut.WaitForAssertion(() => {
+            _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
+        }, timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void EstateIndex_AddOperator_WhenException_ShowsErrorMessage()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var operatorToAdd = new OperatorDropDownModel
+        {
+            OperatorId = operatorId,
+            OperatorName = "Test Operator"
+        };
+        
+        SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
+            .ThrowsAsync(new Exception("Test exception"));
+        
+        var cut = RenderComponent<EstateIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to operators tab
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
+        
+        // Click Add Operator button
+        var addOperatorButton = cut.Find("#addOperatorButton");
+        addOperatorButton.Click();
+        
+        // Act - Select operator and add
+        var selectElement = cut.Find("select");
+        selectElement.Change(operatorId.ToString());
+        var addButtons = cut.FindAll("button");
+        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
+        addButton?.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("An error occurred: Test exception"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void EstateIndex_RemoveOperator_WhenException_ShowsErrorMessage()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var assignedOperator = new OperatorModel
+        {
+            OperatorId = operatorId,
+            Name = "Test Operator",
+            RequireCustomMerchantNumber = true,
+            RequireCustomTerminalNumber = false
+        };
+        
+        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
+            .ThrowsAsync(new Exception("Test exception"));
+        
+        var cut = RenderComponent<EstateIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to operators tab
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
+        
+        // Act - Remove operator
+        var removeButtons = cut.FindAll("button");
+        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        removeButton?.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("An error occurred: Test exception"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void EstateIndex_SuccessMessage_ClearsWhenSwitchingTabs()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var assignedOperator = new OperatorModel
+        {
+            OperatorId = operatorId,
+            Name = "Test Operator",
+            RequireCustomMerchantNumber = true,
+            RequireCustomTerminalNumber = false
+        };
+        
+        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
+            .ReturnsAsync(Result.Success());
+        
+        var cut = RenderComponent<EstateIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to operators tab
+        var buttons = cut.FindAll("button");
+        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        operatorsButton?.Click();
+        
+        // Remove operator to trigger success message
+        var removeButtons = cut.FindAll("button");
+        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        removeButton?.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Act - Switch to overview tab
+        var overviewButtons = cut.FindAll("button");
+        var overviewButton = overviewButtons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
+        overviewButton?.Click();
+        
+        // Assert - Success message should be cleared
+        cut.WaitForAssertion(() => cut.Markup.ShouldNotContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
+    }
+
     // Helper methods
     private void SetupSuccessfulDataLoad()
     {
