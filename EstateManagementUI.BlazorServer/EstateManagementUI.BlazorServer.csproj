@@ -16,6 +16,7 @@
     <PackageReference Include="Lamar.Microsoft.DependencyInjection" Version="15.0.1" />
     <PackageReference Include="MediatR" Version="14.0.0" />
     <PackageReference Include="IdentityModel" Version="6.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.2" />
     <PackageReference Include="Shared" Version="2025.12.2" />
   </ItemGroup>
 
