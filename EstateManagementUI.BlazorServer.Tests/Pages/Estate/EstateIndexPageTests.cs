@@ -1,17 +1,14 @@
+using AngleSharp.Dom;
 using Bunit;
-using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.Common;
+using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using MediatR;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Components.Web;
 using Moq;
 using Shouldly;
 using SimpleResults;
-using System.Security.Claims;
-using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateIndex = EstateManagementUI.BlazorServer.Components.Pages.Estate.Index;
-using EstateManagementUI.BlazorServer.Models;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Estate;
 
@@ -21,8 +18,7 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_RendersCorrectly()
     {
         // Arrange
-        var estate = new EstateModel
-        {
+        EstateModel estate = new() {
             EstateId = Guid.NewGuid(),
             EstateName = "Test Estate",
             Reference = "EST001"
@@ -40,7 +36,7 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
 
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         
         // Assert
         cut.Markup.ShouldContain("Estate Management");
@@ -50,8 +46,7 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_DisplaysEstateDetails()
     {
         // Arrange
-        var estate = new EstateModel
-        {
+        EstateModel estate = new() {
             EstateId = Guid.NewGuid(),
             EstateName = "Test Estate",
             Reference = "EST001",
@@ -70,7 +65,7 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
 
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Estate"), timeout: TimeSpan.FromSeconds(5));
@@ -92,10 +87,10 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
 
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         
         // Assert
-        var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
+        IRenderedComponent<PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
 
@@ -104,12 +99,12 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Act - Find operators button and click it
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Assert
@@ -121,16 +116,16 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators first
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Act - switch back to overview
-        var overviewButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
+        IElement? overviewButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
         overviewButton?.Click();
         
         // Assert
@@ -141,17 +136,15 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_AddOperator_Success_UpdatesAssignedOperators()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var operatorToAdd = new OperatorDropDownModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorDropDownModel operatorToAdd = new() {
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
         
         SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
         
-        var operatorDetails = new OperatorModel
-        {
+        OperatorModel operatorDetails = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -163,36 +156,36 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
             .ReturnsAsync(Result.Success());
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Click Add Operator button
-        var addOperatorButton = cut.Find("#addOperatorButton");
+        IElement addOperatorButton = cut.Find("#addOperatorButton");
         addOperatorButton.Click();
         
         // Act - Select operator and add
-        var selectElement = cut.Find("select");
+        IElement selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
-        var addButtons = cut.FindAll("button");
-        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
-        addButton?.Click();
-        
+        IElement addButton = cut.FindAll("button")
+            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addOperatorButton");
+        addButton.Click();
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator added successfully"), timeout: TimeSpan.FromSeconds(5));
+        
     }
 
     [Fact]
     public void EstateIndex_AddOperator_Failure_ShowsErrorMessage()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var operatorToAdd = new OperatorDropDownModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorDropDownModel operatorToAdd = new() {
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
@@ -202,26 +195,27 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
             .ReturnsAsync(Result.Failure("Failed to add operator"));
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Click Add Operator button
-        var addOperatorButton = cut.Find("#addOperatorButton");
+        IElement addOperatorButton = cut.Find("#addOperatorButton");
         addOperatorButton.Click();
         
         // Act - Select operator and add
-        var selectElement = cut.Find("select");
+        IElement selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
-        var addButtons = cut.FindAll("button");
-        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
-        addButton?.Click();
-        
+        IElement addButton = cut.FindAll("button")
+            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addOperatorButton");
+        addButton.Click();
+
         // Assert
+        _mockMediator.Verify(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default), Times.AtLeastOnce());
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to add operator"), timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -229,9 +223,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_RemoveOperator_Success_RemovesFromList()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var assignedOperator = new OperatorModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -243,17 +236,17 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
             .ReturnsAsync(Result.Success());
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Act - Remove operator
-        var removeButtons = cut.FindAll("button");
-        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
         
         // Assert
@@ -264,9 +257,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_RemoveOperator_Failure_ShowsErrorMessage()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var assignedOperator = new OperatorModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -278,17 +270,17 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
             .ReturnsAsync(Result.Failure("Failed to remove operator"));
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Act - Remove operator
-        var removeButtons = cut.FindAll("button");
-        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
         
         // Assert
@@ -299,8 +291,7 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_DisplaysMerchants_WhenPresent()
     {
         // Arrange
-        var merchants = new List<RecentMerchantsModel>
-        {
+        List<RecentMerchantsModel> merchants = new() {
             new RecentMerchantsModel
             {
                 MerchantId = Guid.NewGuid(),
@@ -313,7 +304,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoadWithMerchants(merchants);
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
@@ -328,7 +319,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoad();
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
@@ -339,8 +330,7 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_DisplaysContracts_WhenPresent()
     {
         // Arrange
-        var contracts = new List<RecentContractModel>
-        {
+        List<RecentContractModel> contracts = new() {
             new RecentContractModel
             {
                 ContractId = Guid.NewGuid(),
@@ -352,7 +342,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoadWithContracts(contracts);
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
@@ -366,7 +356,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoad();
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
@@ -389,11 +379,11 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
-        _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 
     [Fact]
@@ -412,11 +402,11 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
-        _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 
     [Fact]
@@ -435,11 +425,11 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
-        _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 
     [Fact]
@@ -458,11 +448,11 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
-        _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 
     [Fact]
@@ -481,20 +471,19 @@ public class EstateIndexPageTests : BaseTest
             .ReturnsAsync(Result.Failure("Failed to load operators"));
         
         // Act
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
-        _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 
     [Fact]
     public void EstateIndex_DisplaysOperatorRequirements_WhenPresent()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var assignedOperator = new OperatorModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -503,12 +492,12 @@ public class EstateIndexPageTests : BaseTest
         
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Act - Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Assert
@@ -524,12 +513,12 @@ public class EstateIndexPageTests : BaseTest
         // Arrange
         SetupSuccessfulDataLoad();
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Act - Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Assert
@@ -540,9 +529,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_AddOperator_WhenGetOperatorQueryFails_NavigatesToError()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var operatorToAdd = new OperatorDropDownModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorDropDownModel operatorToAdd = new() {
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
@@ -554,38 +542,35 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
             .ReturnsAsync(Result.Failure("Failed to get operator details"));
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Click Add Operator button
-        var addOperatorButton = cut.Find("#addOperatorButton");
+        IElement addOperatorButton = cut.Find("#addOperatorButton");
         addOperatorButton.Click();
         
         // Act - Select operator and add
-        var selectElement = cut.Find("select");
+        IElement selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
-        var addButtons = cut.FindAll("button");
-        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
-        addButton?.Click();
-        
+        IElement addButton = cut.FindAll("button")
+            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addOperatorButton");
+        addButton.Click();
+
         // Assert - Should navigate to error page
-        cut.WaitForAssertion(() => {
-            _mockNavigationManager.Verify(x => x.NavigateTo(It.Is<string>(s => s.Contains("error")), It.IsAny<bool>()), Times.AtLeastOnce());
-        }, timeout: TimeSpan.FromSeconds(5));
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 
     [Fact]
     public void EstateIndex_AddOperator_WhenException_ShowsErrorMessage()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var operatorToAdd = new OperatorDropDownModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorDropDownModel operatorToAdd = new() {
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
@@ -595,25 +580,25 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
             .ThrowsAsync(new Exception("Test exception"));
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Click Add Operator button
-        var addOperatorButton = cut.Find("#addOperatorButton");
+        IElement addOperatorButton = cut.Find("#addOperatorButton");
         addOperatorButton.Click();
         
         // Act - Select operator and add
-        var selectElement = cut.Find("select");
+        IElement selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
-        var addButtons = cut.FindAll("button");
-        var addButton = addButtons.FirstOrDefault(b => b.TextContent.Contains("Add") && !b.GetAttribute("id")?.Equals("addOperatorButton") == true);
-        addButton?.Click();
-        
+        IElement addButton = cut.FindAll("button")
+            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addOperatorButton");
+        addButton.Click();
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("An error occurred: Test exception"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -622,9 +607,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_RemoveOperator_WhenException_ShowsErrorMessage()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var assignedOperator = new OperatorModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -636,17 +620,17 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
             .ThrowsAsync(new Exception("Test exception"));
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Act - Remove operator
-        var removeButtons = cut.FindAll("button");
-        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
         
         // Assert
@@ -657,9 +641,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_SuccessMessage_ClearsWhenSwitchingTabs()
     {
         // Arrange
-        var operatorId = Guid.NewGuid();
-        var assignedOperator = new OperatorModel
-        {
+        Guid operatorId = Guid.NewGuid();
+        OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -671,24 +654,24 @@ public class EstateIndexPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
             .ReturnsAsync(Result.Success());
         
-        var cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
-        var buttons = cut.FindAll("button");
-        var operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
         
         // Remove operator to trigger success message
-        var removeButtons = cut.FindAll("button");
-        var removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
+        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
         
         // Act - Switch to overview tab
-        var overviewButtons = cut.FindAll("button");
-        var overviewButton = overviewButtons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
+        IRefreshableElementCollection<IElement> overviewButtons = cut.FindAll("button");
+        IElement? overviewButton = overviewButtons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
         overviewButton?.Click();
         
         // Assert - Success message should be cleared
@@ -696,11 +679,10 @@ public class EstateIndexPageTests : BaseTest
     }
 
     // Helper methods
-    private void SetupSuccessfulDataLoad(
-        List<RecentMerchantsModel>? merchants = null,
-        List<RecentContractModel>? contracts = null,
-        List<OperatorModel>? assignedOperators = null,
-        List<OperatorDropDownModel>? operators = null)
+    private void SetupSuccessfulDataLoad(List<RecentMerchantsModel>? merchants = null,
+                                         List<RecentContractModel>? contracts = null,
+                                         List<OperatorModel>? assignedOperators = null,
+                                         List<OperatorDropDownModel>? operators = null)
     {
         _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
             .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
