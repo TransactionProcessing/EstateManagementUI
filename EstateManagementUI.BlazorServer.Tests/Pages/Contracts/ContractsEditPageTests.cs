@@ -502,11 +502,11 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
         
-        // Find cancel button in modal
-        buttons = cut.FindAll("button");
-        IElement? cancelButton = buttons.FirstOrDefault(b => 
+        // Find cancel button in modal (type="button" excludes submit buttons)
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
             b.TextContent.Contains("Cancel") && 
-            !b.TextContent.Contains("Update"));
+            b.GetAttribute("type") == "button");
         
         // Assert
         cancelButton.ShouldNotBeNull();
@@ -553,11 +553,11 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
         
-        // Find cancel button in modal
-        buttons = cut.FindAll("button");
-        IElement? cancelButton = buttons.FirstOrDefault(b => 
+        // Find cancel button in modal (type="button" excludes submit buttons)
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
             b.TextContent.Contains("Cancel") && 
-            !b.TextContent.Contains("Update"));
+            b.GetAttribute("type") == "button");
         
         // Assert
         cancelButton.ShouldNotBeNull();
