@@ -39,6 +39,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
                 var result = await this.LoadEstateData(correlationId, estateId);
                 if (result.IsFailed) {
                     this.NavigationManager.NavigateToErrorPage();
+                    return;
                 }
             }
             finally
@@ -110,22 +111,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
 
             ClearMessages();
 
-            try
-            {
+            try {
                 var correlationId = new CorrelationId(Guid.NewGuid());
                 Guid estateId = await this.GetEstateId();
                 var operatorId = Guid.Parse(selectedOperatorId);
 
-                var command = new EstateCommands.AddOperatorToEstateCommand(
-                    correlationId,
-                    estateId,
-                    operatorId
-                );
+                var command = new EstateCommands.AddOperatorToEstateCommand(correlationId, estateId, operatorId);
 
                 var result = await Mediator.Send(command);
 
-                if (result.IsSuccess)
-                {
+                if (result.IsSuccess) {
                     successMessage = "Operator added successfully";
                     selectedOperatorId = null;
                     showAddOperator = false;
@@ -135,25 +130,25 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate
                     if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId)) {
                         OperatorQueries.GetOperatorQuery query = new OperatorQueries.GetOperatorQuery(CorrelationIdHelper.New(), await this.GetEstateId(), operatorId);
                         var operatorResult = await Mediator.Send(query);
-                        if (operatorResult.IsFailed) 
+                        if (operatorResult.IsFailed) {
                             this.NavigationManager.NavigateToErrorPage();
+                            //return;
+                        }
 
-                        assignedOperators.Add(new OperatorModel() {
-                            OperatorId = operatorResult.Data.OperatorId,
-                            Name = operatorResult.Data.Name,
-                            RequireCustomMerchantNumber = operatorResult.Data.RequireCustomMerchantNumber,
-                            RequireCustomTerminalNumber = operatorResult.Data.RequireCustomTerminalNumber
-                        });
+                        assignedOperators.Add(new OperatorModel() { OperatorId = operatorResult.Data.OperatorId, Name = operatorResult.Data.Name, RequireCustomMerchantNumber = operatorResult.Data.RequireCustomMerchantNumber, RequireCustomTerminalNumber = operatorResult.Data.RequireCustomTerminalNumber });
                     }
                 }
-                else
-                {
+                else {
                     errorMessage = result.Message ?? "Failed to add operator";
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 errorMessage = $"An error occurred: {ex.Message}";
+            }
+            finally {
+                // Small delay so user sees confirmation (adjust duration as needed)
+                await Task.Delay(2500);
+                this.StateHasChanged();
             }
         }
 
