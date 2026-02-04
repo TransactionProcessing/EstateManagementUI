@@ -1,7 +1,7 @@
+using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 using EstateManagementUI.BlazorServer.Components.Permissions;
-using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Models;
@@ -152,7 +152,7 @@ public class ContractsViewPageTests : BaseTest
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Test Product",
                     DisplayText = "Test Display",
-                    ProductType = ProductType.MobileTopup,
+                    ProductType = "MobileTopup",
                     Value = "100",
                     NumberOfFees = 2
                 }
@@ -215,7 +215,7 @@ public class ContractsViewPageTests : BaseTest
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Test Product",
                     DisplayText = "Test Display",
-                    ProductType = ProductType.MobileTopup,
+                    ProductType = "MobileTopup",
                     Value = "100",
                     NumberOfFees = 1,
                     TransactionFees = new List<ContractProductTransactionFeeModel>
@@ -224,8 +224,8 @@ public class ContractsViewPageTests : BaseTest
                         {
                             TransactionFeeId = Guid.NewGuid(),
                             Description = "Service Fee",
-                            CalculationType = CalculationType.Fixed,
-                            FeeType = FeeType.ServiceProvider,
+                            CalculationType = 0,
+                            FeeType = 0,
                             Value = 10.50m
                         }
                     }
