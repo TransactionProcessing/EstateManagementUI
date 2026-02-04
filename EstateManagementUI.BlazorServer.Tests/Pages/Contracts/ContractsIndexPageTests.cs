@@ -1,3 +1,4 @@
+using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
@@ -52,10 +53,9 @@ public class ContractsIndexPageTests : BaseTest
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
         
         // Assert
-        cut.Markup.ShouldContain("No contracts found");
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("No contracts found"), timeout: TimeSpan.FromSeconds(5));
     }
 
     [Fact]
@@ -87,10 +87,9 @@ public class ContractsIndexPageTests : BaseTest
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
-        cut.Markup.ShouldContain("Contract 1");
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Contract 1"), timeout: TimeSpan.FromSeconds(5));
         cut.Markup.ShouldContain("Contract 2");
         cut.Markup.ShouldContain("Operator A");
         cut.Markup.ShouldContain("Operator B");
@@ -121,10 +120,9 @@ public class ContractsIndexPageTests : BaseTest
         
         // Act
         var cut = RenderComponent<ContractsIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
-        cut.Markup.ShouldContain("Product(s)");
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Product(s)"), timeout: TimeSpan.FromSeconds(5));
     }
 
     [Fact]
@@ -140,5 +138,89 @@ public class ContractsIndexPageTests : BaseTest
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsIndex_AddNewContractButton_NavigatesToNewContractPage()
+    {
+        // Arrange
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(new List<ContractModel>()));
+        
+        var cut = RenderComponent<ContractsIndex>();
+        cut.WaitForAssertion(() => !cut.Markup.Contains("animate-spin"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Act - Find and click the "Add New Contract" button
+        var addButton = cut.Find("#newContractButton");
+        addButton.Click();
+        
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain("/contracts/new");
+    }
+
+    [Fact]
+    public void ContractsIndex_ViewButton_NavigatesToContractDetails()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contracts = new List<ContractModel>
+        {
+            new ContractModel
+            {
+                ContractId = contractId,
+                Description = "Test Contract",
+                OperatorName = "Test Operator",
+                OperatorId = Guid.NewGuid(),
+                Products = new List<ContractProductModel>()
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(contracts));
+        
+        var cut = RenderComponent<ContractsIndex>();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Act - Find and click the "View" button
+        var buttons = cut.FindAll("button");
+        var viewButton = buttons.FirstOrDefault(b => b.TextContent.Contains("View"));
+        viewButton.ShouldNotBeNull();
+        viewButton.Click();
+        
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/contracts/{contractId}");
+    }
+
+    [Fact]
+    public void ContractsIndex_EditButton_NavigatesToEditContractPage()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contracts = new List<ContractModel>
+        {
+            new ContractModel
+            {
+                ContractId = contractId,
+                Description = "Test Contract",
+                OperatorName = "Test Operator",
+                OperatorId = Guid.NewGuid(),
+                Products = new List<ContractProductModel>()
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+            .ReturnsAsync(Result.Success(contracts));
+        
+        var cut = RenderComponent<ContractsIndex>();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Act - Find and click the "Edit" button
+        var buttons = cut.FindAll("button");
+        var editButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Edit"));
+        editButton.ShouldNotBeNull();
+        editButton.Click();
+        
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/contracts/{contractId}/edit");
     }
 }
