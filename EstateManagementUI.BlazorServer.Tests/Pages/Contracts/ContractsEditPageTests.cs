@@ -224,7 +224,7 @@ public class ContractsEditPageTests : BaseTest
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "Mobile",
+                    ProductType = "NotSet",
                     Value = "100",
                     NumberOfFees = 2,
                     TransactionFees = new List<ContractProductTransactionFeeModel>()
@@ -263,7 +263,7 @@ public class ContractsEditPageTests : BaseTest
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "Mobile",
+                    ProductType = "NotSet",
                     Value = "100",
                     NumberOfFees = 0,
                     TransactionFees = new List<ContractProductTransactionFeeModel>()
@@ -306,7 +306,7 @@ public class ContractsEditPageTests : BaseTest
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "Mobile",
+                    ProductType = "NotSet",
                     Value = "100",
                     NumberOfFees = 1,
                     TransactionFees = new List<ContractProductTransactionFeeModel>
@@ -359,7 +359,7 @@ public class ContractsEditPageTests : BaseTest
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "Mobile",
+                    ProductType = "NotSet",
                     Value = "100",
                     NumberOfFees = 0,
                     TransactionFees = new List<ContractProductTransactionFeeModel>()
@@ -530,7 +530,7 @@ public class ContractsEditPageTests : BaseTest
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "Mobile",
+                    ProductType = "NotSet",
                     Value = "100",
                     NumberOfFees = 0,
                     TransactionFees = new List<ContractProductTransactionFeeModel>()
@@ -582,7 +582,7 @@ public class ContractsEditPageTests : BaseTest
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "Mobile",
+                    ProductType = "NotSet",
                     Value = "100",
                     NumberOfFees = 1,
                     TransactionFees = new List<ContractProductTransactionFeeModel>
