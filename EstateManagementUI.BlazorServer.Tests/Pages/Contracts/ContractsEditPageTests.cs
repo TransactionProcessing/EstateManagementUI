@@ -642,4 +642,533 @@ public class ContractsEditPageTests : BaseTest
         cut.Markup.ShouldContain("Test Operator");
         cut.Markup.ShouldContain("Operator cannot be changed after contract creation");
     }
+
+    [Fact]
+    public void ContractsEdit_UpdateContractButton_Exists()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>()
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert - Find Update Contract button
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Contract"));
+        updateButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_AddProductModal_HasRequiredFields()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>()
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
+        addProductButton.ShouldNotBeNull();
+        addProductButton.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check form has required fields
+        cut.Markup.ShouldContain("Product Name");
+        cut.Markup.ShouldContain("Display Text");
+        cut.Markup.ShouldContain("Variable Value");
+        cut.Markup.ShouldContain("Value");
+        
+        // Check submit button exists
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
+        submitButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_AddProductModal_HasSubmitButton()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>()
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
+        addProductButton.ShouldNotBeNull();
+        addProductButton.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check submit button exists
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
+        submitButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_AddProductModal_HasVariableValueCheckbox()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>()
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
+        addProductButton.ShouldNotBeNull();
+        addProductButton.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check variable value checkbox exists
+        cut.Markup.ShouldContain("Variable Value");
+        var checkbox = cut.Find("input[type='checkbox']");
+        checkbox.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_AddFeeModal_HasRequiredFields()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
+        addFeeButton.ShouldNotBeNull();
+        addFeeButton.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check form has required fields
+        cut.Markup.ShouldContain("Description");
+        cut.Markup.ShouldContain("Calculation Type");
+        cut.Markup.ShouldContain("Fee Type");
+        cut.Markup.ShouldContain("Fee Value");
+        
+        // Check submit button exists
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
+        submitButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_AddFeeModal_HasSubmitButton()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
+        addFeeButton.ShouldNotBeNull();
+        addFeeButton.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check submit button exists
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
+        submitButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_RemoveProduct_HasRemoveButton()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert - Find remove product button
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        var removeButton = buttons.FirstOrDefault(b => 
+            b.GetAttribute("title") == "Remove Product");
+        removeButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_RemoveFee_HasRemoveButton()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var feeId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 1,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    {
+                        new ContractProductTransactionFeeModel
+                        {
+                            TransactionFeeId = feeId,
+                            Description = "Fee 1",
+                            Value = 1.5m,
+                            CalculationType = 0,
+                            FeeType = 0
+                        }
+                    }
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert - Find remove fee button
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        var removeFeeButton = buttons.FirstOrDefault(b => 
+            b.GetAttribute("title") == "Remove Fee");
+        removeFeeButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_ProductModal_HasCancelButtonWithCorrectType()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>()
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open the modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
+        addProductButton?.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check cancel button exists with correct type
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Cancel") && 
+            b.GetAttribute("type") == "button");
+        cancelButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_FeeModal_HasCancelButtonWithCorrectType()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Open the modal
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
+        addFeeButton?.Click();
+        
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
+        
+        // Assert - Check cancel button exists with correct type
+        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Cancel") && 
+            b.GetAttribute("type") == "button");
+        cancelButton.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void ContractsEdit_WithMultipleProducts_DisplaysAllProducts()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = Guid.NewGuid(),
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                },
+                new ContractProductModel
+                {
+                    ContractProductId = Guid.NewGuid(),
+                    ProductName = "Product 2",
+                    DisplayText = "Display 2",
+                    ProductType = "NotSet",
+                    Value = "200",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert
+        cut.Markup.ShouldContain("Product 1");
+        cut.Markup.ShouldContain("Product 2");
+        cut.Markup.ShouldContain("Display 1");
+        cut.Markup.ShouldContain("Display 2");
+    }
+
+    [Fact]
+    public void ContractsEdit_WithMultipleFees_DisplaysAllFees()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractProductModel>
+            {
+                new ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = "NotSet",
+                    Value = "100",
+                    NumberOfFees = 2,
+                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    {
+                        new ContractProductTransactionFeeModel
+                        {
+                            TransactionFeeId = Guid.NewGuid(),
+                            Description = "Fee 1",
+                            Value = 1.5m,
+                            CalculationType = 0,
+                            FeeType = 0
+                        },
+                        new ContractProductTransactionFeeModel
+                        {
+                            TransactionFeeId = Guid.NewGuid(),
+                            Description = "Fee 2",
+                            Value = 2.5m,
+                            CalculationType = 1,
+                            FeeType = 1
+                        }
+                    }
+                }
+            }
+        };
+        
+        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+            .ReturnsAsync(Result.Success(contract));
+        
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Assert
+        cut.Markup.ShouldContain("Fee 1");
+        cut.Markup.ShouldContain("Fee 2");
+    }
 }
