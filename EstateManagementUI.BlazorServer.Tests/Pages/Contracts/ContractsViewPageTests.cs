@@ -128,7 +128,8 @@ public class ContractsViewPageTests : BaseTest
         // Find and click the Back to List button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
-        backButton?.Click();
+        backButton.ShouldNotBeNull();
+        backButton.Click();
         
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/contracts");
@@ -313,7 +314,8 @@ public class ContractsViewPageTests : BaseTest
         // Find and click the Back to List button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
-        backButton?.Click();
+        backButton.ShouldNotBeNull();
+        backButton.Click();
         
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/contracts");
