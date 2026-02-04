@@ -693,7 +693,7 @@ public class ContractsEditPageTests : BaseTest
         
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && !b.GetAttribute("type").Equals("submit"));
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
         
@@ -735,7 +735,7 @@ public class ContractsEditPageTests : BaseTest
         
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && !b.GetAttribute("type").Equals("submit"));
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
         
@@ -771,7 +771,7 @@ public class ContractsEditPageTests : BaseTest
         
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && !b.GetAttribute("type").Equals("submit"));
+        IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
         
