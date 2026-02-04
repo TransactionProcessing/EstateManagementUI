@@ -67,14 +67,12 @@ public class ContractsNewPageTests : BaseTest
         _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
             .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
 
-        // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Contract"), timeout: TimeSpan.FromSeconds(5));
 
-        // Assert
-        cut.WaitForAssertion(() => {
-            IElement createButton = cut.Find("#createContractButton");
-            createButton.ShouldNotBeNull();
-        }, timeout: TimeSpan.FromSeconds(5));
+        // Act & Assert
+        IElement createButton = cut.Find("#createContractButton");
+        createButton.ShouldNotBeNull();
     }
 
     [Fact]
@@ -101,11 +99,9 @@ public class ContractsNewPageTests : BaseTest
         // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
 
-        // Assert
-        cut.WaitForAssertion(() => {
-            cut.Markup.ShouldContain("Test Operator 1");
-            cut.Markup.ShouldContain("Test Operator 2");
-        }, timeout: TimeSpan.FromSeconds(5));
+        // Assert - Verify both operators are loaded and displayed in the dropdown
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator 1"), timeout: TimeSpan.FromSeconds(5));
+        cut.Markup.ShouldContain("Test Operator 2");
     }
 
     [Fact]
