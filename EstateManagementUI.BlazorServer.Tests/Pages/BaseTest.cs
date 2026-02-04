@@ -33,9 +33,11 @@ public abstract class BaseTest :TestContext {
         this.Services.AddSingleton(this._mockPermissionStore.Object);
 
 
-        // Add required permission components
-        this.ComponentFactories.AddStub<RequirePermission>();
-        this.ComponentFactories.AddStub<RequireSectionAccess>();
+        // Add required permission components that render their children
+        this.ComponentFactories.AddStub<RequirePermission>(
+            parameters => parameters.Get(p => p.ChildContent));
+        this.ComponentFactories.AddStub<RequireSectionAccess>(
+            parameters => parameters.Get(p => p.ChildContent));
 
         var claims = new[] { new Claim(ClaimTypes.Role, "Estate"), new Claim("estateId", Guid.NewGuid().ToString()), new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "EstateUser") };
         this.AddTestAuthorization().SetClaims(claims);
