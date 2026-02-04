@@ -708,18 +708,15 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
         
-        // Get instance and set model properties directly since we're testing the component behavior
-        var instance = cut.Instance;
-        instance.GetType().GetField("productModel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            ?.SetValue(instance, new Edit.AddProductModel 
-            { 
-                ProductName = "Test Product", 
-                DisplayText = "Test Display", 
-                Value = 10.50m,
-                IsVariableValue = false
-            });
+        // Fill in the form fields via the UI
+        var inputs = cut.FindAll("input[type='text']");
+        inputs[0].Change("Test Product"); // Product Name
+        inputs[1].Change("Test Display"); // Display Text
         
-        // Submit form - find submit button in modal
+        var numberInput = cut.Find("input[type='number']");
+        numberInput.Change("10.50"); // Value
+        
+        // Submit form
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
         IElement? submitButton = modalButtons.FirstOrDefault(b => 
             b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
@@ -764,16 +761,13 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
         
-        // Get instance and set model properties directly
-        var instance = cut.Instance;
-        instance.GetType().GetField("productModel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            ?.SetValue(instance, new Edit.AddProductModel 
-            { 
-                ProductName = "Test Product", 
-                DisplayText = "Test Display", 
-                Value = 10.50m,
-                IsVariableValue = false
-            });
+        // Fill in the form fields via the UI
+        var inputs = cut.FindAll("input[type='text']");
+        inputs[0].Change("Test Product"); // Product Name
+        inputs[1].Change("Test Display"); // Display Text
+        
+        var numberInput = cut.Find("input[type='number']");
+        numberInput.Change("10.50"); // Value
         
         // Submit form
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
@@ -822,16 +816,14 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
         
-        // Get instance and set model properties with variable value
-        var instance = cut.Instance;
-        instance.GetType().GetField("productModel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            ?.SetValue(instance, new Edit.AddProductModel 
-            { 
-                ProductName = "Test Product", 
-                DisplayText = "Test Display", 
-                IsVariableValue = true,
-                Value = null
-            });
+        // Fill in the form fields via the UI
+        var inputs = cut.FindAll("input[type='text']");
+        inputs[0].Change("Test Product"); // Product Name
+        inputs[1].Change("Test Display"); // Display Text
+        
+        // Check the variable value checkbox
+        var checkbox = cut.Find("input[type='checkbox']");
+        checkbox.Change(true);
         
         // Submit form
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
@@ -890,16 +882,16 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
         
-        // Get instance and set fee model properties directly
-        var instance = cut.Instance;
-        instance.GetType().GetField("feeModel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            ?.SetValue(instance, new Edit.AddTransactionFeeModel 
-            { 
-                Description = "Test Fee", 
-                FeeValue = 5.00m,
-                CalculationType = "0", // Fixed
-                FeeType = "0" // Merchant
-            });
+        // Fill in the form fields via the UI
+        var textInput = cut.Find("input[type='text']");
+        textInput.Change("Test Fee"); // Description
+        
+        var selects = cut.FindAll("select");
+        selects[0].Change("0"); // Calculation Type - Fixed
+        selects[1].Change("0"); // Fee Type - Merchant
+        
+        var numberInput = cut.Find("input[type='number']");
+        numberInput.Change("5.00"); // Fee Value
         
         // Submit form
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
@@ -959,16 +951,16 @@ public class ContractsEditPageTests : BaseTest
         
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
         
-        // Get instance and set fee model properties directly
-        var instance = cut.Instance;
-        instance.GetType().GetField("feeModel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-            ?.SetValue(instance, new Edit.AddTransactionFeeModel 
-            { 
-                Description = "Test Fee", 
-                FeeValue = 5.00m,
-                CalculationType = "0",
-                FeeType = "0"
-            });
+        // Fill in the form fields via the UI
+        var textInput = cut.Find("input[type='text']");
+        textInput.Change("Test Fee"); // Description
+        
+        var selects = cut.FindAll("select");
+        selects[0].Change("0"); // Calculation Type
+        selects[1].Change("0"); // Fee Type
+        
+        var numberInput = cut.Find("input[type='number']");
+        numberInput.Change("5.00"); // Fee Value
         
         // Submit form
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
