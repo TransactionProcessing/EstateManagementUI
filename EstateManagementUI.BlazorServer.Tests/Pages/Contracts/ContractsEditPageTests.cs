@@ -227,7 +227,7 @@ public class ContractsEditPageTests : BaseTest
                     ProductType = "Mobile",
                     Value = "100",
                     NumberOfFees = 2,
-                    TransactionFees = new List<TransactionFeeModel>()
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
                 }
             }
         };
@@ -266,7 +266,7 @@ public class ContractsEditPageTests : BaseTest
                     ProductType = "Mobile",
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<TransactionFeeModel>()
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
                 }
             }
         };
@@ -309,15 +309,15 @@ public class ContractsEditPageTests : BaseTest
                     ProductType = "Mobile",
                     Value = "100",
                     NumberOfFees = 1,
-                    TransactionFees = new List<TransactionFeeModel>
+                    TransactionFees = new List<ContractProductTransactionFeeModel>
                     {
-                        new TransactionFeeModel
+                        new ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.NewGuid(),
                             Description = "Fee 1",
                             Value = 1.5m,
-                            CalculationType = "Fixed",
-                            FeeType = "Merchant"
+                            CalculationType = 0,
+                            FeeType = 0
                         }
                     }
                 }
@@ -362,7 +362,7 @@ public class ContractsEditPageTests : BaseTest
                     ProductType = "Mobile",
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<TransactionFeeModel>()
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
                 }
             }
         };
@@ -533,7 +533,7 @@ public class ContractsEditPageTests : BaseTest
                     ProductType = "Mobile",
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<TransactionFeeModel>()
+                    TransactionFees = new List<ContractProductTransactionFeeModel>()
                 }
             }
         };
@@ -585,15 +585,15 @@ public class ContractsEditPageTests : BaseTest
                     ProductType = "Mobile",
                     Value = "100",
                     NumberOfFees = 1,
-                    TransactionFees = new List<TransactionFeeModel>
+                    TransactionFees = new List<ContractProductTransactionFeeModel>
                     {
-                        new TransactionFeeModel
+                        new ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = feeId,
                             Description = "Fee 1",
                             Value = 1.5m,
-                            CalculationType = "Fixed",
-                            FeeType = "Merchant"
+                            CalculationType = 0,
+                            FeeType = 0
                         }
                     }
                 }
