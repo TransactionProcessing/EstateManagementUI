@@ -247,7 +247,7 @@ public class ContractsViewPageTests : BaseTest
     }
 
     [Fact]
-    public void ContractsView_LoadContract_QueryFails_NavigatesToError()
+    public void ContractsView_LoadContract_QueryFails_ShowsNotFoundMessage()
     {
         // Arrange
         var contractId = Guid.NewGuid();
@@ -264,7 +264,7 @@ public class ContractsViewPageTests : BaseTest
     }
 
     [Fact]
-    public void ContractsView_ContractNotFound_ShowsMessage()
+    public void ContractsView_LoadContract_ReturnsNull_ShowsNotFoundMessage()
     {
         // Arrange
         var contractId = Guid.NewGuid();
