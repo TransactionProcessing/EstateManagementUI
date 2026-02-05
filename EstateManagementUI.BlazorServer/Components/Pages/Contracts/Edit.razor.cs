@@ -131,7 +131,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
                     CloseAddProductModal();
                     
                     // Small delay so user sees confirmation (adjust duration as needed)
-                    await Task.Delay(2500);
+                    await this.WaitOnUIRefresh();
 
                     await LoadContract();
 
@@ -196,7 +196,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
                     CloseAddFeeModal();
 
                     // Small delay so user sees confirmation (adjust duration as needed)
-                    await Task.Delay(2500);
+                    await this.WaitOnUIRefresh();
 
                     await LoadContract();
 
@@ -252,9 +252,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             if (result.IsSuccess)
             {
                 successMessage = "Transaction fee removed successfully";
-                
+
                 // Small delay so user sees confirmation (adjust duration as needed)
-                await Task.Delay(2500);
+                await this.WaitOnUIRefresh();
 
                 await LoadContract();
             }

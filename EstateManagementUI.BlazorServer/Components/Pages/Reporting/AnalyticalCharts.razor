@@ -5,6 +5,7 @@
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject IJSRuntime JSRuntime
+@inherits CustomComponentBase
 @inject ILogger<AnalyticalCharts> Logger
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -191,7 +192,7 @@
         if (firstRender)
         {
             // Give Chart.js time to load from CDN
-            await Task.Delay(100);
+            await this.WaitOnUIRefresh();
         }
         
         if (!isLoading && salesCountData != null && salesValueData != null)

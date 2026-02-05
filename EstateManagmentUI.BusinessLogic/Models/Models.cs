@@ -12,7 +12,8 @@ public class EstateModel
     public List<EstateUserModel>? Users { get; set; }
 }
 
-public class EstateUserModel {
+public class EstateUserModel
+{
     public Guid UserId { get; set; }
     public string? EmailAddress { get; set; }
     public DateTime CreatedDateTime { get; set; }
@@ -36,7 +37,8 @@ public class EstateContractModel
 }
 
 
-public class EstateMerchantModel {
+public class EstateMerchantModel
+{
     public Guid MerchantId { get; set; }
     public string? Name { get; set; }
     public string? Reference { get; set; }
