@@ -19,17 +19,15 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using ClientProxyBase;
+using EstateManagementUI.BlazorServer.Components.Pages.Estate;
+using EstateManagementUI.BlazorServer.UIServices;
 using SecurityService.Client;
 using Shared.General;
 using TransactionProcessor.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ensure web host uses the exe folder as content root (services default to System32 otherwise)
-builder.Host.UseContentRoot(AppContext.BaseDirectory);
-
 // Load hosting.json configuration for port settings
-//builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true)
 builder.Configuration
     .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
     .AddJsonFile($"/home/txnproc/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
@@ -242,6 +240,8 @@ else
     builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
     builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
     builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
+    
+    builder.Services.AddSingleton<IEstateUIService, EstateUIService>();
 }
 
 builder.Host.UseWindowsService();

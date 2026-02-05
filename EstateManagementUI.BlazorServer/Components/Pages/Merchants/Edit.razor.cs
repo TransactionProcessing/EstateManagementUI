@@ -235,8 +235,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 StateHasChanged();
 
                 // Small delay so user sees confirmation (adjust duration as needed)
-                await Task.Delay(2500);
-                
+                await this.WaitOnUIRefresh();
+
                 // Navigate to edit page
                 NavigationManager.NavigateTo($"/merchants");
             }

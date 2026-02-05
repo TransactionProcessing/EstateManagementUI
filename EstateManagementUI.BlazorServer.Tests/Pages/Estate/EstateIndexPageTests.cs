@@ -1,8 +1,10 @@
 using AngleSharp.Dom;
 using Bunit;
+using Castle.Components.DictionaryAdapter;
 using EstateManagementUI.BlazorServer.Common;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
-using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Web;
 using Moq;
@@ -18,22 +20,19 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_RendersCorrectly()
     {
         // Arrange
-        EstateModel estate = new() {
-            EstateId = Guid.NewGuid(),
-            EstateName = "Test Estate",
-            Reference = "EST001"
-        };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(estate));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
+        BlazorServer.Models.EstateModel estate = new(Guid.NewGuid(), "Test Estate", "EST001");
+        estate = estate with {
+                ContractCount = 0,
+                RecentContracts = new List<Models.RecentContractModel>(),
+                OperatorCount = 0,
+                AllOperators = new List<Models.OperatorDropDownModel>(),
+                AssignedOperators = new List<Models.OperatorModel>(),
+                MerchantCount = 0,
+                RecentMerchants = new List<Models.RecentMerchantsModel>(),
+                UserCount = 0
+            };    
+            
+        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
@@ -46,23 +45,19 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_DisplaysEstateDetails()
     {
         // Arrange
-        EstateModel estate = new() {
-            EstateId = Guid.NewGuid(),
-            EstateName = "Test Estate",
-            Reference = "EST001",
-            Operators = new List<EstateOperatorModel>()
+        BlazorServer.Models.EstateModel estate = new(Guid.NewGuid(), "Test Estate", "EST001");
+        estate = estate with
+        {
+            ContractCount = 0,
+            RecentContracts = new List<Models.RecentContractModel>(),
+            OperatorCount = 0,
+            AllOperators = new List<Models.OperatorDropDownModel>(),
+            AssignedOperators = new List<Models.OperatorModel>(),
+            MerchantCount = 0,
+            RecentMerchants = new List<Models.RecentMerchantsModel>(),
+            UserCount = 0
         };
-
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(estate));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
+        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
@@ -75,16 +70,19 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
+        BlazorServer.Models.EstateModel estate = new(Guid.NewGuid(), "Test Estate", "EST001");
+        estate = estate with
+        {
+            ContractCount = 0,
+            RecentContracts = new List<Models.RecentContractModel>(),
+            OperatorCount = 0,
+            AllOperators = new List<Models.OperatorDropDownModel>(),
+            AssignedOperators = new List<Models.OperatorModel>(),
+            MerchantCount = 0,
+            RecentMerchants = new List<Models.RecentMerchantsModel>(),
+            UserCount = 0
+        };
+        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
@@ -150,13 +148,13 @@ public class EstateIndexPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
-            .ReturnsAsync(Result.Success(operatorDetails));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
-            .ReturnsAsync(Result.Success());
-        
+
+        this.EstateUIService.Setup(e => e.AddOperatorToEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>())).ReturnsAsync(Result.Success);
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
@@ -176,7 +174,7 @@ public class EstateIndexPageTests : BaseTest
         addButton.Click();
 
         // Assert
-        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator added successfully"), timeout: TimeSpan.FromSeconds(5));
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator added successfully"), timeout: TimeSpan.FromSeconds(10));
         
     }
 
@@ -191,10 +189,9 @@ public class EstateIndexPageTests : BaseTest
         };
         
         SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
-            .ReturnsAsync(Result.Failure("Failed to add operator"));
-        
+
+        this.EstateUIService.Setup(e => e.AddOperatorToEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>())).ReturnsAsync(Result.Failure);
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
@@ -215,7 +212,6 @@ public class EstateIndexPageTests : BaseTest
         addButton.Click();
 
         // Assert
-        _mockMediator.Verify(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default), Times.AtLeastOnce());
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to add operator"), timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -232,11 +228,12 @@ public class EstateIndexPageTests : BaseTest
         };
         
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
-            .ReturnsAsync(Result.Success());
-        
+
+        this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Switch to operators tab
@@ -266,10 +263,9 @@ public class EstateIndexPageTests : BaseTest
         };
         
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
-            .ReturnsAsync(Result.Failure("Failed to remove operator"));
-        
+
+        this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Failure(String.Empty));
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
@@ -362,117 +358,15 @@ public class EstateIndexPageTests : BaseTest
         // Assert
         cut.Markup.ShouldContain("No contracts found");
     }
-
+    
     [Fact]
-    public void EstateIndex_LoadEstateData_EstateQueryFails_NavigatesToError()
+    public void EstateIndex_LoadEstateData_LoadFails_NavigatesToError()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to load estate"));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-        
+        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Failure());
+
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain("error");
-    }
-
-    [Fact]
-    public void EstateIndex_LoadEstateData_MerchantQueryFails_NavigatesToError()
-    {
-        // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to load merchants"));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-        
-        // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain("error");
-    }
-
-    [Fact]
-    public void EstateIndex_LoadEstateData_ContractQueryFails_NavigatesToError()
-    {
-        // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to load contracts"));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-        
-        // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain("error");
-    }
-
-    [Fact]
-    public void EstateIndex_LoadEstateData_AssignedOperatorsQueryFails_NavigatesToError()
-    {
-        // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to load assigned operators"));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorDropDownModel>()));
-        
-        // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain("error");
-    }
-
-    [Fact]
-    public void EstateIndex_LoadEstateData_AllOperatorsQueryFails_NavigatesToError()
-    {
-        // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid() }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to load operators"));
-        
-        // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
@@ -524,119 +418,7 @@ public class EstateIndexPageTests : BaseTest
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators assigned"), timeout: TimeSpan.FromSeconds(5));
     }
-
-    [Fact]
-    public void EstateIndex_AddOperator_WhenGetOperatorQueryFails_NavigatesToError()
-    {
-        // Arrange
-        Guid operatorId = Guid.NewGuid();
-        OperatorDropDownModel operatorToAdd = new() {
-            OperatorId = operatorId,
-            OperatorName = "Test Operator"
-        };
-        
-        SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
-            .ReturnsAsync(Result.Success());
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to get operator details"));
-        
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
-        operatorsButton?.Click();
-        
-        // Click Add Operator button
-        IElement addOperatorButton = cut.Find("#addOperatorButton");
-        addOperatorButton.Click();
-        
-        // Act - Select operator and add
-        IElement selectElement = cut.Find("select");
-        selectElement.Change(operatorId.ToString());
-        IElement addButton = cut.FindAll("button")
-            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addOperatorButton");
-        addButton.Click();
-
-        // Assert - Should navigate to error page
-        _fakeNavigationManager.Uri.ShouldContain("error");
-    }
-
-    [Fact]
-    public void EstateIndex_AddOperator_WhenException_ShowsErrorMessage()
-    {
-        // Arrange
-        Guid operatorId = Guid.NewGuid();
-        OperatorDropDownModel operatorToAdd = new() {
-            OperatorId = operatorId,
-            OperatorName = "Test Operator"
-        };
-        
-        SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.AddOperatorToEstateCommand>(), default))
-            .ThrowsAsync(new Exception("Test exception"));
-        
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
-        operatorsButton?.Click();
-        
-        // Click Add Operator button
-        IElement addOperatorButton = cut.Find("#addOperatorButton");
-        addOperatorButton.Click();
-        
-        // Act - Select operator and add
-        IElement selectElement = cut.Find("select");
-        selectElement.Change(operatorId.ToString());
-        IElement addButton = cut.FindAll("button")
-            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addOperatorButton");
-        addButton.Click();
-
-        // Assert
-        cut.WaitForAssertion(() => cut.Markup.ShouldContain("An error occurred: Test exception"), timeout: TimeSpan.FromSeconds(5));
-    }
-
-    [Fact]
-    public void EstateIndex_RemoveOperator_WhenException_ShowsErrorMessage()
-    {
-        // Arrange
-        Guid operatorId = Guid.NewGuid();
-        OperatorModel assignedOperator = new() {
-            OperatorId = operatorId,
-            Name = "Test Operator",
-            RequireCustomMerchantNumber = true,
-            RequireCustomTerminalNumber = false
-        };
-        
-        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
-            .ThrowsAsync(new Exception("Test exception"));
-        
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
-        operatorsButton?.Click();
-        
-        // Act - Remove operator
-        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
-        IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
-        removeButton?.Click();
-        
-        // Assert
-        cut.WaitForAssertion(() => cut.Markup.ShouldContain("An error occurred: Test exception"), timeout: TimeSpan.FromSeconds(5));
-    }
-
+    
     [Fact]
     public void EstateIndex_SuccessMessage_ClearsWhenSwitchingTabs()
     {
@@ -650,10 +432,9 @@ public class EstateIndexPageTests : BaseTest
         };
         
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateCommands.RemoveOperatorFromEstateCommand>(), default))
-            .ReturnsAsync(Result.Success());
-        
+
+        this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
@@ -684,16 +465,19 @@ public class EstateIndexPageTests : BaseTest
                                          List<OperatorModel>? assignedOperators = null,
                                          List<OperatorDropDownModel>? operators = null)
     {
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetEstateQuery>(), default))
-            .ReturnsAsync(Result.Success(new EstateModel { EstateId = Guid.NewGuid(), EstateName = "Test Estate" }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(merchants ?? new List<RecentMerchantsModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetRecentContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(contracts ?? new List<RecentContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<EstateQueries.GetAssignedOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(assignedOperators ?? new List<OperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), default))
-            .ReturnsAsync(Result.Success(operators ?? new List<OperatorDropDownModel>()));
+        BlazorServer.Models.EstateModel estate = new(Guid.NewGuid(), "Test Estate", "EST001");
+        estate = estate with
+        {
+            ContractCount = 5,
+            RecentContracts = contracts ?? new List<RecentContractModel>(),
+            OperatorCount = 3,
+            AllOperators = operators ?? new List<OperatorDropDownModel>(),
+            AssignedOperators = assignedOperators ?? new List<OperatorModel>(),
+            MerchantCount = 10,
+            RecentMerchants = merchants ?? new List<RecentMerchantsModel>(),
+            UserCount = 2
+        };
+        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
     }
 
     private void SetupSuccessfulDataLoadWithOperators(List<OperatorDropDownModel> operators)

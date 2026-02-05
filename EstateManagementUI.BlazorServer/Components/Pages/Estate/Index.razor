@@ -1,11 +1,10 @@
 @page "/estate"
 @using EstateManagementUI.BlazorServer.Common
+@using EstateManagementUI.BlazorServer.UIServices
 @inherits AuthorizedComponentBase
 @rendermode InteractiveServer
-@inject AuthenticationStateProvider AuthenticationStateProvider
 @inject NavigationManager NavigationManager
-@inject IMediator Mediator
-@inject IPermissionService PermissionService
+@inject IEstateUIService EstateUIService
 
 <PageTitle>Estate Management</PageTitle>
 
@@ -21,7 +20,7 @@
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
     }
-    else if (estate != null)
+    else
     {
         <!-- Tabs -->
         <div class="bg-white rounded-lg shadow-md">
@@ -62,7 +61,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Merchants</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(estate.Merchants?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.MerchantCount)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -74,7 +73,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Operators</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(estate.Operators?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.OperatorCount)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
@@ -86,7 +85,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Contracts</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(estate.Operators?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.ContractCount)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -98,7 +97,7 @@
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <p class="text-sm text-gray-600 mb-1">Total Users</p>
-                                        <p class="text-3xl font-bold text-gray-900">@(estate.Users?.Count ?? 0)</p>
+                                        <p class="text-3xl font-bold text-gray-900">@(estate.UserCount)</p>
                                     </div>
                                     <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
@@ -115,10 +114,10 @@
                                     <h2 class="text-lg font-semibold text-gray-900">Recent Merchants</h2>
                                     <a href="/merchants" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
                                 </div>
-                                @if (merchants != null && merchants.Any())
+                                @if (@estate.RecentMerchants != null && @estate.RecentMerchants.Any())
                                 {
                                     <div class="space-y-3">
-                                        @foreach (var merchant in merchants)
+                                        @foreach (var merchant in @estate.RecentMerchants)
                                         {
                                             <div class="flex items-center justify-between p-3 bg-white rounded-lg">
                                                 <div>
@@ -146,10 +145,10 @@
                                     <h2 class="text-lg font-semibold text-gray-900">Contracts</h2>
                                     <a href="/contracts" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
                                 </div>
-                                @if (contracts != null && contracts.Any())
+                                @if (estate.RecentContracts != null && estate.RecentContracts.Any())
                                 {
                                     <div class="space-y-3">
-                                        @foreach (var contract in contracts.Take(5))
+                                        @foreach (var contract in estate.RecentContracts.Take(5))
                                         {
                                             <div class="flex items-center justify-between p-3 bg-white rounded-lg">
                                                 <div>
@@ -204,9 +203,9 @@
                                 <div class="flex space-x-2">
                                     <select @bind="selectedOperatorId" class="input flex-1">
                                         <option value="">Select an operator...</option>
-                                        @if (availableOperators != null)
+                                        @if (estate.AllOperators != null)
                                         {
-                                            @foreach (var op in availableOperators)
+                                            @foreach (var op in estate.AllOperators)
                                             {
                                                 <option value="@op.OperatorId">@op.OperatorName</option>
                                             }
@@ -219,14 +218,14 @@
                             </div>
                         }
 
-                        @if (assignedOperators == null || !assignedOperators.Any())
+                        @if (estate.AssignedOperators == null || !estate.AssignedOperators.Any())
                         {
                             <p class="text-gray-500 text-center py-8">No operators assigned</p>
                         }
                         else
                         {
                             <div class="space-y-2">
-                                @foreach (var op in assignedOperators)
+                                @foreach (var op in estate.AssignedOperators)
                                 {
                                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                                         <div>
@@ -252,12 +251,6 @@
                     </div>
                 }
             </div>
-        </div>
-    }
-    else
-    {
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <p class="text-gray-600">Unable to load estate information.</p>
         </div>
     }
 </div>

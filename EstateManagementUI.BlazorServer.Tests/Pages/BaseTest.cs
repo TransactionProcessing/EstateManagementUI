@@ -3,6 +3,7 @@ using Bunit;
 using Bunit.TestDoubles;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.UIServices;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -20,6 +21,7 @@ public abstract class BaseTest :TestContext {
         this._mockPermissionService = new Mock<IPermissionService>();
         this._mockPermissionStore = new Mock<IPermissionStore>();
         this._fakeNavigationManager = new FakeNavigationManager();
+        this.EstateUIService = new Mock<IEstateUIService>();
 
         this._mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
         this._mockPermissionService.Setup(x => x.HasPermissionAsync(It.IsAny<PermissionSection>(), It.IsAny<PermissionFunction>())).ReturnsAsync(true);
@@ -31,6 +33,7 @@ public abstract class BaseTest :TestContext {
         this.Services.AddSingleton(this._mockPermissionService.Object);
         this.Services.AddSingleton(this._mockAuthStateProvider.Object);
         this.Services.AddSingleton(this._mockPermissionStore.Object);
+        this.Services.AddSingleton(this.EstateUIService.Object);
 
 
         // Add required permission components that render their children
@@ -50,6 +53,7 @@ public abstract class BaseTest :TestContext {
     protected readonly Mock<AuthenticationStateProvider> _mockAuthStateProvider;
     protected readonly Mock<IPermissionStore> _mockPermissionStore;
     protected readonly FakeNavigationManager _fakeNavigationManager;
+    protected readonly Mock<IEstateUIService> EstateUIService;
 
     /// <summary>
     /// Minimal test double for NavigationManager.
