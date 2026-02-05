@@ -27,11 +27,7 @@ using TransactionProcessor.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ensure web host uses the exe folder as content root (services default to System32 otherwise)
-//builder.Host.UseContentRoot(AppContext.BaseDirectory);
-
 // Load hosting.json configuration for port settings
-//builder.Configuration.AddJsonFile("hosting.json", optional: true, reloadOnChange: true)
 builder.Configuration
     .AddJsonFile("/home/txnproc/config/appsettings.json", true, true)
     .AddJsonFile($"/home/txnproc/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
