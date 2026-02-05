@@ -1,73 +1,56 @@
 ﻿using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using System.ComponentModel.DataAnnotations;
+using EstateManagementUI.BlazorServer.Models;
+using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
 {
     public partial class New
     {
-        private CreateOperatorModel model = new();
+        private OperatorModels.CreateOperatorModel model = new();
         private bool isSaving = false;
-        private string? errorMessage;
-        private string? successMessage;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
             {
-                await base.OnAfterRenderAsync(firstRender);
+                return;
+            }
+            Result result = await OnAfterRender(PermissionSection.Operator, PermissionFunction.Create);
+            if (result.IsFailed)
+            {
                 return;
             }
 
-            await RequirePermission(PermissionSection.Operator, PermissionFunction.Create);
+            this.StateHasChanged();
         }
 
         private async Task HandleSubmit()
         {
             isSaving = true;
-            errorMessage = null;
+            ClearMessages();
 
-            try
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = await this.GetEstateId();
+
+            var result = await this.OperatorUiService.CreateOperator(correlationId, estateId, this.model);
+            if (result.IsSuccess)
             {
-                var correlationId = new CorrelationId(Guid.NewGuid());
-                var estateId = await this.GetEstateId();
-
-                // Create operator
-                var createCommand = new OperatorCommands.CreateOperatorCommand(
-                    correlationId,
-                    estateId,
-                    model.OperatorName!,
-                    model.RequireCustomMerchantNumber,
-                    model.RequireCustomTerminalNumber
-                );
-
-                var createResult = await Mediator.Send(createCommand);
-
-                if (!createResult.IsSuccess)
-                {
-                    errorMessage = createResult.Message ?? "Failed to create operator";
-                    return;
-                }
-
-                // Show success message briefly before navigating away
-                successMessage = "Operator created successfully.";
+                successMessage = "Operator created successfully";
                 StateHasChanged();
 
                 // Small delay so user sees confirmation (adjust duration as needed)
                 await this.WaitOnUIRefresh();
 
-
-                // Navigate to operators list with success
                 NavigationManager.NavigateTo("/operators");
             }
-            catch (Exception ex)
+            else
             {
-                errorMessage = $"An error occurred: {ex.Message}";
+                errorMessage = "Failed to create operator";
             }
-            finally
-            {
-                isSaving = false;
-            }
+
+            isSaving = false;
         }
 
         private void Cancel()
@@ -75,14 +58,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
             NavigationManager.NavigateTo("/operators");
         }
 
-        public class CreateOperatorModel
-        {
-            [Required(ErrorMessage = "Operator name is required")]
-            public string? OperatorName { get; set; }
-
-            public bool RequireCustomMerchantNumber { get; set; }
-
-            public bool RequireCustomTerminalNumber { get; set; }
-        }
+        
     }
 }

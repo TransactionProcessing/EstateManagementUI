@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
-using OperatorModel = EstateManagementUI.BusinessLogic.Models.OperatorModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
 
@@ -20,15 +19,15 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        var operatorModel = new OperatorModel
+        var operatorModel = new OperatorModels.OperatorModel
         {
             OperatorId = operatorId,
             Name = "Test Operator"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
+
+        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
@@ -42,15 +41,15 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        var operatorModel = new OperatorModel
+        var operatorModel = new OperatorModels.OperatorModel
         {
             OperatorId = operatorId,
             Name = "Test Operator"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
+
+        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
@@ -65,8 +64,8 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), default))
-            .ReturnsAsync(Result.Success(new OperatorModel { OperatorId = operatorId }));
+        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(new OperatorModels.OperatorModel { OperatorId = operatorId }));
         
         // Act
         var cut = RenderComponent<View>(parameters => parameters

@@ -1,8 +1,9 @@
 @page "/operators/{OperatorId:guid}"
 @using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
-@inject IMediator Mediator
+@inject IOperatorUIService OperatorUiService
 @inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 

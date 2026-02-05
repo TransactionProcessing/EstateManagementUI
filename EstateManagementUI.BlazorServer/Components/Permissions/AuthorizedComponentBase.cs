@@ -72,4 +72,28 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
         }
         return estateIdResult.Data;
     }
+
+    protected async Task<Result> OnAfterRender(PermissionSection section,
+                                               PermissionFunction function) =>
+        await OnAfterRender(section, function, null);
+
+    protected async Task<Result> OnAfterRender(PermissionSection section,
+                                               PermissionFunction function,
+                                               Func<Task<Result>>? loadFunc)
+    {
+        Result authResult = await RequirePermission(section, function);
+        if (authResult.IsFailed)
+            return Result.Failure();
+
+        if (loadFunc == null)
+            return Result.Success();
+
+        Result result = await loadFunc();
+        if (result.IsFailed)
+        {
+            this.NavigationManager.NavigateToErrorPage();
+            return Result.Failure();
+        }
+        return Result.Success();
+    }
 }

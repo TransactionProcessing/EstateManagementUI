@@ -2,7 +2,7 @@
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using ComparisonDateModel = EstateManagementUI.BlazorServer.Models.ComparisonDateModel;
 using ContractDropDownModel = EstateManagementUI.BlazorServer.Models.ContractDropDownModel;
-using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorDropDownModel;
+using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorDropDownModel;
 using ContractModel = EstateManagementUI.BlazorServer.Models.ContractModel;
 using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel;
 using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractProductTransactionFeeModel;
@@ -18,7 +18,7 @@ using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModel;
 using MerchantOperatorModel = EstateManagementUI.BlazorServer.Models.MerchantOperatorModel;
 using MerchantSettlementHistoryModel = EstateManagementUI.BlazorServer.Models.MerchantSettlementHistoryModel;
 using MerchantTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.MerchantTransactionSummaryModel;
-using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModel;
+using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorModel;
 using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel;
 using ProductPerformanceModel = EstateManagementUI.BlazorServer.Models.ProductPerformanceModel;
 using RecentContractModel = EstateManagementUI.BlazorServer.Models.RecentContractModel;

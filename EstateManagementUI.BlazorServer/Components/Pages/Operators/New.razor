@@ -2,8 +2,9 @@
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
-@inject IMediator Mediator
+@inject IOperatorUIService OperatorUiService
 @inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService

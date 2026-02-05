@@ -29,11 +29,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private MerchantEditModel merchantEditModel = new();
 
         // Operators
-        private List<OperatorDropDownModel>? availableOperators;
+        private List<OperatorModels.OperatorDropDownModel>? availableOperators;
         private List<MerchantOperatorModel> assignedOperators = new();
         private bool showAddOperator = false;
         private string? selectedOperatorId;
-        private OperatorModel? selectedOperator;
+        private OperatorModels.OperatorModel? selectedOperator;
         private string? merchantNumber;
         private string? terminalNumber;
         private string? merchantNumberError;

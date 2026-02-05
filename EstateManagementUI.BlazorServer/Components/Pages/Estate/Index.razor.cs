@@ -23,17 +23,13 @@ public partial class Index {
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender) {
-        if (!firstRender) {
+        if (!firstRender)
+        {
             return;
         }
-
-        Result authResult = await RequirePermission(PermissionSection.Estate, PermissionFunction.View);
-        if (authResult.IsFailed)
-            return;
-
-        Result result = await this.LoadEstateData();
-        if (result.IsFailed) {
-            this.NavigationManager.NavigateToErrorPage();
+        Result result = await OnAfterRender(PermissionSection.Operator, PermissionFunction.Edit, this.LoadEstateData);
+        if (result.IsFailed)
+        {
             return;
         }
 
@@ -44,7 +40,7 @@ public partial class Index {
     private async Task<Result> LoadEstateData() {
         CorrelationId correlationId = new(Guid.NewGuid());
         Guid estateId = await this.GetEstateId();
-        Result<EstateModel> result = await this.EstateUIService.LoadEstate(correlationId, estateId);
+        Result<EstateModel> result = await this.EstateUiService.LoadEstate(correlationId, estateId);
         if (result.IsFailed) {
             return ResultHelpers.CreateFailure(result);
         }
@@ -62,7 +58,7 @@ public partial class Index {
             CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
             Guid estateId = await this.GetEstateId();
             
-            var result = await this.EstateUIService.AddOperatorToEstate(correlationId, estateId, this.selectedOperatorId);
+            var result = await this.EstateUiService.AddOperatorToEstate(correlationId, estateId, this.selectedOperatorId);
 
             if (result.IsSuccess) {
                 successMessage = "Operator added successfully";
@@ -88,7 +84,7 @@ public partial class Index {
         try {
             CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
             Guid estateId = await this.GetEstateId();
-            var result = await this.EstateUIService.RemoveOperatorFromEstate(correlationId, estateId, operatorId);
+            var result = await this.EstateUiService.RemoveOperatorFromEstate(correlationId, estateId, operatorId);
 
             if (result.IsSuccess) {
                 successMessage = "Operator removed successfully";
