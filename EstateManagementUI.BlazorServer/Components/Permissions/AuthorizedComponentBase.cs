@@ -7,7 +7,9 @@ using SimpleResults;
 
 public abstract class CustomComponentBase : ComponentBase {
 
-    public Int32? DelayOverride;
+    private Int32? DelayOverride;
+
+    public void SetDelayOverride(Int32 delay) => this.DelayOverride = delay;
 
     public async Task WaitOnUIRefresh(Int32 delay=2500) {
         Int32 localDelay = delay;

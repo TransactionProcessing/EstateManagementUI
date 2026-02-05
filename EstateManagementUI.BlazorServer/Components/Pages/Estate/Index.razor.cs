@@ -95,7 +95,6 @@ public partial class Index {
                 await this.LoadEstateData();
             }
             else {
-                // TODO: Should we log out the result message and should it be displayed to the user???
                 errorMessage = "Failed to remove operator";
             }
         }

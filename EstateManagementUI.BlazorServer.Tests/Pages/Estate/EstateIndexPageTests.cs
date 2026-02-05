@@ -152,7 +152,7 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.Setup(e => e.AddOperatorToEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>())).ReturnsAsync(Result.Success);
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.Instance.DelayOverride = 0;
+        cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -232,7 +232,7 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        cut.Instance.DelayOverride = 0;
+        cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
         
