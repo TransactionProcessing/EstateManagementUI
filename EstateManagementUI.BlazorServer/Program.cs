@@ -242,6 +242,7 @@ else
     builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
     
     builder.Services.AddSingleton<IEstateUIService, EstateUIService>();
+    builder.Services.AddSingleton<IOperatorUIService, OperatorUIService>();
 }
 
 builder.Host.UseWindowsService();

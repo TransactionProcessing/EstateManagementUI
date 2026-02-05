@@ -9,8 +9,8 @@ public record EstateModel(Guid EstateId, string? EstateName, string? Reference) 
     public Int32 UserCount { get; init; }
     public List<RecentMerchantsModel> RecentMerchants { get; init; }
     public List<RecentContractModel> RecentContracts { get; init; }
-    public List<OperatorModel> AssignedOperators { get; init; }
-    public List<OperatorDropDownModel> AllOperators { get; init; }
+    public List<OperatorModels.OperatorModel> AssignedOperators { get; init; }
+    public List<OperatorModels.OperatorDropDownModel> AllOperators { get; init; }
 }
 
 
@@ -36,24 +36,11 @@ public class MerchantModel
 }
 
 // Operator Models
-public class OperatorModel
-{
-    public Guid OperatorId { get; set; }
-    public string? Name { get; set; }
-    public bool RequireCustomMerchantNumber { get; set; }
-    public bool RequireCustomTerminalNumber { get; set; }
-}
 
 public class ContractDropDownModel
 {
     public Guid ContractId { get; set; }
     public string? Description { get; set; }
-    public string? OperatorName { get; set; }
-}
-
-public class OperatorDropDownModel
-{
-    public Guid OperatorId { get; set; }
     public string? OperatorName { get; set; }
 }
 

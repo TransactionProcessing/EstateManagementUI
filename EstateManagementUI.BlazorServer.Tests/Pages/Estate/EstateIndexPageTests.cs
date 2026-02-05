@@ -25,8 +25,8 @@ public class EstateIndexPageTests : BaseTest
                 ContractCount = 0,
                 RecentContracts = new List<Models.RecentContractModel>(),
                 OperatorCount = 0,
-                AllOperators = new List<Models.OperatorDropDownModel>(),
-                AssignedOperators = new List<Models.OperatorModel>(),
+                AllOperators = new List<Models.OperatorModels.OperatorDropDownModel>(),
+                AssignedOperators = new List<OperatorModels.OperatorModel>(),
                 MerchantCount = 0,
                 RecentMerchants = new List<Models.RecentMerchantsModel>(),
                 UserCount = 0
@@ -51,8 +51,8 @@ public class EstateIndexPageTests : BaseTest
             ContractCount = 0,
             RecentContracts = new List<Models.RecentContractModel>(),
             OperatorCount = 0,
-            AllOperators = new List<Models.OperatorDropDownModel>(),
-            AssignedOperators = new List<Models.OperatorModel>(),
+            AllOperators = new List<Models.OperatorModels.OperatorDropDownModel>(),
+            AssignedOperators = new List<OperatorModels.OperatorModel>(),
             MerchantCount = 0,
             RecentMerchants = new List<Models.RecentMerchantsModel>(),
             UserCount = 0
@@ -76,8 +76,8 @@ public class EstateIndexPageTests : BaseTest
             ContractCount = 0,
             RecentContracts = new List<Models.RecentContractModel>(),
             OperatorCount = 0,
-            AllOperators = new List<Models.OperatorDropDownModel>(),
-            AssignedOperators = new List<Models.OperatorModel>(),
+            AllOperators = new List<Models.OperatorModels.OperatorDropDownModel>(),
+            AssignedOperators = new List<OperatorModels.OperatorModel>(),
             MerchantCount = 0,
             RecentMerchants = new List<Models.RecentMerchantsModel>(),
             UserCount = 0
@@ -135,14 +135,14 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         Guid operatorId = Guid.NewGuid();
-        OperatorDropDownModel operatorToAdd = new() {
+        OperatorModels.OperatorDropDownModel operatorToAdd = new() {
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
         
-        SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
+        SetupSuccessfulDataLoadWithOperators(new List<OperatorModels.OperatorDropDownModel> { operatorToAdd });
         
-        OperatorModel operatorDetails = new() {
+        OperatorModels.OperatorModel operatorDetails = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
@@ -183,12 +183,12 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         Guid operatorId = Guid.NewGuid();
-        OperatorDropDownModel operatorToAdd = new() {
+        OperatorModels.OperatorDropDownModel operatorToAdd = new() {
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
         
-        SetupSuccessfulDataLoadWithOperators(new List<OperatorDropDownModel> { operatorToAdd });
+        SetupSuccessfulDataLoadWithOperators(new List<OperatorModels.OperatorDropDownModel> { operatorToAdd });
 
         this.EstateUIService.Setup(e => e.AddOperatorToEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>())).ReturnsAsync(Result.Failure);
 
@@ -220,14 +220,14 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         Guid operatorId = Guid.NewGuid();
-        OperatorModel assignedOperator = new() {
+        OperatorModels.OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
         
-        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
+        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
         this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
 
@@ -255,14 +255,14 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         Guid operatorId = Guid.NewGuid();
-        OperatorModel assignedOperator = new() {
+        OperatorModels.OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
         
-        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
+        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
         this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Failure(String.Empty));
 
@@ -377,14 +377,14 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         Guid operatorId = Guid.NewGuid();
-        OperatorModel assignedOperator = new() {
+        OperatorModels.OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = true
         };
         
-        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
+        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
         
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -424,14 +424,14 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         Guid operatorId = Guid.NewGuid();
-        OperatorModel assignedOperator = new() {
+        OperatorModels.OperatorModel assignedOperator = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
         
-        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModel> { assignedOperator });
+        SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
         this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
 
@@ -462,8 +462,8 @@ public class EstateIndexPageTests : BaseTest
     // Helper methods
     private void SetupSuccessfulDataLoad(List<RecentMerchantsModel>? merchants = null,
                                          List<RecentContractModel>? contracts = null,
-                                         List<OperatorModel>? assignedOperators = null,
-                                         List<OperatorDropDownModel>? operators = null)
+                                         List<OperatorModels.OperatorModel>? assignedOperators = null,
+                                         List<OperatorModels.OperatorDropDownModel>? operators = null)
     {
         BlazorServer.Models.EstateModel estate = new(Guid.NewGuid(), "Test Estate", "EST001");
         estate = estate with
@@ -471,8 +471,8 @@ public class EstateIndexPageTests : BaseTest
             ContractCount = 5,
             RecentContracts = contracts ?? new List<RecentContractModel>(),
             OperatorCount = 3,
-            AllOperators = operators ?? new List<OperatorDropDownModel>(),
-            AssignedOperators = assignedOperators ?? new List<OperatorModel>(),
+            AllOperators = operators ?? new List<OperatorModels.OperatorDropDownModel>(),
+            AssignedOperators = assignedOperators ?? new List<OperatorModels.OperatorModel>(),
             MerchantCount = 10,
             RecentMerchants = merchants ?? new List<RecentMerchantsModel>(),
             UserCount = 2
@@ -480,10 +480,10 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
     }
 
-    private void SetupSuccessfulDataLoadWithOperators(List<OperatorDropDownModel> operators)
+    private void SetupSuccessfulDataLoadWithOperators(List<OperatorModels.OperatorDropDownModel> operators)
         => SetupSuccessfulDataLoad(operators: operators);
 
-    private void SetupSuccessfulDataLoadWithAssignedOperators(List<OperatorModel> assignedOperators)
+    private void SetupSuccessfulDataLoadWithAssignedOperators(List<OperatorModels.OperatorModel> assignedOperators)
         => SetupSuccessfulDataLoad(assignedOperators: assignedOperators);
 
     private void SetupSuccessfulDataLoadWithMerchants(List<RecentMerchantsModel> merchants)

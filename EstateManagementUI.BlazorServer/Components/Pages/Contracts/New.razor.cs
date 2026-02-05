@@ -13,7 +13,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
         private bool isLoadingOperators = true;
         private bool hasPermission = false;
         private string? errorMessage;
-        private List<OperatorDropDownModel>? operators;
+        private List<OperatorModels.OperatorDropDownModel>? operators;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
