@@ -1,11 +1,11 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using ComparisonDateModel = EstateManagementUI.BlazorServer.Models.ComparisonDateModel;
-using ContractDropDownModel = EstateManagementUI.BlazorServer.Models.ContractDropDownModel;
+using ContractDropDownModel = EstateManagementUI.BlazorServer.Models.ContractModels.ContractDropDownModel;
 using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorDropDownModel;
-using ContractModel = EstateManagementUI.BlazorServer.Models.ContractModel;
-using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractProductModel;
-using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractProductTransactionFeeModel;
+using ContractModel = EstateManagementUI.BlazorServer.Models.ContractModels.ContractModel;
+using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractModels.ContractProductModel;
+using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractModels.ContractProductTransactionFeeModel;
 using FileDetailsModel = EstateManagementUI.BlazorServer.Models.FileDetailsModel;
 using FileImportLogModel = EstateManagementUI.BlazorServer.Models.FileImportLogModel;
 using MerchantContractModel = EstateManagementUI.BlazorServer.Models.MerchantContractModel;

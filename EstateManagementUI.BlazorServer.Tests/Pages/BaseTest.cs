@@ -34,6 +34,7 @@ public abstract class BaseTest :TestContext {
         this.Services.AddSingleton(this._mockPermissionStore.Object);
         this.Services.AddSingleton(this.EstateUIService.Object);
         this.Services.AddSingleton(this.OperatorUIService.Object);
+        this.Services.AddSingleton(this.ContractUIService.Object);
 
 
         // Add required permission components that render their children
@@ -55,6 +56,7 @@ public abstract class BaseTest :TestContext {
     protected readonly FakeNavigationManager _fakeNavigationManager;
     protected readonly Mock<IEstateUIService> EstateUIService = new Mock<IEstateUIService>();
     protected readonly Mock<IOperatorUIService> OperatorUIService = new Mock<IOperatorUIService>();
+    protected readonly Mock<IContractUIService> ContractUIService = new Mock<IContractUIService>();
     /// <summary>
     /// Minimal test double for NavigationManager.
     /// Register in DI as NavigationManager so components receive it in tests.

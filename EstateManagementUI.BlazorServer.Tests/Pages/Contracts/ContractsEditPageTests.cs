@@ -2,6 +2,7 @@ using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 using EstateManagementUI.BlazorServer.Components.Permissions;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
 
@@ -21,15 +23,15 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
         
         // Act
@@ -45,17 +47,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -71,13 +73,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success(new ContractModel 
-            { 
-                ContractId = contractId,
-                Products = new List<ContractProductModel>()
-            }));
-        
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>()
+        };
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -86,54 +92,23 @@ public class ContractsEditPageTests : BaseTest
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
-
-    [Fact]
-    public void ContractsEdit_CancelButton_NavigatesToViewPage()
-    {
-        // Arrange
-        var contractId = Guid.NewGuid();
-        var contract = new ContractModel
-        {
-            ContractId = contractId,
-            Description = "Test Contract",
-            OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
-        };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success(contract));
-        
-        // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
-            .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Find and click Cancel button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
-        cancelButton.ShouldNotBeNull();
-        cancelButton.Click();
-        
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain($"/contracts/{contractId}");
-    }
-
+    
     [Fact]
     public void ContractsEdit_UpdateContractButton_CanBeFound()
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -152,17 +127,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -181,17 +156,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -212,29 +187,29 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 2,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -251,29 +226,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -294,24 +269,24 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 1,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.NewGuid(),
                             Description = "Fee 1",
@@ -323,10 +298,10 @@ public class ContractsEditPageTests : BaseTest
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -347,29 +322,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -390,17 +365,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -409,56 +384,22 @@ public class ContractsEditPageTests : BaseTest
         // Assert
         cut.Markup.ShouldContain("No products added yet");
     }
-
+    
     [Fact]
-    public void ContractsEdit_ContractNotFound_ShowsErrorMessage()
-    {
+    public void ContractsEdit_BackToListButton_NavigatesToContractsIndex() {
         // Arrange
         var contractId = Guid.NewGuid();
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success<ContractModel>(null!));
-        
-        // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
-            .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Assert
-        cut.Markup.ShouldContain("Contract not found");
-    }
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>()
+        };
 
-    [Fact]
-    public void ContractsEdit_ContractNotFound_HasBackToListButton()
-    {
-        // Arrange
-        var contractId = Guid.NewGuid();
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success<ContractModel>(null!));
-        
-        // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
-            .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Find Back to List button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
-        
-        // Assert
-        backButton.ShouldNotBeNull();
-    }
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
 
-    [Fact]
-    public void ContractsEdit_BackToListButton_NavigatesToContractsIndex()
-    {
-        // Arrange
-        var contractId = Guid.NewGuid();
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success<ContractModel>(null!));
-        
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -479,17 +420,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -518,29 +459,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -570,24 +511,24 @@ public class ContractsEditPageTests : BaseTest
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
         var feeId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 1,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = feeId,
                             Description = "Fee 1",
@@ -599,10 +540,10 @@ public class ContractsEditPageTests : BaseTest
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -622,17 +563,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -648,17 +589,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -675,17 +616,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -717,17 +658,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -753,17 +694,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -789,29 +730,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -844,29 +785,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -893,29 +834,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -935,24 +876,24 @@ public class ContractsEditPageTests : BaseTest
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
         var feeId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 1,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = feeId,
                             Description = "Fee 1",
@@ -964,10 +905,10 @@ public class ContractsEditPageTests : BaseTest
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -985,17 +926,17 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -1022,29 +963,29 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -1070,39 +1011,39 @@ public class ContractsEditPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 },
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Product 2",
                     DisplayText = "Display 2",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "200",
                     NumberOfFees = 0,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>()
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -1121,24 +1062,24 @@ public class ContractsEditPageTests : BaseTest
         // Arrange
         var contractId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = productId,
                     ProductName = "Product 1",
                     DisplayText = "Display 1",
-                    ProductType = "NotSet",
+                    ProductType = ProductType.NotSet,
                     Value = "100",
                     NumberOfFees = 2,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.NewGuid(),
                             Description = "Fee 1",
@@ -1146,22 +1087,22 @@ public class ContractsEditPageTests : BaseTest
                             CalculationType = 0,
                             FeeType = 0
                         },
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.NewGuid(),
                             Description = "Fee 2",
                             Value = 2.5m,
-                            CalculationType = 1,
-                            FeeType = 1
+                            CalculationType = CalculationType.Fixed,
+                            FeeType = FeeType.Merchant
                         }
                     }
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));

@@ -3,8 +3,9 @@
 @rendermode InteractiveServer
 @inherits AuthorizedComponentBase
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
-@inject IMediator Mediator
+@inject IContractUIService ContractUiService
 @inject NavigationManager NavigationManager
 @inject IPermissionKeyProvider PermissionKeyProvider
 

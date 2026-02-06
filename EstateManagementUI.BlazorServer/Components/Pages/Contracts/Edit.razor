@@ -4,8 +4,9 @@
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
-@inject IMediator Mediator
+@inject IContractUIService ContractUiService
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService
 
@@ -26,8 +27,8 @@
                 <h1 class="text-2xl font-bold text-gray-900">Edit Contract: @contractModel.Description</h1>
             </div>
             <div class="flex space-x-2">
-                <button class="btn btn-secondary" @onclick="BackToView">
-                    Cancel
+                <button class="btn btn-secondary" @onclick="BackToList">
+                    Back to List
                 </button>
             </div>
         </div>
@@ -73,9 +74,6 @@
                 </div>
 
                 <div class="flex justify-end space-x-4 pt-4 border-t">
-                    <button type="button" class="btn btn-secondary" @onclick="BackToView" disabled="@isSaving">
-                        Cancel
-                    </button>
                     <button type="submit" class="btn btn-primary" disabled="@isSaving">
                         @if (isSaving)
                         {

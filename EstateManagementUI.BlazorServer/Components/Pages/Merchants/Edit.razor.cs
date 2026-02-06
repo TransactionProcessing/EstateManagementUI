@@ -40,7 +40,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private string? terminalNumberError;
 
         // Contracts
-        private List<ContractDropDownModel>? availableContracts;
+        private List<ContractModels.ContractDropDownModel>? availableContracts;
         private List<MerchantContractModel> assignedContracts = new();
         private bool showAddContract = false;
         private string? selectedContractId;
