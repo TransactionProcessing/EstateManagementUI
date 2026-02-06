@@ -252,4 +252,376 @@ public class MerchantsIndexPageTests : BaseTest
         cut.Markup.ShouldContain("North Region");
         cut.Markup.ShouldContain("12345");
     }
+
+    [Fact]
+    public void MerchantsIndex_AddNewMerchantButton_NavigatesToNewMerchantPage()
+    {
+        // Arrange
+        var merchants = new List<MerchantModels.MerchantListModel>();
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the "Add New Merchant" button
+        var buttons = cut.FindAll("button");
+        var addNewMerchantButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add New Merchant"));
+        addNewMerchantButton?.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain("/merchants/new");
+    }
+
+    [Fact]
+    public void MerchantsIndex_ApplyFiltersButton_ClickIsHandled()
+    {
+        // Arrange
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = Guid.NewGuid(),
+                MerchantName = "Test Merchant"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the "Apply Filters" button
+        var buttons = cut.FindAll("button");
+        var applyFiltersButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Apply Filters"));
+        applyFiltersButton?.Click();
+
+        // Assert - Verify GetMerchants was called at least twice (once on load, once on filter)
+        this.MerchantUIService.Verify(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()), Times.AtLeast(2));
+    }
+
+    [Fact]
+    public void MerchantsIndex_ClearFiltersButton_ClickIsHandled()
+    {
+        // Arrange
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = Guid.NewGuid(),
+                MerchantName = "Test Merchant"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the "Clear Filters" button
+        var buttons = cut.FindAll("button");
+        var clearFiltersButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Clear Filters"));
+        clearFiltersButton?.Click();
+
+        // Assert - Verify GetMerchants was called at least twice (once on load, once on clear)
+        this.MerchantUIService.Verify(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()), Times.AtLeast(2));
+    }
+
+    [Fact]
+    public void MerchantsIndex_ViewButton_NavigatesToMerchantDetailsPage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the View button
+        var viewButton = cut.Find("#viewMerchantLink");
+        viewButton.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}");
+    }
+
+    [Fact]
+    public void MerchantsIndex_EditButton_NavigatesToEditMerchantPage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the Edit button
+        var editButton = cut.Find("#editMerchantLink");
+        editButton.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/edit");
+    }
+
+    [Fact]
+    public void MerchantsIndex_MakeDepositButton_NavigatesToDepositPage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the Make Deposit button
+        var makeDepositButton = cut.Find("#makeDepositLink");
+        makeDepositButton.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/deposit");
+    }
+
+    [Fact]
+    public void MerchantsIndex_PaginationButtons_FirstPage_IsHandled()
+    {
+        // Arrange - Create more than 10 merchants to trigger pagination
+        var merchants = Enumerable.Range(1, 15).Select(i => new MerchantModels.MerchantListModel()
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = $"Merchant {i}"
+        }).ToList();
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Navigate to second page first
+        var buttons = cut.FindAll("button");
+        var nextButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Next Page");
+        nextButton?.Click();
+
+        // Act - Find and click the First Page button
+        buttons = cut.FindAll("button");
+        var firstPageButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "First Page");
+        firstPageButton?.Click();
+
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Page"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsIndex_PaginationButtons_PreviousPage_IsHandled()
+    {
+        // Arrange - Create more than 10 merchants to trigger pagination
+        var merchants = Enumerable.Range(1, 15).Select(i => new MerchantModels.MerchantListModel()
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = $"Merchant {i}"
+        }).ToList();
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Navigate to second page first
+        var buttons = cut.FindAll("button");
+        var nextButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Next Page");
+        nextButton?.Click();
+
+        // Act - Find and click the Previous Page button
+        buttons = cut.FindAll("button");
+        var previousPageButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Previous Page");
+        previousPageButton?.Click();
+
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Page"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsIndex_PaginationButtons_NextPage_IsHandled()
+    {
+        // Arrange - Create more than 10 merchants to trigger pagination
+        var merchants = Enumerable.Range(1, 15).Select(i => new MerchantModels.MerchantListModel()
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = $"Merchant {i}"
+        }).ToList();
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the Next Page button
+        var buttons = cut.FindAll("button");
+        var nextButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Next Page");
+        nextButton?.Click();
+
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Page"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsIndex_PaginationButtons_LastPage_IsHandled()
+    {
+        // Arrange - Create more than 10 merchants to trigger pagination
+        var merchants = Enumerable.Range(1, 15).Select(i => new MerchantModels.MerchantListModel()
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = $"Merchant {i}"
+        }).ToList();
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the Last Page button
+        var buttons = cut.FindAll("button");
+        var lastPageButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Last Page");
+        lastPageButton?.Click();
+
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Page"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsIndex_LoadMerchants_LoadFails_NavigatesToError()
+    {
+        // Arrange
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Failure());
+
+        // Act
+        var cut = RenderComponent<MerchantsIndex>();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain("error");
+    }
+
+    [Fact]
+    public void MerchantsIndex_RowClick_NavigatesToMerchantDetailsPage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click the merchant row
+        var rows = cut.FindAll("tr.hover\\:bg-gray-50");
+        rows.FirstOrDefault()?.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}");
+    }
 }
