@@ -133,4 +133,145 @@ public class OperatorsIndexPageTests : BaseTest
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
+
+    [Fact]
+    public void OperatorsIndex_AddNewOperatorButton_NavigatesToNewOperatorPage()
+    {
+        // Arrange
+        var operators = new List<OperatorModels.OperatorModel>
+        {
+            new OperatorModels.OperatorModel
+            {
+                OperatorId = Guid.NewGuid(),
+                Name = "Test Operator",
+                RequireCustomMerchantNumber = true,
+                RequireCustomTerminalNumber = false
+            }
+        };
+
+        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(operators));
+
+        var cut = RenderComponent<OperatorsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click "Add New Operator" button
+        var buttons = cut.FindAll("button");
+        var addNewOperatorButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add New Operator"));
+        addNewOperatorButton.ShouldNotBeNull();
+        addNewOperatorButton.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain("/operators/new");
+    }
+
+    [Fact]
+    public void OperatorsIndex_ViewButton_NavigatesToOperatorViewPage()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var operators = new List<OperatorModels.OperatorModel>
+        {
+            new OperatorModels.OperatorModel
+            {
+                OperatorId = operatorId,
+                Name = "Test Operator",
+                RequireCustomMerchantNumber = true,
+                RequireCustomTerminalNumber = false
+            }
+        };
+
+        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(operators));
+
+        var cut = RenderComponent<OperatorsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click View button (button with eye icon/title="View")
+        var buttons = cut.FindAll("button");
+        var viewButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "View");
+        viewButton.ShouldNotBeNull();
+        viewButton.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/operators/{operatorId}");
+    }
+
+    [Fact]
+    public void OperatorsIndex_EditButton_NavigatesToOperatorEditPage()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var operators = new List<OperatorModels.OperatorModel>
+        {
+            new OperatorModels.OperatorModel
+            {
+                OperatorId = operatorId,
+                Name = "Test Operator",
+                RequireCustomMerchantNumber = true,
+                RequireCustomTerminalNumber = false
+            }
+        };
+
+        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(operators));
+
+        var cut = RenderComponent<OperatorsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click Edit button (button with title="Edit")
+        var buttons = cut.FindAll("button");
+        var editButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Edit");
+        editButton.ShouldNotBeNull();
+        editButton.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/operators/{operatorId}/edit");
+    }
+
+    [Fact]
+    public void OperatorsIndex_TableRowClick_NavigatesToOperatorViewPage()
+    {
+        // Arrange
+        var operatorId = Guid.NewGuid();
+        var operators = new List<OperatorModels.OperatorModel>
+        {
+            new OperatorModels.OperatorModel
+            {
+                OperatorId = operatorId,
+                Name = "Test Operator",
+                RequireCustomMerchantNumber = true,
+                RequireCustomTerminalNumber = false
+            }
+        };
+
+        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(operators));
+
+        var cut = RenderComponent<OperatorsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - Find and click table row
+        var tableRows = cut.FindAll("tr");
+        var operatorRow = tableRows.FirstOrDefault(tr => tr.TextContent.Contains("Test Operator"));
+        operatorRow.ShouldNotBeNull();
+        operatorRow.Click();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain($"/operators/{operatorId}");
+    }
+
+    [Fact]
+    public void OperatorsIndex_LoadOperators_LoadFails_NavigatesToError()
+    {
+        // Arrange
+        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Failure());
+
+        // Act
+        var cut = RenderComponent<OperatorsIndex>();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain("error");
+    }
 }
