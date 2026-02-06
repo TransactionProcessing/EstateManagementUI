@@ -244,6 +244,7 @@ else
     builder.Services.AddSingleton<IEstateUIService, EstateUIService>();
     builder.Services.AddSingleton<IOperatorUIService, OperatorUIService>();
     builder.Services.AddSingleton<IContractUIService, ContractUIService>();
+    builder.Services.AddSingleton<IMerchantUIService, MerchantUIService>();
 }
 
 builder.Host.UseWindowsService();

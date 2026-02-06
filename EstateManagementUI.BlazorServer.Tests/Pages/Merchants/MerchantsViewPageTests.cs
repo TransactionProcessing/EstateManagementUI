@@ -2,6 +2,7 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
@@ -24,21 +25,18 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         var merchantId = Guid.NewGuid();
-        var merchant = new MerchantModel
+        var merchant = new MerchantModels.MerchantModel
         {
             MerchantId = merchantId,
             MerchantName = "Test Merchant",
             MerchantReference = "REF001"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantQuery>(), default))
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(merchant));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantOperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantDevicesQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantDeviceModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -53,21 +51,19 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         var merchantId = Guid.NewGuid();
-        var merchant = new MerchantModel
+        var merchant = new MerchantModels.MerchantModel
         {
             MerchantId = merchantId,
             MerchantName = "Test Merchant",
             MerchantReference = "REF001"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantQuery>(), default))
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(merchant));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantOperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantDevicesQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantDeviceModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -84,14 +80,19 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         var merchantId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantQuery>(), default))
-            .ReturnsAsync(Result.Success(new MerchantModel { MerchantId = merchantId }));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantOperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantDevicesQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantDeviceModel>()));
+        var merchant = new MerchantModels.MerchantModel
+        {
+            MerchantId = merchantId,
+            MerchantName = "Test Merchant",
+            MerchantReference = "REF001"
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(merchant));
+        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
@@ -106,21 +107,20 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         var merchantId = Guid.NewGuid();
-        var merchant = new MerchantModel
+        var merchant = new MerchantModels.MerchantModel
         {
             MerchantId = merchantId,
-            MerchantName = "Test Merchant"
+            MerchantName = "Test Merchant",
+            MerchantReference = "REF001"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantQuery>(), default))
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(merchant));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantOperatorsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantOperatorModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantContractModel>()));
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantDevicesQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantDeviceModel>()));
-        
+        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));

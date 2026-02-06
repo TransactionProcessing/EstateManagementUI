@@ -3,9 +3,12 @@
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
 @inherits AuthorizedComponentBase
-@inject IMediator Mediator
+@inject IMerchantUIService MerchantUiService
+@inject IOperatorUIService OperatorUiService
+@inject IContractUIService ContractUiService
 @inject NavigationManager NavigationManager
 @inject IPermissionService PermissionService
 
