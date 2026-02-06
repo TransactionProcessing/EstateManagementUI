@@ -1,4 +1,3 @@
-using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Models;
@@ -159,7 +158,8 @@ public class OperatorsIndexPageTests : BaseTest
         // Act - Find and click "Add New Operator" button
         var buttons = cut.FindAll("button");
         var addNewOperatorButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add New Operator"));
-        addNewOperatorButton?.Click();
+        addNewOperatorButton.ShouldNotBeNull();
+        addNewOperatorButton.Click();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/operators/new");
@@ -190,7 +190,8 @@ public class OperatorsIndexPageTests : BaseTest
         // Act - Find and click View button (button with eye icon/title="View")
         var buttons = cut.FindAll("button");
         var viewButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "View");
-        viewButton?.Click();
+        viewButton.ShouldNotBeNull();
+        viewButton.Click();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain($"/operators/{operatorId}");
@@ -221,7 +222,8 @@ public class OperatorsIndexPageTests : BaseTest
         // Act - Find and click Edit button (button with title="Edit")
         var buttons = cut.FindAll("button");
         var editButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Edit");
-        editButton?.Click();
+        editButton.ShouldNotBeNull();
+        editButton.Click();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain($"/operators/{operatorId}/edit");
@@ -252,7 +254,8 @@ public class OperatorsIndexPageTests : BaseTest
         // Act - Find and click table row
         var tableRows = cut.FindAll("tr");
         var operatorRow = tableRows.FirstOrDefault(tr => tr.TextContent.Contains("Test Operator"));
-        operatorRow?.Click();
+        operatorRow.ShouldNotBeNull();
+        operatorRow.Click();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain($"/operators/{operatorId}");
