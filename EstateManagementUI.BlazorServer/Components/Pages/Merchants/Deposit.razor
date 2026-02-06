@@ -2,11 +2,11 @@
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
-@inject IMediator Mediator
+@inject IMerchantUIService MerchantUiService
 @inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
-@inject IPermissionService PermissionService
 
 <PageTitle>Make Merchant Deposit</PageTitle>
 

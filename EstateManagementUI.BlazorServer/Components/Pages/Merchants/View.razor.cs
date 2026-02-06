@@ -15,14 +15,14 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         [Parameter]
         public Guid MerchantId { get; set; }
 
-        private MerchantModel? merchant;
+        private MerchantModels.MerchantModel? merchant;
         private bool isLoading = true;
         private string activeTab = "details";
 
         // Mock assigned data
-        private List<MerchantOperatorModel> assignedOperators = new();
-        private List<MerchantContractModel> assignedContracts = new();
-        private List<MerchantDeviceModel> assignedDevices = new();
+        private List<MerchantModels.MerchantOperatorModel> assignedOperators = new();
+        private List<MerchantModels.MerchantContractModel> assignedContracts = new();
+        private List<MerchantModels.MerchantDeviceModel> assignedDevices = new();
 
         // Settlement transaction history data
         private List<TransactionDetailModel>? settlementTransactions;
@@ -37,25 +37,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         {
             if (!firstRender)
             {
-                await base.OnAfterRenderAsync(firstRender);
                 return;
             }
-            try
+            Result result = await OnAfterRender(PermissionSection.Merchant, PermissionFunction.View, this.LoadMerchant);
+            if (result.IsFailed)
             {
-                await base.OnInitializedAsync();
-
-                await RequirePermission(PermissionSection.Merchant, PermissionFunction.View);
-
-                Result result = await LoadMerchant();
-                if (result.IsFailed) {
-                    this.NavigationManager.NavigateToErrorPage();
-                }
+                return;
             }
-            finally
-            {
-                isLoading = false;
-                this.StateHasChanged();
-            }
+
+            isLoading = false;
+            this.StateHasChanged();
         }
 
         private async Task<Result> LoadMerchant()
@@ -66,16 +57,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 CorrelationId correlationId = new(Guid.NewGuid());
                 Guid estateId = await this.GetEstateId();
 
-                Result<BusinessLogic.Models.MerchantModel> getMerchantResult = await Mediator.Send(new MerchantQueries.GetMerchantQuery(correlationId, estateId, MerchantId));
+                Result<MerchantModels.MerchantModel> getMerchantResult = await this.MerchantUIService.GetMerchant(correlationId, estateId, MerchantId);
 
                 if (getMerchantResult.IsFailed)
                     return ResultHelpers.CreateFailure(getMerchantResult);
 
-                merchant = ModelFactory.ConvertFrom(getMerchantResult.Data);
+                merchant = getMerchantResult.Data;
 
-                var operatorsResultTask = Mediator.Send(new MerchantQueries.GetMerchantOperatorsQuery(correlationId, estateId, MerchantId));
-                var contractsResultTask = Mediator.Send(new MerchantQueries.GetMerchantContractsQuery(correlationId, estateId, MerchantId));
-                var devicesResultTask = Mediator.Send(new MerchantQueries.GetMerchantDevicesQuery(correlationId, estateId, MerchantId));
+                var operatorsResultTask = this.MerchantUIService.GetMerchantOperators(correlationId, estateId, MerchantId);
+                var contractsResultTask = this.MerchantUIService.GetMerchantContracts(correlationId, estateId, MerchantId);
+                var devicesResultTask = this.MerchantUIService.GetMerchantDevices(correlationId, estateId, MerchantId);
 
                 await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask);
 
@@ -88,9 +79,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 if (devicesResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
 
-                assignedOperators = ModelFactory.ConvertFrom(operatorsResultTask.Result.Data);
-                assignedContracts = ModelFactory.ConvertFrom(contractsResultTask.Result.Data);
-                this.assignedDevices = ModelFactory.ConvertFrom(devicesResultTask.Result.Data);
+                assignedOperators = operatorsResultTask.Result.Data;
+                assignedContracts = contractsResultTask.Result.Data;
+                this.assignedDevices = devicesResultTask.Result.Data;
 
                 return Result.Success();
             }
@@ -102,44 +93,44 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private async Task LoadSettlementTransactions()
         {
-            loadingSettlementTransactions = true;
-            try
-            {
-                var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-                var accessToken = "stubbed-token";
-                var correlationId = CorrelationIdHelper.New();
+            //loadingSettlementTransactions = true;
+            //try
+            //{
+            //    var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            //    var accessToken = "stubbed-token";
+            //    var correlationId = CorrelationIdHelper.New();
 
-                // Load last 6 months of transaction data for this merchant
-                var query = new Queries.GetTransactionDetailQuery(
-                    correlationId,
-                    accessToken,
-                    estateId,
-                    DateTime.Today.AddMonths(-6),
-                    DateTime.Today,
-                    new List<Guid> { MerchantId }, // Filter by this merchant only
-                    null, // All operators
-                    null  // All products
-                );
+            //    // Load last 6 months of transaction data for this merchant
+            //    var query = new Queries.GetTransactionDetailQuery(
+            //        correlationId,
+            //        accessToken,
+            //        estateId,
+            //        DateTime.Today.AddMonths(-6),
+            //        DateTime.Today,
+            //        new List<Guid> { MerchantId }, // Filter by this merchant only
+            //        null, // All operators
+            //        null  // All products
+            //    );
 
-                var result = await Mediator.Send(query);
-                if (result.IsSuccess && result.Data != null)
-                {
-                    settlementTransactions = ModelFactory.ConvertFrom(result.Data);
-                }
-                else
-                {
-                    settlementTransactions = new List<TransactionDetailModel>();
-                }
-            }
-            catch (Exception)
-            {
-                // Handle error silently for now
-                settlementTransactions = new List<TransactionDetailModel>();
-            }
-            finally
-            {
-                loadingSettlementTransactions = false;
-            }
+            //    var result = await Mediator.Send(query);
+            //    if (result.IsSuccess && result.Data != null)
+            //    {
+            //        settlementTransactions = ModelFactory.ConvertFrom(result.Data);
+            //    }
+            //    else
+            //    {
+            //        settlementTransactions = new List<TransactionDetailModel>();
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    // Handle error silently for now
+            //    settlementTransactions = new List<TransactionDetailModel>();
+            //}
+            //finally
+            //{
+            //    loadingSettlementTransactions = false;
+            //}
         }
 
         private string GetResultBadgeClass(string? status)

@@ -1,5 +1,6 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Permissions;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
@@ -21,16 +22,19 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_InitialState_ShowsLoadingIndicator()
     {
         // Arrange
-        var merchants = new List<MerchantListModel>
+        var merchants = new List<MerchantModels.MerchantListModel>
         {
-            new MerchantListModel
-            {
+            new() {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant"
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+            It.IsAny<String>(),
+            It.IsAny<Int32>(),
+            It.IsAny<String>(),
+            It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -44,8 +48,12 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithNoMerchants_ShowsEmptyState()
     {
         // Arrange
-        var merchants = new List<MerchantListModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        var merchants = new List<MerchantModels.MerchantListModel>();
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
@@ -60,15 +68,15 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysMerchantList()
     {
         // Arrange
-        var merchants = new List<MerchantListModel>
+        var merchants = new List<MerchantModels.MerchantListModel>
         {
-            new MerchantListModel()
+            new MerchantModels.MerchantListModel()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant 1",
                 MerchantReference = "REF001"
             },
-            new MerchantListModel()
+            new MerchantModels.MerchantListModel()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant 2",
@@ -76,8 +84,13 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
+
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -94,7 +107,7 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysSummaryCards()
     {
         // Arrange
-        var merchants = new List<MerchantListModel>
+        var merchants = new List<MerchantModels.MerchantListModel>
         {
             new()
             {
@@ -108,8 +121,13 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
+
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -125,9 +143,14 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<MerchantListModel>()));
-        
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(new List<MerchantModels.MerchantListModel>()));
+
+
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         
@@ -140,17 +163,22 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysFilters()
     {
         // Arrange
-        var merchants = new List<MerchantListModel>
+        var merchants = new List<MerchantModels.MerchantListModel>
         {
-            new MerchantListModel()
+            new()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant"
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
+
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -169,14 +197,19 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithManyMerchants_DisplaysPagination()
     {
         // Arrange - Create more than 10 merchants to trigger pagination
-        var merchants = Enumerable.Range(1, 12).Select(i => new MerchantListModel()
+        var merchants = Enumerable.Range(1, 12).Select(i => new  MerchantModels.MerchantListModel()
         {
             MerchantId = Guid.NewGuid(),
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
+
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
@@ -192,9 +225,9 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_WithMerchants_DisplaysRegionAndPostcode()
     {
         // Arrange
-        var merchants = new List<MerchantListModel>
+        var merchants = new List<MerchantModels.MerchantListModel>
         {
-            new MerchantListModel
+            new()
             {
                 MerchantId = Guid.NewGuid(),
                 MerchantName = "Test Merchant",
@@ -203,8 +236,13 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        _mockMediator.Setup(x => x.Send(It.IsAny<MerchantQueries.GetMerchantsQuery>(), default))
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
+
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();

@@ -18,6 +18,9 @@ public interface IContractUIService {
                                                            Guid estateId,
                                                            Guid contractId);
 
+    Task<Result<List<ContractModels.ContractDropDownModel>>> GetContractsForDropDown(CorrelationId correlationId,
+                                                                  Guid estateId);
+
     Task<Result> AddProductToContract(CorrelationId correlationId,
                                       Guid estateId,
                                       Guid contractId,
@@ -115,5 +118,14 @@ public class ContractUIService : IContractUIService {
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
         return Result.Success();
+    }
+
+    public async Task<Result<List<ContractModels.ContractDropDownModel>>> GetContractsForDropDown(CorrelationId correlationId,
+                                                                               Guid estateId) {
+        var result = await this.Mediator.Send(new ContractQueries.GetContractsForDropDownQuery(correlationId, estateId));
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        var contracts = ModelFactory.ConvertFrom(result.Data);
+        return Result.Success(contracts);
     }
 }

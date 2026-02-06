@@ -1,10 +1,11 @@
 @page "/merchants/{MerchantId:guid}"
 @using EstateManagementUI.BlazorServer.Factories
 @rendermode InteractiveServer
-@inject IMediator Mediator
+@inject IMerchantUIService MerchantUIService
 @inherits  AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 @using EstateManagementUI.BlazorServer.Models
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
 
 <PageTitle>View Merchant</PageTitle>
