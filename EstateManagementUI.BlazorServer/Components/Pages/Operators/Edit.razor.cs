@@ -50,6 +50,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
 
             operatorModel = result.Data;
 
+            // Check if operator was found
+            if (operatorModel == null)
+            {
+                return Result.Success();
+            }
+
             // Initialize model with current values
             model = new OperatorModels.EditOperatorModel
             {
