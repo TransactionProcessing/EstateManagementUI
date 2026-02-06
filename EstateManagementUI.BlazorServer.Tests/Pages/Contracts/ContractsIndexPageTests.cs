@@ -5,12 +5,14 @@ using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
+using EstateManagementUI.BlazorServer.Models;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using ContractsIndex = EstateManagementUI.BlazorServer.Components.Pages.Contracts.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
@@ -21,19 +23,19 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_RendersCorrectly()
     {
         // Arrange
-        List<ContractModel> contracts = new List<ContractModel>
+        List<ContractModels.ContractModel> contracts = new()
         {
-            new ContractModel
+            new ContractModels.ContractModel
             {
                 ContractId = Guid.NewGuid(),
                 Description = "Test Contract",
                 OperatorName = "Test Operator",
                 OperatorId = Guid.NewGuid(),
-                Products = new List<ContractProductModel>()
+                Products = new List<ContractModels.ContractProductModel>()
             }
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contracts));
         
         // Act
@@ -47,10 +49,10 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_WithNoContracts_ShowsEmptyState()
     {
         // Arrange
-        List<ContractModel> emptyList = new List<ContractModel>();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+        List<ContractModels.ContractModel> emptyList = new();
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(emptyList));
-        
+
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         
@@ -62,29 +64,29 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_WithContracts_DisplaysContractList()
     {
         // Arrange
-        List<ContractModel> contracts = new List<ContractModel>
+        List<ContractModels.ContractModel> contracts = new()
         {
-            new ContractModel
+            new ContractModels.ContractModel
             {
                 ContractId = Guid.NewGuid(),
                 Description = "Contract 1",
                 OperatorName = "Operator A",
                 OperatorId = Guid.NewGuid(),
-                Products = new List<ContractProductModel>()
+                Products = new List<ContractModels.ContractProductModel>()
             },
-            new ContractModel
+            new ContractModels.ContractModel
             {
                 ContractId = Guid.NewGuid(),
                 Description = "Contract 2",
                 OperatorName = "Operator B",
                 OperatorId = Guid.NewGuid(),
-                Products = new List<ContractProductModel>()
+                Products = new List<ContractModels.ContractProductModel>()
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contracts));
-        
+
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         
@@ -99,25 +101,24 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_DisplaysProductCount()
     {
         // Arrange
-        List<ContractModel> contracts = new List<ContractModel>
+        List<ContractModels.ContractModel> contracts = new()
         {
-            new ContractModel
+            new ContractModels.ContractModel
             {
                 ContractId = Guid.NewGuid(),
                 Description = "Test Contract",
                 OperatorName = "Test Operator",
                 OperatorId = Guid.NewGuid(),
-                Products = new List<ContractProductModel>
-                {
-                    new ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 1", ProductType = "NotSet"},
-                    new ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 2", ProductType = "NotSet" }
-                }
+                Products = [
+                    new ContractModels.ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 1", ProductType = ProductType.NotSet },
+                    new ContractModels.ContractProductModel { ContractProductId = Guid.NewGuid(), ProductName = "Product 2", ProductType = ProductType.NotSet }
+                ]
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contracts));
-        
+
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         
@@ -129,9 +130,9 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<ContractModel>()));
-        
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(new List<ContractModels.ContractModel>()));
+
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         
@@ -141,12 +142,26 @@ public class ContractsIndexPageTests : BaseTest
     }
 
     [Fact]
+    public void ContractsIndex_LoadContractFails_NavigatesToError()
+    {
+        // Arrange
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Failure());
+
+        // Act
+        IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
+
+        // Assert
+        _fakeNavigationManager.Uri.ShouldContain("error");
+    }
+
+    [Fact]
     public void ContractsIndex_AddNewContractButton_NavigatesToNewContractPage()
     {
         // Arrange
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
-            .ReturnsAsync(Result.Success(new List<ContractModel>()));
-        
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(new List<ContractModels.ContractModel>()));
+
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Contract Management"), timeout: TimeSpan.FromSeconds(5));
         
@@ -163,21 +178,21 @@ public class ContractsIndexPageTests : BaseTest
     {
         // Arrange
         Guid contractId = Guid.NewGuid();
-        List<ContractModel> contracts = new List<ContractModel>
+        List<ContractModels.ContractModel> contracts = new()
         {
-            new ContractModel
+            new ContractModels.ContractModel
             {
                 ContractId = contractId,
                 Description = "Test Contract",
                 OperatorName = "Test Operator",
                 OperatorId = Guid.NewGuid(),
-                Products = new List<ContractProductModel>()
+                Products = new List<ContractModels.ContractProductModel>()
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contracts));
-        
+
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
         
@@ -196,21 +211,21 @@ public class ContractsIndexPageTests : BaseTest
     {
         // Arrange
         Guid contractId = Guid.NewGuid();
-        List<ContractModel> contracts = new List<ContractModel>
+        List<ContractModels.ContractModel> contracts = new()
         {
-            new ContractModel
+            new ContractModels.ContractModel
             {
                 ContractId = contractId,
                 Description = "Test Contract",
                 OperatorName = "Test Operator",
                 OperatorId = Guid.NewGuid(),
-                Products = new List<ContractProductModel>()
+                Products = new List<ContractModels.ContractProductModel>()
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractsQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contracts));
-        
+
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
         

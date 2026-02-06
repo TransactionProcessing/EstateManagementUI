@@ -1,100 +1,77 @@
-﻿using EstateManagementUI.BlazorServer.Factories;
+﻿using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using System.ComponentModel.DataAnnotations;
-using EstateManagementUI.BlazorServer.Models;
+using Shared.Results;
+using Result = SimpleResults.Result;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
 {
     public partial class New
     {
-        private CreateContractFormModel model = new();
+        private ContractModels.CreateContractFormModel model = new();
         private bool isSaving = false;
         private bool isLoadingOperators = true;
-        private bool hasPermission = false;
-        private string? errorMessage;
         private List<OperatorModels.OperatorDropDownModel>? operators;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (!firstRender)
+        { if (!firstRender)
             {
-                await base.OnAfterRenderAsync(firstRender);
                 return;
             }
-            await RequirePermission(PermissionSection.Contract, PermissionFunction.Create);
-            await LoadOperators();
+            Result result = await OnAfterRender(PermissionSection.Contract, PermissionFunction.Create, this.LoadOperators);
+            if (result.IsFailed)
+            {
+                return;
+            }
+
+            this.StateHasChanged();
+        }
+        
+        private async Task<Result> LoadOperators()
+        {
+            isLoadingOperators = true;
+            var estateId = await GetEstateId();
+            var result = await this.OperatorUiService.GetOperatorsForDropDown(CorrelationIdHelper.New(), estateId);
+
+            if (result.IsFailed) {
+                return ResultHelpers.CreateFailure(result);
+            }
+
+            operators = result.Data;
+            this.isLoadingOperators = false;
+            return Result.Success();
+
         }
 
-
-        private async Task LoadOperators()
-        {
-            try
-            {
-                isLoadingOperators = true;
-                var estateId = await GetEstateId();
-                var result = await Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(CorrelationIdHelper.New(), estateId));
-                if (result.IsSuccess)
-                {
-                    operators = ModelFactory.ConvertFrom(result.Data);
-                }
-            }
-            finally
-            {
-                isLoadingOperators = false;
-                StateHasChanged();
-            }
-        }
-
-        private async Task HandleSubmit()
-        {
+        private async Task HandleSubmit() {
             isSaving = true;
             errorMessage = null;
 
-            try {
-                var estateId = await this.GetEstateId();
+            var estateId = await this.GetEstateId();
 
-                // Create contract
-                var createCommand = new ContractCommands.CreateContractCommand(
-                    CorrelationIdHelper.New(),
-                    estateId,
-                    model.Description!,
-                    Guid.Parse(model.OperatorId!)
-                );
+            var result = await this.ContractUiService.CreateContract(CorrelationIdHelper.New(), estateId, this.model);
 
-                var createResult = await Mediator.Send(createCommand);
+            if (result.IsSuccess) {
+                successMessage = "Contract created successfully";
 
-                if (!createResult.IsSuccess)
-                {
-                    errorMessage = createResult.Message ?? "Failed to create contract";
-                    return;
-                }
+                StateHasChanged();
+
+                // Small delay so user sees confirmation (adjust duration as needed)
+                await this.WaitOnUIRefresh();
 
                 // Navigate to contracts list with success
                 NavigationManager.NavigateTo("/contracts");
             }
-            catch (Exception ex)
-            {
-                errorMessage = $"An error occurred: {ex.Message}";
+            else {
+                this.errorMessage = "Failed to create contract";
             }
-            finally
-            {
-                isSaving = false;
-            }
+
+            isSaving = false;
         }
 
         private void Cancel()
         {
             NavigationManager.NavigateTo("/contracts");
-        }
-
-        public class CreateContractFormModel
-        {
-            [Required(ErrorMessage = "Description is required")]
-            public string? Description { get; set; }
-
-            [Required(ErrorMessage = "Operator is required")]
-            public string? OperatorId { get; set; }
         }
     }
 }

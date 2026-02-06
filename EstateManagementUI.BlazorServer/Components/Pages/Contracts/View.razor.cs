@@ -3,6 +3,8 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components;
+using Shared.Results;
+using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
 {
@@ -11,46 +13,36 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
         [Parameter]
         public Guid ContractId { get; set; }
 
-        private ContractModel? contractModel;
+        private ContractModels.ContractModel? contractModel;
         private bool isLoading = true;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
             {
-                await base.OnAfterRenderAsync(firstRender);
+                return;
+            }
+            Result result = await OnAfterRender(PermissionSection.Contract, PermissionFunction.View, this.LoadContract);
+            if (result.IsFailed)
+            {
                 return;
             }
 
-            try
-            {
-                await RequirePermission(PermissionSection.Contract, PermissionFunction.View);
-                await LoadContract();
-            }
-            finally
-            {
-                isLoading = false;
-                this.StateHasChanged();
-            }
+            isLoading = false;
+            this.StateHasChanged();
         }
 
-        private async Task LoadContract()
+        private async Task<Result> LoadContract()
         {
-            try
-            {
-                isLoading = true;
-                var estateId = await this.GetEstateId();
-                var result = await Mediator.Send(new ContractQueries.GetContractQuery(CorrelationIdHelper.New(), estateId, ContractId));
+            var estateId = await this.GetEstateId();
+            var result = await this.ContractUiService.GetContract(CorrelationIdHelper.New(), estateId, this.ContractId);
 
-                if (result.IsSuccess && result.Data != null)
-                {
-                    contractModel = ModelFactory.ConvertFrom(result.Data);
-                }
-            }
-            finally
+            if (result.IsFailed)
             {
-                isLoading = false;
+                return ResultHelpers.CreateFailure(result);
             }
+            contractModel = result.Data;
+            return Result.Success();
         }
 
         private void BackToList()

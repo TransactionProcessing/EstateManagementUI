@@ -1,9 +1,10 @@
 @page "/contracts/{ContractId:guid}"
 @using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
 @inherits AuthorizedComponentBase
-@inject IMediator Mediator
+@inject IContractUIService ContractUiService
 @inject NavigationManager NavigationManager
 
 <PageTitle>View Contract</PageTitle>

@@ -11,6 +11,7 @@ namespace EstateManagementUI.BlazorServer.UIServices;
 public interface IOperatorUIService
 {
     Task<Result<List<OperatorModels.OperatorModel>>> GetOperators(CorrelationId correlationId, Guid estateId);
+    Task<Result<List<OperatorModels.OperatorDropDownModel>>> GetOperatorsForDropDown(CorrelationId correlationId, Guid estateId);
     Task<Result<OperatorModels.OperatorModel>> GetOperator(CorrelationId correlationId, Guid estateId, Guid operatorId);
 
     Task<Result> UpdateOperator(CorrelationId correlationId, Guid estateId, Guid operatorId, OperatorModels.EditOperatorModel editOperatorModel);
@@ -32,9 +33,18 @@ public class OperatorUIService : IOperatorUIService
         return Result.Success(operators);
     }
 
+    public async Task<Result<List<OperatorModels.OperatorDropDownModel>>> GetOperatorsForDropDown(CorrelationId correlationId,
+                                                                                                  Guid estateId) {
+        var result = await this.Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        var operators = ModelFactory.ConvertFrom(result.Data);
+        return Result.Success(operators);
+    }
+
     public async Task<Result<OperatorModels.OperatorModel>> GetOperator(CorrelationId correlationId,
-                                                         Guid estateId,
-                                                         Guid operatorId) {
+                                                                        Guid estateId,
+                                                                        Guid operatorId) {
         var result = await this.Mediator.Send(new OperatorQueries.GetOperatorQuery(correlationId, estateId, operatorId));
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);

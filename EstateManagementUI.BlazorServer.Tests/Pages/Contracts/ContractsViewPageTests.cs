@@ -2,6 +2,7 @@ using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 using EstateManagementUI.BlazorServer.Components.Permissions;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Models;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
 
@@ -22,16 +24,16 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator"
         };
         
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -45,16 +47,16 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -69,9 +71,15 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success(new ContractModel { ContractId = contractId }));
-        
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator"
+        };
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -86,16 +94,16 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -110,16 +118,16 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator"
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -140,28 +148,28 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Test Product",
                     DisplayText = "Test Display",
-                    ProductType = "MobileTopup",
+                    ProductType = ProductType.MobileTopup,
                     Value = "100",
                     NumberOfFees = 2
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -178,17 +186,17 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -203,24 +211,24 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = contractId,
             Description = "Test Contract",
             OperatorName = "Test Operator",
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.NewGuid(),
                     ProductName = "Test Product",
                     DisplayText = "Test Display",
-                    ProductType = "MobileTopup",
+                    ProductType = ProductType.MobileTopup,
                     Value = "100",
                     NumberOfFees = 1,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.NewGuid(),
                             Description = "Service Fee",
@@ -232,10 +240,10 @@ public class ContractsViewPageTests : BaseTest
                 }
             }
         };
-        
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
@@ -252,72 +260,15 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Failure("Failed to load contract"));
-        
-        // Act
-        var cut = RenderComponent<View>(parameters => parameters
-            .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Assert
-        cut.Markup.ShouldContain("Contract not found");
-    }
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Failure());
 
-    [Fact]
-    public void ContractsView_LoadContract_ReturnsNull_ShowsNotFoundMessage()
-    {
-        // Arrange
-        var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success<ContractModel>(null!));
-        
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Assert
-        cut.Markup.ShouldContain("Contract not found");
-    }
+        //cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
-    [Fact]
-    public void ContractsView_ContractNotFound_HasBackButton()
-    {
-        // Arrange
-        var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success<ContractModel>(null!));
-        
-        // Act
-        var cut = RenderComponent<View>(parameters => parameters
-            .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
         // Assert
-        cut.Markup.ShouldContain("Back to List");
-    }
-
-    [Fact]
-    public void ContractsView_ContractNotFound_BackButton_NavigatesToContractsList()
-    {
-        // Arrange
-        var contractId = Guid.NewGuid();
-        _mockMediator.Setup(x => x.Send(It.IsAny<ContractQueries.GetContractQuery>(), default))
-            .ReturnsAsync(Result.Success<ContractModel>(null!));
-        
-        // Act
-        var cut = RenderComponent<View>(parameters => parameters
-            .Add(p => p.ContractId, contractId));
-        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
-        // Find and click the Back to List button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
-        backButton.ShouldNotBeNull();
-        backButton.Click();
-        
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain("/contracts");
+        _fakeNavigationManager.Uri.ShouldContain("error");
     }
 }
