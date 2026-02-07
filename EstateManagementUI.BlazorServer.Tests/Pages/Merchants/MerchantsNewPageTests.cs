@@ -322,6 +322,6 @@ public class MerchantsNewPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Saving..."), timeout: TimeSpan.FromSeconds(5));
         
         // Complete the task
-        tcs.SetResult(Result.Success);
+        tcs.SetResult(Result.Success());
     }
 }
