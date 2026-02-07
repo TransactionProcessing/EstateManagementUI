@@ -291,6 +291,17 @@ public class MerchantsNewPageTests : BaseTest
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
 
+        // Interact with CountrySelector - find the button that opens the dropdown
+        var countryButtons = cut.FindAll("button[aria-label='Select country']");
+        if (countryButtons.Any())
+        {
+            countryButtons.First().Click();
+            // Find and click a country option (e.g., United Kingdom)
+            var countryOptions = cut.FindAll("button");
+            var ukButton = countryOptions.FirstOrDefault(b => b.TextContent.Contains("United Kingdom"));
+            ukButton?.Click();
+        }
+
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
 
