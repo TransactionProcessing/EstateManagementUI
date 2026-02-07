@@ -143,6 +143,8 @@ public class MerchantsDepositPageTests : BaseTest
 
         IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
             parameters.Add(p => p.MerchantId, _testMerchantId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Fill form fields
