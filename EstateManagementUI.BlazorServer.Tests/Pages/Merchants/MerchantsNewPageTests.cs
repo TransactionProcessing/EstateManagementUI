@@ -95,9 +95,6 @@ public class MerchantsNewPageTests : BaseTest
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
 
-        var countrySelect = cut.Find("select[name='Country']");
-        countrySelect.Change("United Kingdom");
-
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
 
@@ -148,9 +145,6 @@ public class MerchantsNewPageTests : BaseTest
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
 
-        var countrySelect = cut.Find("select[name='Country']");
-        countrySelect.Change("United Kingdom");
-
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
 
@@ -199,9 +193,6 @@ public class MerchantsNewPageTests : BaseTest
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
 
-        var countrySelect = cut.Find("select[name='Country']");
-        countrySelect.Change("United Kingdom");
-
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
 
@@ -249,9 +240,6 @@ public class MerchantsNewPageTests : BaseTest
 
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
-
-        var countrySelect = cut.Find("select[name='Country']");
-        countrySelect.Change("United Kingdom");
 
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
@@ -302,9 +290,6 @@ public class MerchantsNewPageTests : BaseTest
 
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
-
-        var countrySelect = cut.Find("select[name='Country']");
-        countrySelect.Change("United Kingdom");
 
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
