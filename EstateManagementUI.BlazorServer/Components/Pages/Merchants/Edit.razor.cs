@@ -20,9 +20,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
         private MerchantModels.MerchantModel? merchant;
         private bool isLoading = true;
         private bool isSaving = false;
-        private string? errorMessage;
-        private string? successMessage;
-        private string activeTab = "details";
 
         // Unified model for editing
         private MerchantModels.MerchantEditModel merchantEditModel = new();
@@ -48,6 +45,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
         private List<MerchantModels.MerchantDeviceModel> assignedDevices = new();
         private bool showAddDevice = false;
         private string? deviceIdentifier;
+
+        protected override async Task OnInitializedAsync() {
+            await base.OnInitializedAsync();
+            this.SetActiveTab("details");
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender) {
             if (!firstRender) {
