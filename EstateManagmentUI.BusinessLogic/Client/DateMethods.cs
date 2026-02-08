@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Shared.General;
 using TransactionProcessor.Client;
 
 namespace EstateManagementUI.BusinessLogic.Client
@@ -24,7 +25,8 @@ namespace EstateManagementUI.BusinessLogic.Client
         private readonly ISecurityServiceClient SecurityServiceClient;
         private readonly ITransactionProcessorClient TransactionProcessorClient;
 
-        public ApiClient(IEstateReportingApiClient estateReportingApiClient, ISecurityServiceClient securityServiceClient,
+        public ApiClient(IEstateReportingApiClient estateReportingApiClient, 
+                         ISecurityServiceClient securityServiceClient,
                          ITransactionProcessorClient transactionProcessorClient) {
             this.EstateReportingApiClient = estateReportingApiClient;
             this.SecurityServiceClient = securityServiceClient;
@@ -50,7 +52,9 @@ namespace EstateManagementUI.BusinessLogic.Client
         private async Task<Result<String>> GetToken(CancellationToken cancellationToken) {
             // Get a token here 
             // TODO: Add caching
-            Result<TokenResponse>? token = await this.SecurityServiceClient.GetToken("serviceClient", "d192cbc46d834d0da90e8a9d50ded543", cancellationToken);
+            var clientId = ConfigurationReader.GetValueOrDefault("AppSettings", "ClientId", "");
+            var clientSecret = ConfigurationReader.GetValueOrDefault("AppSettings", "ClientSecret", "");
+            Result<TokenResponse>? token = await this.SecurityServiceClient.GetToken(clientId, clientSecret, cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
             return Result.Success<String>(token.Data.AccessToken);
