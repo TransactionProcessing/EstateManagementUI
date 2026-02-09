@@ -25,7 +25,7 @@
             var estateId = Guid.NewGuid();
             var correlationId = CorrelationIdHelper.New();
 
-            var bizOperators = new List<EstateManagementUI.BusinessLogic.Models.OperatorModel>
+            var bizOperators = new List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>
             {
                 new() { OperatorId = Guid.NewGuid(), Name = "OpA", RequireCustomMerchantNumber = true, RequireCustomTerminalNumber = false }
             };
@@ -71,7 +71,7 @@
             var correlationId = CorrelationIdHelper.New();
             var operatorId = Guid.NewGuid();
 
-            var bizOperator = new EstateManagementUI.BusinessLogic.Models.OperatorModel
+            var bizOperator = new EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel
             {
                 OperatorId = operatorId,
                 Name = "OpDetail",

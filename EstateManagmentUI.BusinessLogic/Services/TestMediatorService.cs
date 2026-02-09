@@ -120,7 +120,7 @@ public class TestMediatorService : IMediator
     }
 
     // Helper methods for retrieving data
-    private Result<MerchantModel> GetMerchantResult(Guid estateId, Guid merchantId)
+    private Result<MerchantModels.MerchantModel> GetMerchantResult(Guid estateId, Guid merchantId)
     {
         var merchant = this._testDataStore.GetMerchant(estateId, merchantId);
         return merchant != null 
@@ -128,7 +128,7 @@ public class TestMediatorService : IMediator
             : Result.Failure($"Merchant {merchantId} not found");
     }
 
-    private Result<OperatorModel> GetOperatorResult(Guid estateId, Guid operatorId)
+    private Result<OperatorModels.OperatorModel> GetOperatorResult(Guid estateId, Guid operatorId)
     {
         var operatorModel = this._testDataStore.GetOperator(estateId, operatorId);
         return operatorModel != null 
@@ -136,7 +136,7 @@ public class TestMediatorService : IMediator
             : Result.Failure($"Operator {operatorId} not found");
     }
 
-    private Result<ContractModel> GetContractResult(Guid estateId, Guid contractId)
+    private Result<ContractModels.ContractModel> GetContractResult(Guid estateId, Guid contractId)
     {
         var contract = this._testDataStore.GetContract(estateId, contractId);
         return contract != null 
@@ -147,7 +147,7 @@ public class TestMediatorService : IMediator
     // Command execution methods
     private Result ExecuteCreateMerchant(MerchantCommands.CreateMerchantCommand cmd)
     {
-        var merchant = new MerchantModel
+        var merchant = new MerchantModels.MerchantModel
         {
             MerchantId = Guid.NewGuid(),
             MerchantName = cmd.Name,
@@ -172,7 +172,7 @@ public class TestMediatorService : IMediator
     
     private Result ExecuteCreateOperator(OperatorCommands.CreateOperatorCommand cmd)
     {
-        var operatorModel = new OperatorModel
+        var operatorModel = new OperatorModels.OperatorModel
         {
             OperatorId = Guid.NewGuid(),
             Name = cmd.Name,
@@ -198,12 +198,12 @@ public class TestMediatorService : IMediator
 
     private Result ExecuteCreateContract(ContractCommands.CreateContractCommand cmd)
     {
-        var contract = new ContractModel
+        var contract = new ContractModels.ContractModel
         {
             ContractId = Guid.NewGuid(),
             Description = cmd.Description,
             OperatorId = cmd.OperatorId,
-            Products = new List<ContractProductModel>()
+            Products = new List<ContractModels.ContractProductModel>()
         };
         
         var operatorModel = this._testDataStore.GetOperator(cmd.EstateId, cmd.OperatorId);
@@ -223,9 +223,9 @@ public class TestMediatorService : IMediator
             return Result.Failure($"Contract {cmd.ContractId} not found");
         
         if (contract.Products == null)
-            contract.Products = new List<ContractProductModel>();
+            contract.Products = new List<ContractModels.ContractProductModel>();
         
-        contract.Products.Add(new ContractProductModel
+        contract.Products.Add(new ContractModels.ContractProductModel
         {
             ContractProductId = Guid.NewGuid(),
             ProductName = cmd.ProductName,
@@ -248,9 +248,9 @@ public class TestMediatorService : IMediator
             return Result.Failure($"Product {cmd.ProductId} not found in contract");
         
         if (product.TransactionFees == null)
-            product.TransactionFees = new List<ContractProductTransactionFeeModel>();
+            product.TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>();
         
-        product.TransactionFees.Add(new ContractProductTransactionFeeModel
+        product.TransactionFees.Add(new ContractModels.ContractProductTransactionFeeModel
         {
             TransactionFeeId = Guid.NewGuid(),
             Description = cmd.Description,
@@ -272,7 +272,7 @@ public class TestMediatorService : IMediator
             return Result.Failure($"Product {cmd.ProductId} not found in contract");
 
         if (product.TransactionFees == null)
-            product.TransactionFees = new List<ContractProductTransactionFeeModel>();
+            product.TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>();
 
         var fee = product.TransactionFees.Single(f => f.TransactionFeeId == cmd.FeeId);
         product.TransactionFees.Remove(fee);
@@ -485,7 +485,7 @@ public class TestMediatorService : IMediator
         new TodaysSalesValueByHourModel { Hour = 10, TodaysSalesValue = 18500, ComparisonSalesValue = 15000 }
     };
 
-    private static MerchantKpiModel GetMockMerchantKpi() => new()
+    private static MerchantModels.MerchantKpiModel GetMockMerchantKpi() => new()
     {
         MerchantsWithNoSaleInLast7Days = 5,
         MerchantsWithNoSaleToday = 12,
@@ -651,7 +651,7 @@ public class TestMediatorService : IMediator
         
         // Collect all unique products from all contracts
         var productNames = contracts
-            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .SelectMany(c => c.Products ?? new List<ContractModels.ContractProductModel>())
             .Select(p => p.ProductName)
             .Where(p => !string.IsNullOrEmpty(p))
             .Distinct()
@@ -821,7 +821,7 @@ public class TestMediatorService : IMediator
         
         // Get all products with their IDs from contracts
         var productList = contracts
-            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .SelectMany(c => c.Products ?? new List<ContractModels.ContractProductModel>())
             .Where(p => !string.IsNullOrEmpty(p.ProductName))
             .ToList();
         

@@ -27,11 +27,11 @@ public class EstateUIService : IEstateUIService
     public async Task<Result<EstateModel>> LoadEstate(CorrelationId correlationId,
                                                       Guid estateId)
     {
-        Task<Result<BusinessLogic.Models.EstateModel>> estateTask = Mediator.Send(new EstateQueries.GetEstateQuery(correlationId, estateId));
-        Task<Result<List<BusinessLogic.Models.RecentMerchantsModel>>> merchantTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
-        Task<Result<List<BusinessLogic.Models.RecentContractModel>>> contractsTask = Mediator.Send(new ContractQueries.GetRecentContractsQuery(correlationId, estateId));
-        Task<Result<List<BusinessLogic.Models.OperatorModel>>> assignedOperatorsTask = Mediator.Send(new EstateQueries.GetAssignedOperatorsQuery(correlationId, estateId));
-        Task<Result<List<BusinessLogic.Models.OperatorDropDownModel>>> allOperatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
+        Task<Result<BusinessLogic.Models.EstateModels.EstateModel>> estateTask = Mediator.Send(new EstateQueries.GetEstateQuery(correlationId, estateId));
+        Task<Result<List<BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>> merchantTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
+        Task<Result<List<BusinessLogic.Models.ContractModels.RecentContractModel>>> contractsTask = Mediator.Send(new ContractQueries.GetRecentContractsQuery(correlationId, estateId));
+        Task<Result<List<BusinessLogic.Models.OperatorModels.OperatorModel>>> assignedOperatorsTask = Mediator.Send(new EstateQueries.GetAssignedOperatorsQuery(correlationId, estateId));
+        Task<Result<List<BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>> allOperatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
 
         await Task.WhenAll(estateTask, merchantTask, contractsTask, assignedOperatorsTask, allOperatorsTask);
 

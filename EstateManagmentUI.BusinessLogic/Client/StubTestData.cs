@@ -5,16 +5,16 @@ namespace EstateManagementUI.BusinessLogic.Client;
 
 public static class StubTestData {
 
-    public static EstateModel GetMockEstate() => new()
+    public static EstateModels.EstateModel GetMockEstate() => new()
     {
         EstateId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
         EstateName = "Test Estate",
         Reference = "Test Estate"
     };
 
-    public static List<MerchantModel> GetMockMerchants() => new()
+    public static List<MerchantModels.MerchantModel> GetMockMerchants() => new()
     {
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
             MerchantName = "Test Merchant 1",
@@ -25,7 +25,7 @@ public static class StubTestData {
             Region = "North Region",
             PostalCode = "12345"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
             MerchantName = "Test Merchant 2",
@@ -36,7 +36,7 @@ public static class StubTestData {
             Region = "South Region",
             PostalCode = "67890"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
             MerchantName = "Test Merchant 3",
@@ -47,7 +47,7 @@ public static class StubTestData {
             Region = "East Region",
             PostalCode = "54321"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222225"),
             MerchantName = "Test Merchant 4",
@@ -58,7 +58,7 @@ public static class StubTestData {
             Region = "West Region",
             PostalCode = "11111"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222226"),
             MerchantName = "Test Merchant 5",
@@ -69,7 +69,7 @@ public static class StubTestData {
             Region = "North Region",
             PostalCode = "22222"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222227"),
             MerchantName = "Test Merchant 6",
@@ -80,7 +80,7 @@ public static class StubTestData {
             Region = "South Region",
             PostalCode = "33333"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222228"),
             MerchantName = "Test Merchant 7",
@@ -91,7 +91,7 @@ public static class StubTestData {
             Region = "East Region",
             PostalCode = "44444"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222229"),
             MerchantName = "Test Merchant 8",
@@ -102,7 +102,7 @@ public static class StubTestData {
             Region = "West Region",
             PostalCode = "55555"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222230"),
             MerchantName = "Test Merchant 9",
@@ -113,7 +113,7 @@ public static class StubTestData {
             Region = "North Region",
             PostalCode = "66666"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222231"),
             MerchantName = "Test Merchant 10",
@@ -124,7 +124,7 @@ public static class StubTestData {
             Region = "South Region",
             PostalCode = "77777"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222232"),
             MerchantName = "Test Merchant 11",
@@ -135,7 +135,7 @@ public static class StubTestData {
             Region = "East Region",
             PostalCode = "88888"
         },
-        new MerchantModel
+        new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222233"),
             MerchantName = "Test Merchant 12",
@@ -148,23 +148,23 @@ public static class StubTestData {
         }
     };
 
-    public static List<RecentMerchantsModel> GetMockRecentMerchants() => new()
+    public static List<MerchantModels.RecentMerchantsModel> GetMockRecentMerchants() => new()
     {
-        new RecentMerchantsModel
+        new MerchantModels.RecentMerchantsModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
             Name = "Test Merchant 1",
             Reference = "MERCH001",
             CreatedDateTime = DateTime.Now
         },
-        new RecentMerchantsModel
+        new MerchantModels.RecentMerchantsModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
             Name = "Test Merchant 2",
             Reference = "MERCH002",
             CreatedDateTime = DateTime.Now.AddDays(-1)
         },
-        new RecentMerchantsModel
+        new MerchantModels.RecentMerchantsModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
             Name = "Test Merchant 3",
@@ -173,7 +173,7 @@ public static class StubTestData {
         }
     };
 
-    public static MerchantModel GetMockMerchant() => new()
+    public static MerchantModels.MerchantModel GetMockMerchant() => new()
     {
         MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
         MerchantName = "Test Merchant 1",
@@ -191,16 +191,16 @@ public static class StubTestData {
         ContactPhoneNumber = "555-1234"
     };
 
-    public static List<OperatorModel> GetMockOperators() => new()
+    public static List<OperatorModels.OperatorModel> GetMockOperators() => new()
     {
-        new OperatorModel
+        new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
             Name = "Safaricom",
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         },
-        new OperatorModel
+        new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
             Name = "Voucher",
@@ -209,7 +209,7 @@ public static class StubTestData {
         }
     };
 
-    public static OperatorModel GetMockOperator() => new()
+    public static OperatorModels.OperatorModel GetMockOperator() => new()
     {
         OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
         Name = "Safaricom",
@@ -217,17 +217,17 @@ public static class StubTestData {
         RequireCustomTerminalNumber = false
     };
 
-    public static List<ContractModel> GetMockContracts() => new()
+    public static List<ContractModels.ContractModel> GetMockContracts() => new()
     {
-        new ContractModel
+        new ContractModels.ContractModel
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
             Description = "Standard Transaction Contract",
             OperatorName = "Safaricom",
             OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
                     ProductName = "Mobile Topup",
@@ -235,15 +235,15 @@ public static class StubTestData {
                 }
             }
         },
-        new ContractModel
+        new ContractModels.ContractModel
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444445"),
             Description = "Voucher Sales Contract",
             OperatorName = "Voucher",
             OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555556"),
                     ProductName = "Voucher",
@@ -253,15 +253,15 @@ public static class StubTestData {
         }
     };
 
-    public static ContractModel GetMockContract() => new()
+    public static ContractModels.ContractModel GetMockContract() => new()
     {
         ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
         Description = "Standard Transaction Contract",
         OperatorName = "Safaricom",
         OperatorId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-        Products = new List<ContractProductModel>
+        Products = new List<ContractModels.ContractProductModel>
         {
-            new ContractProductModel
+            new ContractModels.ContractProductModel
             {
                 ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
                 ProductName = "Mobile Topup",
@@ -269,9 +269,9 @@ public static class StubTestData {
                 ProductType = "Mobile Topup",
                 Value = "Variable",
                 NumberOfFees = 2,
-                TransactionFees = new List<ContractProductTransactionFeeModel>
+                TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                 {
-                    new ContractProductTransactionFeeModel
+                    new ContractModels.ContractProductTransactionFeeModel
                     {
                         TransactionFeeId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
                         Description = "Merchant Commission",
@@ -279,7 +279,7 @@ public static class StubTestData {
                         FeeType = 0,
                         Value = 0.50m
                     },
-                    new ContractProductTransactionFeeModel
+                    new ContractModels.ContractProductTransactionFeeModel
                     {
                         TransactionFeeId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
                         Description = "Service Provider Fee",
@@ -289,7 +289,7 @@ public static class StubTestData {
                     }
                 }
             },
-            new ContractProductModel
+            new ContractModels.ContractProductModel
             {
                 ContractProductId = Guid.Parse("88888888-8888-8888-8888-888888888888"),
                 ProductName = "Bill Payment",
@@ -297,9 +297,9 @@ public static class StubTestData {
                 ProductType = "Bill Payment",
                 Value = "Variable",
                 NumberOfFees = 1,
-                TransactionFees = new List<ContractProductTransactionFeeModel>
+                TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                 {
-                    new ContractProductTransactionFeeModel
+                    new ContractModels.ContractProductTransactionFeeModel
                     {
                         TransactionFeeId = Guid.Parse("99999999-9999-9999-9999-999999999999"),
                         Description = "Transaction Fee",
@@ -411,7 +411,7 @@ public static class StubTestData {
         new TodaysSalesValueByHourModel { Hour = 15, TodaysSalesValue = 21500, ComparisonSalesValue = 9500 }
     };
 
-    public static MerchantKpiModel GetMockMerchantKpi() => new()
+    public static MerchantModels.MerchantKpiModel GetMockMerchantKpi() => new()
     {
         MerchantsWithNoSaleInLast7Days = 5,
         MerchantsWithNoSaleToday = 12,
@@ -474,7 +474,7 @@ public static class StubTestData {
         var contracts = GetMockContracts();
         
         var productList = contracts
-            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .SelectMany(c => c.Products ?? new List<ContractModels.ContractProductModel>())
             .Where(p => !string.IsNullOrEmpty(p.ProductName))
             .ToList();
 
@@ -719,7 +719,7 @@ public static class StubTestData {
 
         // Get all products with their IDs from contracts
         var productList = contracts
-            .SelectMany(c => c.Products ?? new List<ContractProductModel>())
+            .SelectMany(c => c.Products ?? new List<ContractModels.ContractProductModel>())
             .Where(p => !string.IsNullOrEmpty(p.ProductName))
             .ToList();
 

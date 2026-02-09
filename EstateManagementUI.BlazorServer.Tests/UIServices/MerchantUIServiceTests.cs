@@ -30,7 +30,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             // Arrange
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
-            var biz = new BusinessLogic.Models.MerchantModel
+            var biz = new BusinessLogic.Models.MerchantModels.MerchantModel
             {
                 MerchantId = merchantId,
                 MerchantName = "M1",
@@ -88,7 +88,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             var estateId = Guid.NewGuid();
-            var bizList = new List<BusinessLogic.Models.MerchantListModel>
+            var bizList = new List<BusinessLogic.Models.MerchantModels.MerchantListModel>
             {
                 new() { MerchantId = Guid.NewGuid(), MerchantName = "M1", MerchantReference = "R1", Balance = 1m, AvailableBalance = 1m, SettlementSchedule = "S", Region = "Reg", PostalCode = "PC", CreatedDateTime = DateTime.UtcNow }
             };
@@ -124,7 +124,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
-            var bizList = new List<BusinessLogic.Models.MerchantOperatorModel>
+            var bizList = new List<BusinessLogic.Models.MerchantModels.MerchantOperatorModel>
             {
                 new() { MerchantId = merchantId, OperatorId = Guid.NewGuid(), OperatorName = "Op1", MerchantNumber = "MN", TerminalNumber = "TN", IsDeleted = false }
             };
@@ -157,9 +157,10 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
-            var bizList = new List<BusinessLogic.Models.MerchantContractModel>
+            var bizList = new List<BusinessLogic.Models.MerchantModels.MerchantContractModel>
             {
-                new() { MerchantId = merchantId, ContractId = Guid.NewGuid(), ContractName = "C1", OperatorName = "Op" , IsDeleted=false, ContractProducts = new List<BusinessLogic.Models.MerchantContractProductModel>() }
+                new() { MerchantId = merchantId, ContractId = Guid.NewGuid(), ContractName = "C1", OperatorName = "Op" , IsDeleted=false, 
+                    ContractProducts = new List<BusinessLogic.Models.MerchantModels.MerchantContractProductModel>() }
             };
 
             _mockMediator
@@ -190,7 +191,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
-            var bizList = new List<BusinessLogic.Models.MerchantDeviceModel>
+            var bizList = new List<BusinessLogic.Models.MerchantModels.MerchantDeviceModel>
             {
                 new() { MerchantId = merchantId, DeviceId = Guid.NewGuid(), DeviceIdentifier = "dev1", IsDeleted = false }
             };

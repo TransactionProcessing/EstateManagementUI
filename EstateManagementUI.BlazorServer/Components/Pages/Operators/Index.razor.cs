@@ -1,7 +1,6 @@
 ﻿using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
-using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Shared.Results;
 using SimpleResults;

@@ -1,8 +1,6 @@
 using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Models;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Moq;
 using Shouldly;

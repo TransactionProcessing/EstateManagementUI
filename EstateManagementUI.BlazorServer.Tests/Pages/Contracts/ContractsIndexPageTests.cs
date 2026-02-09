@@ -13,6 +13,7 @@ using Moq;
 using Shouldly;
 using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
+using ContractModels = EstateManagementUI.BlazorServer.Models.ContractModels;
 using ContractsIndex = EstateManagementUI.BlazorServer.Components.Pages.Contracts.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
