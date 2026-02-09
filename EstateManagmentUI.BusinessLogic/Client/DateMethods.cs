@@ -1,5 +1,4 @@
 ﻿using EstateManagementUI.BusinessLogic.BackendAPI;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using SecurityService.Client;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using Shared.General;
 using TransactionProcessor.Client;
 

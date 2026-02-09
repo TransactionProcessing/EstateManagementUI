@@ -12,11 +12,11 @@ using TransactionProcessor.DataTransferObjects.Responses.Estate;
 
 namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {
-        Task<Result<EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
-                                            CancellationToken cancellationToken);
+        Task<Result<EstateModels.EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
+                                                         CancellationToken cancellationToken);
 
-        Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(EstateQueries.GetAssignedOperatorsQuery request,
-                                                                           CancellationToken cancellationToken);
+        Task<Result<List<OperatorModels.OperatorModel>>> GetEstateAssignedOperators(EstateQueries.GetAssignedOperatorsQuery request,
+                                                                                    CancellationToken cancellationToken);
 
         Task<Result> RemoveEstateOperator(EstateCommands.RemoveOperatorFromEstateCommand request,
                                             CancellationToken cancellationToken);
@@ -26,8 +26,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
 
     public partial class ApiClient : IApiClient {
 
-        public async Task<Result<EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
-                                                         CancellationToken cancellationToken) {
+        public async Task<Result<EstateModels.EstateModel>> GetEstate(EstateQueries.GetEstateQuery request,
+                                                                      CancellationToken cancellationToken) {
             // Get a token here 
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
@@ -37,13 +37,13 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            EstateModel estate = APIModelFactory.ConvertFrom(apiResult.Data);
+            EstateModels.EstateModel estate = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(estate);
         }
 
-        public async Task<Result<List<OperatorModel>>> GetEstateAssignedOperators(EstateQueries.GetAssignedOperatorsQuery request,
-                                                                                  CancellationToken cancellationToken) {
+        public async Task<Result<List<OperatorModels.OperatorModel>>> GetEstateAssignedOperators(EstateQueries.GetAssignedOperatorsQuery request,
+                                                                                                 CancellationToken cancellationToken) {
             // Get a token here 
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
@@ -53,7 +53,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            List<OperatorModel> estateOperators = apiResult.Data.ToOperator();
+            List<OperatorModels.OperatorModel> estateOperators = apiResult.Data.ToOperator();
 
             return Result.Success(estateOperators);
         }

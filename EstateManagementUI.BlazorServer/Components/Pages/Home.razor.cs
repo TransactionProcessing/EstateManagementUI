@@ -121,9 +121,9 @@ public partial class Home
 
             // Process results
             if (kpiTask.Result.IsFailed)
-                return ResultHelpers.CreateFailure<BusinessLogic.Models.MerchantKpiModel>(kpiTask.Result);
+                return ResultHelpers.CreateFailure<BusinessLogic.Models.MerchantModels.MerchantKpiModel>(kpiTask.Result);
 
-            this.merchantKpi = ModelFactory.ConvertFrom((BusinessLogic.Models.MerchantKpiModel)kpiTask.Result.Data);
+            this.merchantKpi = ModelFactory.ConvertFrom((BusinessLogic.Models.MerchantModels.MerchantKpiModel)kpiTask.Result.Data);
 
             if (salesTask.Result.IsFailed)
                 return ResultHelpers.CreateFailure<BusinessLogic.Models.TodaysSalesModel>(salesTask.Result);
@@ -136,11 +136,11 @@ public partial class Home
             this.todaysFailedSales = ModelFactory.ConvertFrom((BusinessLogic.Models.TodaysSalesModel)failedSalesTask.Result.Data);
 
             if (merchantsTask.Result.IsFailed)
-                return ResultHelpers.CreateFailure<List<BusinessLogic.Models.RecentMerchantsModel>>(merchantsTask.Result);
+                return ResultHelpers.CreateFailure(merchantsTask.Result);
 
             // Note: API returns merchants in creation order (newest first)
             // If ordering is incorrect, would need CreatedDate field in the model
-            this.recentMerchants = ModelFactory.ConvertFrom((List<BusinessLogic.Models.RecentMerchantsModel>)merchantsTask.Result.Data);
+            this.recentMerchants = ModelFactory.ConvertFrom((List<BusinessLogic.Models.MerchantModels.RecentMerchantsModel>)merchantsTask.Result.Data);
 
             return Result.Success();
         }

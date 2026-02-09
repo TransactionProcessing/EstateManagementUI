@@ -1,4 +1,3 @@
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using System.Collections.Concurrent;
 
@@ -10,10 +9,10 @@ namespace EstateManagementUI.BusinessLogic.Services;
 /// </summary>
 public class TestDataStore : ITestDataStore
 {
-    private readonly ConcurrentDictionary<Guid, EstateModel> _estates = new();
-    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, MerchantModel>> _merchants = new();
-    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, OperatorModel>> _operators = new();
-    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, ContractModel>> _contracts = new();
+    private readonly ConcurrentDictionary<Guid, EstateModels.EstateModel> _estates = new();
+    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, MerchantModels.MerchantModel>> _merchants = new();
+    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, OperatorModels.OperatorModel>> _operators = new();
+    private readonly ConcurrentDictionary<Guid, ConcurrentDictionary<Guid, ContractModels.ContractModel>> _contracts = new();
 
     public TestDataStore()
     {
@@ -21,14 +20,14 @@ public class TestDataStore : ITestDataStore
         this.InitializeDefaultData();
     }
 
-    public EstateModel GetEstate(Guid estateId)
+    public EstateModels.EstateModel GetEstate(Guid estateId)
     {
         if (this._estates.TryGetValue(estateId, out var estate))
         {
             // Populate operators list
             if (this._operators.TryGetValue(estateId, out var operatorDict))
             {
-                estate.Operators = operatorDict.Values.Select(o => new EstateOperatorModel
+                estate.Operators = operatorDict.Values.Select(o => new EstateModels.EstateOperatorModel
                 {
                     OperatorId = o.OperatorId,
                     Name = o.Name,
@@ -38,7 +37,7 @@ public class TestDataStore : ITestDataStore
             }
             if (this._contracts.TryGetValue(estateId, out var contractDict))
             {
-                estate.Contracts = contractDict.Values.Select(o => new EstateContractModel()
+                estate.Contracts = contractDict.Values.Select(o => new EstateModels.EstateContractModel()
                 {
                     OperatorId = o.OperatorId,
                     Name = o.Description,
@@ -48,7 +47,7 @@ public class TestDataStore : ITestDataStore
             }
             if (this._merchants.TryGetValue(estateId, out var merchantDict))
             {
-                estate.Merchants = merchantDict.Values.Select(o => new EstateMerchantModel()
+                estate.Merchants = merchantDict.Values.Select(o => new EstateModels.EstateMerchantModel()
                 {
                     Name = o.MerchantName,
                     Reference = o.MerchantReference,
@@ -56,13 +55,13 @@ public class TestDataStore : ITestDataStore
                 }).ToList();
             }
 
-            estate.Users = [new EstateUserModel { CreatedDateTime = DateTime.Now, EmailAddress = "estatedevuser1@estate.co.uk", UserId = Guid.Parse("61BFC7DC-FDB4-408A-9CAA-B9F0CF690130") }];
+            estate.Users = [new EstateModels.EstateUserModel { CreatedDateTime = DateTime.Now, EmailAddress = "estatedevuser1@estate.co.uk", UserId = Guid.Parse("61BFC7DC-FDB4-408A-9CAA-B9F0CF690130") }];
 
             return estate;
         }
         
         // Return a default estate if not found for consistency
-        return new EstateModel
+        return new EstateModels.EstateModel
         {
             EstateId = estateId,
             EstateName = "Unknown Estate",
@@ -70,40 +69,40 @@ public class TestDataStore : ITestDataStore
         };
     }
 
-    public void SetEstate(EstateModel estate)
+    public void SetEstate(EstateModels.EstateModel estate)
     {
         this._estates[estate.EstateId] = estate;
         
         // Ensure collections exist for this estate
-        this._merchants.TryAdd(estate.EstateId, new ConcurrentDictionary<Guid, MerchantModel>());
-        this._operators.TryAdd(estate.EstateId, new ConcurrentDictionary<Guid, OperatorModel>());
-        this._contracts.TryAdd(estate.EstateId, new ConcurrentDictionary<Guid, ContractModel>());
+        this._merchants.TryAdd(estate.EstateId, new ConcurrentDictionary<Guid, MerchantModels.MerchantModel>());
+        this._operators.TryAdd(estate.EstateId, new ConcurrentDictionary<Guid, OperatorModels.OperatorModel>());
+        this._contracts.TryAdd(estate.EstateId, new ConcurrentDictionary<Guid, ContractModels.ContractModel>());
     }
 
-    public List<MerchantModel> GetMerchants(Guid estateId)
+    public List<MerchantModels.MerchantModel> GetMerchants(Guid estateId)
     {
         if (this._merchants.TryGetValue(estateId, out var merchantDict))
         {
             return merchantDict.Values.ToList();
         }
-        return new List<MerchantModel>();
+        return new List<MerchantModels.MerchantModel>();
     }
 
-    public List<RecentMerchantsModel> GetRecentMerchants(Guid estateId)
+    public List<MerchantModels.RecentMerchantsModel> GetRecentMerchants(Guid estateId)
     {
         if (this._merchants.TryGetValue(estateId, out var merchantDict))
         {
-            return merchantDict.Values.Select(m => new RecentMerchantsModel {
+            return merchantDict.Values.Select(m => new MerchantModels.RecentMerchantsModel {
                 CreatedDateTime = m.CreatedDateTime,
                 Reference = m.MerchantReference,
                 Name = m.MerchantName,
                 MerchantId = m.MerchantId
             }).ToList();
         }
-        return new List<RecentMerchantsModel>();
+        return new List<MerchantModels.RecentMerchantsModel>();
     }
 
-    public MerchantModel? GetMerchant(Guid estateId, Guid merchantId)
+    public MerchantModels.MerchantModel? GetMerchant(Guid estateId, Guid merchantId)
     {
         if (this._merchants.TryGetValue(estateId, out var merchantDict))
         {
@@ -113,15 +112,15 @@ public class TestDataStore : ITestDataStore
         return null;
     }
 
-    public void AddMerchant(Guid estateId, MerchantModel merchant)
+    public void AddMerchant(Guid estateId, MerchantModels.MerchantModel merchant)
     {
-        var merchantDict = this._merchants.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, MerchantModel>());
+        var merchantDict = this._merchants.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, MerchantModels.MerchantModel>());
         merchantDict[merchant.MerchantId] = merchant;
     }
 
-    public void UpdateMerchant(Guid estateId, MerchantModel merchant)
+    public void UpdateMerchant(Guid estateId, MerchantModels.MerchantModel merchant)
     {
-        var merchantDict = this._merchants.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, MerchantModel>());
+        var merchantDict = this._merchants.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, MerchantModels.MerchantModel>());
         merchantDict[merchant.MerchantId] = merchant;
     }
 
@@ -133,16 +132,16 @@ public class TestDataStore : ITestDataStore
         }
     }
 
-    public List<OperatorModel> GetOperators(Guid estateId)
+    public List<OperatorModels.OperatorModel> GetOperators(Guid estateId)
     {
         if (this._operators.TryGetValue(estateId, out var operatorDict))
         {
             return operatorDict.Values.ToList();
         }
-        return new List<OperatorModel>();
+        return new List<OperatorModels.OperatorModel>();
     }
 
-    public OperatorModel? GetOperator(Guid estateId, Guid operatorId)
+    public OperatorModels.OperatorModel? GetOperator(Guid estateId, Guid operatorId)
     {
         if (this._operators.TryGetValue(estateId, out var operatorDict))
         {
@@ -152,15 +151,15 @@ public class TestDataStore : ITestDataStore
         return null;
     }
 
-    public void AddOperator(Guid estateId, OperatorModel operatorModel)
+    public void AddOperator(Guid estateId, OperatorModels.OperatorModel operatorModel)
     {
-        var operatorDict = this._operators.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, OperatorModel>());
+        var operatorDict = this._operators.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, OperatorModels.OperatorModel>());
         operatorDict[operatorModel.OperatorId] = operatorModel;
     }
 
-    public void UpdateOperator(Guid estateId, OperatorModel operatorModel)
+    public void UpdateOperator(Guid estateId, OperatorModels.OperatorModel operatorModel)
     {
-        var operatorDict = this._operators.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, OperatorModel>());
+        var operatorDict = this._operators.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, OperatorModels.OperatorModel>());
         operatorDict[operatorModel.OperatorId] = operatorModel;
     }
 
@@ -172,16 +171,16 @@ public class TestDataStore : ITestDataStore
         }
     }
 
-    public List<ContractModel> GetContracts(Guid estateId)
+    public List<ContractModels.ContractModel> GetContracts(Guid estateId)
     {
         if (this._contracts.TryGetValue(estateId, out var contractDict))
         {
             return contractDict.Values.ToList();
         }
-        return new List<ContractModel>();
+        return new List<ContractModels.ContractModel>();
     }
 
-    public ContractModel? GetContract(Guid estateId, Guid contractId)
+    public ContractModels.ContractModel? GetContract(Guid estateId, Guid contractId)
     {
         if (this._contracts.TryGetValue(estateId, out var contractDict))
         {
@@ -191,15 +190,15 @@ public class TestDataStore : ITestDataStore
         return null;
     }
 
-    public void AddContract(Guid estateId, ContractModel contract)
+    public void AddContract(Guid estateId, ContractModels.ContractModel contract)
     {
-        var contractDict = this._contracts.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, ContractModel>());
+        var contractDict = this._contracts.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, ContractModels.ContractModel>());
         contractDict[contract.ContractId] = contract;
     }
 
-    public void UpdateContract(Guid estateId, ContractModel contract)
+    public void UpdateContract(Guid estateId, ContractModels.ContractModel contract)
     {
-        var contractDict = this._contracts.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, ContractModel>());
+        var contractDict = this._contracts.GetOrAdd(estateId, _ => new ConcurrentDictionary<Guid, ContractModels.ContractModel>());
         contractDict[contract.ContractId] = contract;
     }
 
@@ -226,7 +225,7 @@ public class TestDataStore : ITestDataStore
     {
         // Default test estate
         var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var estate = new EstateModel
+        var estate = new EstateModels.EstateModel
         {
             EstateId = estateId,
             EstateName = "Test Estate",
@@ -235,7 +234,7 @@ public class TestDataStore : ITestDataStore
         this.SetEstate(estate);
 
         // Default test merchants
-        this.AddMerchant(estateId, new MerchantModel
+        this.AddMerchant(estateId, new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
             MerchantName = "Test Merchant 1",
@@ -254,7 +253,7 @@ public class TestDataStore : ITestDataStore
             CreatedDateTime = DateTime.Now
         });
 
-        this.AddMerchant(estateId, new MerchantModel
+        this.AddMerchant(estateId, new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
             MerchantName = "Test Merchant 2",
@@ -265,7 +264,7 @@ public class TestDataStore : ITestDataStore
             CreatedDateTime = DateTime.Now.AddDays(-1)
         });
 
-        this.AddMerchant(estateId, new MerchantModel
+        this.AddMerchant(estateId, new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
             MerchantName = "Test Merchant 3",
@@ -277,7 +276,7 @@ public class TestDataStore : ITestDataStore
         });
 
         // Default test operators
-        this.AddOperator(estateId, new OperatorModel
+        this.AddOperator(estateId, new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
             Name = "Safaricom",
@@ -285,7 +284,7 @@ public class TestDataStore : ITestDataStore
             RequireCustomTerminalNumber = false
         });
 
-        this.AddOperator(estateId, new OperatorModel
+        this.AddOperator(estateId, new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
             Name = "Voucher",
@@ -294,15 +293,15 @@ public class TestDataStore : ITestDataStore
         });
 
         // Default test contracts
-        this.AddContract(estateId, new ContractModel
+        this.AddContract(estateId, new ContractModels.ContractModel
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
             Description = "Standard Transaction Contract",
             OperatorName = "Safaricom",
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
                     ProductName = "Mobile Topup",
@@ -310,9 +309,9 @@ public class TestDataStore : ITestDataStore
                     ProductType = "Mobile Topup",
                     Value = "Variable",
                     NumberOfFees = 2,
-                    TransactionFees = new List<ContractProductTransactionFeeModel>
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
                             Description = "Merchant Commission",
@@ -320,7 +319,7 @@ public class TestDataStore : ITestDataStore
                             FeeType = 0,
                             Value = 0.50m
                         },
-                        new ContractProductTransactionFeeModel
+                        new ContractModels.ContractProductTransactionFeeModel
                         {
                             TransactionFeeId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
                             Description = "Service Provider Fee",
@@ -333,15 +332,15 @@ public class TestDataStore : ITestDataStore
             }
         });
 
-        this.AddContract(estateId, new ContractModel
+        this.AddContract(estateId, new ContractModels.ContractModel
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444445"),
             Description = "Voucher Sales Contract",
             OperatorName = "Voucher",
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
-            Products = new List<ContractProductModel>
+            Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractProductModel
+                new ContractModels.ContractProductModel
                 {
                     ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555556"),
                     ProductName = "Voucher",

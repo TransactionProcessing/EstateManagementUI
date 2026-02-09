@@ -1,92 +1,5 @@
 namespace EstateManagementUI.BusinessLogic.Models;
 
-// Estate Models
-public class EstateModel
-{
-    public Guid EstateId { get; set; }
-    public string? EstateName { get; set; }
-    public string? Reference { get; set; }
-    public List<EstateOperatorModel>? Operators { get; set; }
-    public List<EstateMerchantModel>? Merchants { get; set; }
-    public List<EstateContractModel>? Contracts { get; set; }
-    public List<EstateUserModel>? Users { get; set; }
-}
-
-public class EstateUserModel
-{
-    public Guid UserId { get; set; }
-    public string? EmailAddress { get; set; }
-    public DateTime CreatedDateTime { get; set; }
-}
-
-public class EstateOperatorModel
-{
-    public Guid OperatorId { get; set; }
-    public string? Name { get; set; }
-    public bool RequireCustomMerchantNumber { get; set; }
-    public bool RequireCustomTerminalNumber { get; set; }
-    public DateTime CreatedDateTime { get; set; }
-}
-
-public class EstateContractModel
-{
-    public Guid OperatorId { get; set; }
-    public Guid ContractId { get; set; }
-    public string? Name { get; set; }
-    public string? OperatorName { get; set; }
-}
-
-
-public class EstateMerchantModel
-{
-    public Guid MerchantId { get; set; }
-    public string? Name { get; set; }
-    public string? Reference { get; set; }
-}
-
-
-// Operator Models
-
-
-// Contract Models
-public class ContractModel
-{
-    public Guid ContractId { get; set; }
-    public string? Description { get; set; }
-    public string? OperatorName { get; set; }
-    public Guid OperatorId { get; set; }
-    public List<ContractProductModel>? Products { get; set; }
-}
-
-public class ContractDropDownModel
-{
-    public Guid ContractId { get; set; }
-    public string? Description { get; set; }
-    public string? OperatorName { get; set; }
-}
-
-public class ContractProductModel
-{
-    public Guid ContractProductId { get; set; }
-    public string? ProductName { get; set; }
-    public string? DisplayText { get; set; }
-    public string? ProductType { get; set; }
-    // Changed from decimal? to string? to support displaying "Variable" for variable-value products
-    // This aligns with how the backend represents variable vs fixed value products
-    public string? Value { get; set; }
-    public int NumberOfFees { get; set; }
-    public List<ContractProductTransactionFeeModel>? TransactionFees { get; set; }
-}
-
-public class ContractProductTransactionFeeModel
-{
-    public Guid TransactionFeeId { get; set; }
-    public string? Description { get; set; }
-    public Int32 CalculationType { get; set; }
-    public Int32 FeeType { get; set; }
-    public decimal Value { get; set; }
-}
-
 // File Processing Models
 public class FileImportLogModel
 {
@@ -155,12 +68,7 @@ public class TodaysSalesValueByHourModel
     public decimal ComparisonSalesValue { get; set; }
 }
 
-public class MerchantKpiModel
-{
-    public int MerchantsWithNoSaleInLast7Days { get; set; }
-    public int MerchantsWithNoSaleToday { get; set; }
-    public int MerchantsWithSaleInLastHour { get; set; }
-}
+
 
 public class TopBottomProductDataModel
 {
@@ -264,10 +172,5 @@ public class TransactionDetailModel
     public string? ResponseCode { get; set; }
     public DateTime? SettlementDateTime { get; set; }
 }
-public class RecentContractModel
-{
-    public Guid ContractId { get; set; }
-    public string? Description { get; set; }
-    public string? OperatorName { get; set; }
-}
+
 

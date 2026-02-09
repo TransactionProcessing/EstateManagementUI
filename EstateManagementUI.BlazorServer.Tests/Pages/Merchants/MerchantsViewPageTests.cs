@@ -3,8 +3,6 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
@@ -12,10 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using SimpleResults;
-using MerchantContractModel = EstateManagementUI.BusinessLogic.Models.MerchantContractModel;
-using MerchantDeviceModel = EstateManagementUI.BusinessLogic.Models.MerchantDeviceModel;
-using MerchantModel = EstateManagementUI.BusinessLogic.Models.MerchantModel;
-using MerchantOperatorModel = EstateManagementUI.BusinessLogic.Models.MerchantOperatorModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
@@ -310,7 +304,7 @@ public class MerchantsViewPageTests : BaseTest
                     {
                         ProductId = Guid.NewGuid(),
                         ProductName = "Test Product",
-                        DisplayText = "Â£10 Topup"
+                        DisplayText = "£10 Topup"
                     }
                 }
             }

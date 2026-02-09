@@ -11,15 +11,15 @@ using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {
-        Task<Result<List<RecentContractModel>>> GetRecentContracts(ContractQueries.GetRecentContractsQuery request,
-                                                                   CancellationToken cancellationToken);
+        Task<Result<List<ContractModels.RecentContractModel>>> GetRecentContracts(ContractQueries.GetRecentContractsQuery request,
+                                                                                  CancellationToken cancellationToken);
 
-        Task<Result<List<ContractDropDownModel>>> GetContracts(ContractQueries.GetContractsForDropDownQuery request,
+        Task<Result<List<ContractModels.ContractDropDownModel>>> GetContracts(ContractQueries.GetContractsForDropDownQuery request,
+                                                                              CancellationToken cancellationToken);
+        Task<Result<List<ContractModels.ContractModel>>> GetContracts(ContractQueries.GetContractsQuery request,
+                                                                      CancellationToken cancellationToken);
+        Task<Result<ContractModels.ContractModel>> GetContract(ContractQueries.GetContractQuery request,
                                                                CancellationToken cancellationToken);
-        Task<Result<List<ContractModel>>> GetContracts(ContractQueries.GetContractsQuery request,
-                                                               CancellationToken cancellationToken);
-        Task<Result<ContractModel>> GetContract(ContractQueries.GetContractQuery request,
-                                                       CancellationToken cancellationToken);
 
         Task<Result> CreateContract(ContractCommands.CreateContractCommand request,
                                     CancellationToken cancellationToken);
@@ -33,8 +33,8 @@ namespace EstateManagementUI.BusinessLogic.Client {
     }
 
     public partial class ApiClient : IApiClient {
-        public async Task<Result<List<RecentContractModel>>> GetRecentContracts(ContractQueries.GetRecentContractsQuery request,
-                                                                                CancellationToken cancellationToken) {
+        public async Task<Result<List<ContractModels.RecentContractModel>>> GetRecentContracts(ContractQueries.GetRecentContractsQuery request,
+                                                                                               CancellationToken cancellationToken) {
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
@@ -44,13 +44,13 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            List<RecentContractModel> recentContractModels = apiResult.Data.ToRecentContracts();
+            List<ContractModels.RecentContractModel> recentContractModels = apiResult.Data.ToRecentContracts();
 
             return Result.Success(recentContractModels);
         }
 
-        public async Task<Result<List<ContractDropDownModel>>> GetContracts(ContractQueries.GetContractsForDropDownQuery request,
-                                                                    CancellationToken cancellationToken)
+        public async Task<Result<List<ContractModels.ContractDropDownModel>>> GetContracts(ContractQueries.GetContractsForDropDownQuery request,
+                                                                                           CancellationToken cancellationToken)
         {
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
@@ -61,30 +61,30 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            List<ContractDropDownModel> contractModels = apiResult.Data.ToContractDropDown();
+            List<ContractModels.ContractDropDownModel> contractModels = apiResult.Data.ToContractDropDown();
 
             return Result.Success(contractModels);
         }
 
-        public async Task<Result<List<ContractModel>>> GetContracts(ContractQueries.GetContractsQuery request,
+        public async Task<Result<List<ContractModels.ContractModel>>> GetContracts(ContractQueries.GetContractsQuery request,
+                                                                                   CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<List<Contract>> apiResult = await this.EstateReportingApiClient.GetContracts(token.Data, request.EstateId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            List<ContractModels.ContractModel> contractModels = apiResult.Data.ToContract();
+
+            return Result.Success(contractModels);
+        }
+
+        public async Task<Result<ContractModels.ContractModel>> GetContract(ContractQueries.GetContractQuery request,
                                                                             CancellationToken cancellationToken)
-        {
-            Result<String> token = await this.GetToken(cancellationToken);
-            if (token.IsFailed)
-                return ResultHelpers.CreateFailure(token);
-
-            Result<List<Contract>> apiResult = await this.EstateReportingApiClient.GetContracts(token.Data, request.EstateId, cancellationToken);
-
-            if (apiResult.IsFailed)
-                return ResultHelpers.CreateFailure(apiResult);
-
-            List<ContractModel> contractModels = apiResult.Data.ToContract();
-
-            return Result.Success(contractModels);
-        }
-
-        public async Task<Result<ContractModel>> GetContract(ContractQueries.GetContractQuery request,
-                                                                    CancellationToken cancellationToken)
         {
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
@@ -95,7 +95,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
-            ContractModel contractModel = apiResult.Data.ToContract();
+            ContractModels.ContractModel contractModel = apiResult.Data.ToContract();
 
             return Result.Success(contractModel);
         }

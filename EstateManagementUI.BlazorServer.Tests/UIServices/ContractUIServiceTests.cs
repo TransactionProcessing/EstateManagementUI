@@ -32,7 +32,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var estateId = Guid.NewGuid();
             var correlationId = CorrelationIdHelper.New();
 
-            var bizContracts = new List<BusinessLogic.Models.ContractModel>
+            var bizContracts = new List<BusinessLogic.Models.ContractModels.ContractModel>
             {
                 new()
                 {
@@ -40,7 +40,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                     Description = "Contract A",
                     OperatorId = Guid.NewGuid(),
                     OperatorName = "OpA",
-                    Products = new List<BusinessLogic.Models.ContractProductModel>
+                    Products = new List<BusinessLogic.Models.ContractModels.ContractProductModel>
                     {
                         new()
                         {
@@ -50,7 +50,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                             ProductType = "NotSet",
                             Value = "10.00",
                             NumberOfFees = 0,
-                            TransactionFees = new List<BusinessLogic.Models.ContractProductTransactionFeeModel>()
+                            TransactionFees = new List<BusinessLogic.Models.ContractModels.ContractProductTransactionFeeModel>()
                         }
                     }
                 }
@@ -97,13 +97,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             // Arrange
             var estateId = Guid.NewGuid();
             var contractId = Guid.NewGuid();
-            var bizContract = new BusinessLogic.Models.ContractModel
+            var bizContract = new BusinessLogic.Models.ContractModels.ContractModel
             {
                 ContractId = contractId,
                 Description = "Contract Detail",
                 OperatorId = Guid.NewGuid(),
                 OperatorName = "OpDetail",
-                Products = new List<BusinessLogic.Models.ContractProductModel>()
+                Products = new List<BusinessLogic.Models.ContractModels.ContractProductModel>()
             };
 
             _mockMediator

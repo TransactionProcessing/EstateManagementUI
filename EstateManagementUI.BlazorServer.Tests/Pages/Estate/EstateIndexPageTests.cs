@@ -4,7 +4,6 @@ using Castle.Components.DictionaryAdapter;
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Web;
 using Moq;

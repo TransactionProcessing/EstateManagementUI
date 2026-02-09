@@ -1,9 +1,9 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Services;
 using Shouldly;
-using EstateModel = EstateManagementUI.BusinessLogic.Models.EstateModel;
-using MerchantModel = EstateManagementUI.BusinessLogic.Models.MerchantModel;
-using OperatorModel = EstateManagementUI.BusinessLogic.Models.OperatorModel;
+using EstateModel = EstateManagementUI.BusinessLogic.Models.EstateModels.EstateModel;
+using MerchantModel = EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel;
+using OperatorModel = EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel;
 
 namespace EstateManagementUI.BlazorServer.Tests.Services;
 
