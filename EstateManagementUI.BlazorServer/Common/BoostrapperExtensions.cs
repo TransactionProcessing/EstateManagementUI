@@ -40,7 +40,7 @@ public static class BoostrapperExtensions {
         {
             await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
             await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Results.Redirect("/");
+            return Results.Redirect("/entry");
         }).RequireAuthorization();
         return app;
     }
@@ -55,7 +55,7 @@ public static class BoostrapperExtensions {
         app.MapGet("/logout", (HttpContext context) =>
         {
             // In test mode, just redirect to home
-            return Results.Redirect("/");
+            return Results.Redirect("/entry");
         }).RequireAuthorization();
 
         return app;
