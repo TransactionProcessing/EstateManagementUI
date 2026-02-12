@@ -1,4 +1,5 @@
 ﻿using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using ComparisonDateModel = EstateManagementUI.BlazorServer.Models.ComparisonDateModel;
@@ -30,6 +31,7 @@ using TodaysSalesModel = EstateManagementUI.BlazorServer.Models.TodaysSalesModel
 using TodaysSalesValueByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesValueByHourModel;
 using TodaysSettlementModel = EstateManagementUI.BlazorServer.Models.TodaysSettlementModel;
 using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
+using TransactionModels = EstateManagementUI.BlazorServer.Models.TransactionModels;
 
 namespace EstateManagementUI.BlazorServer.Factories {
     public static class ModelFactory {
@@ -408,6 +410,7 @@ namespace EstateManagementUI.BlazorServer.Factories {
             foreach (BusinessLogic.Models.MerchantModels.MerchantDropDownModel merchantDropDownModel in resultData) {
                 merchantList.Add(new MerchantDropDownModel {
                     MerchantId = merchantDropDownModel.MerchantId,
+                    MerchantReportingId = merchantDropDownModel.MerchantReportingId,
                     MerchantName = merchantDropDownModel.MerchantName
                 });
             }
@@ -493,11 +496,43 @@ namespace EstateManagementUI.BlazorServer.Factories {
                 operatorList.Add(new OperatorDropDownModel()
                 {
                     OperatorId = operatorDropDownModel.OperatorId,
+                    OperatorReportingId = operatorDropDownModel.OperatorReportingId,
                     OperatorName = operatorDropDownModel.OperatorName
                 });
             }
 
             return operatorList;
+        }
+
+        public static TransactionModels.TransactionDetailReportResponse? ConvertFrom(BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse resultData) {
+            TransactionModels.TransactionDetailReportResponse model = new();
+            model.Summary = new TransactionDetailSummary {
+                TotalFees = resultData.Summary.TotalFees,
+                TotalValue = resultData.Summary.TotalValue,
+                TransactionCount = resultData.Summary.TransactionCount
+            };
+            model.Transactions = new List<TransactionModels.TransactionDetail>();
+            foreach (BusinessLogic.Models.TransactionModels.TransactionDetail resultDataTransaction in resultData.Transactions) {
+                model.Transactions.Add(new TransactionModels.TransactionDetail {
+                    TotalFees = resultDataTransaction.TotalFees,
+                    Value = resultDataTransaction.Value,
+                    Status = resultDataTransaction.Status,
+                    Type = resultDataTransaction.Type,
+                    ProductReportingId = resultDataTransaction.ProductReportingId,
+                    ProductId = resultDataTransaction.ProductId,
+                    Product = resultDataTransaction.Product,
+                    OperatorReportingId = resultDataTransaction.OperatorReportingId,
+                    OperatorId = resultDataTransaction.OperatorId,
+                    Operator = resultDataTransaction.Operator,
+                    MerchantReportingId = resultDataTransaction.MerchantReportingId,
+                    MerchantId = resultDataTransaction.MerchantId,
+                    Merchant = resultDataTransaction.Merchant,
+                    DateTime = resultDataTransaction.DateTime,
+                    Id = resultDataTransaction.Id,
+                    SettlementReference = resultDataTransaction.SettlementReference
+                });
+            }
+            return model;
         }
     }
 }

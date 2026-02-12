@@ -23,6 +23,7 @@ public record OperatorModels {
     public class OperatorDropDownModel
     {
         public Guid OperatorId { get; set; }
+        public Int32 OperatorReportingId { get; set; }
         public string? OperatorName { get; set; }
     }
 

@@ -711,7 +711,7 @@ public static class StubTestData {
         return demoTransactions;
     }
 
-    public static List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
+    public static List<TransactionDetailModel> GetMockTransactionDetails(TransactionQueries.GetTransactionDetailQuery query)
     {
         var merchants = GetMockMerchants();
         var operators = GetMockOperators();
@@ -828,20 +828,20 @@ public static class StubTestData {
         // Apply filters
         IEnumerable<TransactionDetailModel> filteredTransactions = transactions;
         
-        if (query.MerchantIds != null && query.MerchantIds.Any())
-        {
-            filteredTransactions = filteredTransactions.Where(t => query.MerchantIds.Contains(t.MerchantId));
-        }
+        //if (query.MerchantIds != null && query.MerchantIds.Any())
+        //{
+        //    filteredTransactions = filteredTransactions.Where(t => query.MerchantIds.Contains(t.MerchantId));
+        //}
 
-        if (query.OperatorIds != null && query.OperatorIds.Any())
-        {
-            filteredTransactions = filteredTransactions.Where(t => query.OperatorIds.Contains(t.OperatorId));
-        }
+        //if (query.OperatorIds != null && query.OperatorIds.Any())
+        //{
+        //    filteredTransactions = filteredTransactions.Where(t => query.OperatorIds.Contains(t.OperatorId));
+        //}
 
-        if (query.ProductIds != null && query.ProductIds.Any())
-        {
-            filteredTransactions = filteredTransactions.Where(t => query.ProductIds.Contains(t.ProductId));
-        }
+        //if (query.ProductIds != null && query.ProductIds.Any())
+        //{
+        //    filteredTransactions = filteredTransactions.Where(t => query.ProductIds.Contains(t.ProductId));
+        //}
 
         // Sort by transaction date descending (most recent first) and materialize
         return filteredTransactions.OrderByDescending(t => t.TransactionDateTime).ToList();

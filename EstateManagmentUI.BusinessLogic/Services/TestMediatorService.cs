@@ -46,12 +46,12 @@ public class TestMediatorService : IMediator
             
             // Dashboard Queries - return mock data
             Queries.GetComparisonDatesQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockComparisonDates())),
-            Queries.GetTodaysSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysSales(query.ComparisonDate))),
+            TransactionQueries.GetTodaysSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysSales(query.ComparisonDate))),
             Queries.GetTodaysSettlementQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysSettlement())),
             Queries.GetTodaysSalesCountByHourQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockSalesCountByHour())),
             Queries.GetTodaysSalesValueByHourQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockSalesValueByHour())),
             MerchantQueries.GetMerchantKpiQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockMerchantKpi())),
-            Queries.GetTodaysFailedSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysFailedSales(query.ComparisonDate))),
+            TransactionQueries.GetTodaysFailedSalesQuery query => Task.FromResult((TResponse)(object)Result.Success(GetMockTodaysFailedSales(query.ComparisonDate))),
             Queries.GetTopProductDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTopProducts())),
             Queries.GetBottomProductDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockBottomProducts())),
             Queries.GetTopMerchantDataQuery => Task.FromResult((TResponse)(object)Result.Success(GetMockTopMerchants())),
@@ -64,7 +64,7 @@ public class TestMediatorService : IMediator
             Queries.GetOperatorTransactionSummaryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockOperatorTransactionSummary(query))),
             Queries.GetMerchantSettlementHistoryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockMerchantSettlementHistory(query))),
             Queries.GetSettlementSummaryQuery query => Task.FromResult((TResponse)(object)Result.Success(this.GetMockSettlementSummary(query))),
-            Queries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result.Success(this.GetMockTransactionDetails(q))),
+            TransactionQueries.GetTransactionDetailQuery q => Task.FromResult((TResponse)(object)Result.Success(this.GetMockTransactionDetails(q))),
 
             // Commands - execute against test data store
             MerchantCommands.CreateMerchantCommand cmd => Task.FromResult((TResponse)(object)this.ExecuteCreateMerchant(cmd)),
@@ -813,7 +813,7 @@ public class TestMediatorService : IMediator
         return summary;
     }
 
-    private List<TransactionDetailModel> GetMockTransactionDetails(Queries.GetTransactionDetailQuery query)
+    private List<TransactionDetailModel> GetMockTransactionDetails(TransactionQueries.GetTransactionDetailQuery query)
     {
         var merchants = this._testDataStore.GetMerchants(query.EstateId);
         var operators = this._testDataStore.GetOperators(query.EstateId);
@@ -906,20 +906,20 @@ public class TestMediatorService : IMediator
         // Apply filters
         IEnumerable<TransactionDetailModel> filteredTransactions = transactions;
         
-        if (query.MerchantIds != null && query.MerchantIds.Any())
-        {
-            filteredTransactions = filteredTransactions.Where(t => query.MerchantIds.Contains(t.MerchantId));
-        }
+        //if (query.MerchantIds != null && query.MerchantIds.Any())
+        //{
+        //    filteredTransactions = filteredTransactions.Where(t => query.MerchantIds.Contains(t.MerchantId));
+        //}
         
-        if (query.OperatorIds != null && query.OperatorIds.Any())
-        {
-            filteredTransactions = filteredTransactions.Where(t => query.OperatorIds.Contains(t.OperatorId));
-        }
+        //if (query.OperatorIds != null && query.OperatorIds.Any())
+        //{
+        //    filteredTransactions = filteredTransactions.Where(t => query.OperatorIds.Contains(t.OperatorId));
+        //}
         
-        if (query.ProductIds != null && query.ProductIds.Any())
-        {
-            filteredTransactions = filteredTransactions.Where(t => query.ProductIds.Contains(t.ProductId));
-        }
+        //if (query.ProductIds != null && query.ProductIds.Any())
+        //{
+        //    filteredTransactions = filteredTransactions.Where(t => query.ProductIds.Contains(t.ProductId));
+        //}
         
         // Sort by transaction date descending (most recent first) and materialize
         return filteredTransactions.OrderByDescending(t => t.TransactionDateTime).ToList();

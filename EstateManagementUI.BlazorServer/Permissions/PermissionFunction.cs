@@ -9,6 +9,12 @@ public enum PermissionFunction
     Create,
     Edit,
     Delete,
+    List,
+
+    // Specific functions for certain sections
+    // Merchant
     MakeDeposit,
-    List
+
+    // Reporting
+    TransactionDetailReport,
 }
