@@ -11,12 +11,13 @@ namespace EstateManagementUI.BusinessLogic.Client
 {
     public partial interface IApiClient
     {
-        Task<Result<TodaysSalesModel>> GetTodaysSales(Queries.GetTodaysSalesQuery request, CancellationToken cancellationToken);
-        Task<Result<TodaysSalesModel>> GetTodaysFailedSales(Queries.GetTodaysFailedSalesQuery request, CancellationToken cancellationToken);
+        Task<Result<TodaysSalesModel>> GetTodaysSales(TransactionQueries.GetTodaysSalesQuery request, CancellationToken cancellationToken);
+        Task<Result<TodaysSalesModel>> GetTodaysFailedSales(TransactionQueries.GetTodaysFailedSalesQuery request, CancellationToken cancellationToken);
+        Task<Result<TransactionModels.TransactionDetailReportResponse>> GetTransactionDetailReport(TransactionQueries.GetTransactionDetailQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
-        public async Task<Result<TodaysSalesModel>> GetTodaysSales(Queries.GetTodaysSalesQuery request,
+        public async Task<Result<TodaysSalesModel>> GetTodaysSales(TransactionQueries.GetTodaysSalesQuery request,
                                                                    CancellationToken cancellationToken) {
             // Get a token here 
             var token = await this.GetToken(cancellationToken);
@@ -33,7 +34,7 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success(todaysSalesModel);
         }
 
-        public async Task<Result<TodaysSalesModel>> GetTodaysFailedSales(Queries.GetTodaysFailedSalesQuery request,
+        public async Task<Result<TodaysSalesModel>> GetTodaysFailedSales(TransactionQueries.GetTodaysFailedSalesQuery request,
                                                                          CancellationToken cancellationToken)
         {
             // Get a token here 
@@ -49,6 +50,30 @@ namespace EstateManagementUI.BusinessLogic.Client
             TodaysSalesModel todaysSalesModel = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(todaysSalesModel);
+        }
+
+        public async Task<Result<TransactionModels.TransactionDetailReportResponse>> GetTransactionDetailReport(TransactionQueries.GetTransactionDetailQuery request,
+                                                                                                                CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            TransactionDetailReportRequest apiRequest = new TransactionDetailReportRequest {
+                EndDate = request.EndDate,
+                StartDate = request.StartDate,
+                Merchants = request.MerchantIds,
+                Operators = request.OperatorIds,
+                Products = request.ProductIds
+            };
+
+            Result<TransactionDetailReportResponse> apiResult = await this.EstateReportingApiClient.GetTransactionDetailReport(token.Data, request.EstateId, apiRequest, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            TransactionModels.TransactionDetailReportResponse transactionDetailReportResponseModel = APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(transactionDetailReportResponseModel);
         }
     }
 }

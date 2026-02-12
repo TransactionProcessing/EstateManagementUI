@@ -80,6 +80,11 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                                   Guid estateId,
                                                                   Guid merchantId,
                                                                   CancellationToken cancellationToken);
+
+        Task<Result<TransactionDetailReportResponse>> GetTransactionDetailReport(String accessToken,
+                                               Guid estateId,
+                                               TransactionDetailReportRequest request,
+                                               CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -427,10 +432,37 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             }
         }
 
+        public async Task<Result<TransactionDetailReportResponse>> GetTransactionDetailReport(String accessToken,
+                                                                                              Guid estateId,
+                                                                                              TransactionDetailReportRequest request,
+                                                                                              CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/transactions/transactionDetailReport");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<TransactionDetailReportResponse>? result = await this.SendHttpPostRequest<TransactionDetailReportRequest, TransactionDetailReportResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting transaction detail report for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
         public async Task<Result<List<MerchantDevice>>> GetMerchantDevices(String accessToken,
-                                                                               Guid estateId,
-                                                                               Guid merchantId,
-                                                                               CancellationToken cancellationToken)
+                                                                           Guid estateId,
+                                                                           Guid merchantId,
+                                                                           CancellationToken cancellationToken)
         {
             String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/devices");
 

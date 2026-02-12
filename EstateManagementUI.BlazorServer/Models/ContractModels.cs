@@ -24,6 +24,7 @@ public class ContractModels {
     public class ContractProductModel
     {
         public Guid ContractProductId { get; set; }
+        public Int32 ContractProductReportingId { get; set; }
         public string? ProductName { get; set; }
         public string? DisplayText { get; set; }
         public ProductType ProductType { get; set; }

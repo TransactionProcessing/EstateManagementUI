@@ -100,6 +100,35 @@ public static class APIModelFactory {
 
         return model;
     }
+
+    public static TransactionModels.TransactionDetailReportResponse ConvertFrom(TransactionDetailReportResponse apiResultData) {
+        TransactionModels.TransactionDetailReportResponse model = new();
+
+        model.Summary = new TransactionDetailSummary { TotalFees = apiResultData.Summary.TotalFees, TotalValue = apiResultData.Summary.TotalValue, TransactionCount = apiResultData.Summary.TransactionCount };
+        model.Transactions = new();
+
+        foreach (TransactionDetail transaction in apiResultData.Transactions) {
+            model.Transactions.Add(new TransactionModels.TransactionDetail {
+                Id = transaction.Id,
+                DateTime = transaction.DateTime,
+                Merchant = transaction.Merchant,
+                MerchantId = transaction.MerchantId,
+                MerchantReportingId = transaction.MerchantReportingId,
+                Operator = transaction.Operator,
+                OperatorId = transaction.OperatorId,
+                OperatorReportingId = transaction.OperatorReportingId,
+                Product = transaction.Product,
+                ProductId = transaction.ProductId,
+                ProductReportingId = transaction.ProductReportingId,
+                Type = transaction.Type,
+                Status = transaction.Status,
+                Value = transaction.Value,
+                TotalFees = transaction.TotalFees,
+                SettlementReference = transaction.SettlementReference
+            });
+        }
+        return model;
+    }
 }
 
 public  static class FactoryExtensions{

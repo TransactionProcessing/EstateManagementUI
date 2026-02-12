@@ -22,7 +22,8 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     IRequestHandler<MerchantQueries.GetMerchantsForDropDownQuery, Result<List<MerchantModels.MerchantDropDownModel>>>,
     IRequestHandler<MerchantQueries.GetMerchantContractsQuery, Result<List<MerchantModels.MerchantContractModel>>>,
     IRequestHandler<MerchantQueries.GetMerchantOperatorsQuery, Result<List<MerchantModels.MerchantOperatorModel>>>,
-    IRequestHandler<MerchantQueries.GetMerchantDevicesQuery, Result<List<MerchantModels.MerchantDeviceModel>>>
+    IRequestHandler<MerchantQueries.GetMerchantDevicesQuery, Result<List<MerchantModels.MerchantDeviceModel>>>,
+    IRequestHandler<MerchantQueries.GetMerchantKpiQuery, Result<MerchantModels.MerchantKpiModel>>
 {
 
     private readonly IApiClient ApiClient;
@@ -122,5 +123,10 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     public async Task<Result<List<MerchantModels.MerchantDeviceModel>>> Handle(MerchantQueries.GetMerchantDevicesQuery request,
                                                                                CancellationToken cancellationToken) {
         return await this.ApiClient.GetMerchantDevices(request, cancellationToken);
+    }
+
+    public async Task<Result<MerchantModels.MerchantKpiModel>> Handle(MerchantQueries.GetMerchantKpiQuery request,
+                                                                      CancellationToken cancellationToken) {
+        return await this.ApiClient.GetMerchantKpi(request, cancellationToken);
     }
 }

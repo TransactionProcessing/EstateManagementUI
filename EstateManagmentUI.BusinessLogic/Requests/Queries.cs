@@ -4,6 +4,12 @@ using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.Requests;
 
+public static class TransactionQueries {
+    public record GetTodaysSalesQuery(CorrelationId CorrelationId, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
+    public record GetTodaysFailedSalesQuery(CorrelationId CorrelationId, Guid EstateId, string ResponseCode, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
+    public record GetTransactionDetailQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate, List<Int32>? MerchantIds = null, List<Int32>? OperatorIds = null, List<Int32>? ProductIds = null) : IRequest<Result<TransactionModels.TransactionDetailReportResponse>>;
+}
+
 public static class Queries
 {
     public record GetFileImportLogsListQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid MerchantId, DateTime StartDate, DateTime EndDate)
@@ -12,12 +18,12 @@ public static class Queries
         : IRequest<Result<FileImportLogModel>>;
     public record GetFileDetailsQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid FileId) : IRequest<Result<FileDetailsModel>>;
     public record GetComparisonDatesQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<ComparisonDateModel>>>;
-    public record GetTodaysSalesQuery(CorrelationId CorrelationId, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
+    
     public record GetTodaysSettlementQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSettlementModel>>;
     public record GetTodaysSalesCountByHourQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesCountByHourModel>>>;
     public record GetTodaysSalesValueByHourQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesValueByHourModel>>>;
     
-    public record GetTodaysFailedSalesQuery(CorrelationId CorrelationId, Guid EstateId, string ResponseCode, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
+    
     public record GetTopProductDataQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, int ResultCount) : IRequest<Result<List<TopBottomProductDataModel>>>;
     public record GetBottomProductDataQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, int ResultCount) : IRequest<Result<List<TopBottomProductDataModel>>>;
     public record GetTopMerchantDataQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, int ResultCount) : IRequest<Result<List<TopBottomMerchantDataModel>>>;
@@ -31,5 +37,4 @@ public static class Queries
     public record GetOperatorTransactionSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null) : IRequest<Result<List<OperatorTransactionSummaryModel>>>;
     public record GetMerchantSettlementHistoryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid? MerchantId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<MerchantSettlementHistoryModel>>>;
     public record GetSettlementSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, string? Status = null) : IRequest<Result<List<SettlementSummaryModel>>>;
-    public record GetTransactionDetailQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, List<Guid>? MerchantIds = null, List<Guid>? OperatorIds = null, List<Guid>? ProductIds = null) : IRequest<Result<List<TransactionDetailModel>>>;
 }

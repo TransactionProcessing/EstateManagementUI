@@ -67,6 +67,7 @@ public class MerchantModels
     public class MerchantDropDownModel
     {
         public Guid MerchantId { get; set; }
+        public Int32 MerchantReportingId { get; set; }
         public string? MerchantName { get; set; }
     }
 

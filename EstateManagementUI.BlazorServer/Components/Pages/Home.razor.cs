@@ -113,8 +113,8 @@ public partial class Home
 
             // Load all dashboard data in parallel
             var kpiTask = Mediator.Send(new MerchantQueries.GetMerchantKpiQuery(correlationId, estateId));
-            var salesTask = Mediator.Send(new Queries.GetTodaysSalesQuery(correlationId, estateId, comparisonDateResult.Data));
-            var failedSalesTask = Mediator.Send(new Queries.GetTodaysFailedSalesQuery(correlationId, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
+            var salesTask = Mediator.Send(new TransactionQueries.GetTodaysSalesQuery(correlationId, estateId, comparisonDateResult.Data));
+            var failedSalesTask = Mediator.Send(new TransactionQueries.GetTodaysFailedSalesQuery(correlationId, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
             var merchantsTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
 
             await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
