@@ -9,7 +9,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
     public partial class TransactionSummaryMerchant
     {
         private bool isLoading = true;
-        private string? errorMessage;
 
         // Filter states
         private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
@@ -27,43 +26,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private int totalTransactions = 0;
         private decimal totalValue = 0;
         private decimal averageValue = 0;
-
-        //protected override async Task OnInitializedAsync()
-        //{
-        //    await LoadData();
-        //}
-
+        
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
             {
                 return;
             }
-
-            // Check for query parameters (from drill-down)
-            //var uri = new Uri(Navigation.Uri);
-            //var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-
-            //if (!string.IsNullOrEmpty(query["merchantId"]))
-            //{
-            //    _selectedMerchantIds = new List<string> { query["merchantId"] };
-            //}
-
-            //if (!string.IsNullOrEmpty(query["startDate"]))
-            //{
-            //    if (DateOnly.TryParse(query["startDate"], out var startDate))
-            //    {
-            //        _startDate = startDate;
-            //    }
-            //}
-
-            //if (!string.IsNullOrEmpty(query["endDate"]))
-            //{
-            //    if (DateOnly.TryParse(query["endDate"], out var endDate))
-            //    {
-            //        _endDate = endDate;
-            //    }
-            //}
 
             Result result = await OnAfterRender(PermissionSection.Reporting, PermissionFunction.TransactionMerchantSummaryReport, this.LoadData);
             if (result.IsFailed)
@@ -85,8 +54,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
                 var correlationId = new CorrelationId(Guid.NewGuid());
                 var estateId = await this.GetEstateId();
-                var accessToken = "stubbed-token";
-
+                
                 // Load filter options
                 var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
                 var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
@@ -123,10 +91,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
                 var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
                 var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
-
-                //Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
-                //Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
-
+                
                 Int32? merchant = null;
                 Int32? @operator = null;
                 if (this._selectedMerchant != "-1") {
@@ -175,8 +140,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private void DrillDownToDetail(Guid merchantId)
         {
             // Navigate to transaction detail page with merchant filter and return URL
-            var startDate = _startDate.ToString("yyyy-MM-dd");
-            var endDate = _endDate.ToString("yyyy-MM-dd");
+            //var startDate = _startDate.ToString("yyyy-MM-dd");
+            //var endDate = _endDate.ToString("yyyy-MM-dd");
             //Navigation.NavigateTo($"/reporting/transaction-detail?merchantId={merchantId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-merchant");
         }
     }
