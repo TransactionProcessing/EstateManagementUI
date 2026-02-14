@@ -8,7 +8,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetTodaysSalesQuery, Result<TodaysSalesModel>>, 
     IRequestHandler<TransactionQueries.GetTransactionDetailQuery, Result<TransactionModels.TransactionDetailReportResponse>>,
-    IRequestHandler<TransactionQueries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>
+    IRequestHandler<TransactionQueries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>,
+    IRequestHandler<TransactionQueries.GetMerchantTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByMerchantResponse>>
 {
     private readonly IApiClient ApiClient;
     public TransactionRequestHandler(IApiClient apiClient) {
@@ -28,5 +29,10 @@ public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetT
     public async Task<Result<TodaysSalesModel>> Handle(TransactionQueries.GetTodaysFailedSalesQuery request,
                                                        CancellationToken cancellationToken) {
         return await this.ApiClient.GetTodaysFailedSales(request, cancellationToken);
+    }
+
+    public async Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> Handle(TransactionQueries.GetMerchantTransactionSummaryQuery request,
+                                                                                        CancellationToken cancellationToken) {
+        return await this.ApiClient.GetMerchantTransactionSummary(request, cancellationToken);
     }
 }

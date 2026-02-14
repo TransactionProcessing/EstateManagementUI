@@ -536,41 +536,42 @@ public class TestMediatorService : IMediator
         SettlementValue = 123750.00m
     };
 
-    private List<MerchantTransactionSummaryModel> GetMockMerchantTransactionSummary(Queries.GetMerchantTransactionSummaryQuery query)
-    {
-        const double MinSuccessRate = 0.80; // 80% minimum success rate for test data
-        const double SuccessRateRange = 0.15; // Range up to 95% success rate
-        
-        var merchants = this._testDataStore.GetMerchants(query.EstateId);
-        var random = new Random(42); // Use seed for consistent data
-        
-        var summary = merchants.Select(merchant =>
-        {
-            var totalCount = random.Next(100, 1000);
-            var successRate = MinSuccessRate + random.NextDouble() * SuccessRateRange;
-            var successfulCount = (int)(totalCount * successRate);
-            var failedCount = totalCount - successfulCount;
-            var totalValue = (decimal)(random.NextDouble() * 50000 + 10000);
-            
-            return new MerchantTransactionSummaryModel
-            {
-                MerchantId = merchant.MerchantId,
-                MerchantName = merchant.MerchantName ?? "Unknown Merchant",
-                TotalTransactionCount = totalCount,
-                TotalTransactionValue = Math.Round(totalValue, 2),
-                AverageTransactionValue = Math.Round(totalValue / totalCount, 2),
-                SuccessfulTransactionCount = successfulCount,
-                FailedTransactionCount = failedCount
-            };
-        }).ToList();
-        
-        // Apply filters if specified
-        if (query.MerchantId.HasValue)
-        {
-            summary = summary.Where(s => s.MerchantId == query.MerchantId.Value).ToList();
-        }
-        
-        return summary;
+    private List<TransactionModels.TransactionSummaryByMerchantResponse> GetMockMerchantTransactionSummary(Queries.GetMerchantTransactionSummaryQuery query) {
+        return new List<TransactionModels.TransactionSummaryByMerchantResponse>();
+        //const double MinSuccessRate = 0.80; // 80% minimum success rate for test data
+        //const double SuccessRateRange = 0.15; // Range up to 95% success rate
+
+        //var merchants = this._testDataStore.GetMerchants(query.EstateId);
+        //var random = new Random(42); // Use seed for consistent data
+
+        //var summary = merchants.Select(merchant =>
+        //{
+        //    var totalCount = random.Next(100, 1000);
+        //    var successRate = MinSuccessRate + random.NextDouble() * SuccessRateRange;
+        //    var successfulCount = (int)(totalCount * successRate);
+        //    var failedCount = totalCount - successfulCount;
+        //    var totalValue = (decimal)(random.NextDouble() * 50000 + 10000);
+
+        //    return new List<TransactionModels.TransactionSummaryByMerchantResponse>();
+        //    //return new MerchantTransactionSummaryModel
+        //    //{
+        //    //    MerchantId = merchant.MerchantId,
+        //    //    MerchantName = merchant.MerchantName ?? "Unknown Merchant",
+        //    //    TotalTransactionCount = totalCount,
+        //    //    TotalTransactionValue = Math.Round(totalValue, 2),
+        //    //    AverageTransactionValue = Math.Round(totalValue / totalCount, 2),
+        //    //    SuccessfulTransactionCount = successfulCount,
+        //    //    FailedTransactionCount = failedCount
+        //    //};
+        //}).ToList();
+
+        //// Apply filters if specified
+        //if (query.MerchantId.HasValue)
+        //{
+        //    summary = summary.Where(s => s.MerchantId == query.MerchantId.Value).ToList();
+        //}
+
+        //return summary;
     }
 
     private List<MerchantSettlementHistoryModel> GetMockMerchantSettlementHistory(Queries.GetMerchantSettlementHistoryQuery query)

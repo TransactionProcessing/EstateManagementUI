@@ -336,23 +336,23 @@ namespace EstateManagementUI.BlazorServer.Factories {
             };
         }
 
-        public static List<MerchantTransactionSummaryModel> ConvertFrom(List<BusinessLogic.Models.MerchantTransactionSummaryModel> models) {
-            List<MerchantTransactionSummaryModel> result = new List<MerchantTransactionSummaryModel>();
-            models.ForEach(m => result.Add(ConvertFrom(m)));
-            return result;
-        }
+        //public static List<MerchantTransactionSummaryModel> ConvertFrom(List<BusinessLogic.Models.MerchantTransactionSummaryModel> models) {
+        //    List<MerchantTransactionSummaryModel> result = new List<MerchantTransactionSummaryModel>();
+        //    models.ForEach(m => result.Add(ConvertFrom(m)));
+        //    return result;
+        //}
 
-        private static MerchantTransactionSummaryModel ConvertFrom(BusinessLogic.Models.MerchantTransactionSummaryModel model) {
-            return new MerchantTransactionSummaryModel() {
-                MerchantName = model.MerchantName,
-                TotalTransactionCount = model.TotalTransactionCount,
-                TotalTransactionValue = model.TotalTransactionValue,
-                MerchantId = model.MerchantId,
-                AverageTransactionValue = model.AverageTransactionValue,
-                FailedTransactionCount = model.FailedTransactionCount,
-                SuccessfulTransactionCount = model.SuccessfulTransactionCount
-            };
-        }
+        //private static MerchantTransactionSummaryModel ConvertFrom(BusinessLogic.Models.MerchantTransactionSummaryModel model) {
+        //    return new MerchantTransactionSummaryModel() {
+        //        MerchantName = model.MerchantName,
+        //        TotalTransactionCount = model.TotalTransactionCount,
+        //        TotalTransactionValue = model.TotalTransactionValue,
+        //        MerchantId = model.MerchantId,
+        //        AverageTransactionValue = model.AverageTransactionValue,
+        //        FailedTransactionCount = model.FailedTransactionCount,
+        //        SuccessfulTransactionCount = model.SuccessfulTransactionCount
+        //    };
+        //}
 
         public static List<FileImportLogModel> ConvertFrom(List<BusinessLogic.Models.FileImportLogModel> models) {
             List<FileImportLogModel> result = new List<FileImportLogModel>();
@@ -532,6 +532,31 @@ namespace EstateManagementUI.BlazorServer.Factories {
                     SettlementReference = resultDataTransaction.SettlementReference
                 });
             }
+            return model;
+        }
+
+        public static TransactionModels.TransactionSummaryByMerchantResponse ConvertFrom(BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse resultData) {
+            TransactionModels.TransactionSummaryByMerchantResponse model = new();
+            model.Summary = new TransactionModels.MerchantDetailSummary {
+                AverageValue = resultData.Summary.AverageValue,
+                TotalCount = resultData.Summary.TotalCount,
+                TotalMerchants = resultData.Summary.TotalMerchants,
+                TotalValue = resultData.Summary.TotalValue
+            };
+            model.Merchants = new();
+            foreach (BusinessLogic.Models.TransactionModels.MerchantDetail resultDataMerchant in resultData.Merchants) {
+                model.Merchants.Add(new TransactionModels.MerchantDetail() {
+                    AverageValue = resultDataMerchant.AverageValue,
+                    DeclinedCount = resultDataMerchant.DeclinedCount,
+                    MerchantId = resultDataMerchant.MerchantId,
+                    MerchantName = resultDataMerchant.MerchantName,
+                    AuthorisedPercentage = resultDataMerchant.AuthorisedPercentage,
+                    AuthorisedCount = resultDataMerchant.AuthorisedCount,
+                    TotalCount = resultDataMerchant.TotalCount,
+                    TotalValue= resultDataMerchant.TotalValue
+                });
+            }
+
             return model;
         }
     }

@@ -14,6 +14,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<TodaysSalesModel>> GetTodaysSales(TransactionQueries.GetTodaysSalesQuery request, CancellationToken cancellationToken);
         Task<Result<TodaysSalesModel>> GetTodaysFailedSales(TransactionQueries.GetTodaysFailedSalesQuery request, CancellationToken cancellationToken);
         Task<Result<TransactionModels.TransactionDetailReportResponse>> GetTransactionDetailReport(TransactionQueries.GetTransactionDetailQuery request, CancellationToken cancellationToken);
+        Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(TransactionQueries.GetMerchantTransactionSummaryQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -74,6 +75,37 @@ namespace EstateManagementUI.BusinessLogic.Client
             TransactionModels.TransactionDetailReportResponse transactionDetailReportResponseModel = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(transactionDetailReportResponseModel);
+        }
+
+        public async Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(TransactionQueries.GetMerchantTransactionSummaryQuery request,
+                                                                                                                   CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            TransactionSummaryByMerchantRequest apiRequest = new TransactionSummaryByMerchantRequest
+            {
+                EndDate = request.EndDate,
+                StartDate = request.StartDate,
+                Merchants = request.MerchantId.HasValue switch {
+                    true => [request.MerchantId.Value],
+                    _ => null
+                },
+                Operators = request.OperatorId.HasValue switch
+                {
+                    true => [request.OperatorId.Value],
+                    _ => null
+                }
+            };
+
+            Result<TransactionSummaryByMerchantResponse> apiResult = await this.EstateReportingApiClient.GetMerchantTransactionSummary(token.Data, request.EstateId, apiRequest, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            TransactionModels.TransactionSummaryByMerchantResponse transactionSummaryByMerchantResponseModel = APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(transactionSummaryByMerchantResponseModel);
         }
     }
 }
