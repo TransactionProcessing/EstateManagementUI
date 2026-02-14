@@ -235,12 +235,12 @@ public static class BoostrapperExtensions {
         return builder;
     }
 
-    public static WebApplicationBuilder RegisterTestMediator(this WebApplicationBuilder builder) {
-        Console.WriteLine("Registering TestMediatorService with in-memory test data store");
-        builder.Services.AddSingleton<ITestDataStore, TestDataStore>();
-        builder.Services.AddSingleton<IMediator, TestMediatorService>();
-        return builder;
-    }
+    //public static WebApplicationBuilder RegisterTestMediator(this WebApplicationBuilder builder) {
+    //    Console.WriteLine("Registering TestMediatorService with in-memory test data store");
+    //    builder.Services.AddSingleton<ITestDataStore, TestDataStore>();
+    //    builder.Services.AddSingleton<IMediator, TestMediatorService>();
+    //    return builder;
+    //}
 
     public static WebApplicationBuilder RegisterProductionMeriator(this WebApplicationBuilder builder) {
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EstateRequestHandler).Assembly));

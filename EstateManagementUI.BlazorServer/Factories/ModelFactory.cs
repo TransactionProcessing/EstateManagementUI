@@ -529,7 +529,8 @@ namespace EstateManagementUI.BlazorServer.Factories {
                     Merchant = resultDataTransaction.Merchant,
                     DateTime = resultDataTransaction.DateTime,
                     Id = resultDataTransaction.Id,
-                    SettlementReference = resultDataTransaction.SettlementReference
+                    SettlementReference = resultDataTransaction.SettlementReference,
+                    NetAmount = resultDataTransaction.Value - resultDataTransaction.TotalFees
                 });
             }
             return model;
@@ -549,11 +550,41 @@ namespace EstateManagementUI.BlazorServer.Factories {
                     AverageValue = resultDataMerchant.AverageValue,
                     DeclinedCount = resultDataMerchant.DeclinedCount,
                     MerchantId = resultDataMerchant.MerchantId,
+                    MerchantReportingId = resultDataMerchant.MerchantReportingId,
                     MerchantName = resultDataMerchant.MerchantName,
                     AuthorisedPercentage = resultDataMerchant.AuthorisedPercentage,
                     AuthorisedCount = resultDataMerchant.AuthorisedCount,
                     TotalCount = resultDataMerchant.TotalCount,
                     TotalValue= resultDataMerchant.TotalValue
+                });
+            }
+
+            return model;
+        }
+
+        public static TransactionModels.TransactionSummaryByOperatorResponse ConvertFrom(BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse resultData) {
+            TransactionModels.TransactionSummaryByOperatorResponse model = new();
+            model.Summary = new TransactionModels.OperatorDetailSummary
+            {
+                AverageValue = resultData.Summary.AverageValue,
+                TotalCount = resultData.Summary.TotalCount,
+                TotalOperators = resultData.Summary.TotalOperators,
+                TotalValue = resultData.Summary.TotalValue
+            };
+            model.Operators = new();
+            foreach (BusinessLogic.Models.TransactionModels.OperatorDetail resultDataOperator in resultData.Operators)
+            {
+                model.Operators.Add(new TransactionModels.OperatorDetail()
+                {
+                    AverageValue = resultDataOperator.AverageValue,
+                    DeclinedCount = resultDataOperator.DeclinedCount,
+                    OperatorId = resultDataOperator.OperatorId,
+                    OperatorReportingId = resultDataOperator.OperatorReportingId,
+                    OperatorName = resultDataOperator.OperatorName,
+                    AuthorisedPercentage = resultDataOperator.AuthorisedPercentage,
+                    AuthorisedCount = resultDataOperator.AuthorisedCount,
+                    TotalCount = resultDataOperator.TotalCount,
+                    TotalValue = resultDataOperator.TotalValue
                 });
             }
 

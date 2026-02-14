@@ -151,6 +151,30 @@ public static class APIModelFactory {
         }
         return model;
     }
+
+    public static TransactionModels.TransactionSummaryByOperatorResponse ConvertFrom(TransactionSummaryByOperatorResponse apiResultData) {
+        TransactionModels.TransactionSummaryByOperatorResponse model = new();
+
+        model.Summary = new TransactionModels.OperatorDetailSummary() { TotalValue = apiResultData.Summary.TotalValue, AverageValue = apiResultData.Summary.AverageValue, TotalCount = apiResultData.Summary.TotalCount, TotalOperators = apiResultData.Summary.TotalOperators };
+        model.Operators = new();
+
+        foreach (OperatorDetail @operator in apiResultData.Operators)
+        {
+            model.Operators.Add(new TransactionModels.OperatorDetail
+            {
+                TotalValue = @operator.TotalValue,
+                OperatorReportingId= @operator.OperatorReportingId,
+                AverageValue = @operator.AverageValue,
+                TotalCount = @operator.TotalCount,
+                AuthorisedCount = @operator.AuthorisedCount,
+                AuthorisedPercentage = @operator.AuthorisedPercentage,
+                DeclinedCount = @operator.DeclinedCount,
+                OperatorId = @operator.OperatorId,
+                OperatorName = @operator.OperatorName
+            });
+        }
+        return model;
+    }
 }
 
 public  static class FactoryExtensions{
