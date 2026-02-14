@@ -8,6 +8,7 @@ public static class TransactionQueries {
     public record GetTodaysSalesQuery(CorrelationId CorrelationId, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
     public record GetTodaysFailedSalesQuery(CorrelationId CorrelationId, Guid EstateId, string ResponseCode, DateTime ComparisonDate) : IRequest<Result<TodaysSalesModel>>;
     public record GetTransactionDetailQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate, List<Int32>? MerchantIds = null, List<Int32>? OperatorIds = null, List<Int32>? ProductIds = null) : IRequest<Result<TransactionModels.TransactionDetailReportResponse>>;
+    public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate, Int32? MerchantId = null, Int32? OperatorId = null) : IRequest<Result<TransactionModels.TransactionSummaryByMerchantResponse>>;
 }
 
 public static class Queries
@@ -32,7 +33,7 @@ public static class Queries
     public record GetBottomOperatorDataQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, int ResultCount) : IRequest<Result<List<TopBottomOperatorDataModel>>>;
     public record GetLastSettlementQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<LastSettlementModel>>;
     
-    public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null, Guid? ProductId = null) : IRequest<Result<List<MerchantTransactionSummaryModel>>>;
+    public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null, Guid? ProductId = null) : IRequest<Result<List<TransactionModels.TransactionSummaryByMerchantResponse>>>;
     public record GetProductPerformanceQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<ProductPerformanceModel>>>;
     public record GetOperatorTransactionSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null) : IRequest<Result<List<OperatorTransactionSummaryModel>>>;
     public record GetMerchantSettlementHistoryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid? MerchantId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<MerchantSettlementHistoryModel>>>;

@@ -85,6 +85,8 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                Guid estateId,
                                                TransactionDetailReportRequest request,
                                                CancellationToken cancellationToken);
+
+        Task<Result<TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(String accessToken, Guid estateId, TransactionSummaryByMerchantRequest request, CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -436,7 +438,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                                                               Guid estateId,
                                                                                               TransactionDetailReportRequest request,
                                                                                               CancellationToken cancellationToken) {
-            String requestUri = this.BuildRequestUrl($"/api/transactions/transactionDetailReport");
+            String requestUri = this.BuildRequestUrl($"/api/transactions/transactiondetailreport");
 
             try
             {
@@ -454,6 +456,33 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting transaction detail report for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(String accessToken,
+                                                                                                      Guid estateId,
+                                                                                                      TransactionSummaryByMerchantRequest request,
+                                                                                                      CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/transactions/transactionsummarybymerchantreport");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<TransactionSummaryByMerchantResponse>? result = await this.SendHttpPostRequest<TransactionSummaryByMerchantRequest, TransactionSummaryByMerchantResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting merchant transaction summary report for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

@@ -9,7 +9,7 @@
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager Navigation
-@inject ILogger<TransactionSummaryMerchant> Logger
+@inherits AuthorizedComponentBase
 
 <PageTitle>Transaction Summary by Merchant</PageTitle>
 
@@ -74,13 +74,13 @@
                     <!-- Merchant Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
-                        <select @bind="_selectedMerchantId" class="form-control">
-                            <option value="">All Merchants</option>
+                        <select @bind="_selectedMerchant" class="form-control">
+                            <option value="-1">All Merchants</option>
                             @if (merchants != null)
                             {
                                 @foreach (var merchant in merchants)
                                 {
-                                    <option value="@merchant.MerchantId">@merchant.MerchantName</option>
+                                    <option value="@merchant.MerchantReportingId">@merchant.MerchantName</option>
                                 }
                             }
                         </select>
@@ -89,13 +89,13 @@
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <select @bind="_selectedOperatorId" class="form-control">
-                            <option value="">All Operators</option>
+                        <select @bind="_selectedOperator" class="form-control">
+                            <option value="-1">All Operators</option>
                             @if (operators != null)
                             {
                                 @foreach (var op in operators)
                                 {
-                                    <option value="@op.OperatorId">@op.OperatorName</option>
+                                    <option value="@op.OperatorReportingId">@op.OperatorName</option>
                                 }
                             }
                         </select>
@@ -125,7 +125,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Merchants</span>
-                    <span class="info-box-number">@totalMerchants</span>
+                    <span class="info-box-number">@summaryData.Summary.TotalMerchants</span>
                 </div>
             </div>
             
@@ -137,7 +137,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Transactions</span>
-                    <span class="info-box-number">@totalTransactions.ToString("N0")</span>
+                    <span class="info-box-number">@summaryData.Summary.TotalCount.ToString("N0")</span>
                 </div>
             </div>
             
@@ -149,7 +149,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Value</span>
-                    <span class="info-box-number">@totalValue.ToString("C")</span>
+                    <span class="info-box-number">@summaryData.Summary.TotalValue.ToString("C")</span>
                 </div>
             </div>
             
@@ -161,7 +161,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Average Transaction</span>
-                    <span class="info-box-number">@averageValue.ToString("C")</span>
+                    <span class="info-box-number">@summaryData.Summary.AverageValue.ToString("C")</span>
                 </div>
             </div>
         </div>
@@ -172,37 +172,35 @@
                 <h3 class="card-title">Merchant Transaction Summary</h3>
             </div>
             <div class="card-body">
-                @if (summaryData != null && summaryData.Any())
+                @if (summaryData != null && summaryData.Merchants.Any())
                 {
                     <div class="overflow-x-auto">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>Merchant Name</th>
-                                    <th class="text-right">Total Count</th>
-                                    <th class="text-right">Total Value</th>
-                                    <th class="text-right">Average Value</th>
-                                    <th class="text-right">Successful</th>
-                                    <th class="text-right">Failed</th>
-                                    <th class="text-right">Success Rate</th>
+                                    <th class="text-center">Total Count</th>
+                                    <th class="text-center">Total Value</th>
+                                    <th class="text-center">Average Value</th>
+                                    <th class="text-center">Successful</th>
+                                    <th class="text-center">Failed</th>
+                                    <th class="text-center">Success Rate</th>
                                     <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in summaryData)
+                                @foreach (var item in summaryData.Merchants)
                                 {
                                     <tr>
                                         <td class="font-medium">@item.MerchantName</td>
-                                        <td class="text-right">@item.TotalTransactionCount.ToString("N0")</td>
-                                        <td class="text-right">@item.TotalTransactionValue.ToString("C")</td>
-                                        <td class="text-right">@item.AverageTransactionValue.ToString("C")</td>
-                                        <td class="text-right text-green-600">@item.SuccessfulTransactionCount.ToString("N0")</td>
-                                        <td class="text-right text-red-600">@item.FailedTransactionCount.ToString("N0")</td>
+                                        <td class="text-right">@item.TotalCount.ToString("N0")</td>
+                                        <td class="text-right">@item.TotalValue.ToString("C")</td>
+                                        <td class="text-right">@item.AverageValue.ToString("C")</td>
+                                        <td class="text-right text-green-600">@item.AuthorisedCount.ToString("N0")</td>
+                                        <td class="text-right text-red-600">@item.DeclinedCount.ToString("N0")</td>
                                         <td class="text-right">
                                             @{
-                                                var successRate = item.TotalTransactionCount > 0 
-                                                    ? (item.SuccessfulTransactionCount * 100.0 / item.TotalTransactionCount) 
-                                                    : 0;
+                                                var successRate = item.AuthorisedPercentage * 100.0m;
                                                 var rateClass = successRate >= 90 ? "text-green-600" : successRate >= 75 ? "text-yellow-600" : "text-red-600";
                                             }
                                             <span class="@rateClass font-medium">@successRate.ToString("F1")%</span>
@@ -237,149 +235,3 @@
         </div>
     }
 </div>
-
-@code {
-    private bool isLoading = true;
-    private string? errorMessage;
-    
-    // Filter states
-    private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
-    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
-    private string _selectedMerchantId = "";
-    private string _selectedOperatorId = "";
-    
-    // Data
-    private List<MerchantTransactionSummaryModel>? summaryData;
-    private List<MerchantDropDownModel>? merchants;
-    private List<OperatorDropDownModel>? operators;
-    
-    // KPIs
-    private int totalMerchants = 0;
-    private int totalTransactions = 0;
-    private decimal totalValue = 0;
-    private decimal averageValue = 0;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-    
-    private async Task LoadData()
-    {
-        try
-        {
-            isLoading = true;
-            errorMessage = null;
-            StateHasChanged();
-            
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            
-            // Load filter options
-            var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
-            
-            await Task.WhenAll(merchantsTask, operatorsTask);
-            
-            if (merchantsTask.Result.IsSuccess)
-                merchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
-            
-            if (operatorsTask.Result.IsSuccess)
-                operators = ModelFactory.ConvertFrom(operatorsTask.Result.Data);
-            
-            // Load summary data
-            await LoadSummaryData();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load data: {ex.Message}";
-            Logger.LogError(ex, "Error loading merchant transaction summary data");
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
-    }
-    
-    private async Task LoadSummaryData()
-    {
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            
-            var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
-            var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
-            
-            Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
-            Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
-            
-            var result = await Mediator.Send(new Queries.GetMerchantTransactionSummaryQuery(
-                correlationId, 
-                accessToken, 
-                estateId, 
-                startDate, 
-                endDate, 
-                merchantId, 
-                operatorId
-            ));
-            
-            if (result.IsSuccess && result.Data != null)
-            {
-                summaryData = ModelFactory.ConvertFrom(result.Data);
-                CalculateKPIs();
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to load summary data";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load summary data: {ex.Message}";
-            Logger.LogError(ex, "Error loading summary data");
-        }
-    }
-    
-    private void CalculateKPIs()
-    {
-        if (summaryData == null || !summaryData.Any())
-        {
-            totalMerchants = 0;
-            totalTransactions = 0;
-            totalValue = 0;
-            averageValue = 0;
-            return;
-        }
-        
-        totalMerchants = summaryData.Count;
-        totalTransactions = summaryData.Sum(s => s.TotalTransactionCount);
-        totalValue = summaryData.Sum(s => s.TotalTransactionValue);
-        averageValue = totalTransactions > 0 ? totalValue / totalTransactions : 0;
-    }
-    
-    private async Task ApplyFilters()
-    {
-        await LoadSummaryData();
-    }
-    
-    private async Task ClearFilters()
-    {
-        _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
-        _endDate = DateOnly.FromDateTime(DateTime.Now);
-        _selectedMerchantId = "";
-        _selectedOperatorId = "";
-        await LoadSummaryData();
-    }
-    
-    private void DrillDownToDetail(Guid merchantId)
-    {
-        // Navigate to transaction detail page with merchant filter and return URL
-        var startDate = _startDate.ToString("yyyy-MM-dd");
-        var endDate = _endDate.ToString("yyyy-MM-dd");
-        Navigation.NavigateTo($"/reporting/transaction-detail?merchantId={merchantId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-merchant");
-    }
-}

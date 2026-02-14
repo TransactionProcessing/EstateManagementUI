@@ -104,7 +104,7 @@ public static class APIModelFactory {
     public static TransactionModels.TransactionDetailReportResponse ConvertFrom(TransactionDetailReportResponse apiResultData) {
         TransactionModels.TransactionDetailReportResponse model = new();
 
-        model.Summary = new TransactionDetailSummary { TotalFees = apiResultData.Summary.TotalFees, TotalValue = apiResultData.Summary.TotalValue, TransactionCount = apiResultData.Summary.TransactionCount };
+        model.Summary = new TransactionModels.TransactionDetailSummary { TotalFees = apiResultData.Summary.TotalFees, TotalValue = apiResultData.Summary.TotalValue, TransactionCount = apiResultData.Summary.TransactionCount };
         model.Transactions = new();
 
         foreach (TransactionDetail transaction in apiResultData.Transactions) {
@@ -129,6 +129,28 @@ public static class APIModelFactory {
         }
         return model;
     }
+
+    public static TransactionModels.TransactionSummaryByMerchantResponse ConvertFrom(TransactionSummaryByMerchantResponse apiResultData) {
+        TransactionModels.TransactionSummaryByMerchantResponse model = new();
+
+        model.Summary = new TransactionModels.MerchantDetailSummary() { TotalValue = apiResultData.Summary.TotalValue, AverageValue = apiResultData.Summary.AverageValue, TotalCount = apiResultData.Summary.TotalCount, TotalMerchants = apiResultData.Summary.TotalMerchants};
+        model.Merchants = new();
+
+        foreach (MerchantDetail merchant in apiResultData.Merchants) {
+            model.Merchants.Add(new TransactionModels.MerchantDetail {
+                TotalValue = merchant.TotalValue,
+                MerchantReportingId = merchant.MerchantReportingId,
+                AverageValue = merchant.AverageValue,
+                TotalCount = merchant.TotalCount,
+                AuthorisedCount = merchant.AuthorisedCount,
+                AuthorisedPercentage = merchant.AuthorisedPercentage,
+                DeclinedCount = merchant.DeclinedCount,
+                MerchantId = merchant.MerchantId,
+                MerchantName = merchant.MerchantName
+            });
+        }
+        return model;
+    }
 }
 
 public  static class FactoryExtensions{
@@ -148,6 +170,7 @@ public  static class FactoryExtensions{
         OperatorModels.OperatorDropDownModel model = new()
         {
             OperatorName= apiResultData.Name,
+            OperatorReportingId = apiResultData.OperatorReportingId,
             OperatorId = apiResultData.OperatorId
         };
         return model;
@@ -240,6 +263,7 @@ public  static class FactoryExtensions{
             merchants.Add(new MerchantModels.MerchantDropDownModel
             {
                 MerchantId = merchant.MerchantId,
+                MerchantReportingId = merchant.MerchantReportingId,
                 MerchantName = merchant.Name,
             });
         }
