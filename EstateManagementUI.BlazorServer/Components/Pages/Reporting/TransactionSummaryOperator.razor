@@ -9,7 +9,7 @@
 @rendermode InteractiveServer
 @inject IMediator Mediator
 @inject NavigationManager Navigation
-@inject ILogger<TransactionSummaryOperator> Logger
+@inherits AuthorizedComponentBase
 
 <PageTitle>Transaction Summary by Operator</PageTitle>
 
@@ -74,13 +74,13 @@
                     <!-- Merchant Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Merchant</label>
-                        <select @bind="_selectedMerchantId" class="form-control">
-                            <option value="">All Merchants</option>
+                        <select @bind="_selectedMerchant" class="form-control">
+                            <option value="-1">All Merchants</option>
                             @if (merchants != null)
                             {
                                 @foreach (var merchant in merchants)
                                 {
-                                    <option value="@merchant.MerchantId">@merchant.MerchantName</option>
+                                    <option value="@merchant.MerchantReportingId">@merchant.MerchantName</option>
                                 }
                             }
                         </select>
@@ -89,13 +89,13 @@
                     <!-- Operator Filter -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operator</label>
-                        <select @bind="_selectedOperatorId" class="form-control">
-                            <option value="">All Operators</option>
+                        <select @bind="_selectedOperator" class="form-control">
+                            <option value="-1">All Operators</option>
                             @if (operators != null)
                             {
                                 @foreach (var op in operators)
                                 {
-                                    <option value="@op.OperatorId">@op.OperatorName</option>
+                                    <option value="@op.OperatorReportingId">@op.OperatorName</option>
                                 }
                             }
                         </select>
@@ -125,7 +125,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Operators</span>
-                    <span class="info-box-number">@totalOperators</span>
+                    <span class="info-box-number">@summaryData.Summary.TotalOperators</span>
                 </div>
             </div>
             
@@ -137,7 +137,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Transactions</span>
-                    <span class="info-box-number">@totalTransactions.ToString("N0")</span>
+                    <span class="info-box-number">@summaryData.Summary.TotalCount.ToString("N0")</span>
                 </div>
             </div>
             
@@ -149,19 +149,19 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Value</span>
-                    <span class="info-box-number">@totalValue.ToString("C")</span>
+                    <span class="info-box-number">@summaryData.Summary.TotalValue.ToString("C")</span>
                 </div>
             </div>
             
             <div class="info-box">
                 <div class="info-box-icon bg-admin-info">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                     </svg>
                 </div>
                 <div class="info-box-content">
-                    <span class="info-box-text">Total Fees Earned</span>
-                    <span class="info-box-number">@totalFees.ToString("C")</span>
+                    <span class="info-box-text">Average Transaction</span>
+                    <span class="info-box-number">@summaryData.Summary.AverageValue.ToString("C")</span>
                 </div>
             </div>
         </div>
@@ -172,7 +172,7 @@
                 <h3 class="card-title">Operator Transaction Summary</h3>
             </div>
             <div class="card-body">
-                @if (summaryData != null && summaryData.Any())
+                @if (summaryData != null && summaryData.Operators.Any())
                 {
                     <div class="overflow-x-auto">
                         <table class="table">
@@ -181,35 +181,47 @@
                                     <th>Operator Name</th>
                                     <th class="text-right">Transaction Count</th>
                                     <th class="text-right">Transaction Value</th>
-                                    <th class="text-right">Fees Earned</th>
+                                    @* <th class="text-right">Fees Earned</th> *@
                                     <th class="text-right">Average Value</th>
                                     <th class="text-right">Successful</th>
                                     <th class="text-right">Failed</th>
-                                    <th class="text-right">Failure Rate</th>
+                                    <th class="text-right">Success Rate</th>
+                                    <th class="text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in summaryData)
+                                @foreach (var item in summaryData.Operators)
                                 {
                                     <tr>
                                         <td class="font-medium">@item.OperatorName</td>
-                                        <td class="text-right">@item.TotalTransactionCount.ToString("N0")</td>
-                                        <td class="text-right">@item.TotalTransactionValue.ToString("C")</td>
-                                        <td class="text-right font-medium text-green-600">@item.TotalFeesEarned.ToString("C")</td>
-                                        <td class="text-right">@item.AverageTransactionValue.ToString("C")</td>
-                                        <td class="text-right text-green-600">@item.SuccessfulTransactionCount.ToString("N0")</td>
-                                        <td class="text-right text-red-600">@item.FailedTransactionCount.ToString("N0")</td>
+                                        <td class="text-right">@item.TotalCount.ToString("N0")</td>
+                                        <td class="text-right">@item.TotalValue.ToString("C")</td>
+                                        @* <td class="text-right font-medium text-green-600">@item.TotalFeesEarned.ToString("C")</td> *@
+                                        <td class="text-right">@item.AverageValue.ToString("C")</td>
+                                        <td class="text-right text-green-600">@item.AuthorisedCount.ToString("N0")</td>
+                                        <td class="text-right text-red-600">@item.DeclinedCount.ToString("N0")</td>
                                         <td class="text-right">
                                             @{
-                                                var failureRate = CalculateFailureRate(item.FailedTransactionCount, item.TotalTransactionCount);
-                                                var rateClass = GetFailureRateClass(failureRate);
+                                                var successRate = item.AuthorisedPercentage * 100.0m;
+                                                var rateClass = successRate >= 90 ? "text-green-600" : successRate >= 75 ? "text-yellow-600" : "text-red-600";
                                             }
-                                            <span class="@rateClass font-medium">@failureRate.ToString("F1")%</span>
+                                            <span class="@rateClass font-medium">@successRate.ToString("F1")%</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <button @onclick="() => DrillDownToDetail(item.OperatorReportingId)"
+                                                    class="btn btn-sm btn-primary"
+                                                    title="View detailed transactions">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                </svg>
+                                                View Details
+                                            </button>
                                         </td>
                                     </tr>
                                 }
                             </tbody>
-                            <tfoot class="bg-gray-50 font-semibold">
+                           @*  <tfoot class="bg-gray-50 font-semibold">
                                 <tr>
                                     <td>Total</td>
                                     <td class="text-right">@totalTransactions.ToString("N0")</td>
@@ -226,7 +238,7 @@
                                         <span class="@overallRateClass">@overallFailureRate.ToString("F1")%</span>
                                     </td>
                                 </tr>
-                            </tfoot>
+                            </tfoot> *@
                         </table>
                     </div>
                 }
@@ -243,158 +255,3 @@
         </div>
     }
 </div>
-
-@code {
-    private bool isLoading = true;
-    private string? errorMessage;
-    
-    // Filter states
-    private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
-    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
-    private string _selectedMerchantId = "";
-    private string _selectedOperatorId = "";
-    
-    // Data
-    private List<OperatorTransactionSummaryModel>? summaryData;
-    private List<MerchantDropDownModel>? merchants;
-    private List<OperatorDropDownModel>? operators;
-    
-    // KPIs
-    private int totalOperators = 0;
-    private int totalTransactions = 0;
-    private decimal totalValue = 0;
-    private decimal totalFees = 0;
-    private int totalSuccessful = 0;
-    private int totalFailed = 0;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-    
-    private async Task LoadData()
-    {
-        try
-        {
-            isLoading = true;
-            errorMessage = null;
-            StateHasChanged();
-            
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            
-            // Load filter options
-            var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
-            
-            await Task.WhenAll(merchantsTask, operatorsTask);
-            
-            if (merchantsTask.Result.IsSuccess)
-                merchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
-            
-            if (operatorsTask.Result.IsSuccess)
-                operators = ModelFactory.ConvertFrom(operatorsTask.Result.Data);
-            
-            // Load summary data
-            await LoadSummaryData();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load data: {ex.Message}";
-            Logger.LogError(ex, "Error loading operator transaction summary data");
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
-    }
-    
-    private async Task LoadSummaryData()
-    {
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            
-            var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
-            var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
-            
-            Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
-            Guid? operatorId = string.IsNullOrEmpty(_selectedOperatorId) ? null : Guid.Parse(_selectedOperatorId);
-            
-            var result = await Mediator.Send(new Queries.GetOperatorTransactionSummaryQuery(
-                correlationId, 
-                accessToken, 
-                estateId, 
-                startDate, 
-                endDate, 
-                merchantId, 
-                operatorId
-            ));
-            
-            if (result.IsSuccess && result.Data != null)
-            {
-                summaryData = ModelFactory.ConvertFrom(result.Data);
-                CalculateKPIs();
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to load summary data";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load summary data: {ex.Message}";
-            Logger.LogError(ex, "Error loading summary data");
-        }
-    }
-    
-    private void CalculateKPIs()
-    {
-        if (summaryData == null || !summaryData.Any())
-        {
-            totalOperators = 0;
-            totalTransactions = 0;
-            totalValue = 0;
-            totalFees = 0;
-            totalSuccessful = 0;
-            totalFailed = 0;
-            return;
-        }
-        
-        totalOperators = summaryData.Count;
-        totalTransactions = summaryData.Sum(s => s.TotalTransactionCount);
-        totalValue = summaryData.Sum(s => s.TotalTransactionValue);
-        totalFees = summaryData.Sum(s => s.TotalFeesEarned);
-        totalSuccessful = summaryData.Sum(s => s.SuccessfulTransactionCount);
-        totalFailed = summaryData.Sum(s => s.FailedTransactionCount);
-    }
-    
-    private double CalculateFailureRate(int failed, int total)
-    {
-        return total > 0 ? (failed * 100.0 / total) : 0;
-    }
-    
-    private string GetFailureRateClass(double failureRate)
-    {
-        return failureRate <= 5 ? "text-green-600" : failureRate <= 10 ? "text-yellow-600" : "text-red-600";
-    }
-    
-    private async Task ApplyFilters()
-    {
-        await LoadSummaryData();
-    }
-    
-    private async Task ClearFilters()
-    {
-        _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
-        _endDate = DateOnly.FromDateTime(DateTime.Now);
-        _selectedMerchantId = "";
-        _selectedOperatorId = "";
-        await LoadSummaryData();
-    }
-}
-

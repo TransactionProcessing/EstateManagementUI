@@ -6,27 +6,21 @@ using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 {
-    public partial class TransactionSummaryMerchant
+    public partial class TransactionSummaryOperator
     {
         private bool isLoading = true;
-
+        
         // Filter states
         private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
         private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
-        private String _selectedMerchant = "-1";
-        private String _selectedOperator = "-1";
+        private string _selectedMerchant = "-1";
+        private string _selectedOperator = "-1";
 
         // Data
-        private TransactionModels.TransactionSummaryByMerchantResponse summaryData;
+        private TransactionModels.TransactionSummaryByOperatorResponse summaryData;
         private List<MerchantModels.MerchantDropDownModel>? merchants;
         private List<OperatorModels.OperatorDropDownModel>? operators;
 
-        // KPIs
-        private int totalMerchants = 0;
-        private int totalTransactions = 0;
-        private decimal totalValue = 0;
-        private decimal averageValue = 0;
-        
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
@@ -54,7 +48,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
                 var correlationId = new CorrelationId(Guid.NewGuid());
                 var estateId = await this.GetEstateId();
-                
+
                 // Load filter options
                 var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
                 var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
@@ -91,10 +85,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
                 var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
                 var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
-                
+
                 Int32? merchant = null;
                 Int32? @operator = null;
-                if (this._selectedMerchant != "-1") {
+                if (this._selectedMerchant != "-1")
+                {
                     merchant = Int32.Parse(this._selectedMerchant);
                 }
                 if (this._selectedOperator != "-1")
@@ -102,7 +97,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                     @operator = Int32.Parse(this._selectedOperator);
                 }
 
-                var result = await Mediator.Send(new TransactionQueries.GetMerchantTransactionSummaryQuery(correlationId, estateId, startDate, endDate, merchant, @operator));
+                var result = await Mediator.Send(new TransactionQueries.GetOperatorTransactionSummaryQuery(
+                    correlationId,
+                    estateId,
+                    startDate,
+                    endDate,
+                    merchant,
+                    @operator));
 
                 if (result.IsSuccess && result.Data != null)
                 {
@@ -112,7 +113,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 {
                     errorMessage = result.Message ?? "Failed to load summary data";
                 }
-
                 return Result.Success();
             }
             catch (Exception ex)
@@ -121,7 +121,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 return Result.Failure(errorMessage);
             }
         }
-        
+
+        private double CalculateFailureRate(int failed, int total)
+        {
+            return total > 0 ? (failed * 100.0 / total) : 0;
+        }
+
+        private string GetFailureRateClass(double failureRate)
+        {
+            return failureRate <= 5 ? "text-green-600" : failureRate <= 10 ? "text-yellow-600" : "text-red-600";
+        }
+
         private async Task ApplyFilters()
         {
             await LoadSummaryData();
@@ -131,18 +141,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         {
             _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
             _endDate = DateOnly.FromDateTime(DateTime.Now);
-            _selectedMerchant = "-1";
-            _selectedOperator = "-1";
+            _selectedMerchant = "";
+            _selectedOperator = "";
             await LoadSummaryData();
         }
 
-        private void DrillDownToDetail(Int32 merchantReportingId)
+        private void DrillDownToDetail(Int32 operatorReportingId)
         {
             // Navigate to transaction detail page with merchant filter and return URL
             var startDate = _startDate.ToString("yyyy-MM-dd");
             var endDate = _endDate.ToString("yyyy-MM-dd");
-            Navigation.NavigateTo($"/reporting/transaction-detail?merchantId={merchantReportingId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-merchant");
+            Navigation.NavigateTo($"/reporting/transaction-detail?operatorId={operatorReportingId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-operator");
         }
     }
 }
-

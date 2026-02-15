@@ -9,7 +9,8 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetTodaysSalesQuery, Result<TodaysSalesModel>>, 
     IRequestHandler<TransactionQueries.GetTransactionDetailQuery, Result<TransactionModels.TransactionDetailReportResponse>>,
     IRequestHandler<TransactionQueries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>,
-    IRequestHandler<TransactionQueries.GetMerchantTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByMerchantResponse>>
+    IRequestHandler<TransactionQueries.GetMerchantTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByMerchantResponse>>,
+    IRequestHandler<TransactionQueries.GetOperatorTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByOperatorResponse>>
 {
     private readonly IApiClient ApiClient;
     public TransactionRequestHandler(IApiClient apiClient) {
@@ -34,5 +35,10 @@ public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetT
     public async Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> Handle(TransactionQueries.GetMerchantTransactionSummaryQuery request,
                                                                                         CancellationToken cancellationToken) {
         return await this.ApiClient.GetMerchantTransactionSummary(request, cancellationToken);
+    }
+
+    public async Task<Result<TransactionModels.TransactionSummaryByOperatorResponse>> Handle(TransactionQueries.GetOperatorTransactionSummaryQuery request,
+                                                                                             CancellationToken cancellationToken) {
+        return await this.ApiClient.GetOperatorTransactionSummary(request, cancellationToken);
     }
 }

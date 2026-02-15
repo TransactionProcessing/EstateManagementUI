@@ -10,7 +10,7 @@ namespace EstateManagementUI.BusinessLogic.Services;
 /// Test-enabled MediatR service that uses an in-memory data store
 /// Allows CRUD operations on test data during test execution while maintaining the mediator pattern
 /// </summary>
-public class TestMediatorService : IMediator
+/*public class TestMediatorService : IMediator
 {
     private readonly ITestDataStore _testDataStore;
 
@@ -926,3 +926,4 @@ public class TestMediatorService : IMediator
         return filteredTransactions.OrderByDescending(t => t.TransactionDateTime).ToList();
     }
 }
+*/

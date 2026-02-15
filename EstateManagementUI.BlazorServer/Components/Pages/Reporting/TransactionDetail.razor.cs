@@ -90,6 +90,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 _selectedMerchantIds = new List<string> { query["merchantId"] };
             }
 
+            if (!string.IsNullOrEmpty(query["operatorId"]))
+            {
+                this._selectedOperatorIds = new List<string> { query["operatorId"] };
+            }
+
             if (!string.IsNullOrEmpty(query["startDate"]))
             {
                 if (DateOnly.TryParse(query["startDate"], out var startDate))
@@ -323,9 +328,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         {
             return status switch
             {
-                "Successful" => "badge-success",
-                "Failed" => "badge-danger",
-                "Reversed" => "badge-warning",
+                "Authorised" => "badge-success",
+                "Declined" => "badge-danger",
                 _ => "badge-default"
             };
         }

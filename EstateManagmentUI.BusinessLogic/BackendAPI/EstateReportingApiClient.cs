@@ -87,6 +87,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                CancellationToken cancellationToken);
 
         Task<Result<TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(String accessToken, Guid estateId, TransactionSummaryByMerchantRequest request, CancellationToken cancellationToken);
+        Task<Result<TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(String accessToken, Guid estateId, TransactionSummaryByOperatorRequest request, CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -483,6 +484,33 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting merchant transaction summary report for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(String accessToken,
+                                                                                                      Guid estateId,
+                                                                                                      TransactionSummaryByOperatorRequest request,
+                                                                                                      CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/transactions/transactionsummarybyoperatorreport");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<TransactionSummaryByOperatorResponse>? result = await this.SendHttpPostRequest<TransactionSummaryByOperatorRequest, TransactionSummaryByOperatorResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting operator transaction summary report for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }
