@@ -28,7 +28,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 return;
             }
 
-            Result result = await OnAfterRender(PermissionSection.Reporting, PermissionFunction.TransactionMerchantSummaryReport, this.LoadData);
+            Result result = await OnAfterRender(PermissionSection.Reporting, PermissionFunction.TransactionOperatorSummaryReport, this.LoadData);
             if (result.IsFailed)
             {
                 return;

@@ -18,5 +18,6 @@ public enum PermissionFunction
     // Reporting
     TransactionDetailReport,
     TransactionMerchantSummaryReport,
-    TransactionOperatorSummaryReport
+    TransactionOperatorSummaryReport,
+    ProductPerformanceReport
 }

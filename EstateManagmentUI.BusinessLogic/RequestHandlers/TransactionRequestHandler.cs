@@ -10,7 +10,8 @@ public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetT
     IRequestHandler<TransactionQueries.GetTransactionDetailQuery, Result<TransactionModels.TransactionDetailReportResponse>>,
     IRequestHandler<TransactionQueries.GetTodaysFailedSalesQuery, Result<TodaysSalesModel>>,
     IRequestHandler<TransactionQueries.GetMerchantTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByMerchantResponse>>,
-    IRequestHandler<TransactionQueries.GetOperatorTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByOperatorResponse>>
+    IRequestHandler<TransactionQueries.GetOperatorTransactionSummaryQuery, Result<TransactionModels.TransactionSummaryByOperatorResponse>>,
+    IRequestHandler<TransactionQueries.GetProductPerformanceQuery, Result<TransactionModels.ProductPerformanceResponse>>
 {
     private readonly IApiClient ApiClient;
     public TransactionRequestHandler(IApiClient apiClient) {
@@ -40,5 +41,10 @@ public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetT
     public async Task<Result<TransactionModels.TransactionSummaryByOperatorResponse>> Handle(TransactionQueries.GetOperatorTransactionSummaryQuery request,
                                                                                              CancellationToken cancellationToken) {
         return await this.ApiClient.GetOperatorTransactionSummary(request, cancellationToken);
+    }
+
+    public async Task<Result<TransactionModels.ProductPerformanceResponse>> Handle(TransactionQueries.GetProductPerformanceQuery request,
+                                                                                   CancellationToken cancellationToken) {
+        return await this.ApiClient.GetProductPerformance(request, cancellationToken);
     }
 }

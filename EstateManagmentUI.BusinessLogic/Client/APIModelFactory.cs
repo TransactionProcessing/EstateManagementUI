@@ -175,6 +175,26 @@ public static class APIModelFactory {
         }
         return model;
     }
+
+    public static TransactionModels.ProductPerformanceResponse ConvertFrom(ProductPerformanceResponse apiResultData) {
+        TransactionModels.ProductPerformanceResponse model = new();
+        model.Summary = new TransactionModels.ProductPerformanceSummary() { TotalValue = apiResultData.Summary.TotalValue, AveragePerProduct = apiResultData.Summary.AveragePerProduct, TotalCount = apiResultData.Summary.TotalCount, TotalProducts = apiResultData.Summary.TotalProducts };
+        model.ProductDetails = new();
+        foreach (ProductPerformanceDetail productPerformanceDetail in apiResultData.ProductDetails) {
+            model.ProductDetails.Add(new TransactionModels.ProductPerformanceDetail() {
+                ProductId = productPerformanceDetail.ProductId,
+                ProductName = productPerformanceDetail.ProductName,
+                PercentageOfTotal = productPerformanceDetail.PercentageOfTotal,
+                ProductReportingId = productPerformanceDetail.ProductReportingId,
+                ContractId = productPerformanceDetail.ContractId,
+                ContractReportingId = productPerformanceDetail.ContractReportingId,
+                TransactionCount = productPerformanceDetail.TransactionCount,
+                TransactionValue = productPerformanceDetail.TransactionValue
+            });
+        }
+
+        return model;
+    }
 }
 
 public  static class FactoryExtensions{
