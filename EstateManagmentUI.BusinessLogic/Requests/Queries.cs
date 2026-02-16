@@ -10,6 +10,7 @@ public static class TransactionQueries {
     public record GetTransactionDetailQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate, List<Int32>? MerchantIds = null, List<Int32>? OperatorIds = null, List<Int32>? ProductIds = null) : IRequest<Result<TransactionModels.TransactionDetailReportResponse>>;
     public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate, Int32? MerchantId = null, Int32? OperatorId = null) : IRequest<Result<TransactionModels.TransactionSummaryByMerchantResponse>>;
     public record GetOperatorTransactionSummaryQuery(CorrelationId CorrelationId,Guid EstateId, DateTime StartDate, DateTime EndDate, Int32? MerchantId = null, Int32? OperatorId = null) : IRequest<Result<TransactionModels.TransactionSummaryByOperatorResponse>>;
+    public record GetProductPerformanceQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate) : IRequest<Result<TransactionModels.ProductPerformanceResponse>>;
 }
 
 public static class Queries
@@ -35,7 +36,6 @@ public static class Queries
     public record GetLastSettlementQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId) : IRequest<Result<LastSettlementModel>>;
     
     public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, Guid? OperatorId = null, Guid? ProductId = null) : IRequest<Result<List<TransactionModels.TransactionSummaryByMerchantResponse>>>;
-    public record GetProductPerformanceQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<ProductPerformanceModel>>>;
     public record GetMerchantSettlementHistoryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, Guid? MerchantId, DateTime StartDate, DateTime EndDate) : IRequest<Result<List<MerchantSettlementHistoryModel>>>;
     public record GetSettlementSummaryQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime StartDate, DateTime EndDate, Guid? MerchantId = null, string? Status = null) : IRequest<Result<List<SettlementSummaryModel>>>;
 }

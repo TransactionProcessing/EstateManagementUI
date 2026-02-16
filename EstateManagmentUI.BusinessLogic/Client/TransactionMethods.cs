@@ -16,6 +16,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<TransactionModels.TransactionDetailReportResponse>> GetTransactionDetailReport(TransactionQueries.GetTransactionDetailQuery request, CancellationToken cancellationToken);
         Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(TransactionQueries.GetMerchantTransactionSummaryQuery request, CancellationToken cancellationToken);
         Task<Result<TransactionModels.TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(TransactionQueries.GetOperatorTransactionSummaryQuery request, CancellationToken cancellationToken);
+        Task<Result<TransactionModels.ProductPerformanceResponse>> GetProductPerformance(TransactionQueries.GetProductPerformanceQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -139,6 +140,22 @@ namespace EstateManagementUI.BusinessLogic.Client
             TransactionModels.TransactionSummaryByOperatorResponse transactionSummaryByOperatorResponseModel = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(transactionSummaryByOperatorResponseModel);
+        }
+
+        public async Task<Result<TransactionModels.ProductPerformanceResponse>> GetProductPerformance(TransactionQueries.GetProductPerformanceQuery request,
+                                                                                                      CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<ProductPerformanceResponse> apiResult = await this.EstateReportingApiClient.GetProductPerformance(token.Data, request.EstateId, request.StartDate, request.EndDate, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            TransactionModels.ProductPerformanceResponse productPerformanceResponseModel = APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(productPerformanceResponseModel);
         }
     }
 }

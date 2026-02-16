@@ -2,6 +2,7 @@
 @using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
+@inherits AuthorizedComponentBase
 @inject IMediator Mediator
 @inject NavigationManager Navigation
 @inject ILogger<ProductPerformance> Logger
@@ -67,9 +68,9 @@
                     <div class="flex items-end">
                         <button @onclick="LoadData" class="btn btn-primary">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                             </svg>
-                            Refresh
+                            Apply Filters
                         </button>
                     </div>
                 </div>
@@ -86,7 +87,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Products</span>
-                    <span class="info-box-number">@totalProducts</span>
+                    <span class="info-box-number">@performanceData.Summary.TotalProducts</span>
                 </div>
             </div>
             
@@ -98,7 +99,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Transactions</span>
-                    <span class="info-box-number">@totalTransactions.ToString("N0")</span>
+                    <span class="info-box-number">@performanceData.Summary.TotalCount.ToString("N0")</span>
                 </div>
             </div>
             
@@ -110,7 +111,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Value</span>
-                    <span class="info-box-number">@totalValue.ToString("C")</span>
+                    <span class="info-box-number">@performanceData.Summary.TotalValue.ToString("C")</span>
                 </div>
             </div>
             
@@ -122,7 +123,7 @@
                 </div>
                 <div class="info-box-content">
                     <span class="info-box-text">Average per Product</span>
-                    <span class="info-box-number">@averageValuePerProduct.ToString("C")</span>
+                    <span class="info-box-number">@performanceData.Summary.AveragePerProduct.ToString("C")</span>
                 </div>
             </div>
         </div>
@@ -149,7 +150,7 @@
                 </div>
             </div>
             <div class="card-body">
-                @if (performanceData != null && performanceData.Any())
+                @if (performanceData != null && performanceData.ProductDetails.Any())
                 {
                     @if (!showChart)
                     {
@@ -166,25 +167,25 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in performanceData)
+                                    @foreach (var item in performanceData.ProductDetails)
                                     {
                                         <tr>
                                             <td class="font-medium">@item.ProductName</td>
                                             <td class="text-right">@item.TransactionCount.ToString("N0")</td>
                                             <td class="text-right">@item.TransactionValue.ToString("C")</td>
                                             <td class="text-right">
-                                                <span class="font-medium text-admin-primary">@item.PercentageContribution.ToString("F2")%</span>
+                                                <span class="font-medium text-admin-primary">@item.PercentageOfTotal.ToString("F2")%</span>
                                             </td>
                                             <td>
                                                 <div class="w-full bg-gray-200 rounded-full h-2.5">
                                                     <div class="bg-admin-primary h-2.5 rounded-full" 
-                                                         style="width: @(item.PercentageContribution)%"></div>
+                                                         style="width: @(item.PercentageOfTotal)%"></div>
                                                 </div>
                                             </td>
                                         </tr>
                                     }
                                 </tbody>
-                                <tfoot>
+                                @* <tfoot>
                                     <tr class="font-bold bg-gray-50">
                                         <td>Total</td>
                                         <td class="text-right">@totalTransactions.ToString("N0")</td>
@@ -192,7 +193,7 @@
                                         <td class="text-right">@totalPercentage.ToString("F2")%</td>
                                         <td></td>
                                     </tr>
-                                </tfoot>
+                                </tfoot> *@
                             </table>
                         </div>
                     }
@@ -201,19 +202,19 @@
                         <!-- Chart View -->
                         <div class="space-y-4">
                             <h4 class="font-semibold text-lg mb-4">Transaction Value by Product</h4>
-                            @foreach (var item in performanceData)
+                            @foreach (var item in performanceData.ProductDetails)
                             {
                                 <div class="mb-4">
                                     <div class="flex justify-between mb-1">
                                         <span class="text-sm font-medium text-gray-700">@item.ProductName</span>
                                         <div class="text-sm text-gray-600">
                                             <span class="font-semibold">@item.TransactionValue.ToString("C")</span>
-                                            <span class="text-admin-primary ml-2">(@item.PercentageContribution.ToString("F2")%)</span>
+                                            <span class="text-admin-primary ml-2">(@item.PercentageOfTotal.ToString("F2")%)</span>
                                         </div>
                                     </div>
                                     <div class="w-full bg-gray-200 rounded-full h-8">
                                         <div class="bg-gradient-to-r from-admin-primary to-admin-secondary h-8 rounded-full flex items-center justify-end pr-3" 
-                                             style="width: @(item.PercentageContribution)%">
+                                             style="width: @(item.PercentageOfTotal)%">
                                             <span class="text-white text-xs font-bold">@item.TransactionCount.ToString("N0")</span>
                                         </div>
                                     </div>
@@ -223,7 +224,7 @@
                     }
                     
                     <!-- Validation Message -->
-                    @if (Math.Abs(totalPercentage - 100) < 0.01m)
+                    @if (Math.Abs(performanceData.ProductDetails.Sum(p=> p.PercentageOfTotal) - 100) < 0.01m)
                     {
                         <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                             <div class="flex items-center text-green-700">
@@ -241,7 +242,7 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                                 </svg>
-                                <span class="text-sm font-medium">Warning: Percentages sum to @totalPercentage.ToString("F2")%</span>
+                                <span class="text-sm font-medium">Warning: Percentages sum to @performanceData.ProductDetails.Sum(p => p.PercentageOfTotal).ToString("F2")%</span>
                             </div>
                         </div>
                     }
@@ -259,93 +260,4 @@
         </div>
     }
 </div>
-
-@code {
-    private bool isLoading = true;
-    private string? errorMessage;
-    private bool showChart = false;
-    
-    // Filter states
-    private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
-    private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
-    
-    // Data
-    private List<ProductPerformanceModel>? performanceData;
-    
-    // KPIs
-    private int totalProducts = 0;
-    private int totalTransactions = 0;
-    private decimal totalValue = 0;
-    private decimal averageValuePerProduct = 0;
-    private decimal totalPercentage = 0;
-    
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadData();
-    }
-    
-    private async Task LoadData()
-    {
-        try
-        {
-            isLoading = true;
-            errorMessage = null;
-            StateHasChanged();
-            
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            
-            var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
-            var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
-            
-            var result = await Mediator.Send(new Queries.GetProductPerformanceQuery(
-                correlationId, 
-                accessToken, 
-                estateId, 
-                startDate, 
-                endDate
-            ));
-            
-            if (result.IsSuccess && result.Data != null)
-            {
-                performanceData = ModelFactory.ConvertFrom(result.Data);
-                CalculateKPIs();
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to load product performance data";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load data: {ex.Message}";
-            Logger.LogError(ex, "Error loading product performance data");
-        }
-        finally
-        {
-            isLoading = false;
-            StateHasChanged();
-        }
-    }
-    
-    private void CalculateKPIs()
-    {
-        if (performanceData == null || !performanceData.Any())
-        {
-            totalProducts = 0;
-            totalTransactions = 0;
-            totalValue = 0;
-            averageValuePerProduct = 0;
-            totalPercentage = 0;
-            return;
-        }
-        
-        totalProducts = performanceData.Count;
-        totalTransactions = performanceData.Sum(p => p.TransactionCount);
-        totalValue = performanceData.Sum(p => p.TransactionValue);
-        averageValuePerProduct = totalProducts > 0 ? totalValue / totalProducts : 0;
-        totalPercentage = performanceData.Sum(p => p.PercentageContribution);
-    }
-}
 

@@ -1,9 +1,10 @@
-﻿using SimpleResults;
+﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using Shared.Results;
+using SimpleResults;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-using Shared.Results;
+using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.BackendAPI
 {
@@ -88,6 +89,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
 
         Task<Result<TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(String accessToken, Guid estateId, TransactionSummaryByMerchantRequest request, CancellationToken cancellationToken);
         Task<Result<TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(String accessToken, Guid estateId, TransactionSummaryByOperatorRequest request, CancellationToken cancellationToken);
+        Task<Result<ProductPerformanceResponse>> GetProductPerformance(String accessToken, Guid estateId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -511,6 +513,38 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting operator transaction summary report for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<ProductPerformanceResponse>> GetProductPerformance(String accessToken,
+                                                                                    Guid estateId,
+                                                                                    DateTime startDate,
+                                                                                    DateTime endDate,
+                                                                                    CancellationToken cancellationToken) {
+            QueryStringBuilder builder = new QueryStringBuilder();
+            builder.AddParameter("startDate", $"{startDate:yyyy-MM-dd}");
+            builder.AddParameter("endDate", $"{endDate:yyyy-MM-dd}");
+
+            String requestUri = this.BuildRequestUrl($"/api/transactions/productperformancereport?{builder.BuildQueryString()}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<ProductPerformanceResponse> result = await this.SendHttpGetRequest<ProductPerformanceResponse>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting product performance report for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }
