@@ -26,41 +26,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private TodaysSalesModel? todaysSales;
         private TodaysSettlementModel? todaysSettlement;
 
-        //protected override async Task OnInitializedAsync()
-        //{
-        //    await LoadDashboardData();
-        //    await base.OnInitializedAsync();
-        //}
-
-        //protected override async Task OnAfterRenderAsync(bool firstRender)
-        //{
-        //    if (firstRender)
-        //    {
-        //        // Give Chart.js time to load from CDN
-        //        await this.WaitOnUIRefresh();
-        //    }
-
-        //    if (!isLoading && salesCountData != null && salesValueData != null)
-        //    {
-        //        try
-        //        {
-        //            // Check if Chart.js is available
-        //            var isChartJsLoaded = await JSRuntime.InvokeAsync<bool>("eval", "typeof Chart !== 'undefined'");
-        //            if (!isChartJsLoaded)
-        //            {
-        //                Logger.LogWarning("Chart.js not loaded yet, will retry on next render");
-        //                return;
-        //            }
-
-        //            await UpdateCharts();
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Logger.LogError(ex, "Error in OnAfterRenderAsync");
-        //        }
-        //    }
-        //}
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
@@ -68,14 +33,36 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 return;
             }
 
-            // Give Chart.js time to load from CDN
-            await this.WaitOnUIRefresh();
-
             Result result = await OnAfterRender(PermissionSection.Reporting, PermissionFunction.AnalyticalChartsReport, this.LoadDashboardData);
             if (result.IsFailed)
             {
                 return;
             }
+
+            // Give Chart.js time to load from CDN
+            await this.WaitOnUIRefresh();
+
+            // TODO:: move to a function that can be called after data loads as well, to handle cases where Chart.js loads after first render
+            if (!isLoading && this.salesByHourData != null)
+            {
+                try
+                {
+                    // Check if Chart.js is available
+                    var isChartJsLoaded = await JSRuntime.InvokeAsync<bool>("eval", "typeof Chart !== 'undefined'");
+                    if (!isChartJsLoaded)
+                    {
+                        return;
+                    }
+
+                    await UpdateCharts();
+                }
+                catch (Exception ex)
+                {
+                    return;
+                }
+            }
+
+            
         }
 
         private async Task<Result> LoadDashboardData() {
@@ -110,9 +97,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 // Load all data in parallel
                 var salesByHourTask = Mediator.Send(new TransactionQueries.GetTodaysSalesByHourQuery(correlationId, estateId, comparisonDate));
                 var todaysSalesTask = Mediator.Send(new TransactionQueries.GetTodaysSalesQuery(correlationId, estateId, comparisonDate));
-                //var settlementTask = Mediator.Send(new Queries.GetTodaysSettlementQuery(correlationId,  estateId, comparisonDate));
+                var settlementTask = Mediator.Send(new SettlementQueries.GetTodaysSettlementQuery(correlationId, estateId, comparisonDate));
 
-                await Task.WhenAll(salesByHourTask, todaysSalesTask);
+                await Task.WhenAll(salesByHourTask, todaysSalesTask, settlementTask);
 
                 // Process results
                 if (salesByHourTask.Result.IsSuccess)
@@ -121,10 +108,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 if (todaysSalesTask.Result.IsSuccess)
                     todaysSales = ModelFactory.ConvertFrom(todaysSalesTask.Result.Data);
 
-                //    if (settlementTask.Result.IsSuccess)
-                //        todaysSettlement = ModelFactory.ConvertFrom(settlementTask.Result.Data);
+                if (settlementTask.Result.IsSuccess)
+                    todaysSettlement = ModelFactory.ConvertFrom(settlementTask.Result.Data);
 
-                await UpdateCharts();
                 // Calculate KPIs
                 CalculateKPIs();
                 return Result.Success();
@@ -156,12 +142,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             }
         }
 
-        private ElementReference volumeCanvas;
-        private ElementReference valueCanvas;
-
         private async Task OnFiltersChanged()
         {
             await LoadDashboardData();
+            await UpdateCharts();
         }
 
         private async Task UpdateCharts()
@@ -188,26 +172,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 var todayLabel = today.ToString("MMM dd");
                 var comparisonDateLabel = compDate.ToString("MMM dd");
 
-                //var volumeExists = await JSRuntime.InvokeAsync<bool>("elementExists", "volumeChart");
-                //var valueExists = await JSRuntime.InvokeAsync<bool>("elementExists", "valueChart");
-                bool volumeReady = await EnsureCanvasExistsAsync("volumeChart"); // optional helper as earlier
-
-
                 // Update Volume Chart
-                //await JSRuntime.InvokeVoidAsync("updateOrCreateChart",
-                //    "volumeChart",
-                //    _selectedChartType,
-                //    labels,
-                //    new object[]
-                //    {
-                //    new { label = $"Today ({todayLabel}) Volume", data = todaysCountData, borderColor = "rgb(59, 130, 246)", backgroundColor = "rgba(59, 130, 246, 0.1)", tension = 0.4 },
-                //    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Volume", data = comparisonCountData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
-                //    },
-                //    "Transaction Count"
-                //);
-
                 await JSRuntime.InvokeVoidAsync("updateOrCreateChart",
-                    this.volumeCanvas,
+                    "volumeChart",
                     _selectedChartType,
                     labels,
                     new object[]
@@ -219,17 +186,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 );
 
                 // Update Value Chart
-                //await JSRuntime.InvokeVoidAsync("updateOrCreateChart",
-                //    "valueChart",
-                //    _selectedChartType,
-                //    labels,
-                //    new object[]
-                //    {
-                //    new { label = $"Today ({todayLabel}) Value", data = todaysValueData, borderColor = "rgb(16, 185, 129)", backgroundColor = "rgba(16, 185, 129, 0.1)", tension = 0.4 },
-                //    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Value", data = comparisonValueData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
-                //    },
-                //    "Transaction Value ($)"
-                //);
+                await JSRuntime.InvokeVoidAsync("updateOrCreateChart",
+                    "valueChart",
+                    _selectedChartType,
+                    labels,
+                    new object[]
+                    {
+                    new { label = $"Today ({todayLabel}) Value", data = todaysValueData, borderColor = "rgb(16, 185, 129)", backgroundColor = "rgba(16, 185, 129, 0.1)", tension = 0.4 },
+                    new { label = $"{comparisonLabel} ({comparisonDateLabel}) Value", data = comparisonValueData, borderColor = "rgb(156, 163, 175)", backgroundColor = "rgba(156, 163, 175, 0.1)", tension = 0.4 }
+                    },
+                    "Transaction Value (KES)"
+                );
             }
             catch (Exception ex)
             {

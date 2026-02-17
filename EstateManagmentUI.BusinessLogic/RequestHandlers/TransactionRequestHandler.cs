@@ -54,3 +54,17 @@ public class TransactionRequestHandler : IRequestHandler<TransactionQueries.GetT
         return await this.ApiClient.GetTodaysSalesByHour(request, cancellationToken);
     }
 }
+
+public class SettlementRequestHandler : IRequestHandler<SettlementQueries.GetTodaysSettlementQuery, Result<TodaysSettlementModel>> {
+
+    private readonly IApiClient ApiClient;
+    public SettlementRequestHandler(IApiClient apiClient)
+    {
+        this.ApiClient = apiClient;
+    }
+
+    public async Task<Result<TodaysSettlementModel>> Handle(SettlementQueries.GetTodaysSettlementQuery request,
+                                                            CancellationToken cancellationToken) {
+        return await this.ApiClient.GetTodaysSettlement(request, cancellationToken);
+    }
+}

@@ -96,6 +96,11 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                  Guid estateId,
                                                  DateTime comparisonDate,
                                                  CancellationToken cancellationToken);
+
+        Task<Result<TodaysSettlement>> GetTodaysSettlement(String accessToken,
+                                                                   Guid estateId,
+                                                                   DateTime comparisonDate,
+                                                                   CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -570,11 +575,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-
-                var jsonmessage = "[\r\n    {\r\n        \"hour\": 9,\r\n        \"todays_sales_value\": 6410.00,\r\n        \"comparison_sales_value\": 900.00,\r\n        \"todays_sales_count\": 49,\r\n        \"comparison_sales_count\": 7\r\n    },\r\n    {\r\n        \"hour\": 12,\r\n        \"todays_sales_value\": 186.00,\r\n        \"comparison_sales_value\": 0,\r\n        \"todays_sales_count\": 1,\r\n        \"comparison_sales_count\": 0\r\n    },\r\n    {\r\n        \"hour\": 15,\r\n        \"todays_sales_value\": 276.00,\r\n        \"comparison_sales_value\": 0,\r\n        \"todays_sales_count\": 7,\r\n        \"comparison_sales_count\": 0\r\n    },\r\n    {\r\n        \"hour\": 16,\r\n        \"todays_sales_value\": 407.00,\r\n        \"comparison_sales_value\": 800.00,\r\n        \"todays_sales_count\": 6,\r\n        \"comparison_sales_count\": 7\r\n    },\r\n    {\r\n        \"hour\": 17,\r\n        \"todays_sales_value\": 0,\r\n        \"comparison_sales_value\": 1500.00,\r\n        \"todays_sales_count\": 0,\r\n        \"comparison_sales_count\": 10\r\n    },\r\n    {\r\n        \"hour\": 18,\r\n        \"todays_sales_value\": 0,\r\n        \"comparison_sales_value\": 500.00,\r\n        \"todays_sales_count\": 0,\r\n        \"comparison_sales_count\": 3\r\n    }\r\n]";
-
-                var x = JsonConvert.DeserializeObject<List<TodaysSalesByHour>>(jsonmessage);
-
+                
                 Result<List<TodaysSalesByHour>>? result = await this.SendHttpGetRequest<List<TodaysSalesByHour>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
@@ -586,6 +587,37 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting todays sales by hour for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<TodaysSettlement>> GetTodaysSettlement(String accessToken,
+                                                                        Guid estateId,
+                                                                        DateTime comparisonDate,
+                                                                        CancellationToken cancellationToken) {
+            QueryStringBuilder builder = new QueryStringBuilder();
+            builder.AddParameter("comparisonDate", $"{comparisonDate.Date:yyyy-MM-dd}");
+
+            String requestUri = this.BuildRequestUrl($"/api/settlements/todayssettlements?{builder.BuildQueryString()}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+
+                Result<TodaysSettlement>? result = await this.SendHttpGetRequest<TodaysSettlement>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting todays settlement for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

@@ -210,6 +210,20 @@ public static class APIModelFactory {
         return salesByHour;
 
     }
+
+    public static TodaysSettlementModel ConvertFrom(TodaysSettlement apiResultData) {
+        TodaysSettlementModel model = new() {
+            ComparisonPendingSettlementCount = apiResultData.ComparisonPendingSettlementCount,
+            ComparisonPendingSettlementValue = apiResultData.ComparisonPendingSettlementValue,
+            ComparisonSettlementCount = apiResultData.ComparisonSettlementCount,
+            ComparisonSettlementValue = apiResultData.ComparisonSettlementValue,
+            TodaysPendingSettlementCount = apiResultData.TodaysPendingSettlementCount,
+            TodaysPendingSettlementValue = apiResultData.TodaysPendingSettlementValue,
+            TodaysSettlementCount = apiResultData.TodaysSettlementCount,
+            TodaysSettlementValue = apiResultData.TodaysSettlementValue
+        };
+        return model;
+    }
 }
 
 public  static class FactoryExtensions{
