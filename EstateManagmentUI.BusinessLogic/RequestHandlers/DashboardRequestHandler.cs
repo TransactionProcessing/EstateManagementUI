@@ -7,9 +7,8 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class DashboardRequestHandler : 
-    IRequestHandler<Queries.GetTodaysSettlementQuery, Result<TodaysSettlementModel>>,
-    IRequestHandler<Queries.GetTodaysSalesCountByHourQuery, Result<List<TodaysSalesCountByHourModel>>>,
-    IRequestHandler<Queries.GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>,
+   
+    //IRequestHandler<Queries.GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>,
     
     IRequestHandler<Queries.GetTopProductDataQuery, Result<List<TopBottomProductDataModel>>>,
     IRequestHandler<Queries.GetBottomProductDataQuery, Result<List<TopBottomProductDataModel>>>,
@@ -29,21 +28,15 @@ public class DashboardRequestHandler :
 
     // Implementations similar to above handlers returning stub data
     
+    //public async Task<Result<List<TodaysSalesByHourModel>>> Handle(TransactionQueries.GetTodaysSalesByHourQuery request,
+    //                                                                    CancellationToken cancellationToken) {
+    //    return Result.Success(StubTestData.GetMockSalesCountByHour());
+    //}
 
-    public async Task<Result<TodaysSettlementModel>> Handle(Queries.GetTodaysSettlementQuery request,
-                                                            CancellationToken cancellationToken) {
-        return Result.Success(StubTestData.GetMockTodaysSettlement());
-    }
-
-    public async Task<Result<List<TodaysSalesCountByHourModel>>> Handle(Queries.GetTodaysSalesCountByHourQuery request,
-                                                                        CancellationToken cancellationToken) {
-        return Result.Success(StubTestData.GetMockSalesCountByHour());
-    }
-
-    public async Task<Result<List<TodaysSalesValueByHourModel>>> Handle(Queries.GetTodaysSalesValueByHourQuery request,
-                                                                        CancellationToken cancellationToken) {
-        return Result.Success(StubTestData.GetMockSalesValueByHour());
-    }
+    //public async Task<Result<List<TodaysSalesValueByHourModel>>> Handle(Queries.GetTodaysSalesValueByHourQuery request,
+    //                                                                    CancellationToken cancellationToken) {
+    //    return Result.Success(StubTestData.GetMockSalesValueByHour());
+    //}
     
     public async Task<Result<List<TopBottomProductDataModel>>> Handle(Queries.GetTopProductDataQuery request,
                                                                       CancellationToken cancellationToken) {

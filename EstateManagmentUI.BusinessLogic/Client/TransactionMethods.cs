@@ -17,6 +17,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(TransactionQueries.GetMerchantTransactionSummaryQuery request, CancellationToken cancellationToken);
         Task<Result<TransactionModels.TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(TransactionQueries.GetOperatorTransactionSummaryQuery request, CancellationToken cancellationToken);
         Task<Result<TransactionModels.ProductPerformanceResponse>> GetProductPerformance(TransactionQueries.GetProductPerformanceQuery request, CancellationToken cancellationToken);
+        Task<Result<List<TransactionModels.TodaysSalesByHourModel>>> GetTodaysSalesByHour(TransactionQueries.GetTodaysSalesByHourQuery request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -156,6 +157,23 @@ namespace EstateManagementUI.BusinessLogic.Client
             TransactionModels.ProductPerformanceResponse productPerformanceResponseModel = APIModelFactory.ConvertFrom(apiResult.Data);
 
             return Result.Success(productPerformanceResponseModel);
+        }
+
+        public async Task<Result<List<TransactionModels.TodaysSalesByHourModel>>> GetTodaysSalesByHour(TransactionQueries.GetTodaysSalesByHourQuery request,
+                                                                                                        CancellationToken cancellationToken) {
+            // Get a token here 
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            var apiResult = await this.EstateReportingApiClient.GetTodaysSalesByHour(token.Data, request.EstateId, request.ComparisonDate, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            List<TransactionModels.TodaysSalesByHourModel> todaysSalesByHourModel = APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(todaysSalesByHourModel);
         }
     }
 }

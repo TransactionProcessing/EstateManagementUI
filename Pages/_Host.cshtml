@@ -1,0 +1,32 @@
+@page "/"
+@namespace EstateManagementUI.BlazorServer.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = Layout.MainLayout;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <component type="typeof(HeadOutlet)" render-mode="Static" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <title>EstateManagementUI</title>
+</head>
+<body class="h-full">
+<app>
+    <component type="typeof(App)" render-mode="ServerPrerendered" />
+</app>
+
+<!-- Blazor Server runtime -->
+<script src="_framework/blazor.server.js"></script>
+
+<!-- Chart.js and your helpers must load AFTER blazor.server.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="js/charts.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

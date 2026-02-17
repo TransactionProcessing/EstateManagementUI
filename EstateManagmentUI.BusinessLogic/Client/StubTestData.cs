@@ -389,27 +389,17 @@ public static class StubTestData {
         TodaysPendingSettlementValue = 14500.00m
     };
 
-    public static List<TodaysSalesCountByHourModel> GetMockSalesCountByHour() => new()
+    public static List<TransactionModels.TodaysSalesByHourModel> GetMockSalesCountByHour() => new()
     {
-        new TodaysSalesCountByHourModel { Hour = 9, TodaysSalesCount = 45, ComparisonSalesCount = 38 },
-        new TodaysSalesCountByHourModel { Hour = 10, TodaysSalesCount = 67, ComparisonSalesCount = 54 },
-        new TodaysSalesCountByHourModel { Hour = 11, TodaysSalesCount = 89, ComparisonSalesCount = 76 },
-        new TodaysSalesCountByHourModel { Hour = 12, TodaysSalesCount = 102, ComparisonSalesCount = 95 },
-        new TodaysSalesCountByHourModel { Hour = 13, TodaysSalesCount = 78, ComparisonSalesCount = 82 },
-        new TodaysSalesCountByHourModel { Hour = 14, TodaysSalesCount = 65, ComparisonSalesCount = 71 },
-        new TodaysSalesCountByHourModel { Hour = 15, TodaysSalesCount = 77, ComparisonSalesCount = 34 }
+        new TransactionModels.TodaysSalesByHourModel { Hour = 9, TodaysSalesCount = 45, ComparisonSalesCount = 38, TodaysSalesValue = 12500, ComparisonSalesValue = 10500 },
+        new TransactionModels.TodaysSalesByHourModel { Hour = 10, TodaysSalesCount = 67, ComparisonSalesCount = 54, TodaysSalesValue = 18500, ComparisonSalesValue = 15000 },
+        new TransactionModels.TodaysSalesByHourModel { Hour = 11, TodaysSalesCount = 89, ComparisonSalesCount = 76, TodaysSalesValue = 24500, ComparisonSalesValue = 21000 },
+        new TransactionModels.TodaysSalesByHourModel { Hour = 12, TodaysSalesCount = 102, ComparisonSalesCount = 95, TodaysSalesValue = 28000, ComparisonSalesValue = 26000 },
+        new TransactionModels.TodaysSalesByHourModel { Hour = 13, TodaysSalesCount = 78, ComparisonSalesCount = 82, TodaysSalesValue = 21500, ComparisonSalesValue = 22500 },
+        new TransactionModels.TodaysSalesByHourModel { Hour = 14, TodaysSalesCount = 65, ComparisonSalesCount = 71 , TodaysSalesValue = 18000, ComparisonSalesValue = 19500},
+        new TransactionModels.TodaysSalesByHourModel { Hour = 15, TodaysSalesCount = 77, ComparisonSalesCount = 34 , TodaysSalesValue = 21500, ComparisonSalesValue = 9500}
     };
 
-    public static List<TodaysSalesValueByHourModel> GetMockSalesValueByHour() => new()
-    {
-        new TodaysSalesValueByHourModel { Hour = 9, TodaysSalesValue = 12500, ComparisonSalesValue = 10500 },
-        new TodaysSalesValueByHourModel { Hour = 10, TodaysSalesValue = 18500, ComparisonSalesValue = 15000 },
-        new TodaysSalesValueByHourModel { Hour = 11, TodaysSalesValue = 24500, ComparisonSalesValue = 21000 },
-        new TodaysSalesValueByHourModel { Hour = 12, TodaysSalesValue = 28000, ComparisonSalesValue = 26000 },
-        new TodaysSalesValueByHourModel { Hour = 13, TodaysSalesValue = 21500, ComparisonSalesValue = 22500 },
-        new TodaysSalesValueByHourModel { Hour = 14, TodaysSalesValue = 18000, ComparisonSalesValue = 19500 },
-        new TodaysSalesValueByHourModel { Hour = 15, TodaysSalesValue = 21500, ComparisonSalesValue = 9500 }
-    };
 
     public static MerchantModels.MerchantKpiModel GetMockMerchantKpi() => new()
     {

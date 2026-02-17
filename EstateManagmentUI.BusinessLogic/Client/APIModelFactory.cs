@@ -195,6 +195,35 @@ public static class APIModelFactory {
 
         return model;
     }
+
+    public static List<TransactionModels.TodaysSalesByHourModel> ConvertFrom(List<TodaysSalesByHour> apiResultData) {
+        List<TransactionModels.TodaysSalesByHourModel> salesByHour = new();
+        foreach (TodaysSalesByHour todaysSalesByHour in apiResultData) {
+            salesByHour.Add(new TransactionModels.TodaysSalesByHourModel() {
+                Hour = todaysSalesByHour.Hour,
+                ComparisonSalesCount = todaysSalesByHour.ComparisonSalesCount,
+                ComparisonSalesValue = todaysSalesByHour.ComparisonSalesValue,
+                TodaysSalesCount = todaysSalesByHour.TodaysSalesCount,
+                TodaysSalesValue = todaysSalesByHour.TodaysSalesValue
+            });
+        }
+        return salesByHour;
+
+    }
+
+    public static TodaysSettlementModel ConvertFrom(TodaysSettlement apiResultData) {
+        TodaysSettlementModel model = new() {
+            ComparisonPendingSettlementCount = apiResultData.ComparisonPendingSettlementCount,
+            ComparisonPendingSettlementValue = apiResultData.ComparisonPendingSettlementValue,
+            ComparisonSettlementCount = apiResultData.ComparisonSettlementCount,
+            ComparisonSettlementValue = apiResultData.ComparisonSettlementValue,
+            TodaysPendingSettlementCount = apiResultData.TodaysPendingSettlementCount,
+            TodaysPendingSettlementValue = apiResultData.TodaysPendingSettlementValue,
+            TodaysSettlementCount = apiResultData.TodaysSettlementCount,
+            TodaysSettlementValue = apiResultData.TodaysSettlementValue
+        };
+        return model;
+    }
 }
 
 public  static class FactoryExtensions{

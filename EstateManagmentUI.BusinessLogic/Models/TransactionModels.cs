@@ -121,5 +121,14 @@ namespace EstateManagementUI.BusinessLogic.Models
             public Decimal TotalValue { get; set; }
             public Decimal AveragePerProduct { get; set; }
         }
+
+        public class TodaysSalesByHourModel
+        {
+            public int Hour { get; set; }
+            public int TodaysSalesCount { get; set; }
+            public int ComparisonSalesCount { get; set; }
+            public decimal TodaysSalesValue { get; set; }
+            public decimal ComparisonSalesValue { get; set; }
+        }
     }
 }
