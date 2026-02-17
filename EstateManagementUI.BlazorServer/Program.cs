@@ -50,10 +50,13 @@ builder = builder.RegisterPermissionServices();
 //};
 builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
 
-// Add Health Checks
+// Add Health Checks - read URLs from configuration
+var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
+var securityServiceUrl = builder.Configuration.GetValue<string>("AppSettings:SecurityService") ?? "http://localhost:5001";
+
 builder.Services.AddHealthChecks()
-    .AddUrlGroup(new Uri("http://localhost:5011"), name: "Estate Reporting API", tags: new[] { "estateapi" })
-    .AddUrlGroup(new Uri("http://localhost:5001"), name: "Security Service API", tags: new[] { "securityapi" });
+    .AddUrlGroup(new Uri(estateReportingApiUrl), name: "Estate Reporting API", tags: new[] { "estateapi" })
+    .AddUrlGroup(new Uri(securityServiceUrl), name: "Security Service API", tags: new[] { "securityapi" });
 
 builder.Host.UseWindowsService();
 
