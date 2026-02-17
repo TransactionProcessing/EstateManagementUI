@@ -54,6 +54,25 @@ builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
 var securityServiceUrl = builder.Configuration.GetValue<string>("AppSettings:SecurityService") ?? "http://localhost:5001";
 
+// Validate URLs
+try
+{
+    _ = new Uri(estateReportingApiUrl);
+}
+catch (UriFormatException ex)
+{
+    throw new InvalidOperationException($"Invalid URL configured for AppSettings:EstateReportingApi: '{estateReportingApiUrl}'", ex);
+}
+
+try
+{
+    _ = new Uri(securityServiceUrl);
+}
+catch (UriFormatException ex)
+{
+    throw new InvalidOperationException($"Invalid URL configured for AppSettings:SecurityService: '{securityServiceUrl}'", ex);
+}
+
 builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri(estateReportingApiUrl), name: "Estate Reporting API", tags: new[] { "estateapi" })
     .AddUrlGroup(new Uri(securityServiceUrl), name: "Security Service API", tags: new[] { "securityapi" });
@@ -90,12 +109,13 @@ app = testMode switch {
 };
 
 // Map Health Check endpoints
+// /health - standard JSON health check endpoint
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
-    Predicate = _ => true,
-    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    Predicate = _ => true
 });
 
+// /healthui - detailed UI-formatted health check endpoint for monitoring dashboards
 app.MapHealthChecks("/healthui", new HealthCheckOptions
 {
     Predicate = _ => true,
