@@ -54,28 +54,25 @@ builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
 var securityServiceUrl = builder.Configuration.GetValue<string>("AppSettings:SecurityService") ?? "http://localhost:5001";
 
-// Validate URLs
-try
+// Validate URLs and create Uri objects
+Uri ValidateAndCreateUri(string url, string configKey)
 {
-    _ = new Uri(estateReportingApiUrl);
-}
-catch (UriFormatException ex)
-{
-    throw new InvalidOperationException($"Invalid URL configured for AppSettings:EstateReportingApi: '{estateReportingApiUrl}'", ex);
+    try
+    {
+        return new Uri(url);
+    }
+    catch (UriFormatException ex)
+    {
+        throw new InvalidOperationException($"Invalid URL configured for {configKey}: '{url}'", ex);
+    }
 }
 
-try
-{
-    _ = new Uri(securityServiceUrl);
-}
-catch (UriFormatException ex)
-{
-    throw new InvalidOperationException($"Invalid URL configured for AppSettings:SecurityService: '{securityServiceUrl}'", ex);
-}
+var estateReportingUri = ValidateAndCreateUri(estateReportingApiUrl, "AppSettings:EstateReportingApi");
+var securityServiceUri = ValidateAndCreateUri(securityServiceUrl, "AppSettings:SecurityService");
 
 builder.Services.AddHealthChecks()
-    .AddUrlGroup(new Uri(estateReportingApiUrl), name: "Estate Reporting API", tags: new[] { "estateapi" })
-    .AddUrlGroup(new Uri(securityServiceUrl), name: "Security Service API", tags: new[] { "securityapi" });
+    .AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" })
+    .AddUrlGroup(securityServiceUri, name: "Security Service API", tags: new[] { "securityapi" });
 
 builder.Host.UseWindowsService();
 
