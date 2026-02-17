@@ -15,3 +15,17 @@ function downloadFile(filename, base64Content) {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
 }
+
+window.elementExists = function (id) {
+    try { return document.getElementById(id) !== null; } catch { return false; }
+};
+
+window.updateOrCreateChartElement = function (canvasElement, type, labels, datasets, title) {
+    try {
+        if (!canvasElement) return;
+        // existing chart logic but operate on canvasElement (not by id)
+        // e.g., const ctx = canvasElement.getContext('2d'); ...
+    } catch (e) {
+        console.error(e);
+    }
+};

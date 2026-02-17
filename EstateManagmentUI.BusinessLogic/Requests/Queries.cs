@@ -11,6 +11,7 @@ public static class TransactionQueries {
     public record GetMerchantTransactionSummaryQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate, Int32? MerchantId = null, Int32? OperatorId = null) : IRequest<Result<TransactionModels.TransactionSummaryByMerchantResponse>>;
     public record GetOperatorTransactionSummaryQuery(CorrelationId CorrelationId,Guid EstateId, DateTime StartDate, DateTime EndDate, Int32? MerchantId = null, Int32? OperatorId = null) : IRequest<Result<TransactionModels.TransactionSummaryByOperatorResponse>>;
     public record GetProductPerformanceQuery(CorrelationId CorrelationId, Guid EstateId, DateTime StartDate, DateTime EndDate) : IRequest<Result<TransactionModels.ProductPerformanceResponse>>;
+    public record GetTodaysSalesByHourQuery(CorrelationId CorrelationId, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TransactionModels.TodaysSalesByHourModel>>>;
 }
 
 public static class Queries
@@ -23,9 +24,6 @@ public static class Queries
     public record GetComparisonDatesQuery(CorrelationId CorrelationId, Guid EstateId) : IRequest<Result<List<ComparisonDateModel>>>;
     
     public record GetTodaysSettlementQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<TodaysSettlementModel>>;
-    public record GetTodaysSalesCountByHourQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesCountByHourModel>>>;
-    public record GetTodaysSalesValueByHourQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, DateTime ComparisonDate) : IRequest<Result<List<TodaysSalesValueByHourModel>>>;
-    
     
     public record GetTopProductDataQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, int ResultCount) : IRequest<Result<List<TopBottomProductDataModel>>>;
     public record GetBottomProductDataQuery(CorrelationId CorrelationId, string AccessToken, Guid EstateId, int ResultCount) : IRequest<Result<List<TopBottomProductDataModel>>>;

@@ -25,9 +25,7 @@ using ProductPerformanceResponse = EstateManagementUI.BlazorServer.Models.Transa
 using RecentContractModel = EstateManagementUI.BlazorServer.Models.RecentContractModel;
 using RecentMerchantsModel = EstateManagementUI.BlazorServer.Models.RecentMerchantsModel;
 using SettlementSummaryModel = EstateManagementUI.BlazorServer.Models.SettlementSummaryModel;
-using TodaysSalesCountByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesCountByHourModel;
 using TodaysSalesModel = EstateManagementUI.BlazorServer.Models.TodaysSalesModel;
-using TodaysSalesValueByHourModel = EstateManagementUI.BlazorServer.Models.TodaysSalesValueByHourModel;
 using TodaysSettlementModel = EstateManagementUI.BlazorServer.Models.TodaysSettlementModel;
 using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
 using TransactionModels = EstateManagementUI.BlazorServer.Models.TransactionModels;
@@ -202,29 +200,7 @@ public static class ModelFactory {
             TodaysPendingSettlementValue = model.TodaysPendingSettlementValue
         };
     }
-
-    public static List<TodaysSalesCountByHourModel> ConvertFrom(List<BusinessLogic.Models.TodaysSalesCountByHourModel> models)
-    {
-        List<TodaysSalesCountByHourModel> result = new List<TodaysSalesCountByHourModel>();
-        models.ForEach(m => result.Add(ConvertFrom(m)));
-        return result;
-    }
-
-    public static List<TodaysSalesValueByHourModel> ConvertFrom(List<BusinessLogic.Models.TodaysSalesValueByHourModel> models)
-    {
-        List<TodaysSalesValueByHourModel> result = new List<TodaysSalesValueByHourModel>();
-        models.ForEach(m => result.Add(ConvertFrom(m)));
-        return result;
-    }
-
-    public static TodaysSalesCountByHourModel ConvertFrom(BusinessLogic.Models.TodaysSalesCountByHourModel model) {
-        return new TodaysSalesCountByHourModel() { TodaysSalesCount = model.TodaysSalesCount, ComparisonSalesCount = model.ComparisonSalesCount, Hour = model.Hour };
-    }
-
-    public static TodaysSalesValueByHourModel ConvertFrom(BusinessLogic.Models.TodaysSalesValueByHourModel model) {
-        return new TodaysSalesValueByHourModel() { TodaysSalesValue = model.TodaysSalesValue, ComparisonSalesValue = model.ComparisonSalesValue, Hour = model.Hour };
-    }
-
+    
     public static MerchantKpiModel ConvertFrom(BusinessLogic.Models.MerchantModels.MerchantKpiModel model) {
         return new MerchantKpiModel() { MerchantsWithNoSaleInLast7Days = model.MerchantsWithNoSaleInLast7Days, MerchantsWithNoSaleToday = model.MerchantsWithNoSaleToday, MerchantsWithSaleInLastHour = model.MerchantsWithSaleInLastHour };
     }
@@ -597,5 +573,20 @@ public static class ModelFactory {
         }
 
         return model;
+    }
+
+    public static List<TodaysSalesByHourModel>? ConvertFrom(List<BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel> resultData) {
+        List<TodaysSalesByHourModel> todaysSalesByHourModels = new();
+        foreach (BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel todaysSalesCountByHourModel in resultData) {
+            todaysSalesByHourModels.Add(new TodaysSalesByHourModel {
+                Hour = todaysSalesCountByHourModel.Hour,
+                TodaysSalesCount = todaysSalesCountByHourModel.TodaysSalesCount,
+                ComparisonSalesCount = todaysSalesCountByHourModel.ComparisonSalesCount,
+                ComparisonSalesValue = todaysSalesCountByHourModel.ComparisonSalesValue,
+                TodaysSalesValue = todaysSalesCountByHourModel.TodaysSalesValue
+            });
+        }
+
+        return todaysSalesByHourModels;
     }
 }

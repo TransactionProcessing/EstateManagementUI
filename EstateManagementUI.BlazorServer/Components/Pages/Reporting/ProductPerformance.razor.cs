@@ -12,8 +12,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private bool showChart = false;
 
         // Filter states
-        //private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
-        private DateOnly _startDate = DateOnly.FromDateTime(new DateTime(2025, 12, 10));
+        private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
         private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
 
         // Data

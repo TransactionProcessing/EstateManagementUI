@@ -65,16 +65,11 @@ public class TodaysSettlementModel
     public decimal TodaysPendingSettlementValue { get; set; }
 }
 
-public class TodaysSalesCountByHourModel
+public class TodaysSalesByHourModel
 {
     public int Hour { get; set; }
     public int TodaysSalesCount { get; set; }
     public int ComparisonSalesCount { get; set; }
-}
-
-public class TodaysSalesValueByHourModel
-{
-    public int Hour { get; set; }
     public decimal TodaysSalesValue { get; set; }
     public decimal ComparisonSalesValue { get; set; }
 }

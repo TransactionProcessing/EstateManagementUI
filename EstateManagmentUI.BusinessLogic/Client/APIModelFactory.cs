@@ -195,6 +195,21 @@ public static class APIModelFactory {
 
         return model;
     }
+
+    public static List<TransactionModels.TodaysSalesByHourModel> ConvertFrom(List<TodaysSalesByHour> apiResultData) {
+        List<TransactionModels.TodaysSalesByHourModel> salesByHour = new();
+        foreach (TodaysSalesByHour todaysSalesByHour in apiResultData) {
+            salesByHour.Add(new TransactionModels.TodaysSalesByHourModel() {
+                Hour = todaysSalesByHour.Hour,
+                ComparisonSalesCount = todaysSalesByHour.ComparisonSalesCount,
+                ComparisonSalesValue = todaysSalesByHour.ComparisonSalesValue,
+                TodaysSalesCount = todaysSalesByHour.TodaysSalesCount,
+                TodaysSalesValue = todaysSalesByHour.TodaysSalesValue
+            });
+        }
+        return salesByHour;
+
+    }
 }
 
 public  static class FactoryExtensions{
