@@ -1,6 +1,8 @@
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
 
@@ -48,6 +50,11 @@ builder = builder.RegisterPermissionServices();
 //};
 builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
 
+// Add Health Checks
+builder.Services.AddHealthChecks()
+    .AddUrlGroup(new Uri("http://localhost:5011"), name: "Estate Reporting API", tags: new[] { "estateapi" })
+    .AddUrlGroup(new Uri("http://localhost:5001"), name: "Security Service API", tags: new[] { "securityapi" });
+
 builder.Host.UseWindowsService();
 
 WebApplication app = builder.Build();
@@ -78,6 +85,19 @@ app = testMode switch {
     TestMode.Full => app.ConfigureTestLogin(),
     _ => app.ConfigureLiveLogin()
 };
+
+// Map Health Check endpoints
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.MapHealthChecks("/healthui", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
 
