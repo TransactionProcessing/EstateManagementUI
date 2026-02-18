@@ -14,18 +14,13 @@
                 <ModulePath>.*bunit\.web\.dll$</ModulePath>
               </Exclude>
             </ModulePaths>
-            <Attributes>
-              <Exclude>
-                <!-- Exclude methods marked with CompilerGenerated attribute -->
-                <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
-                <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
-              </Exclude>
-            </Attributes>
             <Functions>
               <Exclude>
-                <!-- Exclude all BuildRenderTree method variants from Blazor components -->
+                <!-- Exclude BuildRenderTree methods from Blazor components -->
+                <!-- Using multiple specific patterns to catch all variants -->
                 <Function>^.*\.BuildRenderTree$</Function>
-                <Function>^.*\.BuildRenderTree\(.*\)$</Function>
+                <Function>^.*\.BuildRenderTree\(Microsoft\.AspNetCore\.Components\.Rendering\.RenderTreeBuilder\)$</Function>
+                <Function>^.*\.BuildRenderTree\(System\.String\)$</Function>
               </Exclude>
             </Functions>
           </CodeCoverage>
@@ -37,7 +32,7 @@
   <!-- Configuration for coverlet (used in CI) -->
   <RunConfiguration>
     <EnvironmentVariables>
-      <ExcludeByAttribute>Obsolete,GeneratedCode,CompilerGenerated</ExcludeByAttribute>
+      <!-- Note: ExcludeByAttribute removed to preserve coverage of user code in partial classes -->
     </EnvironmentVariables>
   </RunConfiguration>
 </RunSettings>
