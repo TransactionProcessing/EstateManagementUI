@@ -725,6 +725,332 @@ public class MerchantsEditPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
     }
 
+    [Fact]
+    public void MerchantsEdit_LoadMerchant_Success_LoadsAllData()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId, "Test Merchant", "MERCH001");
+        
+        // Act
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        
+        // Assert
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        cut.Markup.ShouldContain("Test Merchant");
+        cut.Markup.ShouldContain("MERCH001");
+        this.MerchantUIService.Verify(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId), Times.Once);
+        this.MerchantUIService.Verify(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId), Times.Once);
+        this.MerchantUIService.Verify(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId), Times.Once);
+        this.MerchantUIService.Verify(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId), Times.Once);
+    }
+
+    [Fact]
+    public void MerchantsEdit_AddDeviceToMerchant_Success_ShowsSuccessMessage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+        
+        this.MerchantUIService.Setup(m => m.AddMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<String>()))
+            .ReturnsAsync(Result.Success);
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Add Device button
+        IElement addDeviceButton = cut.Find("#addDeviceButton");
+        addDeviceButton.Click();
+        
+        // Act - Enter device identifier and add
+        IElement deviceInput = cut.Find("input[placeholder*='device']");
+        deviceInput.Change("DEV123");
+        
+        IElement addButton = cut.FindAll("button")
+            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addDeviceButton");
+        addButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Device added successfully"), timeout: TimeSpan.FromSeconds(10));
+        this.MerchantUIService.Verify(m => m.AddMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, "DEV123"), Times.Once);
+    }
+
+    [Fact]
+    public void MerchantsEdit_AddDeviceToMerchant_Failure_ShowsErrorMessage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+        
+        this.MerchantUIService.Setup(m => m.AddMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<String>()))
+            .ReturnsAsync(Result.Failure());
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Add Device button
+        IElement addDeviceButton = cut.Find("#addDeviceButton");
+        addDeviceButton.Click();
+        
+        // Act - Enter device identifier and add
+        IElement deviceInput = cut.Find("input[placeholder*='device']");
+        deviceInput.Change("DEV123");
+        
+        IElement addButton = cut.FindAll("button")
+            .First(b => b.TextContent.Trim() == "Add" && (b.GetAttribute("id") ?? "") != "addDeviceButton");
+        addButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to add device"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsEdit_SaveAllChanges_Success_ShowsSuccessMessageAndNavigates()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+        
+        this.MerchantUIService.Setup(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()))
+            .ReturnsAsync(Result.Success);
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Act - Find and click save button
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? saveButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Save Changes"));
+        saveButton?.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant details updated successfully"), timeout: TimeSpan.FromSeconds(5));
+        cut.WaitForState(() => _fakeNavigationManager.Uri.Contains("/merchants"), TimeSpan.FromSeconds(5));
+        _fakeNavigationManager.Uri.ShouldContain("/merchants");
+        this.MerchantUIService.Verify(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()), Times.Once);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SaveAllChanges_Failure_ShowsErrorMessage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+        
+        this.MerchantUIService.Setup(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()))
+            .ReturnsAsync(Result.Failure());
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Act - Find and click save button
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? saveButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Save Changes"));
+        saveButton?.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to update merchant"), timeout: TimeSpan.FromSeconds(5));
+        this.MerchantUIService.Verify(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()), Times.Once);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SwapDeviceConfirm_Success_ShowsSuccessMessage()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var existingDevice = new MerchantModels.MerchantDeviceModel { DeviceIdentifier = "DEV123" };
+        SetupSuccessfulDataLoad(merchantId, assignedDevices: new List<MerchantModels.MerchantDeviceModel> { existingDevice });
+        
+        this.MerchantUIService.Setup(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, "DEV123", "DEV456"))
+            .ReturnsAsync(Result.Success);
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Swap button for the device
+        IElement swapButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Swap"));
+        swapButton.Click();
+        
+        // Act - Enter new device identifier and confirm swap
+        cut.WaitForState(() => cut.Markup.Contains("New Device Identifier"), TimeSpan.FromSeconds(5));
+        IElement swapInput = cut.FindAll("input").Last();
+        swapInput.Change("DEV456");
+        
+        IElement confirmButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Confirm"));
+        confirmButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Device DEV123 swapped for DEV456"), timeout: TimeSpan.FromSeconds(5));
+        this.MerchantUIService.Verify(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, "DEV123", "DEV456"), Times.Once);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SwapDeviceConfirm_EmptyIdentifier_ShowsError()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var existingDevice = new MerchantModels.MerchantDeviceModel { DeviceIdentifier = "DEV123" };
+        SetupSuccessfulDataLoad(merchantId, assignedDevices: new List<MerchantModels.MerchantDeviceModel> { existingDevice });
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Swap button for the device
+        IElement swapButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Swap"));
+        swapButton.Click();
+        
+        // Act - Try to confirm swap without entering identifier
+        cut.WaitForState(() => cut.Markup.Contains("New Device Identifier"), TimeSpan.FromSeconds(5));
+        IElement confirmButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Confirm"));
+        confirmButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("New device identifier is required"), timeout: TimeSpan.FromSeconds(5));
+        this.MerchantUIService.Verify(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<String>()), Times.Never);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SwapDeviceConfirm_SameIdentifier_ShowsError()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var existingDevice = new MerchantModels.MerchantDeviceModel { DeviceIdentifier = "DEV123" };
+        SetupSuccessfulDataLoad(merchantId, assignedDevices: new List<MerchantModels.MerchantDeviceModel> { existingDevice });
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Swap button for the device
+        IElement swapButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Swap"));
+        swapButton.Click();
+        
+        // Act - Enter same device identifier and try to confirm swap
+        cut.WaitForState(() => cut.Markup.Contains("New Device Identifier"), TimeSpan.FromSeconds(5));
+        IElement swapInput = cut.FindAll("input").Last();
+        swapInput.Change("DEV123");
+        
+        IElement confirmButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Confirm"));
+        confirmButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("New device identifier cannot be the same as the current device"), timeout: TimeSpan.FromSeconds(5));
+        this.MerchantUIService.Verify(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<String>()), Times.Never);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SwapDeviceConfirm_DuplicateIdentifier_ShowsError()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var device1 = new MerchantModels.MerchantDeviceModel { DeviceIdentifier = "DEV123" };
+        var device2 = new MerchantModels.MerchantDeviceModel { DeviceIdentifier = "DEV456" };
+        SetupSuccessfulDataLoad(merchantId, assignedDevices: new List<MerchantModels.MerchantDeviceModel> { device1, device2 });
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Swap button for the first device
+        IElement swapButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Swap"));
+        swapButton.Click();
+        
+        // Act - Try to swap to an already assigned device identifier
+        cut.WaitForState(() => cut.Markup.Contains("New Device Identifier"), TimeSpan.FromSeconds(5));
+        IElement swapInput = cut.FindAll("input").Last();
+        swapInput.Change("DEV456");
+        
+        IElement confirmButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Confirm"));
+        confirmButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("The specified device identifier is already assigned"), timeout: TimeSpan.FromSeconds(5));
+        this.MerchantUIService.Verify(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<String>()), Times.Never);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SwapDeviceConfirm_Failure_ShowsError()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var existingDevice = new MerchantModels.MerchantDeviceModel { DeviceIdentifier = "DEV123" };
+        SetupSuccessfulDataLoad(merchantId, assignedDevices: new List<MerchantModels.MerchantDeviceModel> { existingDevice });
+        
+        this.MerchantUIService.Setup(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, "DEV123", "DEV456"))
+            .ReturnsAsync(Result.Failure());
+        
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+        
+        // Switch to devices tab
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
+        devicesButton?.Click();
+        
+        // Click Swap button for the device
+        IElement swapButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Swap"));
+        swapButton.Click();
+        
+        // Act - Enter new device identifier and confirm swap
+        cut.WaitForState(() => cut.Markup.Contains("New Device Identifier"), TimeSpan.FromSeconds(5));
+        IElement swapInput = cut.FindAll("input").Last();
+        swapInput.Change("DEV456");
+        
+        IElement confirmButton = cut.FindAll("button")
+            .First(b => b.TextContent.Contains("Confirm"));
+        confirmButton.Click();
+        
+        // Assert
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Original device not found"), timeout: TimeSpan.FromSeconds(5));
+        this.MerchantUIService.Verify(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, "DEV123", "DEV456"), Times.Once);
+    }
+
     // Helper methods
     private void SetupSuccessfulDataLoad(Guid merchantId, 
                                          string merchantName = "Test Merchant", 
