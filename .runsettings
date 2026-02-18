@@ -7,13 +7,17 @@
           <CodeCoverage>
             <ModulePaths>
               <Exclude>
+                <!-- Exclude test assemblies -->
                 <ModulePath>.*Tests\.dll$</ModulePath>
+                <!-- Exclude Bunit assemblies -->
+                <ModulePath>.*bunit\.core\.dll$</ModulePath>
+                <ModulePath>.*bunit\.web\.dll$</ModulePath>
               </Exclude>
             </ModulePaths>
             <Functions>
               <Exclude>
-                <!-- Exclude compiler-generated BuildRenderTree methods from Blazor components -->
-                <Function>.*\.BuildRenderTree\(.*\)</Function>
+                <!-- Exclude all BuildRenderTree methods (with or without parameters) from Blazor components -->
+                <Function>.*\.BuildRenderTree\(.*</Function>
               </Exclude>
             </Functions>
           </CodeCoverage>
