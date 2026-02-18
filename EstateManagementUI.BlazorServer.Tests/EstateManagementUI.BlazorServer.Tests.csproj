@@ -39,7 +39,8 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<CoverletExcludeByFile Include="**/*.razor*" />
+		<!-- Exclude only .razor markup files, not .razor.cs code-behind files -->
+		<CoverletExcludeByFile Include="**/*.razor" />
 	</ItemGroup>
 
 </Project>
