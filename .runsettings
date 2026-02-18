@@ -27,10 +27,11 @@
     </DataCollectors>
   </DataCollectionRunSettings>
   
-  <!-- Configuration for coverlet (used in CI) -->
-  <RunConfiguration>
-    <EnvironmentVariables>
-      <!-- Note: ExcludeByAttribute removed to preserve coverage of user code in partial classes -->
-    </EnvironmentVariables>
-  </RunConfiguration>
+  <!-- Configuration for Coverlet (used in CI/GitHub Actions) -->
+  <!-- Coverlet doesn't read Functions/Exclude from DataCollectionRunSettings -->
+  <!-- So we configure it via MSBuild properties in the workflow files -->
+  <!-- Reference: Use /p:ExcludeByFile="**/BuildRenderTree.cs" or ExcludeByAttribute -->
+  <!-- Note: ExcludeByAttribute="CompilerGeneratedAttribute" would hide user code in partial classes -->
+  <!-- Best practice: Use file pattern exclusion or accept BuildRenderTree in Coverlet reports -->
+  
 </RunSettings>
