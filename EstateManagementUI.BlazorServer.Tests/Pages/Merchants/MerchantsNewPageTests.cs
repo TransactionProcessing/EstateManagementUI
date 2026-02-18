@@ -446,10 +446,10 @@ public class MerchantsNewPageTests : BaseTest
     public async Task HandleSubmit_CallsCreateMerchantWithCorrectParameters()
     {
         // Arrange
-        Guid capturedEstateId = Guid.Empty;
-        Guid capturedMerchantId = Guid.Empty;
-        CorrelationId capturedCorrelationId = null;
-        MerchantModels.CreateMerchantModel capturedModel = null;
+        Guid capturedEstateId = default;
+        Guid capturedMerchantId = default;
+        CorrelationId capturedCorrelationId = default;
+        MerchantModels.CreateMerchantModel capturedModel = default;
 
         this.MerchantUIService.Setup(m => m.CreateMerchant(
             It.IsAny<CorrelationId>(), 
