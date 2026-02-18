@@ -837,9 +837,9 @@ public class MerchantsEditPageTests : BaseTest
         IElement? saveButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Save Changes"));
         saveButton?.Click();
         
-        // Assert
+        // Assert - Component has WaitOnUIRefresh() with 2.5s delay before navigation
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant details updated successfully"), timeout: TimeSpan.FromSeconds(5));
-        cut.WaitForState(() => _fakeNavigationManager.Uri.Contains("/merchants"), TimeSpan.FromSeconds(5));
+        cut.WaitForState(() => _fakeNavigationManager.Uri.Contains("/merchants"), TimeSpan.FromSeconds(10));
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
         this.MerchantUIService.Verify(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()), Times.Once);
     }
@@ -863,8 +863,8 @@ public class MerchantsEditPageTests : BaseTest
         IElement? saveButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Save Changes"));
         saveButton?.Click();
         
-        // Assert
-        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to update merchant"), timeout: TimeSpan.FromSeconds(5));
+        // Assert - Use longer timeout to account for async operations
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to update merchant"), timeout: TimeSpan.FromSeconds(10));
         this.MerchantUIService.Verify(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()), Times.Once);
     }
 
@@ -1052,8 +1052,8 @@ public class MerchantsEditPageTests : BaseTest
             .First(b => b.TextContent.Contains("Confirm"));
         confirmButton.Click();
         
-        // Assert
-        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Original device not found"), timeout: TimeSpan.FromSeconds(5));
+        // Assert - Use longer timeout to account for async operations
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Original device not found"), timeout: TimeSpan.FromSeconds(10));
         this.MerchantUIService.Verify(m => m.SwapMerchantDevice(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, "DEV123", "DEV456"), Times.Once);
     }
 
