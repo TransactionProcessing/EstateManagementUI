@@ -11,6 +11,28 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
 public class MerchantsNewPageTests : BaseTest
 {
+    private System.Reflection.MethodInfo GetHandleSubmitMethod()
+    {
+        return typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+    }
+
+    private System.Reflection.FieldInfo GetErrorMessageField(object instance)
+    {
+        // Search through the type hierarchy to find the errorMessage field
+        Type currentType = instance.GetType();
+        System.Reflection.FieldInfo field = null;
+        
+        while (currentType != null && field == null)
+        {
+            field = currentType.GetField("errorMessage", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            currentType = currentType.BaseType;
+        }
+        
+        return field;
+    }
+
     [Fact]
     public void MerchantsNew_RendersCorrectly()
     {
@@ -336,8 +358,7 @@ public class MerchantsNewPageTests : BaseTest
         cut.Instance.SetDelayOverride(0);
 
         // Act - Use reflection to call the private HandleSubmit method
-        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
         var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -362,8 +383,7 @@ public class MerchantsNewPageTests : BaseTest
         cut.Instance.SetDelayOverride(0);
 
         // Act - Use reflection to call the private HandleSubmit method
-        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
         var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -387,8 +407,7 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
 
         // Act - Use reflection to call the private HandleSubmit method
-        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
         var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -413,8 +432,7 @@ public class MerchantsNewPageTests : BaseTest
         var initialUri = _fakeNavigationManager.Uri;
 
         // Act - Use reflection to call the private HandleSubmit method
-        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
         var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -451,8 +469,7 @@ public class MerchantsNewPageTests : BaseTest
         cut.Instance.SetDelayOverride(0);
 
         // Act - Use reflection to call the private HandleSubmit method
-        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
         var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -486,8 +503,7 @@ public class MerchantsNewPageTests : BaseTest
         cut.Instance.SetDelayOverride(0);
 
         // Set an error message first using reflection
-        var errorMessageField = typeof(MerchantsNew).BaseType.BaseType
-            .GetField("errorMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var errorMessageField = GetErrorMessageField(cut.Instance);
         errorMessageField.ShouldNotBeNull();
         errorMessageField.SetValue(cut.Instance, "Previous error");
         cut.Render();
@@ -496,8 +512,7 @@ public class MerchantsNewPageTests : BaseTest
         cut.Markup.ShouldContain("Previous error");
 
         // Act - Use reflection to call the private HandleSubmit method
-        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
         var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
