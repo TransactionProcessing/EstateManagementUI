@@ -97,8 +97,8 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
         
-        // Wait for the component to finish initial rendering
-        cut.WaitForState(() => cut.FindAll("input[name='MerchantName']").Any(), timeout: TimeSpan.FromSeconds(5));
+        // Wait for the component to finish initial rendering and the CountrySelector to appear
+        cut.WaitForState(() => cut.FindAll("button[aria-label='Select country']").Any(), timeout: TimeSpan.FromSeconds(10));
 
         // Act - Fill in form and submit
         var merchantNameInput = cut.Find("input[name='MerchantName']");
@@ -158,8 +158,8 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
         
-        // Wait for the component to finish initial rendering
-        cut.WaitForState(() => cut.FindAll("input[name='MerchantName']").Any(), timeout: TimeSpan.FromSeconds(5));
+        // Wait for the component to finish initial rendering and the CountrySelector to appear
+        cut.WaitForState(() => cut.FindAll("button[aria-label='Select country']").Any(), timeout: TimeSpan.FromSeconds(10));
 
         // Act - Fill in form and submit
         var merchantNameInput = cut.Find("input[name='MerchantName']");
