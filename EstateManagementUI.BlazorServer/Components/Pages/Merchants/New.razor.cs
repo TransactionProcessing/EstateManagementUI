@@ -1,11 +1,13 @@
 ﻿using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using EstateManagementUI.BlazorServer.Models;
 using SimpleResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {
+    [ExcludeFromCodeCoverage(Justification = "BuildRenderTree is compiler-generated and not testable")]
     public partial class New
     {
         private readonly MerchantModels.CreateMerchantModel model = new();
