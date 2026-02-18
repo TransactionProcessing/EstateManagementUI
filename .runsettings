@@ -16,8 +16,9 @@
             </ModulePaths>
             <Functions>
               <Exclude>
-                <!-- Exclude all BuildRenderTree methods (with or without parameters) from Blazor components -->
-                <Function>.*\.BuildRenderTree\(.*</Function>
+                <!-- Exclude all BuildRenderTree method variants from Blazor components -->
+                <Function>.*\.BuildRenderTree$</Function>
+                <Function>.*\.BuildRenderTree\(</Function>
               </Exclude>
             </Functions>
           </CodeCoverage>
