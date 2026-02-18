@@ -96,7 +96,9 @@ public class MerchantsNewPageTests : BaseTest
 
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
-        cut.Render(); // required to trigger re-render
+        
+        // Wait for the component to finish initial rendering
+        cut.WaitForState(() => cut.FindAll("input[name='MerchantName']").Any(), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in form and submit
         var merchantNameInput = cut.Find("input[name='MerchantName']");
@@ -155,7 +157,9 @@ public class MerchantsNewPageTests : BaseTest
 
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
-        cut.Render(); // required to trigger re-render
+        
+        // Wait for the component to finish initial rendering
+        cut.WaitForState(() => cut.FindAll("input[name='MerchantName']").Any(), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in form and submit
         var merchantNameInput = cut.Find("input[name='MerchantName']");
