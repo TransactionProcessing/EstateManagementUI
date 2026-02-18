@@ -7,8 +7,9 @@
     <DebugType>Full</DebugType>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+	  <!--<CoverletExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</CoverletExcludeByAttribute>-->
   </PropertyGroup>
-
+	
   <ItemGroup>
     <PackageReference Include="bunit" Version="1.32.7" />
     <PackageReference Include="bunit.web" Version="1.32.7" />
@@ -38,9 +39,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-	<ItemGroup>
-		<!-- Exclude only .razor markup files, not .razor.cs code-behind files -->
+	<!--<ItemGroup>
+		--><!-- Exclude only .razor markup files, not .razor.cs code-behind files --><!--
 		<CoverletExcludeByFile Include="**/*.razor" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 </Project>
