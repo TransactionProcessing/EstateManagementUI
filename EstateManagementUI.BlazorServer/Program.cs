@@ -1,6 +1,8 @@
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using HealthChecks.UI.Client;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
 
@@ -48,6 +50,30 @@ builder = builder.RegisterPermissionServices();
 //};
 builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
 
+// Add Health Checks - read URLs from configuration
+var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
+var securityServiceUrl = builder.Configuration.GetValue<string>("AppSettings:SecurityService") ?? "http://localhost:5001";
+
+// Validate URLs and create Uri objects
+Uri ValidateAndCreateUri(string url, string configKey)
+{
+    try
+    {
+        return new Uri(url);
+    }
+    catch (UriFormatException ex)
+    {
+        throw new InvalidOperationException($"Invalid URL configured for {configKey}: '{url}'", ex);
+    }
+}
+
+var estateReportingUri = ValidateAndCreateUri(estateReportingApiUrl, "AppSettings:EstateReportingApi");
+var securityServiceUri = ValidateAndCreateUri(securityServiceUrl, "AppSettings:SecurityService");
+
+builder.Services.AddHealthChecks()
+    .AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" })
+    .AddUrlGroup(securityServiceUri, name: "Security Service API", tags: new[] { "securityapi" });
+
 builder.Host.UseWindowsService();
 
 WebApplication app = builder.Build();
@@ -78,6 +104,20 @@ app = testMode switch {
     TestMode.Full => app.ConfigureTestLogin(),
     _ => app.ConfigureLiveLogin()
 };
+
+// Map Health Check endpoints
+// /health - standard JSON health check endpoint
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true
+});
+
+// /healthui - detailed UI-formatted health check endpoint for monitoring dashboards
+app.MapHealthChecks("/healthui", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
 
