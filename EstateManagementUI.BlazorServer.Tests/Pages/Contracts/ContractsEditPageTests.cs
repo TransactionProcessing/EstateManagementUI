@@ -1165,6 +1165,8 @@ public class ContractsEditPageTests : BaseTest
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open Add Product Modal
@@ -1288,6 +1290,8 @@ public class ContractsEditPageTests : BaseTest
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open Add Fee Modal
@@ -1467,6 +1471,8 @@ public class ContractsEditPageTests : BaseTest
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find and click Remove Fee button
