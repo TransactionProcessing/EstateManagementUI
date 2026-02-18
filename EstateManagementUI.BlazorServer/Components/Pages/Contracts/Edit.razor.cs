@@ -55,6 +55,7 @@ public partial class Edit
         var result = await this.ContractUiService.GetContract(CorrelationIdHelper.New(), estateId, ContractId);
 
         if (result.IsFailed) {
+            isLoading = false;
             return ResultHelpers.CreateFailure(result);
         }
 
@@ -62,6 +63,7 @@ public partial class Edit
 
         // Initialize model with current values
         model = new ContractModels.EditContractModel { Description = contractModel.Description };
+        isLoading = false;
         return Result.Success();
     }
 
@@ -140,10 +142,10 @@ public partial class Edit
 
         if (result.IsSuccess) {
             successMessage = "Transaction fee added successfully";
-            CloseAddProductModal();
+            CloseAddFeeModal();
         }
         else {
-            productErrorMessage = "Failed to transaction fee";
+            feeErrorMessage = "Failed to add transaction fee";
         }
 
         await this.WaitOnUIRefresh();
@@ -151,6 +153,7 @@ public partial class Edit
         await LoadContract();
 
         StateHasChanged();
+        isAddingFee = false;
     }
 
     private async Task RemoveProduct(Guid productId)
@@ -175,11 +178,10 @@ public partial class Edit
         if (result.IsSuccess)
         {
             successMessage = "Transaction fee removed successfully";
-            CloseAddProductModal();
         }
         else
         {
-            productErrorMessage = "Failed to remove transaction fee";
+            errorMessage = "Failed to remove transaction fee";
         }
 
         await this.WaitOnUIRefresh();
