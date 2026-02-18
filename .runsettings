@@ -14,11 +14,18 @@
                 <ModulePath>.*bunit\.web\.dll$</ModulePath>
               </Exclude>
             </ModulePaths>
+            <Attributes>
+              <Exclude>
+                <!-- Exclude methods marked with CompilerGenerated attribute -->
+                <Attribute>^System\.Runtime\.CompilerServices\.CompilerGeneratedAttribute$</Attribute>
+                <Attribute>^System\.CodeDom\.Compiler\.GeneratedCodeAttribute$</Attribute>
+              </Exclude>
+            </Attributes>
             <Functions>
               <Exclude>
                 <!-- Exclude all BuildRenderTree method variants from Blazor components -->
-                <Function>.*\.BuildRenderTree$</Function>
-                <Function>.*\.BuildRenderTree\(</Function>
+                <Function>^.*\.BuildRenderTree$</Function>
+                <Function>^.*\.BuildRenderTree\(.*\)$</Function>
               </Exclude>
             </Functions>
           </CodeCoverage>
