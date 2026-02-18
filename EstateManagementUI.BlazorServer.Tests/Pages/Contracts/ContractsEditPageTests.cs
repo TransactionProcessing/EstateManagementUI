@@ -1111,4 +1111,392 @@ public class ContractsEditPageTests : BaseTest
         cut.Markup.ShouldContain("Fee 1");
         cut.Markup.ShouldContain("Fee 2");
     }
+
+    [Fact]
+    public async Task ContractsEdit_AddProduct_CallsServiceAndReloadsContract()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var estateId = Guid.NewGuid();
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>()
+        };
+
+        var contractWithProduct = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>
+            {
+                new ContractModels.ContractProductModel
+                {
+                    ContractProductId = Guid.NewGuid(),
+                    ProductName = "New Product",
+                    DisplayText = "New Display",
+                    ProductType = ProductType.NotSet,
+                    Value = "50",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
+
+        this.ContractUIService.Setup(c => c.AddProductToContract(
+                It.IsAny<CorrelationId>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                It.IsAny<ContractModels.AddProductModel>()))
+            .ReturnsAsync(Result.Success())
+            .Callback(() =>
+            {
+                // After successful add, GetContract should return updated contract
+                this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                    .ReturnsAsync(Result.Success(contractWithProduct));
+            });
+
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Open Add Product Modal
+        var buttons = cut.FindAll("button");
+        var addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
+        addProductButton.ShouldNotBeNull();
+        addProductButton.Click();
+
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
+
+        // Fill in product form
+        var productNameInput = cut.Find("input[placeholder='Enter product name']");
+        productNameInput.Change("New Product");
+
+        var displayTextInput = cut.Find("input[placeholder='Enter display text']");
+        displayTextInput.Change("New Display");
+
+        var valueInput = cut.Find("input[placeholder='Enter value']");
+        valueInput.Change("50");
+
+        // Submit form
+        var modalButtons = cut.FindAll("button");
+        var submitButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
+        submitButton.ShouldNotBeNull();
+
+        await cut.InvokeAsync(() => submitButton.Click());
+
+        // Wait for success message to appear
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Product added successfully"), timeout: TimeSpan.FromSeconds(5));
+
+        // Assert
+        this.ContractUIService.Verify(c => c.AddProductToContract(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            contractId,
+            It.Is<ContractModels.AddProductModel>(p => 
+                p.ProductName == "New Product" && 
+                p.DisplayText == "New Display")), Times.Once);
+
+        // Verify contract was reloaded (called at least twice - once on init, once after add)
+        this.ContractUIService.Verify(c => c.GetContract(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            contractId), Times.AtLeast(2));
+    }
+
+    [Fact]
+    public async Task ContractsEdit_AddFee_CallsServiceAndReloadsContract()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>
+            {
+                new ContractModels.ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = ProductType.NotSet,
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+
+        var contractWithFee = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>
+            {
+                new ContractModels.ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = ProductType.NotSet,
+                    Value = "100",
+                    NumberOfFees = 1,
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
+                    {
+                        new ContractModels.ContractProductTransactionFeeModel
+                        {
+                            TransactionFeeId = Guid.NewGuid(),
+                            Description = "New Fee",
+                            Value = 1.5m,
+                            CalculationType = CalculationType.Fixed,
+                            FeeType = FeeType.Merchant
+                        }
+                    }
+                }
+            }
+        };
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
+
+        this.ContractUIService.Setup(c => c.AddTransactionFeeToProduct(
+                It.IsAny<CorrelationId>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                It.IsAny<ContractModels.AddTransactionFeeModel>()))
+            .ReturnsAsync(Result.Success())
+            .Callback(() =>
+            {
+                // After successful add, GetContract should return updated contract
+                this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                    .ReturnsAsync(Result.Success(contractWithFee));
+            });
+
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Open Add Fee Modal
+        var buttons = cut.FindAll("button");
+        var addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
+        addFeeButton.ShouldNotBeNull();
+        addFeeButton.Click();
+
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
+
+        // Fill in fee form
+        var descriptionInput = cut.Find("input[placeholder='Enter fee description']");
+        descriptionInput.Change("New Fee");
+
+        var calculationTypeSelect = cut.FindAll("select").FirstOrDefault(s => 
+            s.OuterHtml.Contains("Select Calculation Type"));
+        calculationTypeSelect.ShouldNotBeNull();
+        calculationTypeSelect.Change("0"); // Fixed
+
+        var feeTypeSelect = cut.FindAll("select").FirstOrDefault(s => 
+            s.OuterHtml.Contains("Select Fee Type"));
+        feeTypeSelect.ShouldNotBeNull();
+        feeTypeSelect.Change("0"); // Merchant
+
+        var feeValueInput = cut.Find("input[placeholder='Enter fee value']");
+        feeValueInput.Change("1.5");
+
+        // Submit form
+        var modalButtons = cut.FindAll("button");
+        var submitButton = modalButtons.FirstOrDefault(b => 
+            b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
+        submitButton.ShouldNotBeNull();
+
+        await cut.InvokeAsync(() => submitButton.Click());
+
+        // Wait for success message to appear
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Transaction fee added successfully"), timeout: TimeSpan.FromSeconds(5));
+
+        // Assert
+        this.ContractUIService.Verify(c => c.AddTransactionFeeToProduct(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            contractId,
+            productId,
+            It.Is<ContractModels.AddTransactionFeeModel>(f => 
+                f.Description == "New Fee" && 
+                f.FeeValue == 1.5m)), Times.Once);
+
+        // Verify contract was reloaded
+        this.ContractUIService.Verify(c => c.GetContract(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            contractId), Times.AtLeast(2));
+    }
+
+    [Fact]
+    public async Task ContractsEdit_RemoveProduct_ShowsNotSupportedMessage()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>
+            {
+                new ContractModels.ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = ProductType.NotSet,
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
+
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Find and click Remove Product button
+        var buttons = cut.FindAll("button");
+        var removeButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Remove Product");
+        removeButton.ShouldNotBeNull();
+
+        await cut.InvokeAsync(() => removeButton.Click());
+
+        // Assert - Should show error message about unsupported feature
+        cut.WaitForAssertion(() => 
+            cut.Markup.ShouldContain("Product removal is not yet supported by the backend API"), 
+            timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task ContractsEdit_RemoveFee_CallsServiceAndReloadsContract()
+    {
+        // Arrange
+        var contractId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var feeId = Guid.NewGuid();
+        var contract = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>
+            {
+                new ContractModels.ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = ProductType.NotSet,
+                    Value = "100",
+                    NumberOfFees = 1,
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
+                    {
+                        new ContractModels.ContractProductTransactionFeeModel
+                        {
+                            TransactionFeeId = feeId,
+                            Description = "Fee to Remove",
+                            Value = 1.5m,
+                            CalculationType = CalculationType.Fixed,
+                            FeeType = FeeType.Merchant
+                        }
+                    }
+                }
+            }
+        };
+
+        var contractWithoutFee = new ContractModels.ContractModel
+        {
+            ContractId = contractId,
+            Description = "Test Contract",
+            OperatorName = "Test Operator",
+            Products = new List<ContractModels.ContractProductModel>
+            {
+                new ContractModels.ContractProductModel
+                {
+                    ContractProductId = productId,
+                    ProductName = "Product 1",
+                    DisplayText = "Display 1",
+                    ProductType = ProductType.NotSet,
+                    Value = "100",
+                    NumberOfFees = 0,
+                    TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
+                }
+            }
+        };
+
+        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(contract));
+
+        this.ContractUIService.Setup(c => c.RemoveTransactionFeeFromProduct(
+                It.IsAny<CorrelationId>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success())
+            .Callback(() =>
+            {
+                // After successful removal, GetContract should return updated contract
+                this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                    .ReturnsAsync(Result.Success(contractWithoutFee));
+            });
+
+        // Act
+        var cut = RenderComponent<Edit>(parameters => parameters
+            .Add(p => p.ContractId, contractId));
+        cut.Instance.SetDelayOverride(0);
+        cut.Render(); // required to trigger re-render
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Find and click Remove Fee button
+        var buttons = cut.FindAll("button");
+        var removeFeeButton = buttons.FirstOrDefault(b => b.GetAttribute("title") == "Remove Fee");
+        removeFeeButton.ShouldNotBeNull();
+
+        await cut.InvokeAsync(() => removeFeeButton.Click());
+
+        // Wait for success message to appear
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Transaction fee removed successfully"), timeout: TimeSpan.FromSeconds(5));
+
+        // Assert
+        this.ContractUIService.Verify(c => c.RemoveTransactionFeeFromProduct(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            contractId,
+            productId,
+            feeId), Times.Once);
+
+        // Verify contract was reloaded
+        this.ContractUIService.Verify(c => c.GetContract(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            contractId), Times.AtLeast(2));
+    }
 }
