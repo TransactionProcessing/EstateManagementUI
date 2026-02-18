@@ -1193,8 +1193,8 @@ public class ContractsEditPageTests : BaseTest
 
         await cut.InvokeAsync(() => submitButton.Click());
 
-        // Wait for processing
-        await Task.Delay(500);
+        // Wait for success message to appear
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Product added successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert
         this.ContractUIService.Verify(c => c.AddProductToContract(
@@ -1323,8 +1323,8 @@ public class ContractsEditPageTests : BaseTest
 
         await cut.InvokeAsync(() => submitButton.Click());
 
-        // Wait for processing
-        await Task.Delay(500);
+        // Wait for success message to appear
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Transaction fee added successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert
         this.ContractUIService.Verify(c => c.AddTransactionFeeToProduct(
@@ -1383,9 +1383,6 @@ public class ContractsEditPageTests : BaseTest
         removeButton.ShouldNotBeNull();
 
         await cut.InvokeAsync(() => removeButton.Click());
-
-        // Wait for state update
-        await Task.Delay(200);
 
         // Assert - Should show error message about unsupported feature
         cut.WaitForAssertion(() => 
@@ -1479,8 +1476,8 @@ public class ContractsEditPageTests : BaseTest
 
         await cut.InvokeAsync(() => removeFeeButton.Click());
 
-        // Wait for processing
-        await Task.Delay(500);
+        // Wait for success message to appear
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Transaction fee removed successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert
         this.ContractUIService.Verify(c => c.RemoveTransactionFeeFromProduct(
