@@ -320,4 +320,191 @@ public class MerchantsNewPageTests : BaseTest
         // Complete the task
         tcs.SetResult(Result.Success());
     }
+
+    [Fact]
+    public async Task HandleSubmit_SuccessfulCreation_SetsSuccessMessage()
+    {
+        // Arrange
+        this.MerchantUIService.Setup(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()))
+            .ReturnsAsync(Result.Success);
+
+        var cut = RenderComponent<MerchantsNew>();
+        cut.Instance.SetDelayOverride(0);
+
+        // Act - Use reflection to call the private HandleSubmit method
+        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        handleSubmitMethod.ShouldNotBeNull();
+        
+        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+        await task;
+
+        // Assert - Verify success message was set
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant created successfully"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task HandleSubmit_SuccessfulCreation_NavigatesToMerchantsList()
+    {
+        // Arrange
+        this.MerchantUIService.Setup(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()))
+            .ReturnsAsync(Result.Success);
+
+        var cut = RenderComponent<MerchantsNew>();
+        cut.Instance.SetDelayOverride(0);
+
+        // Act - Use reflection to call the private HandleSubmit method
+        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        handleSubmitMethod.ShouldNotBeNull();
+        
+        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+        await task;
+
+        // Assert - Should navigate to /merchants
+        _fakeNavigationManager.Uri.ShouldContain("/merchants");
+    }
+
+    [Fact]
+    public async Task HandleSubmit_FailedCreation_SetsErrorMessage()
+    {
+        // Arrange
+        this.MerchantUIService.Setup(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()))
+            .ReturnsAsync(Result.Failure);
+
+        var cut = RenderComponent<MerchantsNew>();
+
+        // Act - Use reflection to call the private HandleSubmit method
+        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        handleSubmitMethod.ShouldNotBeNull();
+        
+        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+        await task;
+
+        // Assert - Verify error message was set
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to create merchant"), timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task HandleSubmit_FailedCreation_DoesNotNavigate()
+    {
+        // Arrange
+        this.MerchantUIService.Setup(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()))
+            .ReturnsAsync(Result.Failure);
+
+        var cut = RenderComponent<MerchantsNew>();
+        var initialUri = _fakeNavigationManager.Uri;
+
+        // Act - Use reflection to call the private HandleSubmit method
+        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        handleSubmitMethod.ShouldNotBeNull();
+        
+        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+        await task;
+
+        // Assert - Should not navigate (should remain on the same page, not go to /merchants list)
+        _fakeNavigationManager.Uri.ShouldBe(initialUri);
+    }
+
+    [Fact]
+    public async Task HandleSubmit_CallsCreateMerchantWithCorrectParameters()
+    {
+        // Arrange
+        Guid capturedEstateId = Guid.Empty;
+        Guid capturedMerchantId = Guid.Empty;
+        CorrelationId capturedCorrelationId = null;
+        MerchantModels.CreateMerchantModel capturedModel = null;
+
+        this.MerchantUIService.Setup(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()))
+            .Callback<CorrelationId, Guid, Guid, MerchantModels.CreateMerchantModel>(
+                (correlationId, estateId, merchantId, model) => {
+                    capturedCorrelationId = correlationId;
+                    capturedEstateId = estateId;
+                    capturedMerchantId = merchantId;
+                    capturedModel = model;
+                })
+            .ReturnsAsync(Result.Success);
+
+        var cut = RenderComponent<MerchantsNew>();
+        cut.Instance.SetDelayOverride(0);
+
+        // Act - Use reflection to call the private HandleSubmit method
+        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        handleSubmitMethod.ShouldNotBeNull();
+        
+        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+        await task;
+
+        // Assert - Verify CreateMerchant was called with proper parameters
+        this.MerchantUIService.Verify(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()), Times.Once);
+        
+        capturedCorrelationId.ShouldNotBeNull();
+        capturedEstateId.ShouldNotBe(Guid.Empty);
+        capturedMerchantId.ShouldNotBe(Guid.Empty);
+        capturedModel.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public async Task HandleSubmit_ClearsErrorMessageBeforeSubmit()
+    {
+        // Arrange
+        this.MerchantUIService.Setup(m => m.CreateMerchant(
+            It.IsAny<CorrelationId>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<Guid>(), 
+            It.IsAny<MerchantModels.CreateMerchantModel>()))
+            .ReturnsAsync(Result.Success);
+
+        var cut = RenderComponent<MerchantsNew>();
+        cut.Instance.SetDelayOverride(0);
+
+        // Set an error message first using reflection
+        var errorMessageField = typeof(MerchantsNew).BaseType.BaseType
+            .GetField("errorMessage", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        errorMessageField.ShouldNotBeNull();
+        errorMessageField.SetValue(cut.Instance, "Previous error");
+        cut.Render();
+
+        // Verify error is displayed
+        cut.Markup.ShouldContain("Previous error");
+
+        // Act - Use reflection to call the private HandleSubmit method
+        var handleSubmitMethod = typeof(MerchantsNew).GetMethod("HandleSubmit", 
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        handleSubmitMethod.ShouldNotBeNull();
+        
+        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+        await task;
+
+        // Assert - Error message should be cleared and success message shown
+        cut.Markup.ShouldNotContain("Previous error");
+        cut.Markup.ShouldContain("Merchant created successfully");
+    }
 }
