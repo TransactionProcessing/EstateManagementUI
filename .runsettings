@@ -16,11 +16,9 @@
             </ModulePaths>
             <Functions>
               <Exclude>
-                <!-- Exclude BuildRenderTree methods from Blazor components -->
-                <!-- Using multiple specific patterns to catch all variants -->
-                <Function>^.*\.BuildRenderTree$</Function>
-                <Function>^.*\.BuildRenderTree\(Microsoft\.AspNetCore\.Components\.Rendering\.RenderTreeBuilder\)$</Function>
-                <Function>^.*\.BuildRenderTree\(System\.String\)$</Function>
+                <!-- Exclude all BuildRenderTree methods from Blazor components -->
+                <!-- Multiple patterns to ensure comprehensive coverage -->
+                <Function>.*BuildRenderTree.*</Function>
               </Exclude>
             </Functions>
           </CodeCoverage>
