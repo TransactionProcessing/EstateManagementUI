@@ -357,12 +357,15 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
-        // Act - Use reflection to call the private HandleSubmit method
+        // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
-        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-        await task;
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+            await task;
+        });
 
         // Assert - Verify success message was set
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant created successfully"), timeout: TimeSpan.FromSeconds(5));
@@ -382,12 +385,15 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
-        // Act - Use reflection to call the private HandleSubmit method
+        // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
-        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-        await task;
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+            await task;
+        });
 
         // Assert - Should navigate to /merchants
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
@@ -406,12 +412,15 @@ public class MerchantsNewPageTests : BaseTest
 
         var cut = RenderComponent<MerchantsNew>();
 
-        // Act - Use reflection to call the private HandleSubmit method
+        // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
-        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-        await task;
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+            await task;
+        });
 
         // Assert - Verify error message was set
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to create merchant"), timeout: TimeSpan.FromSeconds(5));
@@ -431,12 +440,15 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
         var initialUri = _fakeNavigationManager.Uri;
 
-        // Act - Use reflection to call the private HandleSubmit method
+        // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
-        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-        await task;
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+            await task;
+        });
 
         // Assert - Should not navigate (should remain on the same page, not go to /merchants list)
         _fakeNavigationManager.Uri.ShouldBe(initialUri);
@@ -468,12 +480,15 @@ public class MerchantsNewPageTests : BaseTest
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
-        // Act - Use reflection to call the private HandleSubmit method
+        // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
-        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-        await task;
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+            await task;
+        });
 
         // Assert - Verify CreateMerchant was called with proper parameters
         this.MerchantUIService.Verify(m => m.CreateMerchant(
@@ -511,12 +526,15 @@ public class MerchantsNewPageTests : BaseTest
         // Verify error is displayed
         cut.Markup.ShouldContain("Previous error");
 
-        // Act - Use reflection to call the private HandleSubmit method
+        // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
         
-        var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-        await task;
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
+            await task;
+        });
 
         // Assert - Error message should be cleared and success message shown
         cut.Markup.ShouldNotContain("Previous error");
