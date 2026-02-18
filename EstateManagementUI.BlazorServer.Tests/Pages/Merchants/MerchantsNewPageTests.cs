@@ -367,6 +367,9 @@ public class MerchantsNewPageTests : BaseTest
             await task;
         });
 
+        // Trigger a render to ensure state changes are reflected
+        cut.Render();
+
         // Assert - Verify success message was set
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant created successfully"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -421,6 +424,9 @@ public class MerchantsNewPageTests : BaseTest
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
             await task;
         });
+
+        // Trigger a render to ensure state changes are reflected
+        cut.Render();
 
         // Assert - Verify error message was set
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to create merchant"), timeout: TimeSpan.FromSeconds(5));
@@ -535,6 +541,9 @@ public class MerchantsNewPageTests : BaseTest
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
             await task;
         });
+
+        // Trigger a render to ensure state changes are reflected
+        cut.Render();
 
         // Assert - Error message should be cleared and success message shown
         cut.Markup.ShouldNotContain("Previous error");
