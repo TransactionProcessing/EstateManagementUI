@@ -83,7 +83,7 @@ public class MerchantsNewPageTests : BaseTest
         createButton.TextContent.ShouldContain("Create Merchant");
     }
 
-    [Fact(Skip = "Form submission tests require CountrySelector interaction - tracked in separate issue")]
+    [Fact]
     public void MerchantsNew_SuccessfulCreation_ShowsSuccessMessage()
     {
         // Arrange
@@ -117,6 +117,15 @@ public class MerchantsNewPageTests : BaseTest
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
 
+        // Interact with CountrySelector - find the button that opens the dropdown
+        var countryButton = cut.Find("button[aria-label='Select country']");
+        countryButton.Click();
+        
+        // Find and click a country option (e.g., United Kingdom)
+        var ukButton = cut.FindAll("button").FirstOrDefault(b => b.TextContent.Contains("United Kingdom"));
+        ukButton.ShouldNotBeNull();
+        ukButton.Click();
+
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
 
@@ -133,7 +142,7 @@ public class MerchantsNewPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant created successfully"), timeout: TimeSpan.FromSeconds(5));
     }
 
-    [Fact(Skip = "Form submission tests require CountrySelector interaction - tracked in separate issue")]
+    [Fact]
     public void MerchantsNew_SuccessfulCreation_NavigatesToMerchantsList()
     {
         // Arrange
@@ -166,6 +175,15 @@ public class MerchantsNewPageTests : BaseTest
 
         var postCodeInput = cut.Find("input[name='PostCode']");
         postCodeInput.Change("12345");
+
+        // Interact with CountrySelector - find the button that opens the dropdown
+        var countryButton = cut.Find("button[aria-label='Select country']");
+        countryButton.Click();
+        
+        // Find and click a country option (e.g., United Kingdom)
+        var ukButton = cut.FindAll("button").FirstOrDefault(b => b.TextContent.Contains("United Kingdom"));
+        ukButton.ShouldNotBeNull();
+        ukButton.Click();
 
         var contactNameInput = cut.Find("input[name='ContactName']");
         contactNameInput.Change("John Doe");
