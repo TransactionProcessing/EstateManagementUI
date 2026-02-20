@@ -6,7 +6,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components;
 using Shared.Results;
 using SimpleResults;
-using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
+using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionModels.TransactionDetailModel;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {

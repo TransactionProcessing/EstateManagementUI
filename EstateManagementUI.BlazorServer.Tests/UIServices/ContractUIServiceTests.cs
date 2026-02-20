@@ -345,5 +345,54 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             // Assert
             result.IsFailed.ShouldBeTrue();
         }
+
+        [Fact]
+        public async Task GetContractsForDropDown_ReturnsMappedList_WhenMediatorSucceeds()
+        {
+            // Arrange
+            var estateId = Guid.NewGuid();
+            var correlationId = CorrelationIdHelper.New();
+
+            var bizList = new List<BusinessLogic.Models.ContractModels.ContractDropDownModel>
+            {
+                new() { ContractId = Guid.NewGuid(), Description = "Contract A", OperatorName = "Op A" },
+                new() { ContractId = Guid.NewGuid(), Description = "Contract B", OperatorName = "Op B" }
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(bizList));
+
+            // Act
+            var result = await _service.GetContractsForDropDown(correlationId, estateId);
+
+            // Assert
+            result.IsSuccess.ShouldBeTrue();
+            result.Data.ShouldNotBeNull();
+            result.Data!.Count.ShouldBe(2);
+            result.Data[0].ContractId.ShouldBe(bizList[0].ContractId);
+            result.Data[0].Description.ShouldBe("Contract A");
+            result.Data[0].OperatorName.ShouldBe("Op A");
+
+            _mockMediator.Verify(m =>
+                m.Send(It.Is<ContractQueries.GetContractsForDropDownQuery>(q => q.EstateId == estateId), It.IsAny<CancellationToken>()),
+                Times.Once);
+        }
+
+        [Fact]
+        public async Task GetContractsForDropDown_ReturnsFailure_WhenMediatorFails()
+        {
+            // Arrange
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("backend error"));
+
+            // Act
+            var result = await _service.GetContractsForDropDown(CorrelationIdHelper.New(), Guid.NewGuid());
+
+            // Assert
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<ContractQueries.GetContractsForDropDownQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BlazorServer.Models;
 
+[ExcludeFromCodeCoverage]
 public record OperatorModels {
     public record EditOperatorModel {
         [Required(ErrorMessage = "Operator name is required")]

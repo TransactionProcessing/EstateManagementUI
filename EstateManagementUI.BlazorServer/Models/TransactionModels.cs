@@ -1,7 +1,9 @@
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BlazorServer.Models;
 
+[ExcludeFromCodeCoverage]
 public record TransactionModels
 {
     public class TransactionDetailReportResponse
@@ -116,5 +118,63 @@ public record TransactionModels
         public Int32 TotalCount { get; set; }
         public Decimal TotalValue { get; set; }
         public Decimal AveragePerProduct { get; set; }
+    }
+
+    public class TodaysSalesModel
+    {
+        public int ComparisonSalesCount { get; set; }
+        public decimal ComparisonSalesValue { get; set; }
+        public decimal ComparisonAverageValue { get; set; }
+        public int TodaysSalesCount { get; set; }
+        public decimal TodaysSalesValue { get; set; }
+        public decimal TodaysAverageValue { get; set; }
+    }
+
+    public class TodaysSettlementModel
+    {
+        public int ComparisonSettlementCount { get; set; }
+        public decimal ComparisonSettlementValue { get; set; }
+        public int TodaysSettlementCount { get; set; }
+        public decimal TodaysSettlementValue { get; set; }
+        public int ComparisonPendingSettlementCount { get; set; }
+        public decimal ComparisonPendingSettlementValue { get; set; }
+        public int TodaysPendingSettlementCount { get; set; }
+        public decimal TodaysPendingSettlementValue { get; set; }
+    }
+
+    public class TodaysSalesByHourModel
+    {
+        public int Hour { get; set; }
+        public int TodaysSalesCount { get; set; }
+        public int ComparisonSalesCount { get; set; }
+        public decimal TodaysSalesValue { get; set; }
+        public decimal ComparisonSalesValue { get; set; }
+    }
+
+    public class MerchantKpiModel
+    {
+        public int MerchantsWithNoSaleInLast7Days { get; set; }
+        public int MerchantsWithNoSaleToday { get; set; }
+        public int MerchantsWithSaleInLastHour { get; set; }
+    }
+
+    public class TransactionDetailModel
+    {
+        public Guid TransactionId { get; set; }
+        public DateTime TransactionDateTime { get; set; }
+        public string? MerchantName { get; set; }
+        public Guid MerchantId { get; set; }
+        public string? OperatorName { get; set; }
+        public Guid OperatorId { get; set; }
+        public string? ProductName { get; set; }
+        public Guid ProductId { get; set; }
+        public string? TransactionType { get; set; } // sale, refund, reversal
+        public string? TransactionStatus { get; set; } // successful, failed, reversed
+        public decimal GrossAmount { get; set; }
+        public decimal FeesCommission { get; set; }
+        public decimal NetAmount { get; set; }
+        public string? SettlementReference { get; set; }
+        public string? ResponseCode { get; set; }
+        public DateTime? SettlementDateTime { get; set; }
     }
 }

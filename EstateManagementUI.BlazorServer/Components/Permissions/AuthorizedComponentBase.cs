@@ -16,8 +16,8 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
     
     protected override async Task OnInitializedAsync() {
         
-        this.AuthState = await AuthenticationStateTask;
-        User = this.AuthState.User;
+        //this.AuthState = await AuthenticationStateTask;
+        //User = this.AuthState.User;
     }
 
     [Inject] protected IPermissionService PermissionService { get; set; } = default!;
@@ -52,6 +52,9 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
                                                PermissionFunction function,
                                                Func<Task<Result>>? loadFunc)
     {
+        this.AuthState = await AuthenticationStateTask;
+        User = this.AuthState.User;
+
         Result authResult = await RequirePermission(section, function);
         if (authResult.IsFailed)
             return Result.Failure();

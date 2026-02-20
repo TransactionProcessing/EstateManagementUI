@@ -22,12 +22,12 @@ public class EstateIndexPageTests : BaseTest
         BlazorServer.Models.EstateModel estate = new(Guid.NewGuid(), "Test Estate", "EST001");
         estate = estate with {
                 ContractCount = 0,
-                RecentContracts = new List<Models.RecentContractModel>(),
+                RecentContracts = new List<ContractModels.RecentContractModel>(),
                 OperatorCount = 0,
                 AllOperators = new List<Models.OperatorModels.OperatorDropDownModel>(),
                 AssignedOperators = new List<OperatorModels.OperatorModel>(),
                 MerchantCount = 0,
-                RecentMerchants = new List<Models.RecentMerchantsModel>(),
+                RecentMerchants = new List<MerchantModels.RecentMerchantsModel>(),
                 UserCount = 0
             };    
             
@@ -48,12 +48,12 @@ public class EstateIndexPageTests : BaseTest
         estate = estate with
         {
             ContractCount = 0,
-            RecentContracts = new List<Models.RecentContractModel>(),
+            RecentContracts = new List<ContractModels.RecentContractModel>(),
             OperatorCount = 0,
             AllOperators = new List<Models.OperatorModels.OperatorDropDownModel>(),
             AssignedOperators = new List<OperatorModels.OperatorModel>(),
             MerchantCount = 0,
-            RecentMerchants = new List<Models.RecentMerchantsModel>(),
+            RecentMerchants = new List<MerchantModels.RecentMerchantsModel>(),
             UserCount = 0
         };
         this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
@@ -73,12 +73,12 @@ public class EstateIndexPageTests : BaseTest
         estate = estate with
         {
             ContractCount = 0,
-            RecentContracts = new List<Models.RecentContractModel>(),
+            RecentContracts = new List<ContractModels.RecentContractModel>(),
             OperatorCount = 0,
             AllOperators = new List<Models.OperatorModels.OperatorDropDownModel>(),
             AssignedOperators = new List<OperatorModels.OperatorModel>(),
             MerchantCount = 0,
-            RecentMerchants = new List<Models.RecentMerchantsModel>(),
+            RecentMerchants = new List<MerchantModels.RecentMerchantsModel>(),
             UserCount = 0
         };
         this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
@@ -286,8 +286,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_DisplaysMerchants_WhenPresent()
     {
         // Arrange
-        List<RecentMerchantsModel> merchants = new() {
-            new RecentMerchantsModel
+        List<MerchantModels.RecentMerchantsModel> merchants = new() {
+            new MerchantModels.RecentMerchantsModel
             {
                 MerchantId = Guid.NewGuid(),
                 Name = "Test Merchant",
@@ -325,8 +325,8 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_DisplaysContracts_WhenPresent()
     {
         // Arrange
-        List<RecentContractModel> contracts = new() {
-            new RecentContractModel
+        List<ContractModels.RecentContractModel> contracts = new() {
+            new ContractModels.RecentContractModel
             {
                 ContractId = Guid.NewGuid(),
                 Description = "Test Contract",
@@ -459,8 +459,8 @@ public class EstateIndexPageTests : BaseTest
     }
 
     // Helper methods
-    private void SetupSuccessfulDataLoad(List<RecentMerchantsModel>? merchants = null,
-                                         List<RecentContractModel>? contracts = null,
+    private void SetupSuccessfulDataLoad(List<MerchantModels.RecentMerchantsModel>? merchants = null,
+                                         List<ContractModels.RecentContractModel>? contracts = null,
                                          List<OperatorModels.OperatorModel>? assignedOperators = null,
                                          List<OperatorModels.OperatorDropDownModel>? operators = null)
     {
@@ -468,12 +468,12 @@ public class EstateIndexPageTests : BaseTest
         estate = estate with
         {
             ContractCount = 5,
-            RecentContracts = contracts ?? new List<RecentContractModel>(),
+            RecentContracts = contracts ?? new List<ContractModels.RecentContractModel>(),
             OperatorCount = 3,
             AllOperators = operators ?? new List<OperatorModels.OperatorDropDownModel>(),
             AssignedOperators = assignedOperators ?? new List<OperatorModels.OperatorModel>(),
             MerchantCount = 10,
-            RecentMerchants = merchants ?? new List<RecentMerchantsModel>(),
+            RecentMerchants = merchants ?? new List<MerchantModels.RecentMerchantsModel>(),
             UserCount = 2
         };
         this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
@@ -485,9 +485,9 @@ public class EstateIndexPageTests : BaseTest
     private void SetupSuccessfulDataLoadWithAssignedOperators(List<OperatorModels.OperatorModel> assignedOperators)
         => SetupSuccessfulDataLoad(assignedOperators: assignedOperators);
 
-    private void SetupSuccessfulDataLoadWithMerchants(List<RecentMerchantsModel> merchants)
+    private void SetupSuccessfulDataLoadWithMerchants(List<MerchantModels.RecentMerchantsModel> merchants)
         => SetupSuccessfulDataLoad(merchants: merchants);
 
-    private void SetupSuccessfulDataLoadWithContracts(List<RecentContractModel> contracts)
+    private void SetupSuccessfulDataLoadWithContracts(List<ContractModels.RecentContractModel> contracts)
         => SetupSuccessfulDataLoad(contracts: contracts);
 }

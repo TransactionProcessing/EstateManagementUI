@@ -11,7 +11,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private bool isLoading = true;
 
         // Filter states
-        private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+        private DateOnly _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
         private DateOnly _endDate = DateOnly.FromDateTime(DateTime.Now);
         private String _selectedMerchant = "-1";
         private String _selectedOperator = "-1";
@@ -56,16 +56,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 var estateId = await this.GetEstateId();
                 
                 // Load filter options
-                var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-                var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
+                var merchantsTask = this.MerchantUiService.GetMerchantsForDropDown(correlationId, estateId);
+                var operatorsTask = this.OperatorUiService.GetOperatorsForDropDown(correlationId, estateId);
 
                 await Task.WhenAll(merchantsTask, operatorsTask);
 
                 if (merchantsTask.Result.IsSuccess)
-                    merchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
+                    merchants = merchantsTask.Result.Data;
 
                 if (operatorsTask.Result.IsSuccess)
-                    operators = ModelFactory.ConvertFrom(operatorsTask.Result.Data);
+                    operators = operatorsTask.Result.Data;
 
                 // Load summary data
                 return await LoadSummaryData();
@@ -97,19 +97,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 if (this._selectedMerchant != "-1") {
                     merchant = Int32.Parse(this._selectedMerchant);
                 }
-                if (this._selectedOperator != "-1")
-                {
+
+                if (this._selectedOperator != "-1") {
                     @operator = Int32.Parse(this._selectedOperator);
                 }
 
-                var result = await Mediator.Send(new TransactionQueries.GetMerchantTransactionSummaryQuery(correlationId, estateId, startDate, endDate, merchant, @operator));
+                var result = await this.TransactionUiService.GetMerchantTransactionSummary(correlationId, estateId, startDate, endDate, merchant, @operator);
 
-                if (result.IsSuccess && result.Data != null)
-                {
-                    summaryData = ModelFactory.ConvertFrom(result.Data);
+                if (result.IsSuccess && result.Data != null) {
+                    summaryData = result.Data;
                 }
-                else
-                {
+                else {
                     errorMessage = result.Message ?? "Failed to load summary data";
                 }
 

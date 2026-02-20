@@ -1,9 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BlazorServer.Models;
 
+[ExcludeFromCodeCoverage]
 public class MerchantModels
 {
+    public class RecentMerchantsModel
+    {
+        public DateTime CreatedDateTime { get; set; }
+        public Guid MerchantId { get; set; }
+        public String Name { get; set; }
+        public String Reference { get; set; }
+    }
     public class MerchantModel
     {
         public Guid MerchantId { get; set; }

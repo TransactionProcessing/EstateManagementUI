@@ -46,22 +46,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
                 var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
 
-                var result = await Mediator.Send(new TransactionQueries.GetProductPerformanceQuery(
-                    correlationId,
-                    estateId,
-                    startDate,
-                    endDate
-                ));
+                var result = await this.TransactionUiService.GetProductPerformance(correlationId, estateId, startDate, endDate);
 
                 if (result.IsSuccess && result.Data != null)
                 {
-                    performanceData = ModelFactory.ConvertFrom(result.Data);
+                    performanceData = result.Data;
                 }
                 else
                 {
                     errorMessage = result.Message ?? "Failed to load product performance data";
                 }
-
+                
                 return Result.Success();
             }
             catch (Exception ex)

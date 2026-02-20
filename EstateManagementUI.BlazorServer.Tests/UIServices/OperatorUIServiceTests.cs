@@ -188,4 +188,48 @@
             // Assert
             result.IsFailed.ShouldBeTrue();
         }
-    }
+
+        [Fact]
+        public async Task GetOperatorsForDropDown_ReturnsMappedList_WhenMediatorSucceeds()
+        {
+            // Arrange
+            var estateId = Guid.NewGuid();
+            var bizList = new List<BusinessLogic.Models.OperatorModels.OperatorDropDownModel>
+            {
+                new() { OperatorId = Guid.NewGuid(), OperatorName = "Op1" }
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(bizList));
+
+            // Act
+            var result = await _service.GetOperatorsForDropDown(CorrelationIdHelper.New(), estateId);
+
+            // Assert
+            result.IsSuccess.ShouldBeTrue();
+            result.Data.ShouldNotBeNull();
+            result.Data!.Count.ShouldBe(1);
+            result.Data[0].OperatorName.ShouldBe("Op1");
+
+            _mockMediator.Verify(m =>
+                m.Send(It.Is<OperatorQueries.GetOperatorsForDropDownQuery>(q => q.EstateId == estateId),
+                    It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetOperatorsForDropDown_ReturnsFailure_WhenMediatorFails()
+        {
+            // Arrange
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("backend error"));
+
+            // Act
+            var result = await _service.GetOperatorsForDropDown(CorrelationIdHelper.New(), Guid.NewGuid());
+
+            // Assert
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+}

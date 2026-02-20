@@ -1,13 +1,9 @@
 @page "/reporting/transaction-summary-operator"
-@using EstateManagementUI.BlazorServer.Factories
-@using EstateManagementUI.BusinessLogic.Models
-@using EstateManagementUI.BusinessLogic.Requests
-@using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel
-@using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorDropDownModel
-@using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorModel
-@using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel
+@using EstateManagementUI.BlazorServer.UIServices
 @rendermode InteractiveServer
-@inject IMediator Mediator
+@inject ITransactionUIService TransactionUiService
+@inject IMerchantUIService MerchantUiService
+@inject IOperatorUIService OperatorUiService
 @inject NavigationManager Navigation
 @inherits AuthorizedComponentBase
 

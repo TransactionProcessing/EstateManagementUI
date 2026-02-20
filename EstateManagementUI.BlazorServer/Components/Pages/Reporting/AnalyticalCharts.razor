@@ -1,12 +1,13 @@
 @page "/reporting/analytical-charts"
 @using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
 @using global::Shared.General
 @rendermode InteractiveServer
 @inherits AuthorizedComponentBase
-@inject IMediator Mediator
+@inject ITransactionUIService TransactionUiService
+@inject ICalendarUIService CalendarUiService
 @inject IJSRuntime JSRuntime
-@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Analytical Charts (Volume &amp; Value)</PageTitle>
 
