@@ -1,11 +1,10 @@
 @page "/reporting/product-performance"
 @using EstateManagementUI.BlazorServer.Factories
+@using EstateManagementUI.BlazorServer.UIServices
 @using EstateManagementUI.BusinessLogic.Requests
 @rendermode InteractiveServer
 @inherits AuthorizedComponentBase
-@inject IMediator Mediator
-@inject NavigationManager Navigation
-@inject ILogger<ProductPerformance> Logger
+@inject ITransactionUIService TransactionUiService
 
 <PageTitle>Product Performance Report</PageTitle>
 

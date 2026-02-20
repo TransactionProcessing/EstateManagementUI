@@ -1,9 +1,17 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BlazorServer.Models;
 
+[ExcludeFromCodeCoverage]
 public class ContractModels {
+    public class RecentContractModel
+    {
+        public Guid ContractId { get; set; }
+        public string? Description { get; set; }
+        public string? OperatorName { get; set; }
+    }
     public class ContractDropDownModel
     {
         public Guid ContractId { get; set; }

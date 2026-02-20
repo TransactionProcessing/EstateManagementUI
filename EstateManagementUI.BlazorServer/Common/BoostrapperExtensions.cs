@@ -254,6 +254,9 @@ public static class BoostrapperExtensions {
         builder.Services.AddSingleton<IOperatorUIService, OperatorUIService>();
         builder.Services.AddSingleton<IContractUIService, ContractUIService>();
         builder.Services.AddSingleton<IMerchantUIService, MerchantUIService>();
+        builder.Services.AddSingleton<ICalendarUIService, CalendarUIService>();
+        builder.Services.AddSingleton<ITransactionUIService, TransactionUIService>();
+
         return builder;
     }
     public static WebApplicationBuilder RegisterClients(this WebApplicationBuilder builder) {

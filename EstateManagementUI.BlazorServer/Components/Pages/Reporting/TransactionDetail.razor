@@ -1,21 +1,18 @@
 @page "/reporting/transaction-detail"
 @rendermode InteractiveServer
-@using System.Text
-@using EstateManagementUI.BlazorServer.Factories
 @using EstateManagementUI.BlazorServer.Components.Shared
-@using EstateManagementUI.BusinessLogic.Models
-@using EstateManagementUI.BusinessLogic.Requests
+@using EstateManagementUI.BlazorServer.UIServices
 @using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractModels.ContractProductModel
 @using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel
-@using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantModel
 @using OperatorDropDownModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorDropDownModel
-@using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorModel
-@using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel
+@using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionModels.TransactionDetailModel
 @inherits AuthorizedComponentBase
-@inject IMediator Mediator
 @inject NavigationManager Navigation
-@inject ILogger<TransactionDetail> Logger
 @inject IJSRuntime JSRuntime
+@inject ITransactionUIService TransactionUiService
+@inject IMerchantUIService MerchantUiService
+@inject IOperatorUIService OperatorUiService
+@inject IContractUIService ContractUiService
 
 <PageTitle>Transaction Detail Report</PageTitle>
 

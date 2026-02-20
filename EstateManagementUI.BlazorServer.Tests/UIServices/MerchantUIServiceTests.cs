@@ -159,7 +159,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var merchantId = Guid.NewGuid();
             var bizList = new List<BusinessLogic.Models.MerchantModels.MerchantContractModel>
             {
-                new() { MerchantId = merchantId, ContractId = Guid.NewGuid(), ContractName = "C1", OperatorName = "Op" , IsDeleted=false, 
+                new() { MerchantId = merchantId, ContractId = Guid.NewGuid(), ContractName = "C1", OperatorName = "Op" , IsDeleted=false,
                     ContractProducts = new List<BusinessLogic.Models.MerchantModels.MerchantContractProductModel>() }
             };
 
@@ -406,6 +406,226 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             _mockMediator.Verify(m => m.Send(It.Is<MerchantCommands.MakeMerchantDepositCommand>(c =>
                 c.EstateId == estateId && c.MerchantId == merchantId && c.Amount == depositModel.Amount && c.Reference == depositModel.Reference
             ), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetRecentMerchants_ReturnsMappedList_WhenMediatorSucceeds()
+        {
+            var estateId = Guid.NewGuid();
+            var bizList = new List<BusinessLogic.Models.MerchantModels.RecentMerchantsModel>
+            {
+                new() { MerchantId = Guid.NewGuid(), Name = "RecentM", Reference = "RM", CreatedDateTime = DateTime.UtcNow }
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(bizList));
+
+            var result = await _service.GetRecentMerchants(CorrelationIdHelper.New(), estateId);
+
+            result.IsSuccess.ShouldBeTrue();
+            result.Data.ShouldNotBeNull();
+            result.Data!.Count.ShouldBe(1);
+            result.Data[0].Name.ShouldBe("RecentM");
+            result.Data[0].Reference.ShouldBe("RM");
+        }
+
+        [Fact]
+        public async Task GetRecentMerchants_ReturnsFailure_WhenMediatorFails()
+        {
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.GetRecentMerchants(CorrelationIdHelper.New(), Guid.NewGuid());
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetMerchantKpis_ReturnsMappedModel_WhenMediatorSucceeds()
+        {
+            var estateId = Guid.NewGuid();
+            var bizKpi = new BusinessLogic.Models.MerchantModels.MerchantKpiModel
+            {
+                MerchantsWithNoSaleInLast7Days = 5,
+                MerchantsWithNoSaleToday = 2,
+                MerchantsWithSaleInLastHour = 1
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantKpiQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(bizKpi));
+
+            var result = await _service.GetMerchantKpis(CorrelationIdHelper.New(), estateId);
+
+            result.IsSuccess.ShouldBeTrue();
+            result.Data!.MerchantsWithNoSaleInLast7Days.ShouldBe(5);
+            result.Data.MerchantsWithNoSaleToday.ShouldBe(2);
+            result.Data.MerchantsWithSaleInLastHour.ShouldBe(1);
+        }
+
+        [Fact]
+        public async Task GetMerchantKpis_ReturnsFailure_WhenMediatorFails()
+        {
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantKpiQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.GetMerchantKpis(CorrelationIdHelper.New(), Guid.NewGuid());
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetMerchantsForDropDown_ReturnsMappedList_WhenMediatorSucceeds()
+        {
+            var estateId = Guid.NewGuid();
+            var bizList = new List<BusinessLogic.Models.MerchantModels.MerchantDropDownModel>
+            {
+                new() { MerchantId = Guid.NewGuid(), MerchantName = "MDrop" }
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(bizList));
+
+            var result = await _service.GetMerchantsForDropDown(CorrelationIdHelper.New(), estateId);
+
+            result.IsSuccess.ShouldBeTrue();
+            result.Data.ShouldNotBeNull();
+            result.Data!.Count.ShouldBe(1);
+            result.Data[0].MerchantName.ShouldBe("MDrop");
+        }
+
+        [Fact]
+        public async Task GetMerchantsForDropDown_ReturnsFailure_WhenMediatorFails()
+        {
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.GetMerchantsForDropDown(CorrelationIdHelper.New(), Guid.NewGuid());
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task AddOperatorToMerchant_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var operatorId = Guid.NewGuid();
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.AddOperatorToMerchantCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.AddOperatorToMerchant(CorrelationIdHelper.New(), estateId, merchantId, operatorId, "MN", "TN");
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.AddOperatorToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RemoveOperatorFromMerchant_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var operatorId = Guid.NewGuid();
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.RemoveOperatorFromMerchantCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.RemoveOperatorFromMerchant(CorrelationIdHelper.New(), estateId, merchantId, operatorId);
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.RemoveOperatorFromMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task AssignContractToMerchant_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var contractId = Guid.NewGuid();
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.AssignContractToMerchantCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.AssignContractToMerchant(CorrelationIdHelper.New(), estateId, merchantId, contractId);
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.AssignContractToMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RemoveContractFromMerchant_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var contractId = Guid.NewGuid();
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.RemoveContractFromMerchantCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.RemoveContractFromMerchant(CorrelationIdHelper.New(), estateId, merchantId, contractId);
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.RemoveContractFromMerchantCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddMerchantDevice_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var deviceId = "device-123";
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.AddMerchantDeviceCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.AddMerchantDevice(CorrelationIdHelper.New(), estateId, merchantId, deviceId);
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.AddMerchantDeviceCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task SwapMerchantDevice_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.SwapMerchantDeviceCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.SwapMerchantDevice(CorrelationIdHelper.New(), estateId, merchantId, "old", "new");
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.SwapMerchantDeviceCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task MakeMerchantDeposit_ReturnsFailure_WhenMediatorFails()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var deposit = new BlazorServer.Models.MerchantModels.DepositModel { Amount = 10, Date = DateTime.UtcNow, Reference = "ref" };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.MakeMerchantDepositCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.MakeMerchantDeposit(CorrelationIdHelper.New(), estateId, merchantId, deposit);
+
+            result.IsFailed.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.MakeMerchantDepositCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

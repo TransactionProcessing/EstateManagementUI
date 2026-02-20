@@ -1,11 +1,15 @@
 ﻿@page "/"
 @using EstateManagementUI.BlazorServer.Common
+@using EstateManagementUI.BlazorServer.UIServices
 @rendermode InteractiveServer
-@inject IMediator Mediator
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@* @inject AuthenticationStateProvider AuthenticationStateProvider *@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @inject IPermissionService PermissionService
+@inject ITransactionUIService TransactionUiService
+@inject IMerchantUIService MerchantUiService
+@inject ICalendarUIService CalendarUiService;
+@inherits AuthorizedComponentBase
 
 <PageTitle>Dashboard</PageTitle>
 

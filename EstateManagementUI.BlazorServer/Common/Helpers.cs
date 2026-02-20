@@ -29,7 +29,7 @@ namespace EstateManagementUI.BlazorServer.Common
             return Result.Success(estateId);
         }
 
-        private static decimal GetSalesVariance(TodaysSalesModel todaysSales)
+        private static decimal GetSalesVariance(TransactionModels.TodaysSalesModel todaysSales)
         {
             if (todaysSales == null) return 0;
             if (todaysSales.ComparisonSalesValue == 0)
@@ -43,7 +43,7 @@ namespace EstateManagementUI.BlazorServer.Common
             return (todaysSales.TodaysSalesValue - todaysSales.ComparisonSalesValue) / todaysSales.ComparisonSalesValue;
         }
 
-        public static string GetSalesBackgroundClass(TodaysSalesModel todaysSales)
+        public static string GetSalesBackgroundClass(TransactionModels.TodaysSalesModel todaysSales)
         {
             Decimal variance = GetSalesVariance(todaysSales);
 
@@ -56,7 +56,7 @@ namespace EstateManagementUI.BlazorServer.Common
             };
         }
 
-        public static string GetSalesTextClass(TodaysSalesModel todaysSales, double opacity = 1.0)
+        public static string GetSalesTextClass(TransactionModels.TodaysSalesModel todaysSales, double opacity = 1.0)
         {
             var variance = GetSalesVariance(todaysSales);
 
@@ -73,7 +73,7 @@ namespace EstateManagementUI.BlazorServer.Common
             };
         }
 
-        public static string GetSalesBorderClass(TodaysSalesModel todaysSales)
+        public static string GetSalesBorderClass(TransactionModels.TodaysSalesModel todaysSales)
         {
             Decimal variance = GetSalesVariance(todaysSales);
             return variance switch
@@ -85,7 +85,7 @@ namespace EstateManagementUI.BlazorServer.Common
             };
         }
 
-        public static string GetSalesVarianceDisplay(TodaysSalesModel todaysSales)
+        public static string GetSalesVarianceDisplay(TransactionModels.TodaysSalesModel todaysSales)
         {
             Decimal variance = GetSalesVariance(todaysSales);
             // Special case: comparison was 0, now has sales
@@ -95,7 +95,7 @@ namespace EstateManagementUI.BlazorServer.Common
             return $"{sign}{percentageChange:F1}%";
         }
 
-        public static string GetFailedSalesBackgroundClass(TodaysSalesModel todaysSales)
+        public static string GetFailedSalesBackgroundClass(TransactionModels.TodaysSalesModel todaysSales)
         {
             Decimal variance = GetSalesVariance(todaysSales);
             return variance switch
@@ -107,7 +107,7 @@ namespace EstateManagementUI.BlazorServer.Common
             };
         }
 
-        public static string GetFailedSalesTextClass(TodaysSalesModel todaysSales, double opacity = 1.0)
+        public static string GetFailedSalesTextClass(TransactionModels.TodaysSalesModel todaysSales, double opacity = 1.0)
         {
             Decimal variance = GetSalesVariance(todaysSales);
 
@@ -124,7 +124,7 @@ namespace EstateManagementUI.BlazorServer.Common
             };
         }
 
-        public static string GetFailedSalesBorderClass(TodaysSalesModel todaysSales)
+        public static string GetFailedSalesBorderClass(TransactionModels.TodaysSalesModel todaysSales)
         {
             Decimal variance = GetSalesVariance(todaysSales);
             return variance switch
@@ -136,7 +136,7 @@ namespace EstateManagementUI.BlazorServer.Common
             };
         }
 
-        public static string GetFailedSalesVarianceDisplay(TodaysSalesModel todaysSales)
+        public static string GetFailedSalesVarianceDisplay(TransactionModels.TodaysSalesModel todaysSales)
         {
             Decimal variance = GetSalesVariance(todaysSales);
             // Special case: comparison was 0, now has failures

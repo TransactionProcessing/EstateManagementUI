@@ -131,21 +131,24 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             var estateId = await this.GetEstateId();
 
             // Load filter options
-            var merchantsTask = Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-            var operatorsTask = Mediator.Send(new OperatorQueries.GetOperatorsForDropDownQuery(correlationId, estateId));
-            var contractsTask = Mediator.Send(new ContractQueries.GetContractsQuery(correlationId, estateId));
+            var merchantsTask = this.MerchantUiService.GetMerchantsForDropDown(correlationId, estateId);
+            var operatorsTask = this.OperatorUiService.GetOperatorsForDropDown(correlationId, estateId);
+            var contractsTask = this.ContractUiService.GetContracts(correlationId, estateId);
 
             await Task.WhenAll(merchantsTask, operatorsTask, contractsTask);
 
             if (merchantsTask.Result.IsSuccess)
-                merchants = ModelFactory.ConvertFrom(merchantsTask.Result.Data);
+                merchants = merchantsTask.Result.Data;
 
             if (operatorsTask.Result.IsSuccess)
-                operators = ModelFactory.ConvertFrom(operatorsTask.Result.Data);
+                operators = operatorsTask.Result.Data;
 
             if (contractsTask.Result.IsSuccess) {
                 // Extract all products from all contracts
-                products = contractsTask.Result.Data?.SelectMany(c => ModelFactory.ConvertFrom(c.Products) ?? new List<ContractModels.ContractProductModel>()).Where(p => !string.IsNullOrEmpty(p.ProductName)).DistinctBy(p => p.ProductName).ToList();
+                products = contractsTask.Result.Data?.SelectMany(c => c.Products ?? 
+                                                                      new List<ContractModels.ContractProductModel>())
+                    .Where(p => !string.IsNullOrEmpty(p.ProductName))
+                    .DistinctBy(p => p.ProductName).ToList();
             }
 
             // Load detail data
@@ -170,13 +173,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             var operatorIds = this.ParseInt32List(_selectedOperatorIds);
             var productIds = this.ParseInt32List(_selectedProductIds);
 
-            var result = await Mediator.Send(new TransactionQueries.GetTransactionDetailQuery(correlationId, estateId,
-                _startDate.ToDateTime(TimeOnly.MinValue), _endDate.ToDateTime(TimeOnly.MinValue), merchantIds, operatorIds, productIds));
+            var result = await this.TransactionUiService.GetTransactionDetail(correlationId, estateId,
+                _startDate.ToDateTime(TimeOnly.MinValue), _endDate.ToDateTime(TimeOnly.MinValue), merchantIds, operatorIds, productIds);
 
             if (result.IsFailed)
                 return ResultHelpers.CreateFailure(result);
 
-            detailData = ModelFactory.ConvertFrom(result.Data);
+            detailData = result.Data;
             CalculateKPIs();
             return Result.Success();
         }
@@ -263,31 +266,31 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
             detailData.Transactions = columnName switch
             {
-                nameof(TransactionDetailModel.TransactionId) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.TransactionId) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Id).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Id).ToList(),
-                nameof(TransactionDetailModel.TransactionDateTime) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.TransactionDateTime) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.DateTime).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.DateTime).ToList(),
-                nameof(TransactionDetailModel.MerchantName) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.MerchantName) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Merchant).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Merchant).ToList(),
-                nameof(TransactionDetailModel.OperatorName) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.OperatorName) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Operator).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Operator).ToList(),
-                nameof(TransactionDetailModel.ProductName) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.ProductName) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Product).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Product).ToList(),
-                nameof(TransactionDetailModel.TransactionType) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.TransactionType) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Type).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Type).ToList(),
-                nameof(TransactionDetailModel.TransactionStatus) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.TransactionStatus) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Status).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Status).ToList(),
-                nameof(TransactionDetailModel.GrossAmount) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.GrossAmount) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Value).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Value).ToList(),
-                nameof(TransactionDetailModel.FeesCommission) => _sortAscending
+                nameof(TransactionModels.TransactionDetailModel.FeesCommission) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.TotalFees).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.TotalFees).ToList(),
                 //nameof(TransactionDetailModel.NetAmount) => _sortAscending
@@ -360,7 +363,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Error exporting to CSV");
                 errorMessage = "Failed to export data to CSV";
             }
         }

@@ -13,21 +13,20 @@ using MerchantContractModel = EstateManagementUI.BlazorServer.Models.MerchantMod
 using MerchantContractProductModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantContractProductModel;
 using MerchantDeviceModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDeviceModel;
 using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel;
-using MerchantKpiModel = EstateManagementUI.BlazorServer.Models.MerchantKpiModel;
+using MerchantKpiModel = EstateManagementUI.BlazorServer.Models.TransactionModels.MerchantKpiModel;
 using MerchantListModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantListModel;
 using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantModel;
 using MerchantOperatorModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantOperatorModel;
 using MerchantSettlementHistoryModel = EstateManagementUI.BlazorServer.Models.MerchantSettlementHistoryModel;
-using MerchantTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.MerchantTransactionSummaryModel;
 using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorModel;
-using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel;
+//using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel;
 using ProductPerformanceResponse = EstateManagementUI.BlazorServer.Models.TransactionModels.ProductPerformanceResponse;
-using RecentContractModel = EstateManagementUI.BlazorServer.Models.RecentContractModel;
-using RecentMerchantsModel = EstateManagementUI.BlazorServer.Models.RecentMerchantsModel;
+using RecentContractModel = EstateManagementUI.BlazorServer.Models.ContractModels.RecentContractModel;
+using RecentMerchantsModel = EstateManagementUI.BlazorServer.Models.MerchantModels.RecentMerchantsModel;
 using SettlementSummaryModel = EstateManagementUI.BlazorServer.Models.SettlementSummaryModel;
-using TodaysSalesModel = EstateManagementUI.BlazorServer.Models.TodaysSalesModel;
-using TodaysSettlementModel = EstateManagementUI.BlazorServer.Models.TodaysSettlementModel;
-using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionDetailModel;
+using TodaysSalesModel = EstateManagementUI.BlazorServer.Models.TransactionModels.TodaysSalesModel;
+using TodaysSettlementModel = EstateManagementUI.BlazorServer.Models.TransactionModels.TodaysSettlementModel;
+using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionModels.TransactionDetailModel;
 using TransactionModels = EstateManagementUI.BlazorServer.Models.TransactionModels;
 
 namespace EstateManagementUI.BlazorServer.Factories;
@@ -575,10 +574,10 @@ public static class ModelFactory {
         return model;
     }
 
-    public static List<TodaysSalesByHourModel>? ConvertFrom(List<BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel> resultData) {
-        List<TodaysSalesByHourModel> todaysSalesByHourModels = new();
+    public static List<TransactionModels.TodaysSalesByHourModel>? ConvertFrom(List<BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel> resultData) {
+        List<TransactionModels.TodaysSalesByHourModel> todaysSalesByHourModels = new();
         foreach (BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel todaysSalesCountByHourModel in resultData) {
-            todaysSalesByHourModels.Add(new TodaysSalesByHourModel {
+            todaysSalesByHourModels.Add(new TransactionModels.TodaysSalesByHourModel {
                 Hour = todaysSalesCountByHourModel.Hour,
                 TodaysSalesCount = todaysSalesCountByHourModel.TodaysSalesCount,
                 ComparisonSalesCount = todaysSalesCountByHourModel.ComparisonSalesCount,

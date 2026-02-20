@@ -22,9 +22,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private decimal averageValue = 0;
         private decimal netSettlement = 0;
 
-        private List<TodaysSalesByHourModel>? salesByHourData;
-        private TodaysSalesModel? todaysSales;
-        private TodaysSettlementModel? todaysSettlement;
+        private List<TransactionModels.TodaysSalesByHourModel>? salesByHourData;
+        private TransactionModels.TodaysSalesModel? todaysSales;
+        private TransactionModels.TodaysSettlementModel? todaysSettlement;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -61,8 +61,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                     return;
                 }
             }
-
-            
         }
 
         private async Task<Result> LoadDashboardData() {
@@ -78,10 +76,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 // Load comparison dates first (only if not already loaded)
                 if (comparisonDates == null || !comparisonDates.Any())
                 {
-                    var comparisonDatesResult = await Mediator.Send(new Queries.GetComparisonDatesQuery(correlationId, estateId));
+                    var comparisonDatesResult = await this.CalendarUiService.GetComparisonDates(correlationId, estateId);
                     if (comparisonDatesResult.IsSuccess)
                     {
-                        comparisonDates = ModelFactory.ConvertFrom(comparisonDatesResult.Data);
+                        comparisonDates = comparisonDatesResult.Data;
                         if (comparisonDates != null && comparisonDates.Any())
                         {
                             _selectedComparisonDate = comparisonDates.First().Date.ToString("yyyy-MM-dd");
@@ -95,21 +93,21 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 }
 
                 // Load all data in parallel
-                var salesByHourTask = Mediator.Send(new TransactionQueries.GetTodaysSalesByHourQuery(correlationId, estateId, comparisonDate));
-                var todaysSalesTask = Mediator.Send(new TransactionQueries.GetTodaysSalesQuery(correlationId, estateId, comparisonDate));
-                var settlementTask = Mediator.Send(new SettlementQueries.GetTodaysSettlementQuery(correlationId, estateId, comparisonDate));
+                var salesByHourTask = this.TransactionUiService.GetTodaysSalesByHour(correlationId, estateId, comparisonDate);
+                var todaysSalesTask = this.TransactionUiService.GetTodaysSales(correlationId, estateId, comparisonDate);
+                var settlementTask = this.TransactionUiService.GetTodaysSettlement(correlationId, estateId, comparisonDate);
 
                 await Task.WhenAll(salesByHourTask, todaysSalesTask, settlementTask);
 
                 // Process results
                 if (salesByHourTask.Result.IsSuccess)
-                    this.salesByHourData = ModelFactory.ConvertFrom(salesByHourTask.Result.Data);
+                    this.salesByHourData = salesByHourTask.Result.Data;
 
                 if (todaysSalesTask.Result.IsSuccess)
-                    todaysSales = ModelFactory.ConvertFrom(todaysSalesTask.Result.Data);
+                    todaysSales = todaysSalesTask.Result.Data;
 
                 if (settlementTask.Result.IsSuccess)
-                    todaysSettlement = ModelFactory.ConvertFrom(settlementTask.Result.Data);
+                    todaysSettlement = settlementTask.Result.Data;
 
                 // Calculate KPIs
                 CalculateKPIs();
@@ -170,7 +168,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
                 var comparisonLabel = GetComparisonLabel();
                 var todayLabel = today.ToString("MMM dd");
-                var comparisonDateLabel = compDate.ToString("MMM dd");
+                var comparisonDateLabel = comparisonDateParsed.ToString("MMM dd");
 
                 // Update Volume Chart
                 await JSRuntime.InvokeVoidAsync("updateOrCreateChart",
@@ -202,27 +200,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             {
                 
             }
-        }
-
-        // Helper to retry checking for element presence
-        private async Task<bool> EnsureCanvasExistsAsync(string elementId, int retries = 5, int delayMs = 200)
-        {
-            for (int i = 0; i < retries; i++)
-            {
-                try
-                {
-                    var exists = await JSRuntime.InvokeAsync<bool>("elementExists", elementId);
-                    if (exists) return true;
-                }
-                catch
-                {
-                    // elementExists may not be available yet
-                }
-
-                await Task.Delay(delayMs);
-            }
-
-            return false;
         }
 
         private string GetComparisonLabel()

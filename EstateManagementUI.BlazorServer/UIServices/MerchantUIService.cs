@@ -1,5 +1,6 @@
 ﻿using EstateManagementUI.BlazorServer.Factories;
 using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Shared.Results;
@@ -84,10 +85,11 @@ public interface IMerchantUIService {
                                      Guid merchantId,
                                      MerchantModels.DepositModel depositModel);
 
-    //Contract UI Service
-    //    GetContractsForDropDownQuery
+    Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(CorrelationId correlationId, Guid estateId);
 
+    Task<Result<TransactionModels.MerchantKpiModel>> GetMerchantKpis(CorrelationId correlationId, Guid estateId);
 
+    Task<Result<List<MerchantModels.MerchantDropDownModel>>> GetMerchantsForDropDown(CorrelationId correlationId, Guid estateId);
 }
 
 public class MerchantUIService : IMerchantUIService {
@@ -264,5 +266,35 @@ public class MerchantUIService : IMerchantUIService {
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
         return Result.Success();
+    }
+
+    public async Task<Result<List<RecentMerchantsModel>>> GetRecentMerchants(CorrelationId correlationId,
+                                                                          Guid estateId) {
+        MerchantQueries.GetRecentMerchantsQuery command = new(correlationId, estateId);
+        var result = await this.Mediator.Send(command);
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        var recentMerchantsModels = ModelFactory.ConvertFrom(result.Data);
+        return Result.Success(recentMerchantsModels);
+    }
+
+    public async Task<Result<TransactionModels.MerchantKpiModel>> GetMerchantKpis(CorrelationId correlationId,
+                                                                                  Guid estateId) {
+        MerchantQueries.GetMerchantKpiQuery command = new(correlationId, estateId);
+        var result = await this.Mediator.Send(command);
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        var merchantKpiModel = ModelFactory.ConvertFrom(result.Data);
+        return Result.Success(merchantKpiModel);
+    }
+
+    public async Task<Result<List<MerchantModels.MerchantDropDownModel>>> GetMerchantsForDropDown(CorrelationId correlationId,
+                                                                              Guid estateId) {
+        MerchantQueries.GetMerchantsForDropDownQuery query = new(correlationId, estateId);
+        var result = await this.Mediator.Send(query);
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        var merchantList = ModelFactory.ConvertFrom(result.Data);
+        return Result.Success(merchantList);
     }
 }

@@ -1,15 +1,13 @@
-﻿using System.Security.Claims;
-using EstateManagementUI.BlazorServer.Common;
-using EstateManagementUI.BlazorServer.Factories;
+﻿using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
 using Shared.Exceptions;
-using Shared.General;
 using Shared.Results;
 using SimpleResults;
+using System.Security.Claims;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages;
 
@@ -20,29 +18,27 @@ public partial class Home
 
     private bool isLoading = true;
     private bool isAdministrator;
-    private string? errorMessage;
-
-    private MerchantKpiModel? merchantKpi;
-    private TodaysSalesModel? todaysSales;
-    private TodaysSalesModel? todaysFailedSales;
+    
+    private TransactionModels.MerchantKpiModel? merchantKpi;
+    private TransactionModels.TodaysSalesModel? todaysSales;
+    private TransactionModels.TodaysSalesModel? todaysFailedSales;
     private List<ComparisonDateModel>? comparisonDates;
-    private List<RecentMerchantsModel>? recentMerchants;
+    private List<MerchantModels.RecentMerchantsModel>? recentMerchants;
     private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
     private int changeEventCounter = 0;
 
-    protected override async Task OnInitializedAsync()
-    {
-        // Keep prerender work minimal. This will still run during prerender,
-        // so avoid doing heavy/interactive-only tasks here.
-        await this.LogToConsole("OnInitializedAsync (prerender/early) START");
-        // Do not call LoadDashboardData() here to avoid double-load when prerendering.
-        await base.OnInitializedAsync();
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    // Keep prerender work minimal. This will still run during prerender,
+    //    // so avoid doing heavy/interactive-only tasks here.
+    //    await this.LogToConsole("OnInitializedAsync (prerender/early) START");
+    //    // Do not call LoadDashboardData() here to avoid double-load when prerendering.
+    //    await base.OnInitializedAsync();
+    //}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) {
-            await base.OnAfterRenderAsync(firstRender);
             return;
         }
 
@@ -51,11 +47,12 @@ public partial class Home
 
         try
         {
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            ClaimsPrincipal user = authState.User;
+            await OnAfterRender(PermissionSection.Dashboard, PermissionFunction.View);
+            ClaimsPrincipal user = this.AuthState.User;
 
             // Redirect unauthenticated users to entry screen
-            if (!user.Identity?.IsAuthenticated ?? true) {
+            if (!user.Identity?.IsAuthenticated ?? true)
+            {
                 NavigationManager.NavigateToEntryPage();
                 return;
             }
@@ -66,21 +63,20 @@ public partial class Home
             await this.LogToConsole($"User role: {role}, isAdministrator: {this.isAdministrator}");
 
             CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
-            var estateIdResult = authState.GetEstateIdFromClaims();
-            if (estateIdResult.IsFailed) {
-                this.NavigationManager.NavigateToErrorPage();
-                return;
-            }
+            var estateId = await this.GetEstateId();
 
             // Only load dashboard data for non-admins
-            if (this.isAdministrator == false) {
-                var result = await this.LoadDashboardData(correlationId, estateIdResult.Data);
-                if (result.IsFailed) {
+            if (this.isAdministrator == false)
+            {
+                var result = await this.LoadDashboardData(correlationId, estateId);
+                if (result.IsFailed)
+                {
                     this.NavigationManager.NavigateToErrorPage();
                     return;
                 }
             }
-            else {
+            else
+            {
                 this.isLoading = false;
                 this.StateHasChanged();
             }
@@ -112,35 +108,32 @@ public partial class Home
             }
 
             // Load all dashboard data in parallel
-            var kpiTask = Mediator.Send(new MerchantQueries.GetMerchantKpiQuery(correlationId, estateId));
-            var salesTask = Mediator.Send(new TransactionQueries.GetTodaysSalesQuery(correlationId, estateId, comparisonDateResult.Data));
-            var failedSalesTask = Mediator.Send(new TransactionQueries.GetTodaysFailedSalesQuery(correlationId, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data));
-            var merchantsTask = Mediator.Send(new MerchantQueries.GetRecentMerchantsQuery(correlationId, estateId));
+            var kpiTask = this.MerchantUiService.GetMerchantKpis(correlationId, estateId);
+            var salesTask = this.TransactionUiService.GetTodaysSales(correlationId, estateId, comparisonDateResult.Data);
+            var failedSalesTask = this.TransactionUiService.GetTodaysFailedSales(correlationId, estateId, LOW_CREDIT_RESPONSE_CODE, comparisonDateResult.Data);
+            var merchantsTask = this.MerchantUiService.GetRecentMerchants(correlationId, estateId);
 
             await Task.WhenAll(kpiTask, salesTask, failedSalesTask, merchantsTask);
 
             // Process results
             if (kpiTask.Result.IsFailed)
-                return ResultHelpers.CreateFailure<BusinessLogic.Models.MerchantModels.MerchantKpiModel>(kpiTask.Result);
-
-            this.merchantKpi = ModelFactory.ConvertFrom((BusinessLogic.Models.MerchantModels.MerchantKpiModel)kpiTask.Result.Data);
+                return ResultHelpers.CreateFailure(kpiTask.Result);
+            this.merchantKpi = kpiTask.Result.Data;
 
             if (salesTask.Result.IsFailed)
-                return ResultHelpers.CreateFailure<BusinessLogic.Models.TodaysSalesModel>(salesTask.Result);
-
-            this.todaysSales = ModelFactory.ConvertFrom((BusinessLogic.Models.TodaysSalesModel)salesTask.Result.Data);
+                return ResultHelpers.CreateFailure(salesTask.Result);
+            this.todaysSales = salesTask.Result.Data;
 
             if (failedSalesTask.Result.IsFailed)
-                return ResultHelpers.CreateFailure<BusinessLogic.Models.TodaysSalesModel>(failedSalesTask.Result);
-
-            this.todaysFailedSales = ModelFactory.ConvertFrom((BusinessLogic.Models.TodaysSalesModel)failedSalesTask.Result.Data);
+                return ResultHelpers.CreateFailure(failedSalesTask.Result);
+            this.todaysFailedSales = failedSalesTask.Result.Data;
 
             if (merchantsTask.Result.IsFailed)
                 return ResultHelpers.CreateFailure(merchantsTask.Result);
 
             // Note: API returns merchants in creation order (newest first)
             // If ordering is incorrect, would need CreatedDate field in the model
-            this.recentMerchants = ModelFactory.ConvertFrom((List<BusinessLogic.Models.MerchantModels.RecentMerchantsModel>)merchantsTask.Result.Data);
+            this.recentMerchants = merchantsTask.Result.Data;
 
             return Result.Success();
         }
@@ -157,15 +150,13 @@ public partial class Home
 
     private async Task<Result<DateTime>> LoadComparisonDates(CorrelationId correlationId, Guid estateId) {
 
-        Result<List<BusinessLogic.Models.ComparisonDateModel>> comparisonDatesResult;
         if (this.comparisonDates == null || !this.comparisonDates.Any()) {
-            comparisonDatesResult = await Mediator.Send(new Queries.GetComparisonDatesQuery(correlationId, estateId));
+            var comparisonDatesResult = await this.CalendarUiService.GetComparisonDates(correlationId, estateId);
             if (comparisonDatesResult.IsFailed) {
                 return ResultHelpers.CreateFailure(comparisonDatesResult);
             }
-
-
-            this.comparisonDates = ModelFactory.ConvertFrom(comparisonDatesResult.Data);
+            
+            this.comparisonDates = comparisonDatesResult.Data;
             if (this.comparisonDates != null && this.comparisonDates.Any()) {
                 // Set default comparison date to the first one only on initial load
                 this._selectedComparisonDate = this.comparisonDates.First().Date.ToString("yyyy-MM-dd");
@@ -188,16 +179,11 @@ public partial class Home
         // This is called after _selectedComparisonDate is updated by @bind-Value
         if (this.isAdministrator == false) {
 
-            CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
-            AuthenticationState authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            Result<Guid> estateIdResult = authState.GetEstateIdFromClaims();
-            if (estateIdResult.IsFailed) {
-                this.NavigationManager.NavigateToErrorPage();
-                return;
-            }
-
+            CorrelationId correlationId = CorrelationIdHelper.New();
+            Guid  estateId= await this.GetEstateId();
+            
             await this.LogToConsole($"Loading dashboard data for date: {this._selectedComparisonDate}");
-            var loadResult = await this.LoadDashboardData(correlationId,estateIdResult.Data);
+            var loadResult = await this.LoadDashboardData(correlationId,estateId);
             if (loadResult.IsFailed) {
                 this.NavigationManager.NavigateToErrorPage();
                 return;

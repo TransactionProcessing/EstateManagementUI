@@ -1,42 +1,43 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages;
 using EstateManagementUI.BlazorServer.Components.Permissions;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.UIServices;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using EstateManagementUI.BusinessLogic.Client;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Moq;
 using Shouldly;
-using System.Security.Claims;
-using EstateManagementUI.BusinessLogic.Client;
-using EstateManagementUI.BusinessLogic.Requests;
 using SimpleResults;
+using System.Security.Claims;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
-public class HomePageTests : TestContext
+public class HomePageTests : BaseTest
 {
-    private readonly Mock<IMediator> _mockMediator;
-    private readonly Mock<AuthenticationStateProvider> _mockAuthStateProvider;
-    private readonly Mock<NavigationManager> _mockNavigationManager;
+    private readonly Mock<ICalendarUIService> _mockCalenderUiService;
+    private readonly Mock<IMerchantUIService> _mockMerchantUiService;
+    private readonly Mock<ITransactionUIService> _mockTransactionUiService;
     private readonly Mock<IJSRuntime> _mockJSRuntime;
-    private readonly Mock<IPermissionService> _mockPermissionService;
-
+    
     public HomePageTests()
     {
-        _mockMediator = new Mock<IMediator>();
-        _mockAuthStateProvider = new Mock<AuthenticationStateProvider>();
-        _mockNavigationManager = new Mock<NavigationManager>();
+        _mockCalenderUiService = new Mock<ICalendarUIService>();
+        _mockMerchantUiService = new Mock<IMerchantUIService>();
+        _mockTransactionUiService = new Mock<ITransactionUIService>();
+
         _mockJSRuntime = new Mock<IJSRuntime>();
-        _mockPermissionService = new Mock<IPermissionService>();
         
-        Services.AddSingleton(_mockMediator.Object);
-        Services.AddSingleton(_mockAuthStateProvider.Object);
-        Services.AddSingleton(_mockNavigationManager.Object);
+        Services.AddSingleton(_mockCalenderUiService.Object);
+        Services.AddSingleton(_mockMerchantUiService.Object);
+        Services.AddSingleton(_mockTransactionUiService.Object);
         Services.AddSingleton(_mockJSRuntime.Object);
-        Services.AddSingleton(_mockPermissionService.Object);
         
         // Add required permission components
         ComponentFactories.AddStub<RequirePermission>();
@@ -55,12 +56,63 @@ public class HomePageTests : TestContext
         var user = new ClaimsPrincipal(identity);
         var authState = Task.FromResult(new AuthenticationState(user));
 
+        List<ComparisonDateModel> comparisonDates = new()
+        {
+            new ComparisonDateModel
+            {
+                Date = DateTime.Today,
+                Description = "Today"
+            },
+            new ComparisonDateModel
+            {
+                Date = DateTime.Today.AddDays(-1),
+                Description = "Yesterday"
+            }
+        };
+
+        TransactionModels.MerchantKpiModel merchantKpi = new() { MerchantsWithNoSaleInLast7Days = 5, MerchantsWithNoSaleToday = 12, MerchantsWithSaleInLastHour = 45 };
+
+        TransactionModels.TodaysSalesModel todaysSales = new()
+        {
+            ComparisonSalesCount = 450,
+            ComparisonSalesValue = 125000.00m,
+            ComparisonAverageValue = 277.78m,
+            TodaysSalesCount = 523,
+            TodaysSalesValue = 145000.00m,
+            TodaysAverageValue = 277.24m
+        };
+
+        List<MerchantModels.RecentMerchantsModel> recentMerchants = new()
+        {
+            new MerchantModels.RecentMerchantsModel
+            {
+                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                Name = "Test Merchant 1",
+                Reference = "MERCH001",
+                CreatedDateTime = DateTime.Now
+            },
+            new MerchantModels.RecentMerchantsModel
+            {
+                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
+                Name = "Test Merchant 2",
+                Reference = "MERCH002",
+                CreatedDateTime = DateTime.Now.AddDays(-1)
+            },
+            new MerchantModels.RecentMerchantsModel
+            {
+                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
+                Name = "Test Merchant 3",
+                Reference = "MERCH003",
+                CreatedDateTime = DateTime.Now.AddDays(-5)
+            }
+        };
+
         _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync()).Returns(authState);
-        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockComparisonDates()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantKpiQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchantKpi()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<TransactionQueries.GetTodaysSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<TransactionQueries.GetTodaysFailedSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockRecentMerchants()));
+        this._mockCalenderUiService.Setup(m => m.GetComparisonDates(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(comparisonDates));
+        this._mockMerchantUiService.Setup(m => m.GetMerchantKpis(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(merchantKpi));
+        this._mockMerchantUiService.Setup(m => m.GetRecentMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(recentMerchants));
+        this._mockTransactionUiService.Setup(m => m.GetTodaysSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
+        this._mockTransactionUiService.Setup(m => m.GetTodaysFailedSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
 
         // Act
         var cut = RenderComponent<Home>();
@@ -81,13 +133,65 @@ public class HomePageTests : TestContext
         var identity = new ClaimsIdentity(claims, "Test");
         var user = new ClaimsPrincipal(identity);
         var authState = Task.FromResult(new AuthenticationState(user));
-        
+
+        List<ComparisonDateModel> comparisonDates = new()
+        {
+            new ComparisonDateModel
+            {
+                Date = DateTime.Today,
+                Description = "Today"
+            },
+            new ComparisonDateModel
+            {
+                Date = DateTime.Today.AddDays(-1),
+                Description = "Yesterday"
+            }
+        };
+
+        TransactionModels.MerchantKpiModel merchantKpi = new() { MerchantsWithNoSaleInLast7Days = 5, MerchantsWithNoSaleToday = 12, MerchantsWithSaleInLastHour = 45 };
+
+        TransactionModels.TodaysSalesModel todaysSales = new()
+        {
+            ComparisonSalesCount = 450,
+            ComparisonSalesValue = 125000.00m,
+            ComparisonAverageValue = 277.78m,
+            TodaysSalesCount = 523,
+            TodaysSalesValue = 145000.00m,
+            TodaysAverageValue = 277.24m
+        };
+
+        List<MerchantModels.RecentMerchantsModel> recentMerchants = new()
+        {
+            new MerchantModels.RecentMerchantsModel
+            {
+                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                Name = "Test Merchant 1",
+                Reference = "MERCH001",
+                CreatedDateTime = DateTime.Now
+            },
+            new MerchantModels.RecentMerchantsModel
+            {
+                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
+                Name = "Test Merchant 2",
+                Reference = "MERCH002",
+                CreatedDateTime = DateTime.Now.AddDays(-1)
+            },
+            new MerchantModels.RecentMerchantsModel
+            {
+                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
+                Name = "Test Merchant 3",
+                Reference = "MERCH003",
+                CreatedDateTime = DateTime.Now.AddDays(-5)
+            }
+        };
+
         _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync()).Returns(authState);
-        this._mockMediator.Setup(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>())).ReturnsAsync(Result.Success( StubTestData.GetMockComparisonDates()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantKpiQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockMerchantKpi()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<TransactionQueries.GetTodaysSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<TransactionQueries.GetTodaysFailedSalesQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockTodaysSales()));
-        this._mockMediator.Setup(m => m.Send(It.IsAny<MerchantQueries.GetRecentMerchantsQuery>())).ReturnsAsync(Result.Success(StubTestData.GetMockRecentMerchants()));
+
+        this._mockCalenderUiService.Setup(m => m.GetComparisonDates(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(comparisonDates));
+        this._mockMerchantUiService.Setup(m => m.GetMerchantKpis(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(merchantKpi));
+        this._mockMerchantUiService.Setup(m => m.GetRecentMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(recentMerchants));
+        this._mockTransactionUiService.Setup(m => m.GetTodaysSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
+        this._mockTransactionUiService.Setup(m => m.GetTodaysFailedSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
 
 
         // Act

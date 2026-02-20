@@ -13,19 +13,19 @@ public interface IOperatorUIService
     Task<Result<List<OperatorModels.OperatorModel>>> GetOperators(CorrelationId correlationId, Guid estateId);
     Task<Result<List<OperatorModels.OperatorDropDownModel>>> GetOperatorsForDropDown(CorrelationId correlationId, Guid estateId);
     Task<Result<OperatorModels.OperatorModel>> GetOperator(CorrelationId correlationId, Guid estateId, Guid operatorId);
-
     Task<Result> UpdateOperator(CorrelationId correlationId, Guid estateId, Guid operatorId, OperatorModels.EditOperatorModel editOperatorModel);
     Task<Result> CreateOperator(CorrelationId correlationId, Guid estateId, OperatorModels.CreateOperatorModel createOperatorModel);
 }
-public class OperatorUIService : IOperatorUIService
-{
+
+public class OperatorUIService : IOperatorUIService {
     private readonly IMediator Mediator;
-    public OperatorUIService(IMediator mediator)
-    {
+
+    public OperatorUIService(IMediator mediator) {
         this.Mediator = mediator;
     }
-    public async Task<Result<List<OperatorModels.OperatorModel>>> GetOperators(CorrelationId correlationId, Guid estateId)
-    {
+
+    public async Task<Result<List<OperatorModels.OperatorModel>>> GetOperators(CorrelationId correlationId,
+                                                                               Guid estateId) {
         var result = await this.Mediator.Send(new OperatorQueries.GetOperatorsQuery(correlationId, estateId));
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
@@ -66,14 +66,11 @@ public class OperatorUIService : IOperatorUIService
                                              Guid estateId,
                                              OperatorModels.CreateOperatorModel createOperatorModel) {
         // Create operator
-        var command = new OperatorCommands.CreateOperatorCommand(correlationId,
-            estateId,
-            createOperatorModel.OperatorName!,
-            createOperatorModel.RequireCustomMerchantNumber,
-            createOperatorModel.RequireCustomTerminalNumber
-        );
+        var command = new OperatorCommands.CreateOperatorCommand(correlationId, estateId, createOperatorModel.OperatorName!, createOperatorModel.RequireCustomMerchantNumber, createOperatorModel.RequireCustomTerminalNumber);
 
         var result = await Mediator.Send(command);
         return result;
     }
 }
+
+
