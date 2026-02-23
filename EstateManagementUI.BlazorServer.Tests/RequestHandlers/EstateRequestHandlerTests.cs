@@ -55,7 +55,7 @@ public class EstateRequestHandlerTests
 
         _mockApiClient
             .Setup(c => c.GetEstate(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<EstateModels.EstateModel>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -179,7 +179,7 @@ public class EstateRequestHandlerTests
 
         _mockApiClient
             .Setup(c => c.GetEstateAssignedOperators(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<OperatorModels.OperatorModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
