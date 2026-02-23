@@ -54,7 +54,7 @@ public class ContractRequestHandlerTests
 
         _mockApiClient
             .Setup(c => c.GetContracts(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<ContractModels.ContractModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -102,7 +102,7 @@ public class ContractRequestHandlerTests
 
         _mockApiClient
             .Setup(c => c.GetContract(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<ContractModels.ContractModel>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -299,7 +299,7 @@ public class ContractRequestHandlerTests
 
         _mockApiClient
             .Setup(c => c.GetRecentContracts(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<ContractModels.RecentContractModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -345,7 +345,7 @@ public class ContractRequestHandlerTests
 
         _mockApiClient
             .Setup(c => c.GetContracts(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<ContractModels.ContractDropDownModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         // Act
         var result = await _handler.Handle(query, CancellationToken.None);
