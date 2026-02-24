@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Shared.Results;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
+using EstateManagementUI.BlazorServer.Common;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
 {
@@ -85,7 +86,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
                 // Small delay so user sees confirmation (adjust duration as needed)
                 await this.WaitOnUIRefresh();
 
-                NavigationManager.NavigateTo("/operators");
+                NavigationManager.NavigateToOperatorList();
             }
             else
             {
@@ -95,9 +96,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
             isSaving = false;
         }
         
-        private void BackToList()
-        {
-            NavigationManager.NavigateTo("/operators");
-        }
+        private void BackToList() => NavigationManager.NavigateToOperatorList();
     }
 }

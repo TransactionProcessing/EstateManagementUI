@@ -1,6 +1,7 @@
 ﻿using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using System.ComponentModel.DataAnnotations;
+using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using SimpleResults;
 
@@ -43,7 +44,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
                 // Small delay so user sees confirmation (adjust duration as needed)
                 await this.WaitOnUIRefresh();
 
-                NavigationManager.NavigateTo("/operators");
+                NavigationManager.NavigateToOperatorList();
             }
             else
             {
@@ -53,10 +54,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
             isSaving = false;
         }
 
-        private void Cancel()
-        {
-            NavigationManager.NavigateTo("/operators");
-        }
+        private void Cancel() => NavigationManager.NavigateToOperatorList();
 
         
     }

@@ -209,9 +209,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 : baseClass + "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300";
         }
 
-        private void BackToList()
-        {
-            NavigationManager.NavigateTo("/merchants");
-        }
+        private void BackToList() => NavigationManager.NavigateToMerchantList();
     }
 }

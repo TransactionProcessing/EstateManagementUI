@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.BlazorServer.Models;
+﻿using EstateManagementUI.BlazorServer.Common;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Shared.Results;
@@ -60,7 +61,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
                 await this.WaitOnUIRefresh();
 
                 // Navigate to contracts list with success
-                NavigationManager.NavigateTo("/contracts");
+                NavigationManager.NavigateToContractList();
             }
             else {
                 this.errorMessage = "Failed to create contract";
@@ -69,9 +70,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             isSaving = false;
         }
 
-        private void Cancel()
-        {
-            NavigationManager.NavigateTo("/contracts");
-        }
+        private void Cancel() => NavigationManager.NavigateToContractList();
     }
 }

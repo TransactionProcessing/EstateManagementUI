@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Shared.Results;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
+using EstateManagementUI.BlazorServer.Common;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 
@@ -191,13 +192,7 @@ public partial class Edit
         StateHasChanged();
     }
 
-    private void BackToView()
-    {
-        NavigationManager.NavigateTo($"/contracts/{ContractId}");
-    }
+    private void BackToView() => this.NavigationManager.NavigateToContract(ContractId);
 
-    private void BackToList()
-    {
-        NavigationManager.NavigateTo("/contracts");
-    }
+    private void BackToList() => this.NavigationManager.NavigateToContractList();
 }

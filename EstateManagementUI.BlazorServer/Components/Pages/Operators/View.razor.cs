@@ -45,9 +45,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
             return Result.Success();
         }
 
-        private void BackToList()
-        {
-            NavigationManager.NavigateTo("/operators");
-        }
+        private void BackToList() => NavigationManager.NavigateToOperatorList();
     }
 }
