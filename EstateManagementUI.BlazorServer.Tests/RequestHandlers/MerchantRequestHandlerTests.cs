@@ -48,7 +48,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantsQuery(CorrelationIdHelper.New(), Guid.NewGuid(), null, null, null, null, null);
 
         _mockApiClient.Setup(c => c.GetMerchants(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<MerchantModels.MerchantListModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -85,7 +85,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetMerchant(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<MerchantModels.MerchantModel>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -124,7 +124,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetRecentMerchantsQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetRecentMerchants(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<MerchantModels.RecentMerchantsModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -165,7 +165,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantKpiQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetMerchantKpi(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<MerchantModels.MerchantKpiModel>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -204,7 +204,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantsForDropDownQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetMerchants(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<MerchantModels.MerchantDropDownModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -244,7 +244,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantContractsQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetMerchantContracts(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<MerchantModels.MerchantContractModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -284,7 +284,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantOperatorsQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetMerchantOperators(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<MerchantModels.MerchantOperatorModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
@@ -324,7 +324,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantDevicesQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient.Setup(c => c.GetMerchantDevices(query, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Result.Failure<List<MerchantModels.MerchantDeviceModel>>("api error"));
+            .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
