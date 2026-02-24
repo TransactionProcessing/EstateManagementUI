@@ -174,7 +174,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 await this.WaitOnUIRefresh();
 
                 // Navigate to contracts list with success
-                NavigationManager.NavigateTo("/merchants");
+                NavigationManager.NavigateToMerchantList();
             }
             else {
                 this.errorMessage = "Failed to update merchant";
@@ -420,7 +420,5 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
             StateHasChanged();
         }
 
-        private void BackToList() {
-            NavigationManager.NavigateTo("/merchants");
-        }
+        private void BackToList() => NavigationManager.NavigateToMerchantList();
     }

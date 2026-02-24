@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.BlazorServer.Factories;
+﻿using EstateManagementUI.BlazorServer.Common;
+using EstateManagementUI.BlazorServer.Factories;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
@@ -45,9 +46,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
             return Result.Success();
         }
 
-        private void BackToList()
-        {
-            NavigationManager.NavigateTo("/contracts");
-        }
+        private void BackToList() => NavigationManager.NavigateToContractList();
     }
 }

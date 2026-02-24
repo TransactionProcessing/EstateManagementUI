@@ -146,6 +146,16 @@ namespace EstateManagementUI.BlazorServer.Common
             return $"{sign}{percentageChange:F1}%";
         }
 
+        public static string GetTabClass(string activeTab, string tab)
+        {
+            return activeTab == tab
+                ? "border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+        }
+    }
+
+    public static class NavigationManagerExtensions
+    {
         public static void NavigateToErrorPage(this NavigationManager navigationManager)
         {
             navigationManager.NavigateTo("/error", replace: true);
@@ -161,11 +171,68 @@ namespace EstateManagementUI.BlazorServer.Common
             navigationManager.NavigateTo("/entry", replace: true);
         }
 
-        public static string GetTabClass(string activeTab, string tab)
+        public static void NavigateToContract(this NavigationManager navigationManager, Guid contractId) {
+            navigationManager.NavigateTo($"/contracts/{contractId}");
+        }
+
+        public static void NavigateToEditContract(this NavigationManager navigationManager, Guid contractId)
         {
-            return activeTab == tab
-                ? "border-blue-600 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm";
+            navigationManager.NavigateTo($"/contracts/{contractId}/edit");
+        }
+
+        public static void NavigateToContractList(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo($"/contracts");
+        }
+
+        public static void NavigateToNewContract(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo($"/contracts/new");
+        }
+
+        public static void NavigateToMerchantList(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo($"/merchants");
+        }
+
+        public static void NavigateToMerchant(this NavigationManager navigationManager, Guid merchantId)
+        {
+            navigationManager.NavigateTo($"/merchants/{merchantId}");
+        }
+
+        public static void NavigateToEditMerchant(this NavigationManager navigationManager, Guid merchantId)
+        {
+            navigationManager.NavigateTo($"/merchants/{merchantId}/edit");
+        }
+
+        public static void NavigateToMakeMerchantDeposit(this NavigationManager navigationManager, Guid merchantId)
+        {
+            navigationManager.NavigateTo($"/merchants/{merchantId}/deposit");
+        }
+
+        public static void NavigateToNewMerchant(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo($"/merchants/new");
+        }
+
+        public static void NavigateToOperatorList(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo($"/operators");
+        }
+
+        public static void NavigateToNewOperator(this NavigationManager navigationManager)
+        {
+            navigationManager.NavigateTo($"/operators/new");
+        }
+
+        public static void NavigateToOperator(this NavigationManager navigationManager, Guid operatorId)
+        {
+            navigationManager.NavigateTo($"/operators/{operatorId}");
+        }
+
+        public static void NavigateToEditOperator(this NavigationManager navigationManager, Guid operatorId)
+        {
+            navigationManager.NavigateTo($"/operators/{operatorId}/edit");
         }
     }
 }

@@ -159,24 +159,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             }
         }
 
-        private void ViewMerchant(Guid merchantId)
-        {
-            NavigationManager.NavigateTo($"/merchants/{merchantId}");
-        }
+        private void ViewMerchant(Guid merchantId) => NavigationManager.NavigateToMerchant(merchantId);
 
-        private void EditMerchant(Guid merchantId)
-        {
-            NavigationManager.NavigateTo($"/merchants/{merchantId}/edit");
-        }
+        private void EditMerchant(Guid merchantId) => NavigationManager.NavigateToEditMerchant(merchantId);
 
-        private void MakeDeposit(Guid merchantId)
-        {
-            NavigationManager.NavigateTo($"/merchants/{merchantId}/deposit");
-        }
+        private void MakeDeposit(Guid merchantId) => this.NavigationManager.NavigateToMakeMerchantDeposit(merchantId);
 
-        private void NavigateToNewMerchant()
-        {
-            NavigationManager.NavigateTo("/merchants/new");
-        }
+        private void NavigateToNewMerchant() => NavigationManager.NavigateToNewMerchant();
     }
 }

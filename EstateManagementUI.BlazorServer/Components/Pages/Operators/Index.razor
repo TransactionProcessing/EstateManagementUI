@@ -1,4 +1,5 @@
 @page "/operators"
+@using EstateManagementUI.BlazorServer.Common
 @using EstateManagementUI.BlazorServer.Factories
 @rendermode InteractiveServer
 @using EstateManagementUI.BlazorServer.Permissions
@@ -16,7 +17,7 @@
     <div class="flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">Operator Management</h1>
         <RequirePermission Section="@PermissionSection.Operator" Function="@PermissionFunction.Create" @key="@($"create-operator-{PermissionKeyProvider.GetKey()}")">
-            <button id="newOperatorButton" class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/operators/new")'>
+            <button id="newOperatorButton" class="btn btn-primary" @onclick='() => NavigationManager.NavigateToNewOperator()'>
                 <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -47,7 +48,7 @@
                 <tbody>
                     @foreach (var op in operators)
                     {
-                        <tr class="hover:bg-gray-50 cursor-pointer" @onclick='() => NavigationManager.NavigateTo($"/operators/{op.OperatorId}")'>
+                        <tr class="hover:bg-gray-50 cursor-pointer" @onclick='() => NavigationManager.NavigateToOperator(op.OperatorId)'>
                             <td>
                                 <div class="flex items-center">
                                     <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center mr-3">
@@ -78,14 +79,14 @@
                             </td>
                             <td class="text-right">
                                 <div class="flex justify-end space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-800 p-2" @onclick:stopPropagation="true" @onclick='() => NavigationManager.NavigateTo($"/operators/{op.OperatorId}")' title="View">
+                                    <button class="text-blue-600 hover:text-blue-800 p-2" @onclick:stopPropagation="true" @onclick='() => NavigationManager.NavigateToOperator(op.OperatorId)' title="View">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
                                         </svg>
                                     </button>
                                     <RequirePermission Section="@PermissionSection.Operator" Function="@PermissionFunction.Edit" @key="@($"edit-{op.OperatorId}-{PermissionKeyProvider.GetKey()}")">
-                                        <button class="text-green-600 hover:text-green-800 p-2" @onclick:stopPropagation="true" @onclick='() => NavigationManager.NavigateTo($"/operators/{op.OperatorId}/edit")' title="Edit">
+                                        <button class="text-green-600 hover:text-green-800 p-2" @onclick:stopPropagation="true" @onclick='() => NavigationManager.NavigateToEditOperator(op.OperatorId)' title="Edit">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                             </svg>
@@ -107,7 +108,7 @@
             </svg>
             <p class="text-gray-600 mb-4">No operators found.</p>
             <RequirePermission Section="PermissionSection.Operator" Function="PermissionFunction.Create">
-                <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateTo("/operators/new")'>Add Your First Operator</button>
+                <button class="btn btn-primary" @onclick='() => NavigationManager.NavigateToNewOperator()'>Add Your First Operator</button>
             </RequirePermission>
         </div>
     }

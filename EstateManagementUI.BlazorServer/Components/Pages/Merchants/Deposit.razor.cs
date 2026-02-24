@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Shared.Results;
 using SimpleResults;
 using System.ComponentModel.DataAnnotations;
+using EstateManagementUI.BlazorServer.Common;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {
@@ -63,7 +64,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 await this.WaitOnUIRefresh();
 
                 // Navigate to contracts list with success
-                NavigationManager.NavigateTo("/merchants");
+                NavigationManager.NavigateToMerchantList();
             }
             else {
                 this.errorMessage = "Failed to make deposit";
@@ -72,9 +73,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             isSaving = false;
         }
 
-        private void Cancel()
-        {
-            NavigationManager.NavigateTo("/merchants");
-        }
+        private void Cancel() => NavigationManager.NavigateToMerchantList();
     }
 }
