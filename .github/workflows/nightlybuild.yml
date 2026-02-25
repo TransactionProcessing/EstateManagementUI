@@ -229,7 +229,7 @@ jobs:
     - name: Merge LCOV reports
       run: |
         sudo npm install -g lcov-result-merger
-        lcov-result-merger "*.info" > merged-lcov.info
+        lcov-result-merger "*.info" > lcov.info
     
     - name: Upload merged coverage to Codacy
       uses: codacy/codacy-coverage-reporter-action@v1
