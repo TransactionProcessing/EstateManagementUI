@@ -91,6 +91,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             model.AssignedOperators.ShouldNotBeEmpty();
             model.RecentMerchants.ShouldNotBeEmpty();
             model.RecentContracts.ShouldNotBeEmpty();
+            model.OperatorCount.ShouldBe(1);
         }
 
         [Fact]

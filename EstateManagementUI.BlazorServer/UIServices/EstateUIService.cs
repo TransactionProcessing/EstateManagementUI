@@ -66,6 +66,7 @@ public class EstateUIService : IEstateUIService
             RecentContracts = contracts,
             RecentMerchants = merchants,
             UserCount = estateModel.Users.Count,
+            OperatorCount = estateModel.Operators.Count
         };
 
         return Result.Success(resultModel);
