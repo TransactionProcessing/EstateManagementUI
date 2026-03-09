@@ -134,7 +134,6 @@ public class MerchantsIndexPageTests : BaseTest
         // Assert
         cut.Markup.ShouldContain("Total Merchants");
         cut.Markup.ShouldContain("Total Balance");
-        cut.Markup.ShouldContain("Available Balance");
     }
 
     [Fact]

@@ -86,7 +86,6 @@ public class MerchantModels
         public string? MerchantName { get; set; }
         public string? MerchantReference { get; set; }
         public decimal? Balance { get; set; }
-        public decimal? AvailableBalance { get; set; }
         public string? SettlementSchedule { get; set; }
         public string? Region { get; set; }
         public string? PostalCode { get; set; }
