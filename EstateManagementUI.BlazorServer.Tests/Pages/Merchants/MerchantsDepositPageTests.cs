@@ -171,6 +171,23 @@ public class MerchantsDepositPageTests : BaseTest
     }
 
     [Fact]
+    public void Deposit_HasTwoCancelButtons()
+    {
+        // Arrange
+        SetupSuccessfulMerchantLoad();
+
+        // Act
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+            parameters.Add(p => p.MerchantId, _testMerchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Assert - there should be exactly 2 Cancel buttons
+        IRefreshableElementCollection<IElement> allButtons = cut.FindAll("button");
+        List<IElement> cancelButtonList = allButtons.Where(b => b.TextContent.Trim() == "Cancel").ToList();
+        cancelButtonList.Count.ShouldBe(2);
+    }
+
+    [Fact]
     public void Deposit_CancelButton_NavigatesToMerchantsIndex()
     {
         // Arrange
