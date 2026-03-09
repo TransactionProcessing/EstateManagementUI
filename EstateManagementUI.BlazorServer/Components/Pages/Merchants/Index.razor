@@ -90,7 +90,6 @@
                         <th>Region</th>
                         <th>Postcode</th>
                         <th>Balance</th>
-                        <th>Available Balance</th>
                         <th>Settlement Schedule</th>
                         <th class="text-right">Actions</th>
                     </tr>
@@ -113,7 +112,6 @@
                             <td class="text-sm">@(merchant.Region ?? "N/A")</td>
                             <td class="font-mono text-sm">@(merchant.PostalCode ?? "N/A")</td>
                             <td class="font-semibold text-green-600">@(merchant.Balance?.ToString("C") ?? "N/A")</td>
-                            <td class="font-semibold">@(merchant.AvailableBalance?.ToString("C") ?? "N/A")</td>
                             <td>
                                 <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
                                     @(merchant.SettlementSchedule ?? "Not Set")
@@ -215,10 +213,10 @@
                 <p class="text-sm text-gray-600 mb-1">Total Balance</p>
                 <p class="text-3xl font-bold text-green-600">@pagedMerchants.Sum(m => m.Balance ?? 0).ToString("C")</p>
             </div>
-            <div class="bg-white rounded-lg shadow-md p-6">
+@*             <div class="bg-white rounded-lg shadow-md p-6">
                 <p class="text-sm text-gray-600 mb-1">Available Balance</p>
                 <p class="text-3xl font-bold text-blue-600">@pagedMerchants.Sum(m => m.AvailableBalance ?? 0).ToString("C")</p>
-            </div>
+            </div> *@
         </div>
     }
     else

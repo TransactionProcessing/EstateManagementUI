@@ -354,7 +354,6 @@ public static class ModelFactory {
         foreach (BusinessLogic.Models.MerchantModels.MerchantListModel merchantListModel in resultData) {
             merchantList.Add(new MerchantListModel {
                 CreatedDateTime = merchantListModel.CreatedDateTime,
-                AvailableBalance = merchantListModel.AvailableBalance,
                 Balance = merchantListModel.Balance,
                 MerchantId = merchantListModel.MerchantId,
                 MerchantName = merchantListModel.MerchantName,
