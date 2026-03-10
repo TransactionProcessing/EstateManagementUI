@@ -97,14 +97,14 @@
                         </select>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <button @onclick="ApplyFilters" class="btn btn-primary">
+                <div class="mt-4 flex items-center gap-2">
+                    <button @onclick="ApplyFilters" class="btn btn-primary inline-flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                         </svg>
                         Apply Filters
                     </button>
-                    <button @onclick="ClearFilters" class="btn btn-secondary ml-2">
+                    <button @onclick="ClearFilters" class="btn btn-secondary inline-flex items-center">
                         Clear Filters
                     </button>
                 </div>
@@ -174,19 +174,40 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Operator Name</th>
-                                    <th class="!text-right">Transaction Count</th>
-                                    <th class="!text-right">Transaction Value</th>
+                                    <th class="cursor-pointer select-none" @onclick='() => SortBy("OperatorName")'>
+                                        Operator Name
+                                        @if (_sortColumn == "OperatorName") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("TotalCount")'>
+                                        Transaction Count
+                                        @if (_sortColumn == "TotalCount") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("TotalValue")'>
+                                        Transaction Value
+                                        @if (_sortColumn == "TotalValue") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
                                     @* <th class="!text-right">Fees Earned</th> *@
-                                    <th class="!text-right">Average Value</th>
-                                    <th class="!text-right">Successful</th>
-                                    <th class="!text-right">Failed</th>
-                                    <th class="!text-right">Success Rate</th>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("AverageValue")'>
+                                        Average Value
+                                        @if (_sortColumn == "AverageValue") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("AuthorisedCount")'>
+                                        Successful
+                                        @if (_sortColumn == "AuthorisedCount") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("DeclinedCount")'>
+                                        Failed
+                                        @if (_sortColumn == "DeclinedCount") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("AuthorisedPercentage")'>
+                                        Success Rate
+                                        @if (_sortColumn == "AuthorisedPercentage") { <span>@(_sortAscending ? "↑" : "↓")</span> }
+                                    </th>
                                     <th class="!text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var item in summaryData.Operators)
+                                @foreach (var item in PagedOperators)
                                 {
                                     <tr>
                                         <td class="font-medium">@item.OperatorName</td>
@@ -237,6 +258,32 @@
                             </tfoot> *@
                         </table>
                     </div>
+                    @if (TotalPages > 1)
+                    {
+                        <div class="flex items-center justify-between mt-4">
+                            <div class="text-sm text-gray-700">
+                                Showing @((_currentPage - 1) * _pageSize + 1)–@(Math.Min(_currentPage * _pageSize, summaryData.Operators.Count)) of @summaryData.Operators.Count results
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <button @onclick='() => GoToPage(1)' disabled="@(_currentPage == 1)" class="btn btn-sm btn-secondary">«</button>
+                                <button @onclick='() => GoToPage(_currentPage - 1)' disabled="@(_currentPage == 1)" class="btn btn-sm btn-secondary">‹</button>
+                                @{
+                                    int pageStart = Math.Max(1, _currentPage - 2);
+                                    int pageEnd = Math.Min(TotalPages, _currentPage + 2);
+                                }
+                                @for (int p = pageStart; p <= pageEnd; p++)
+                                {
+                                    var pageNum = p;
+                                    <button @onclick='() => GoToPage(pageNum)'
+                                            class="btn btn-sm @(_currentPage == pageNum ? "btn-primary" : "btn-secondary")">
+                                        @pageNum
+                                    </button>
+                                }
+                                <button @onclick='() => GoToPage(_currentPage + 1)' disabled="@(_currentPage == TotalPages)" class="btn btn-sm btn-secondary">›</button>
+                                <button @onclick='() => GoToPage(TotalPages)' disabled="@(_currentPage == TotalPages)" class="btn btn-sm btn-secondary">»</button>
+                            </div>
+                        </div>
+                    }
                 }
                 else
                 {
