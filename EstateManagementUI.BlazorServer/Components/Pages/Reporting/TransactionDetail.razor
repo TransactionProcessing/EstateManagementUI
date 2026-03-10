@@ -231,13 +231,13 @@
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionStatus))" class="cursor-pointer hover:bg-gray-50">
                                         Status @GetSortIcon(nameof(TransactionDetailModel.TransactionStatus))
                                     </th>
-                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.GrossAmount))" class="text-right cursor-pointer hover:bg-gray-50">
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.GrossAmount))" class="!text-right cursor-pointer hover:bg-gray-50">
                                         Gross Amount @GetSortIcon(nameof(TransactionDetailModel.GrossAmount))
                                     </th>
-                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.FeesCommission))" class="text-right cursor-pointer hover:bg-gray-50">
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.FeesCommission))" class="!text-right cursor-pointer hover:bg-gray-50">
                                         Fees @GetSortIcon(nameof(TransactionDetailModel.FeesCommission))
                                     </th>
-                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.NetAmount))" class="text-right cursor-pointer hover:bg-gray-50">
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.NetAmount))" class="!text-right cursor-pointer hover:bg-gray-50">
                                         Net Amount @GetSortIcon(nameof(TransactionDetailModel.NetAmount))
                                     </th>
                                     <th>Settlement Ref</th>
