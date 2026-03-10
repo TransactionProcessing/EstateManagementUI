@@ -266,9 +266,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
             detailData.Transactions = columnName switch
             {
-                nameof(TransactionModels.TransactionDetailModel.TransactionId) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Id).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Id).ToList(),
                 nameof(TransactionModels.TransactionDetailModel.TransactionDateTime) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.DateTime).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.DateTime).ToList(),
@@ -281,6 +278,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 nameof(TransactionModels.TransactionDetailModel.ProductName) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Product).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Product).ToList(),
+                nameof(TransactionModels.TransactionDetailModel.TransactionNumber) => _sortAscending
+                    ? detailData.Transactions.OrderBy(t => t.TransactionNumber).ToList()
+                    : detailData.Transactions.OrderByDescending(t => t.TransactionNumber).ToList(),
                 nameof(TransactionModels.TransactionDetailModel.TransactionType) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.Type).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.Type).ToList(),
@@ -293,9 +293,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 nameof(TransactionModels.TransactionDetailModel.FeesCommission) => _sortAscending
                     ? detailData.Transactions.OrderBy(t => t.TotalFees).ToList()
                     : detailData.Transactions.OrderByDescending(t => t.TotalFees).ToList(),
-                //nameof(TransactionDetailModel.NetAmount) => _sortAscending
-                //    ? detailData.Transactions.OrderBy(t => t.NetAmount).ToList()
-                //    : detailData.Transactions.OrderByDescending(t => t.NetAmount).ToList(),
+                nameof(TransactionModels.TransactionDetailModel.NetAmount) => _sortAscending
+                    ? detailData.Transactions.OrderBy(t => t.NetAmount).ToList()
+                    : detailData.Transactions.OrderByDescending(t => t.NetAmount).ToList(),
                 _ => detailData.Transactions
             };
 
@@ -308,12 +308,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 return "↕";
 
             return _sortAscending ? "↑" : "↓";
-        }
-
-        private string GetShortId(Guid transactionId)
-        {
-            var idString = transactionId.ToString();
-            return idString.Length >= 8 ? $"{idString.Substring(0, 8)}..." : idString;
         }
 
         private string GetTypeBadgeClass(string? type)
@@ -347,12 +341,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 var csv = new StringBuilder();
 
                 // Header
-                csv.AppendLine("Transaction ID,Transaction Date & Time,Merchant,Operator,Product,Transaction Type,Transaction Status,Gross Amount,Fees/Commission,Settlement Reference");
+                csv.AppendLine("Transaction Date & Time,Merchant,Operator,Product,Txn No,Transaction Type,Transaction Status,Gross Amount,Fees/Commission,Net Amount");
 
                 // Data rows
                 foreach (var item in detailData.Transactions)
                 {
-                    csv.AppendLine($"\"{item.Id}\",\"{item.DateTime:yyyy-MM-dd HH:mm:ss}\",\"{item.Merchant}\",\"{item.Operator}\",\"{item.Product}\",\"{item.Type}\",\"{item.Status}\",{item.Value},{item.TotalFees},\"{item.SettlementReference ?? ""}\"");
+                    csv.AppendLine($"\"{item.DateTime:yyyy-MM-dd HH:mm:ss}\",\"{item.Merchant}\",\"{item.Operator}\",\"{item.Product}\",{item.TransactionNumber},\"{item.Type}\",\"{item.Status}\",{item.Value},{item.TotalFees},{item.NetAmount}");
                 }
 
                 var fileName = $"transaction-detail-{DateTime.Now:yyyyMMdd-HHmmss}.csv";

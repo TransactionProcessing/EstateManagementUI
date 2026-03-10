@@ -480,6 +480,7 @@ public static class ModelFactory {
                 Value = resultDataTransaction.Value,
                 Status = resultDataTransaction.Status,
                 Type = resultDataTransaction.Type,
+                TransactionNumber = resultDataTransaction.TransactionNumber,
                 ProductReportingId = resultDataTransaction.ProductReportingId,
                 ProductId = resultDataTransaction.ProductId,
                 Product = resultDataTransaction.Product,

@@ -29,6 +29,7 @@ namespace EstateManagementUI.BusinessLogic.Models
             public Int32 ProductReportingId { get; set; }
             public String Type { get; set; }
             public String Status { get; set; }
+            public Int32 TransactionNumber { get; set; }
             public Decimal Value { get; set; }
             public Decimal TotalFees { get; set; }
             public String SettlementReference { get; set; }

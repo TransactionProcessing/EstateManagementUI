@@ -34,6 +34,7 @@ public record TransactionModels
         public Int32 ProductReportingId { get; set; }
         public String Type { get; set; }
         public String Status { get; set; }
+        public Int32 TransactionNumber { get; set; }
         public Decimal Value { get; set; }
         public Decimal TotalFees { get; set; }
         public Decimal NetAmount { get; set; }
@@ -168,6 +169,7 @@ public record TransactionModels
         public Guid OperatorId { get; set; }
         public string? ProductName { get; set; }
         public Guid ProductId { get; set; }
+        public int TransactionNumber { get; set; }
         public string? TransactionType { get; set; } // sale, refund, reversal
         public string? TransactionStatus { get; set; } // successful, failed, reversed
         public decimal GrossAmount { get; set; }
