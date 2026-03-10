@@ -456,7 +456,7 @@ public class MerchantsIndexPageTests : BaseTest
     }
 
     [Fact]
-    public void MerchantsIndex_DepositModal_HasTwoCancelButtons()
+    public void MerchantsIndex_DepositModal_HasOneCancelButton()
     {
         // Arrange
         var merchantId = Guid.NewGuid();
@@ -491,10 +491,10 @@ public class MerchantsIndexPageTests : BaseTest
         cut.Find("#makeDepositLink").Click();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Make Merchant Deposit"), TimeSpan.FromSeconds(5));
 
-        // Assert - exactly 2 Cancel buttons in the modal
+        // Assert - exactly 1 Cancel button in the modal footer
         var allButtons = cut.FindAll("button");
         var cancelButtons = allButtons.Where(b => b.TextContent.Trim() == "Cancel").ToList();
-        cancelButtons.Count.ShouldBe(2);
+        cancelButtons.Count.ShouldBe(1);
     }
 
     [Fact]

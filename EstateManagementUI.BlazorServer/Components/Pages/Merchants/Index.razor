@@ -238,17 +238,12 @@
 {
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @onclick="CloseDepositModal">
         <div class="bg-white rounded-lg p-6 max-w-lg w-full mx-4" @onclick:stopPropagation="true">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900">Make Merchant Deposit</h3>
-                    @if (!string.IsNullOrEmpty(depositModalMerchantName))
-                    {
-                        <p class="text-sm text-gray-600 mt-1">For merchant: @depositModalMerchantName</p>
-                    }
-                </div>
-                <button type="button" class="btn btn-secondary" @onclick="CloseDepositModal" disabled="@isDepositSaving">
-                    Cancel
-                </button>
+            <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Make Merchant Deposit</h3>
+                @if (!string.IsNullOrEmpty(depositModalMerchantName))
+                {
+                    <p class="text-sm text-gray-600 mt-1">For merchant: @depositModalMerchantName</p>
+                }
             </div>
 
             @if (!string.IsNullOrWhiteSpace(depositErrorMessage))
