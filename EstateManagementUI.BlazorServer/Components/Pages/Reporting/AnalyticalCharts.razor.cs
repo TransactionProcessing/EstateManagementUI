@@ -159,12 +159,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 var today = DateTime.Today;
                 var comparisonDateParsed = DateTime.TryParse(_selectedComparisonDate, out var compDate) ? compDate : DateTime.Today.AddDays(-7);
 
-                var labels = salesByHourData.Select(d => $"{d.Hour:00}:00").ToArray();
-                var todaysCountData = this.salesByHourData.Select(d => d.TodaysSalesCount).ToArray();
-                var comparisonCountData = this.salesByHourData.Select(d => d.ComparisonSalesCount).ToArray();
+                var sortedSalesByHour = this.salesByHourData.OrderBy(d => d.Hour).ToList();
+                var labels = sortedSalesByHour.Select(d => $"{d.Hour:00}:00").ToArray();
+                var todaysCountData = sortedSalesByHour.Select(d => d.TodaysSalesCount).ToArray();
+                var comparisonCountData = sortedSalesByHour.Select(d => d.ComparisonSalesCount).ToArray();
 
-                var todaysValueData = this.salesByHourData.Select(d => (double)d.TodaysSalesValue).ToArray();
-                var comparisonValueData = this.salesByHourData.Select(d => (double)d.ComparisonSalesValue).ToArray();
+                var todaysValueData = sortedSalesByHour.Select(d => (double)d.TodaysSalesValue).ToArray();
+                var comparisonValueData = sortedSalesByHour.Select(d => (double)d.ComparisonSalesValue).ToArray();
 
                 var comparisonLabel = GetComparisonLabel();
                 var todayLabel = today.ToString("MMM dd");
