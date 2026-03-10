@@ -26,6 +26,76 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private int totalTransactions = 0;
         private decimal totalValue = 0;
         private decimal averageValue = 0;
+
+        // Sorting
+        private string _sortColumn = "MerchantName";
+        private bool _sortAscending = true;
+
+        // Paging
+        private int _pageSize = 10;
+        private int _currentPage = 1;
+
+        private int TotalPages => summaryData?.Merchants != null
+            ? (int)Math.Ceiling(summaryData.Merchants.Count / (double)_pageSize)
+            : 0;
+
+        private IEnumerable<TransactionModels.MerchantDetail> PagedMerchants
+        {
+            get
+            {
+                if (summaryData?.Merchants == null)
+                    return Enumerable.Empty<TransactionModels.MerchantDetail>();
+
+                IEnumerable<TransactionModels.MerchantDetail> sorted = _sortColumn switch
+                {
+                    "TotalCount" => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.TotalCount)
+                        : summaryData.Merchants.OrderByDescending(m => m.TotalCount),
+                    "TotalValue" => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.TotalValue)
+                        : summaryData.Merchants.OrderByDescending(m => m.TotalValue),
+                    "AverageValue" => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.AverageValue)
+                        : summaryData.Merchants.OrderByDescending(m => m.AverageValue),
+                    "AuthorisedCount" => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.AuthorisedCount)
+                        : summaryData.Merchants.OrderByDescending(m => m.AuthorisedCount),
+                    "DeclinedCount" => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.DeclinedCount)
+                        : summaryData.Merchants.OrderByDescending(m => m.DeclinedCount),
+                    "AuthorisedPercentage" => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.AuthorisedPercentage)
+                        : summaryData.Merchants.OrderByDescending(m => m.AuthorisedPercentage),
+                    _ => _sortAscending
+                        ? summaryData.Merchants.OrderBy(m => m.MerchantName)
+                        : summaryData.Merchants.OrderByDescending(m => m.MerchantName),
+                };
+
+                return sorted.Skip((_currentPage - 1) * _pageSize).Take(_pageSize);
+            }
+        }
+
+        private void SortBy(string column)
+        {
+            if (_sortColumn == column)
+            {
+                _sortAscending = !_sortAscending;
+            }
+            else
+            {
+                _sortColumn = column;
+                _sortAscending = true;
+            }
+            _currentPage = 1;
+        }
+
+        private void GoToPage(int page)
+        {
+            if (page >= 1 && page <= TotalPages)
+            {
+                _currentPage = page;
+            }
+        }
         
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -106,6 +176,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
                 if (result.IsSuccess && result.Data != null) {
                     summaryData = result.Data;
+                    _currentPage = 1;
                 }
                 else {
                     errorMessage = result.Message ?? "Failed to load summary data";
