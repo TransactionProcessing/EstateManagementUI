@@ -21,6 +21,76 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         private List<MerchantModels.MerchantDropDownModel>? merchants;
         private List<OperatorModels.OperatorDropDownModel>? operators;
 
+        // Sorting
+        private string _sortColumn = "OperatorName";
+        private bool _sortAscending = true;
+
+        // Paging
+        private int _pageSize = 10;
+        private int _currentPage = 1;
+
+        private int TotalPages => summaryData?.Operators != null
+            ? (int)Math.Ceiling(summaryData.Operators.Count / (double)_pageSize)
+            : 0;
+
+        private IEnumerable<TransactionModels.OperatorDetail> PagedOperators
+        {
+            get
+            {
+                if (summaryData?.Operators == null)
+                    return Enumerable.Empty<TransactionModels.OperatorDetail>();
+
+                IEnumerable<TransactionModels.OperatorDetail> sorted = _sortColumn switch
+                {
+                    "TotalCount" => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.TotalCount)
+                        : summaryData.Operators.OrderByDescending(o => o.TotalCount),
+                    "TotalValue" => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.TotalValue)
+                        : summaryData.Operators.OrderByDescending(o => o.TotalValue),
+                    "AverageValue" => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.AverageValue)
+                        : summaryData.Operators.OrderByDescending(o => o.AverageValue),
+                    "AuthorisedCount" => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.AuthorisedCount)
+                        : summaryData.Operators.OrderByDescending(o => o.AuthorisedCount),
+                    "DeclinedCount" => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.DeclinedCount)
+                        : summaryData.Operators.OrderByDescending(o => o.DeclinedCount),
+                    "AuthorisedPercentage" => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.AuthorisedPercentage)
+                        : summaryData.Operators.OrderByDescending(o => o.AuthorisedPercentage),
+                    _ => _sortAscending
+                        ? summaryData.Operators.OrderBy(o => o.OperatorName)
+                        : summaryData.Operators.OrderByDescending(o => o.OperatorName),
+                };
+
+                return sorted.Skip((_currentPage - 1) * _pageSize).Take(_pageSize);
+            }
+        }
+
+        private void SortBy(string column)
+        {
+            if (_sortColumn == column)
+            {
+                _sortAscending = !_sortAscending;
+            }
+            else
+            {
+                _sortColumn = column;
+                _sortAscending = true;
+            }
+            _currentPage = 1;
+        }
+
+        private void GoToPage(int page)
+        {
+            if (page >= 1 && page <= TotalPages)
+            {
+                _currentPage = page;
+            }
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
@@ -102,6 +172,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 if (result.IsSuccess && result.Data != null)
                 {
                     summaryData = result.Data;
+                    _currentPage = 1;
                 }
                 else
                 {
@@ -135,8 +206,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
         {
             _startDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-7));
             _endDate = DateOnly.FromDateTime(DateTime.Now);
-            _selectedMerchant = "";
-            _selectedOperator = "";
+            _selectedMerchant = "-1";
+            _selectedOperator = "-1";
             await LoadSummaryData();
         }
 
