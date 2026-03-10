@@ -413,7 +413,7 @@ public class MerchantsIndexPageTests : BaseTest
     }
 
     [Fact]
-    public void MerchantsIndex_MakeDepositButton_NavigatesToDepositPage()
+    public void MerchantsIndex_MakeDepositButton_OpensDepositModal()
     {
         // Arrange
         var merchantId = Guid.NewGuid();
@@ -434,6 +434,13 @@ public class MerchantsIndexPageTests : BaseTest
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
 
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+            .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant"
+            }));
+
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -441,8 +448,188 @@ public class MerchantsIndexPageTests : BaseTest
         var makeDepositButton = cut.Find("#makeDepositLink");
         makeDepositButton.Click();
 
-        // Assert
-        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/deposit");
+        // Assert - modal is shown with the deposit form
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Make Merchant Deposit"), TimeSpan.FromSeconds(5));
+        cut.Markup.ShouldContain("depositAmount");
+        cut.Markup.ShouldContain("depositDate");
+        cut.Markup.ShouldContain("depositReference");
+    }
+
+    [Fact]
+    public void MerchantsIndex_DepositModal_HasTwoCancelButtons()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+            .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant"
+            }));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Open modal
+        cut.Find("#makeDepositLink").Click();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Make Merchant Deposit"), TimeSpan.FromSeconds(5));
+
+        // Assert - exactly 2 Cancel buttons in the modal
+        var allButtons = cut.FindAll("button");
+        var cancelButtons = allButtons.Where(b => b.TextContent.Trim() == "Cancel").ToList();
+        cancelButtons.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public void MerchantsIndex_DepositModal_CancelButton_ClosesModal()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+            .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant"
+            }));
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        cut.Find("#makeDepositLink").Click();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Make Merchant Deposit"), TimeSpan.FromSeconds(5));
+
+        // Act - click Cancel
+        var cancelButton = cut.FindAll("button").FirstOrDefault(b => b.TextContent.Trim() == "Cancel");
+        cancelButton?.Click();
+
+        // Assert - modal is closed
+        cut.WaitForAssertion(() => cut.Markup.ShouldNotContain("depositAmount"), TimeSpan.FromSeconds(5));
+        _fakeNavigationManager.Uri.ShouldNotContain("/deposit");
+    }
+
+    [Fact]
+    public void MerchantsIndex_DepositModal_Submit_ShowsSuccess()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+            .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant"
+            }));
+
+        this.MerchantUIService.Setup(m => m.MakeMerchantDeposit(
+                It.IsAny<CorrelationId>(),
+                It.IsAny<Guid>(),
+                merchantId,
+                It.IsAny<MerchantModels.DepositModel>()))
+            .ReturnsAsync(Result.Success);
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.Instance.SetDelayOverride(500);
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        cut.Find("#makeDepositLink").Click();
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Make Merchant Deposit"), TimeSpan.FromSeconds(5));
+
+        // Act - fill and submit form
+        cut.Find("#depositAmount").Change(100);
+        cut.Find("#depositDate").Change(DateTime.Today.ToString("yyyy-MM-dd"));
+        cut.Find("#depositReference").Change("TEST-REF-001");
+        cut.Find("#makeDepositButton").Click();
+
+        // Assert - success message is shown before modal closes
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Deposit recorded successfully"), TimeSpan.FromSeconds(5));
+        cut.WaitForAssertion(() => cut.Markup.ShouldNotContain("depositAmount"), TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsIndex_DepositModal_OpensWithoutMerchantName_WhenGetMerchantFails()
+    {
+        // Arrange
+        var merchantId = Guid.NewGuid();
+        var merchants = new List<MerchantModels.MerchantListModel>
+        {
+            new()
+            {
+                MerchantId = merchantId,
+                MerchantName = "Test Merchant",
+                MerchantReference = "REF001"
+            }
+        };
+
+        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
+                It.IsAny<String>(),
+                It.IsAny<Int32>(),
+                It.IsAny<String>(),
+                It.IsAny<String>()))
+            .ReturnsAsync(Result.Success(merchants));
+
+        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+            .ReturnsAsync(Result.Failure());
+
+        var cut = RenderComponent<MerchantsIndex>();
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        // Act - click Make Deposit when GetMerchant fails
+        cut.Find("#makeDepositLink").Click();
+
+        // Assert - modal opens but without merchant name
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Make Merchant Deposit"), TimeSpan.FromSeconds(5));
+        cut.Markup.ShouldContain("depositAmount");
+        cut.Markup.ShouldNotContain("For merchant:");
     }
 
     [Fact]

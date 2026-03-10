@@ -76,6 +76,15 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private int _totalPages = 1;
         private int totalPages => _totalPages;
 
+        // Deposit modal fields
+        private bool showDepositModal = false;
+        private Guid depositMerchantId;
+        private string? depositModalMerchantName;
+        private MerchantModels.DepositModel depositModel = new();
+        private bool isDepositSaving = false;
+        private string? depositErrorMessage;
+        private string? depositSuccessMessage;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
@@ -163,7 +172,54 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private void EditMerchant(Guid merchantId) => NavigationManager.NavigateToEditMerchant(merchantId);
 
-        private void MakeDeposit(Guid merchantId) => this.NavigationManager.NavigateToMakeMerchantDeposit(merchantId);
+        private async Task MakeDeposit(Guid merchantId)
+        {
+            depositMerchantId = merchantId;
+            depositModel = new MerchantModels.DepositModel();
+            depositErrorMessage = null;
+            depositSuccessMessage = null;
+
+            CorrelationId correlationId = new(Guid.NewGuid());
+            Guid estateId = await this.GetEstateId();
+            Result<MerchantModels.MerchantModel> getMerchantResult = await this.MerchantUiService.GetMerchant(correlationId, estateId, merchantId);
+            depositModalMerchantName = getMerchantResult.IsSuccess ? getMerchantResult.Data.MerchantName : null;
+
+            showDepositModal = true;
+        }
+
+        private void CloseDepositModal()
+        {
+            showDepositModal = false;
+            depositModel = new MerchantModels.DepositModel();
+            depositErrorMessage = null;
+            depositSuccessMessage = null;
+        }
+
+        private async Task HandleDepositSubmit()
+        {
+            isDepositSaving = true;
+            depositErrorMessage = null;
+            depositSuccessMessage = null;
+
+            CorrelationId correlationId = new(Guid.NewGuid());
+            Guid estateId = await this.GetEstateId();
+
+            Result result = await this.MerchantUiService.MakeMerchantDeposit(correlationId, estateId, depositMerchantId, depositModel);
+
+            if (result.IsSuccess)
+            {
+                depositSuccessMessage = "Deposit recorded successfully";
+                StateHasChanged();
+                await this.WaitOnUIRefresh();
+                CloseDepositModal();
+            }
+            else
+            {
+                depositErrorMessage = "Failed to make deposit";
+            }
+
+            isDepositSaving = false;
+        }
 
         private void NavigateToNewMerchant() => NavigationManager.NavigateToNewMerchant();
     }
