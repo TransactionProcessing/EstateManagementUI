@@ -178,31 +178,31 @@
                                         Merchant Name
                                         @if (_sortColumn == "MerchantName") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-right cursor-pointer select-none" @onclick='() => SortBy("TotalCount")'>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("TotalCount")'>
                                         Total Count
                                         @if (_sortColumn == "TotalCount") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-right cursor-pointer select-none" @onclick='() => SortBy("TotalValue")'>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("TotalValue")'>
                                         Total Value
                                         @if (_sortColumn == "TotalValue") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-right cursor-pointer select-none" @onclick='() => SortBy("AverageValue")'>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("AverageValue")'>
                                         Average Value
                                         @if (_sortColumn == "AverageValue") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-right cursor-pointer select-none" @onclick='() => SortBy("AuthorisedCount")'>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("AuthorisedCount")'>
                                         Successful
                                         @if (_sortColumn == "AuthorisedCount") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-right cursor-pointer select-none" @onclick='() => SortBy("DeclinedCount")'>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("DeclinedCount")'>
                                         Failed
                                         @if (_sortColumn == "DeclinedCount") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-right cursor-pointer select-none" @onclick='() => SortBy("AuthorisedPercentage")'>
+                                    <th class="!text-right cursor-pointer select-none" @onclick='() => SortBy("AuthorisedPercentage")'>
                                         Success Rate
                                         @if (_sortColumn == "AuthorisedPercentage") { <span>@(_sortAscending ? "↑" : "↓")</span> }
                                     </th>
-                                    <th class="text-center">Actions</th>
+                                    <th class="!text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
