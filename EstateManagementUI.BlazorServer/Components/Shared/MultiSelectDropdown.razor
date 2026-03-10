@@ -40,7 +40,8 @@
                         <input type="checkbox" 
                                checked="@isSelected"
                                @onchange="@(() => ToggleItem(itemId))"
-                               class="form-checkbox h-4 w-4 text-admin-primary rounded border-gray-300 focus:ring-admin-primary" />
+                               class="h-4 w-4 rounded border-gray-300 cursor-pointer"
+                               style="accent-color: var(--color-admin-primary);" />
                         <span class="ml-2 text-sm text-gray-700">@GetItemText(item)</span>
                     </label>
                 }
