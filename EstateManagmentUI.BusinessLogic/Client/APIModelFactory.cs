@@ -122,6 +122,7 @@ public static class APIModelFactory {
                 ProductReportingId = transaction.ProductReportingId,
                 Type = transaction.Type,
                 Status = transaction.Status,
+                TransactionNumber = transaction.TransactionNumber,
                 Value = transaction.Value,
                 TotalFees = transaction.TotalFees,
                 SettlementReference = transaction.SettlementReference
@@ -499,6 +500,7 @@ public  static class FactoryExtensions{
                 DisplayText = contractProduct.DisplayText,
                 ProductName = contractProduct.ProductName,
                 ContractProductId = contractProduct.ProductId,
+                ContractProductReportingId = contractProduct.ProductReportingId,
                 NumberOfFees = contractProduct.TransactionFees.Count,
                 TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
             };

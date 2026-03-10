@@ -210,9 +210,6 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionId))" class="cursor-pointer hover:bg-gray-50">
-                                        Transaction ID @GetSortIcon(nameof(TransactionDetailModel.TransactionId))
-                                    </th>
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionDateTime))" class="cursor-pointer hover:bg-gray-50">
                                         Date & Time @GetSortIcon(nameof(TransactionDetailModel.TransactionDateTime))
                                     </th>
@@ -225,6 +222,9 @@
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.ProductName))" class="cursor-pointer hover:bg-gray-50">
                                         Product @GetSortIcon(nameof(TransactionDetailModel.ProductName))
                                     </th>
+                                    <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionNumber))" class="cursor-pointer hover:bg-gray-50">
+                                        Txn No @GetSortIcon(nameof(TransactionDetailModel.TransactionNumber))
+                                    </th>
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.TransactionType))" class="cursor-pointer hover:bg-gray-50">
                                         Type @GetSortIcon(nameof(TransactionDetailModel.TransactionType))
                                     </th>
@@ -232,26 +232,25 @@
                                         Status @GetSortIcon(nameof(TransactionDetailModel.TransactionStatus))
                                     </th>
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.GrossAmount))" class="!text-right cursor-pointer hover:bg-gray-50">
-                                        Gross Amount @GetSortIcon(nameof(TransactionDetailModel.GrossAmount))
+                                        Gross @GetSortIcon(nameof(TransactionDetailModel.GrossAmount))
                                     </th>
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.FeesCommission))" class="!text-right cursor-pointer hover:bg-gray-50">
                                         Fees @GetSortIcon(nameof(TransactionDetailModel.FeesCommission))
                                     </th>
                                     <th @onclick="() => SortBy(nameof(TransactionDetailModel.NetAmount))" class="!text-right cursor-pointer hover:bg-gray-50">
-                                        Net Amount @GetSortIcon(nameof(TransactionDetailModel.NetAmount))
+                                        Net @GetSortIcon(nameof(TransactionDetailModel.NetAmount))
                                     </th>
-                                    <th>Settlement Ref</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var item in pagedData)
                                 {
                                     <tr>
-                                        <td class="font-mono text-xs">@GetShortId(item.Id)</td>
                                         <td class="text-sm">@item.DateTime.ToString("yyyy-MM-dd HH:mm:ss")</td>
                                         <td class="font-medium">@item.Merchant</td>
                                         <td>@item.Operator</td>
                                         <td>@item.Product</td>
+                                        <td class="font-mono text-xs">@item.TransactionNumber</td>
                                         <td>
                                             <span class="badge @GetTypeBadgeClass(item.Type)">
                                                 @item.Type
@@ -265,7 +264,6 @@
                                         <td class="text-right">@item.Value.ToString("C")</td>
                                         <td class="text-right text-red-600">@item.TotalFees.ToString("C")</td>
                                         <td class="text-right font-medium">@item.NetAmount.ToString("C")</td>
-                                        <td class="text-sm text-gray-600">@(item.SettlementReference ?? "-")</td>
                                     </tr>
                                 }
                             </tbody>

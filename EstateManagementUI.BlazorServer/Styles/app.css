@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design-system CSS custom properties (available throughout the app) */
+:root {
+  --color-admin-primary: #007bff;
+  --color-admin-secondary: #6c757d;
+  --color-admin-success: #28a745;
+  --color-admin-info: #17a2b8;
+  --color-admin-warning: #ffc107;
+  --color-admin-danger: #dc3545;
+}
+
 /* AdminLTE-inspired components */
 @layer components {
   /* Navigation Menu Items */
@@ -90,11 +100,13 @@
   
   /* Cards */
   .card {
-    @apply bg-white rounded-lg shadow-admin overflow-hidden;
+    @apply bg-white rounded-lg shadow-admin;
+    /* NOTE: overflow-hidden is intentionally omitted so that absolutely-positioned
+       children (e.g. multi-select dropdown panels) can escape the card boundary. */
   }
   
   .card-header {
-    @apply px-6 py-4 border-b border-admin-border bg-white;
+    @apply px-6 py-4 border-b border-admin-border bg-white rounded-t-lg overflow-hidden;
   }
   
   .card-body {
@@ -102,7 +114,7 @@
   }
   
   .card-footer {
-    @apply px-6 py-4 border-t border-admin-border bg-gray-50;
+    @apply px-6 py-4 border-t border-admin-border bg-gray-50 rounded-b-lg overflow-hidden;
   }
   
   .card-title {

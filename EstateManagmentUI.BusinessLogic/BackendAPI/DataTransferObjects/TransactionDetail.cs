@@ -30,6 +30,8 @@ public class TransactionDetail
     public String Type { get; set; }
     [JsonProperty("status")]
     public String Status { get; set; }
+    [JsonProperty("transaction_number")]
+    public Int32 TransactionNumber { get; set; }
     [JsonProperty("value")]
     public Decimal Value { get; set; }
     [JsonProperty("total_fees")]
