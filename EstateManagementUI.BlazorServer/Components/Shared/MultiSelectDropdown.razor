@@ -1,5 +1,7 @@
 @typeparam TItem
 @using System.Linq.Expressions
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
 
 <div class="relative" @ref="dropdownRef">
     <!-- Dropdown Button -->
@@ -54,6 +56,7 @@
 @code {
     private ElementReference dropdownRef;
     private bool isOpen = false;
+    private DotNetObjectReference<MultiSelectDropdown<TItem>>? _dotNetRef;
 
     [Parameter]
     public List<TItem>? Items { get; set; }
@@ -84,6 +87,25 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _dotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("registerClickOutsideHandler", dropdownRef, _dotNetRef);
+        }
+    }
+
+    [JSInvokable]
+    public void CloseDropdown()
+    {
+        if (isOpen)
+        {
+            isOpen = false;
+            StateHasChanged();
+        }
+    }
+
     private void ToggleDropdown()
     {
         isOpen = !isOpen;
@@ -103,6 +125,20 @@
         await SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
 
-    // Close dropdown when clicking outside (would need JS interop for full implementation)
-    // For now, we'll keep it simple and let users close by clicking the button again
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("unregisterClickOutsideHandler", dropdownRef);
+        }
+        catch (JSDisconnectedException)
+        {
+            // Circuit has already been disconnected — safe to ignore
+        }
+        catch (TaskCanceledException)
+        {
+            // Component disposed during navigation — safe to ignore
+        }
+        _dotNetRef?.Dispose();
+    }
 }

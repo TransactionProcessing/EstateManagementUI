@@ -1,3 +1,22 @@
+// Click-outside handler registry for dropdowns
+window.registerClickOutsideHandler = function (element, dotNetRef) {
+    if (!element) return;
+    var handler = function (event) {
+        if (!element.contains(event.target)) {
+            dotNetRef.invokeMethodAsync('CloseDropdown');
+        }
+    };
+    document.addEventListener('click', handler);
+    element._clickOutsideHandler = handler;
+};
+
+window.unregisterClickOutsideHandler = function (element) {
+    if (element && element._clickOutsideHandler) {
+        document.removeEventListener('click', element._clickOutsideHandler);
+        element._clickOutsideHandler = null;
+    }
+};
+
 // File download utility
 function downloadFile(filename, base64Content) {
     const binaryString = window.atob(base64Content);
