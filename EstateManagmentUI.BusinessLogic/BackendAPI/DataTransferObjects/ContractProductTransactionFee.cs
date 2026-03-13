@@ -14,4 +14,6 @@ public class ContractProductTransactionFee
     public Int32 FeeType { get; set; }
     [JsonProperty("value")] 
     public Decimal Value { get; set; }
+    [JsonProperty("contract_product_transaction_fee_reporting_id")]
+    public Int32 ContractProductTransactionFeeReportingId { get; set; }
 }

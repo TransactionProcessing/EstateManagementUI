@@ -128,6 +128,7 @@ public static class ModelFactory {
     public static ContractProductModel ConvertFrom(BusinessLogic.Models.ContractModels.ContractProductModel model) {
         var result = new ContractProductModel() {
             ContractProductId = model.ContractProductId,
+            ContractProductReportingId = model.ContractProductReportingId,
             ProductName = model.ProductName,
             DisplayText = model.DisplayText,
             Value = model.Value,
