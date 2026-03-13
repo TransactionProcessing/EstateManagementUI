@@ -500,7 +500,7 @@ public  static class FactoryExtensions{
                 DisplayText = contractProduct.DisplayText,
                 ProductName = contractProduct.ProductName,
                 ContractProductId = contractProduct.ProductId,
-                ContractProductReportingId = contractProduct.ProductReportingId,
+                ContractProductReportingId = contractProduct.ContractProductReportingId,
                 NumberOfFees = contractProduct.TransactionFees.Count,
                 TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>()
             };

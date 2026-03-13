@@ -8,8 +8,8 @@ public class ContractProduct
     public Guid ContractId { get; set; }
     [JsonProperty("product_id")]
     public Guid ProductId { get; set; }
-    [JsonProperty("product_reporting_id")]
-    public Int32 ProductReportingId { get; set; }
+    [JsonProperty("contract_product_reporting_id")]
+    public Int32 ContractProductReportingId { get; set; }
     [JsonProperty("product_name")]
     public String ProductName { get; set; }
     [JsonProperty("display_text")]

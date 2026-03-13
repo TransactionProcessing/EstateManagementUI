@@ -50,7 +50,7 @@ public class ContractUIService : IContractUIService {
 
     public async Task<Result<List<ContractModels.ContractModel>>> GetContracts(CorrelationId correlationId,
                                                                                Guid estateId) {
-        var result = await this.Mediator.Send(new ContractQueries.GetContractsQuery(correlationId, estateId));
+        Result<List<BusinessLogic.Models.ContractModels.ContractModel>> result = await this.Mediator.Send(new ContractQueries.GetContractsQuery(correlationId, estateId));
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
         var contracts = ModelFactory.ConvertFrom(result.Data);
