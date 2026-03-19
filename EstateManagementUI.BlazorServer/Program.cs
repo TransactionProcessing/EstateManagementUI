@@ -1,10 +1,53 @@
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Sentry.Extensibility;
+using Shared.General;
+using Spectre.Console;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
+
+
+//builder.ConfigureAppConfiguration((context, configBuilder) =>
+//{
+//    var env = context.HostingEnvironment;
+
+//    configBuilder.SetBasePath(fi.Directory.FullName)
+//        .AddJsonFile("hosting.json", optional: true)
+//        .AddJsonFile($"hosting.{env.EnvironmentName}.json", optional: true)
+//        .AddJsonFile("/home/txnproc/config/appsettings.json", optional: true, reloadOnChange: true)
+//        .AddJsonFile($"/home/txnproc/config/appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+//        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+//        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+//        .AddEnvironmentVariables();
+
+//    // Build a snapshot of configuration so we can use it immediately (e.g. for Sentry)
+//    var builtConfig = configBuilder.Build();
+
+//    // Keep existing static usage (if you must), and initialise the ConfigurationReader now.
+//    //Startup.Configuration = builtConfig;
+//    //ConfigurationReader.Initialise(Startup.Configuration);
+
+// Configure Sentry on the webBuilder using the config snapshot.
+var sentrySection = ConfigurationReader.GetValueOrDefault("SentryConfiguration", "Dsn", "N/A");
+if (sentrySection != "N/A")
+{
+    // Replace the condition below if you intended to only enable Sentry in certain environments.
+    if (builder.Environment.IsDevelopment() == false)
+    {
+        builder.WebHost.UseSentry(o =>
+        {
+            o.Dsn = sentrySection;
+            o.SendDefaultPii = true;
+            o.MaxRequestBodySize = RequestSize.Always;
+            o.CaptureBlockingCalls = true;
+            o.Release = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
+        });
+    }
+}
 
 // Clear default claims mapping
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
