@@ -7,29 +7,9 @@ using Shared.General;
 using Spectre.Console;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using Shared.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
-
-
-//builder.ConfigureAppConfiguration((context, configBuilder) =>
-//{
-//    var env = context.HostingEnvironment;
-
-//    configBuilder.SetBasePath(fi.Directory.FullName)
-//        .AddJsonFile("hosting.json", optional: true)
-//        .AddJsonFile($"hosting.{env.EnvironmentName}.json", optional: true)
-//        .AddJsonFile("/home/txnproc/config/appsettings.json", optional: true, reloadOnChange: true)
-//        .AddJsonFile($"/home/txnproc/config/appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-//        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-//        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-//        .AddEnvironmentVariables();
-
-//    // Build a snapshot of configuration so we can use it immediately (e.g. for Sentry)
-//    var builtConfig = configBuilder.Build();
-
-//    // Keep existing static usage (if you must), and initialise the ConfigurationReader now.
-//    //Startup.Configuration = builtConfig;
-//    //ConfigurationReader.Initialise(Startup.Configuration);
 
 // Configure Sentry on the webBuilder using the config snapshot.
 var sentrySection = ConfigurationReader.GetValueOrDefault("SentryConfiguration", "Dsn", "N/A");
@@ -95,7 +75,6 @@ builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
 
 // Add Health Checks - read URLs from configuration
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
-var securityServiceUrl = builder.Configuration.GetValue<string>("AppSettings:SecurityService") ?? "http://localhost:5001";
 
 // Validate URLs and create Uri objects
 Uri ValidateAndCreateUri(string url, string configKey)
@@ -110,12 +89,9 @@ Uri ValidateAndCreateUri(string url, string configKey)
     }
 }
 
-var estateReportingUri = ValidateAndCreateUri(estateReportingApiUrl, "AppSettings:EstateReportingApi");
-var securityServiceUri = ValidateAndCreateUri(securityServiceUrl, "AppSettings:SecurityService");
+var estateReportingUri = ValidateAndCreateUri($"{estateReportingApiUrl}/health", "AppSettings:EstateReportingApi");
 
-builder.Services.AddHealthChecks()
-    .AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" })
-    .AddUrlGroup(securityServiceUri, name: "Security Service API", tags: new[] { "securityapi" });
+builder.Services.AddHealthChecks().AddSecurityService().AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" });
 
 builder.Host.UseWindowsService();
 
