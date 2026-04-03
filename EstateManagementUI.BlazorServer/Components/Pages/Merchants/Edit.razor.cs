@@ -415,13 +415,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
         private IReadOnlyList<OpeningHoursRow> GetOpeningHoursRows() =>
         [
-            new("Sunday", merchantOpeningHoursModel.Sunday),
             new("Monday", merchantOpeningHoursModel.Monday),
             new("Tuesday", merchantOpeningHoursModel.Tuesday),
             new("Wednesday", merchantOpeningHoursModel.Wednesday),
             new("Thursday", merchantOpeningHoursModel.Thursday),
             new("Friday", merchantOpeningHoursModel.Friday),
-            new("Saturday", merchantOpeningHoursModel.Saturday)
+            new("Saturday", merchantOpeningHoursModel.Saturday),
+            new("Sunday", merchantOpeningHoursModel.Sunday)
         ];
 
         private Boolean TryNormaliseAndValidateOpeningHours(out String validationError) {
@@ -454,13 +454,17 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 return value;
             }
 
-            String digitsOnly = new(value.Where(Char.IsDigit).ToArray());
+            String trimmedValue = value.Trim();
 
-            if (digitsOnly.Length == 3) {
-                digitsOnly = digitsOnly.PadLeft(4, '0');
+            if (DateTime.TryParseExact(trimmedValue,
+                                       ["HHmm", "Hmm", "HH:mm", "H:mm"],
+                                       CultureInfo.InvariantCulture,
+                                       DateTimeStyles.None,
+                                       out DateTime parsed) == false) {
+                return trimmedValue;
             }
 
-            return digitsOnly;
+            return parsed.ToString("HHmm", CultureInfo.InvariantCulture);
         }
 
         private static Boolean TryParseOpeningHoursValue(String? value, out TimeSpan time) {
