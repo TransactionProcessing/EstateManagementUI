@@ -18,6 +18,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
     public partial class Edit {
         [Parameter] public Guid MerchantId { get; set; }
 
+        private static readonly String[] OpeningHoursFormats = ["HHmm", "Hmm", "HH:mm", "H:mm"];
+
         private MerchantModels.MerchantModel? merchant;
         private bool isLoading = true;
         private bool isSaving = false;
@@ -426,21 +428,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
         private Boolean TryNormaliseAndValidateOpeningHours(out String validationError) {
             foreach (OpeningHoursRow row in this.GetOpeningHoursRows()) {
-                row.Hours.Opening = NormaliseOpeningHoursValue(row.Hours.Opening);
-                row.Hours.Closing = NormaliseOpeningHoursValue(row.Hours.Closing);
-
-                if (TryParseOpeningHoursValue(row.Hours.Opening, out TimeSpan openingTime) == false) {
-                    validationError = $"{row.DayName} opening time must be entered in HHmm format.";
-                    return false;
-                }
-
-                if (TryParseOpeningHoursValue(row.Hours.Closing, out TimeSpan closingTime) == false) {
-                    validationError = $"{row.DayName} closing time must be entered in HHmm format.";
-                    return false;
-                }
-
-                if (closingTime <= openingTime) {
-                    validationError = $"{row.DayName} closing time must be later than opening time.";
+                if (TryValidateOpeningHoursRow(row, out validationError) == false) {
                     return false;
                 }
             }
@@ -457,7 +445,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
             String trimmedValue = value.Trim();
 
             if (DateTime.TryParseExact(trimmedValue,
-                                       ["HHmm", "Hmm", "HH:mm", "H:mm"],
+                                       OpeningHoursFormats,
                                        CultureInfo.InvariantCulture,
                                        DateTimeStyles.None,
                                        out DateTime parsed) == false) {
@@ -474,8 +462,35 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 return false;
             }
 
-            return DateTime.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed)
-                   && (time = parsed.TimeOfDay) >= TimeSpan.Zero;
+            if (DateTime.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed) == false) {
+                return false;
+            }
+
+            time = parsed.TimeOfDay;
+            return true;
+        }
+
+        private static Boolean TryValidateOpeningHoursRow(OpeningHoursRow row, out String validationError) {
+            row.Hours.Opening = NormaliseOpeningHoursValue(row.Hours.Opening);
+            row.Hours.Closing = NormaliseOpeningHoursValue(row.Hours.Closing);
+
+            if (TryParseOpeningHoursValue(row.Hours.Opening, out TimeSpan openingTime) == false) {
+                validationError = $"{row.DayName} opening time must be entered in HHmm format.";
+                return false;
+            }
+
+            if (TryParseOpeningHoursValue(row.Hours.Closing, out TimeSpan closingTime) == false) {
+                validationError = $"{row.DayName} closing time must be entered in HHmm format.";
+                return false;
+            }
+
+            if (closingTime <= openingTime) {
+                validationError = $"{row.DayName} closing time must be later than opening time.";
+                return false;
+            }
+
+            validationError = String.Empty;
+            return true;
         }
 
         // inside partial class Edit (add the following fields and methods)
