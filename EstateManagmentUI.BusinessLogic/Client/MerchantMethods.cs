@@ -20,6 +20,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<List<MerchantModels.MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantModels.MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchant(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> UpdateMerchantOpeningHours(MerchantCommands.UpdateMerchantOpeningHoursCommand request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request, CancellationToken cancellationToken);
@@ -300,8 +301,33 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success();
         }
 
+        public async Task<Result> UpdateMerchantOpeningHours(MerchantCommands.UpdateMerchantOpeningHoursCommand request,
+                                                             CancellationToken cancellationToken)
+        {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            MerchantOpeningRequest apiRequest = new()
+            {
+                Sunday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Sunday.Opening, Closing = request.OpeningHours.Sunday.Closing },
+                Monday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Monday.Opening, Closing = request.OpeningHours.Monday.Closing },
+                Tuesday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Tuesday.Opening, Closing = request.OpeningHours.Tuesday.Closing },
+                Wednesday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Wednesday.Opening, Closing = request.OpeningHours.Wednesday.Closing },
+                Thursday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Thursday.Opening, Closing = request.OpeningHours.Thursday.Closing },
+                Friday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Friday.Opening, Closing = request.OpeningHours.Friday.Closing },
+                Saturday = new TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHours { Opening = request.OpeningHours.Saturday.Opening, Closing = request.OpeningHours.Saturday.Closing }
+            };
+
+            Result apiResult = await this.TransactionProcessorClient.UpdateMerchantOpeningHours(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
         public async Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request,
-                                                 CancellationToken cancellationToken)
+                                                  CancellationToken cancellationToken)
         {
             Result<String> token = await this.GetToken(cancellationToken);
             if (token.IsFailed)
@@ -365,4 +391,3 @@ namespace EstateManagementUI.BusinessLogic.Client
         }
     }
 }
-

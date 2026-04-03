@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Shared.Results;
 using SimpleResults;
+using System.Globalization;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using static FastExpressionCompiler.ExpressionCompiler;
 using Result = SimpleResults.Result;
 
@@ -22,6 +24,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
         // Unified model for editing
         private MerchantModels.MerchantEditModel merchantEditModel = new();
+        private MerchantModels.MerchantOpeningHoursModel merchantOpeningHoursModel = new();
 
         // Operators
         private List<OperatorModels.OperatorDropDownModel>? availableOperators;
@@ -92,6 +95,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                     ContactName = merchant.ContactName,
                     ContactEmailAddress = merchant.ContactEmailAddress,
                     ContactPhoneNumber = merchant.ContactPhoneNumber,
+                };
+                merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel
+                {
+                    Sunday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Sunday.Opening, Closing = merchant.OpeningHours.Sunday.Closing },
+                    Monday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Monday.Opening, Closing = merchant.OpeningHours.Monday.Closing },
+                    Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Tuesday.Opening, Closing = merchant.OpeningHours.Tuesday.Closing },
+                    Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Wednesday.Opening, Closing = merchant.OpeningHours.Wednesday.Closing },
+                    Thursday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Thursday.Opening, Closing = merchant.OpeningHours.Thursday.Closing },
+                    Friday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Friday.Opening, Closing = merchant.OpeningHours.Friday.Closing },
+                    Saturday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Saturday.Opening, Closing = merchant.OpeningHours.Saturday.Closing }
                 };
 
                 var operatorsResultTask = this.MerchantUiService.GetMerchantOperators(correlationId, estateId, MerchantId);
@@ -181,6 +194,45 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
             }
 
             isSaving = false;
+        }
+
+        private async Task SaveOpeningHours() {
+            isSaving = true;
+            ClearMessages();
+
+            if (TryNormaliseAndValidateOpeningHours(out String validationError) == false) {
+                errorMessage = validationError;
+                isSaving = false;
+                StateHasChanged();
+                return;
+            }
+
+            var correlationId = new CorrelationId(Guid.NewGuid());
+            var estateId = await this.GetEstateId();
+
+            var result = await this.MerchantUiService.UpdateMerchantOpeningHours(correlationId, estateId, this.MerchantId, this.merchantOpeningHoursModel);
+
+            if (result.IsSuccess) {
+                successMessage = "Merchant opening hours updated successfully";
+                if (merchant != null) {
+                    merchant.OpeningHours = new MerchantModels.MerchantOpeningHoursModel
+                    {
+                        Sunday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Sunday.Opening, Closing = merchantOpeningHoursModel.Sunday.Closing },
+                        Monday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Monday.Opening, Closing = merchantOpeningHoursModel.Monday.Closing },
+                        Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Tuesday.Opening, Closing = merchantOpeningHoursModel.Tuesday.Closing },
+                        Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Wednesday.Opening, Closing = merchantOpeningHoursModel.Wednesday.Closing },
+                        Thursday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Thursday.Opening, Closing = merchantOpeningHoursModel.Thursday.Closing },
+                        Friday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Friday.Opening, Closing = merchantOpeningHoursModel.Friday.Closing },
+                        Saturday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Saturday.Opening, Closing = merchantOpeningHoursModel.Saturday.Closing }
+                    };
+                }
+            }
+            else {
+                errorMessage = "Failed to update merchant opening hours";
+            }
+
+            isSaving = false;
+            StateHasChanged();
         }
 
         private async Task OnOperatorSelected() {
@@ -361,6 +413,67 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
             }
         }
 
+        private IReadOnlyList<OpeningHoursRow> GetOpeningHoursRows() =>
+        [
+            new("Sunday", merchantOpeningHoursModel.Sunday),
+            new("Monday", merchantOpeningHoursModel.Monday),
+            new("Tuesday", merchantOpeningHoursModel.Tuesday),
+            new("Wednesday", merchantOpeningHoursModel.Wednesday),
+            new("Thursday", merchantOpeningHoursModel.Thursday),
+            new("Friday", merchantOpeningHoursModel.Friday),
+            new("Saturday", merchantOpeningHoursModel.Saturday)
+        ];
+
+        private Boolean TryNormaliseAndValidateOpeningHours(out String validationError) {
+            foreach (OpeningHoursRow row in this.GetOpeningHoursRows()) {
+                row.Hours.Opening = NormaliseOpeningHoursValue(row.Hours.Opening);
+                row.Hours.Closing = NormaliseOpeningHoursValue(row.Hours.Closing);
+
+                if (TryParseOpeningHoursValue(row.Hours.Opening, out TimeSpan openingTime) == false) {
+                    validationError = $"{row.DayName} opening time must be entered in HHmm format.";
+                    return false;
+                }
+
+                if (TryParseOpeningHoursValue(row.Hours.Closing, out TimeSpan closingTime) == false) {
+                    validationError = $"{row.DayName} closing time must be entered in HHmm format.";
+                    return false;
+                }
+
+                if (closingTime <= openingTime) {
+                    validationError = $"{row.DayName} closing time must be later than opening time.";
+                    return false;
+                }
+            }
+
+            validationError = String.Empty;
+            return true;
+        }
+
+        private static String? NormaliseOpeningHoursValue(String? value) {
+            if (String.IsNullOrWhiteSpace(value)) {
+                return value;
+            }
+
+            String digitsOnly = new(value.Where(Char.IsDigit).ToArray());
+
+            if (digitsOnly.Length == 3) {
+                digitsOnly = digitsOnly.PadLeft(4, '0');
+            }
+
+            return digitsOnly;
+        }
+
+        private static Boolean TryParseOpeningHoursValue(String? value, out TimeSpan time) {
+            time = default;
+
+            if (String.IsNullOrWhiteSpace(value)) {
+                return false;
+            }
+
+            return DateTime.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed)
+                   && (time = parsed.TimeOfDay) >= TimeSpan.Zero;
+        }
+
         // inside partial class Edit (add the following fields and methods)
 
         // Swap device UI state
@@ -421,4 +534,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
         }
 
         private void BackToList() => NavigationManager.NavigateToMerchantList();
+
+        private sealed record OpeningHoursRow(String DayName, MerchantModels.DayOpeningHoursModel Hours);
     }

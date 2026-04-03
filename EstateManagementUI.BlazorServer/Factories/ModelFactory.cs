@@ -76,6 +76,16 @@ public static class ModelFactory {
             Balance = model.Balance,
             AvailableBalance = model.AvailableBalance,
             SettlementSchedule = model.SettlementSchedule,
+            OpeningHours = new MerchantModels.MerchantOpeningHoursModel
+            {
+                Sunday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Sunday.Opening, Closing = model.OpeningHours.Sunday.Closing },
+                Monday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Monday.Opening, Closing = model.OpeningHours.Monday.Closing },
+                Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Tuesday.Opening, Closing = model.OpeningHours.Tuesday.Closing },
+                Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Wednesday.Opening, Closing = model.OpeningHours.Wednesday.Closing },
+                Thursday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Thursday.Opening, Closing = model.OpeningHours.Thursday.Closing },
+                Friday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Friday.Opening, Closing = model.OpeningHours.Friday.Closing },
+                Saturday = new MerchantModels.DayOpeningHoursModel { Opening = model.OpeningHours.Saturday.Opening, Closing = model.OpeningHours.Saturday.Closing }
+            },
             AddressLine1 = model.AddressLine1,
             AddressLine2 = model.AddressLine2,
             Town = model.Town,

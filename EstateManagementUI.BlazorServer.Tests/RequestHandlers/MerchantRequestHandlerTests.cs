@@ -466,6 +466,50 @@ public class MerchantRequestHandlerTests
 
     #endregion
 
+    #region UpdateMerchantOpeningHoursCommand
+
+    [Fact]
+    public async Task Handle_UpdateMerchantOpeningHoursCommand_ReturnsSuccess_WhenApiClientSucceeds()
+    {
+        var command = new MerchantCommands.UpdateMerchantOpeningHoursCommand(
+            CorrelationIdHelper.New(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            new MerchantModels.MerchantOpeningHoursModel
+            {
+                Sunday = new() { Opening = "0800", Closing = "1800" },
+                Monday = new() { Opening = "0800", Closing = "1700" }
+            });
+
+        _mockApiClient.Setup(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success());
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsSuccess.ShouldBeTrue();
+        _mockApiClient.Verify(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_UpdateMerchantOpeningHoursCommand_ReturnsFailure_WhenApiClientFails()
+    {
+        var command = new MerchantCommands.UpdateMerchantOpeningHoursCommand(
+            CorrelationIdHelper.New(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            new MerchantModels.MerchantOpeningHoursModel());
+
+        _mockApiClient.Setup(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure("api error"));
+
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        result.IsFailed.ShouldBeTrue();
+        _mockApiClient.Verify(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    #endregion
+
     #region RemoveContractFromMerchantCommand
 
     [Fact]

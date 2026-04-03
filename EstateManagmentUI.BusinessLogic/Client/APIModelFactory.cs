@@ -4,6 +4,9 @@ using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using ContractProductTransactionFee = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.ContractProductTransactionFee;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EstateManagementUI.BusinessLogic.Client;
 
@@ -365,7 +368,53 @@ public  static class FactoryExtensions{
             PostalCode = apiResultData.PostCode,
             SettlementSchedule = ((SettlementSchedule)apiResultData.SettlementSchedule).ToString(),
             Town = apiResultData.Town,
+            OpeningHours = apiResultData.OpeningHours.ToMerchantOpeningHours()
         };
+        return model;
+    }
+
+    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHoursResponse>? openingHours) {
+        MerchantModels.MerchantOpeningHoursModel model = new();
+
+        if (openingHours == null)
+        {
+            return model;
+        }
+
+        foreach (KeyValuePair<DayOfWeek, TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHoursResponse> entry in openingHours)
+        {
+            MerchantModels.DayOpeningHoursModel dayModel = new()
+            {
+                Opening = entry.Value.Opening,
+                Closing = entry.Value.Closing
+            };
+
+            switch (entry.Key)
+            {
+                case DayOfWeek.Sunday:
+                    model.Sunday = dayModel;
+                    break;
+                case DayOfWeek.Monday:
+                    model.Monday = dayModel;
+                    break;
+                case DayOfWeek.Tuesday:
+                    model.Tuesday = dayModel;
+                    break;
+                case DayOfWeek.Wednesday:
+                    model.Wednesday = dayModel;
+                    break;
+                case DayOfWeek.Thursday:
+                    model.Thursday = dayModel;
+                    break;
+                case DayOfWeek.Friday:
+                    model.Friday = dayModel;
+                    break;
+                case DayOfWeek.Saturday:
+                    model.Saturday = dayModel;
+                    break;
+            }
+        }
+
         return model;
     }
 

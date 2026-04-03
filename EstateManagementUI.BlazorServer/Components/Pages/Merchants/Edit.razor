@@ -66,6 +66,9 @@
                 <button type="button" @onclick='() => SetActiveTab("contact")' class="@GetTabClass("contact")">
                     Contact Details
                 </button>
+                <button type="button" @onclick='() => SetActiveTab("openingHours")' class="@GetTabClass("openingHours")">
+                    Opening Hours
+                </button>
                 <button type="button" @onclick='() => SetActiveTab("operators")' class="@GetTabClass("operators")">
                     Assigned Operators
                 </button>
@@ -175,6 +178,32 @@
                     </label>
                     <InputText @bind-Value="merchantEditModel.ContactPhoneNumber" type="tel" class="input w-full" name="PhoneNumber"/>
                     <ValidationMessage For="@(() => merchantEditModel.ContactPhoneNumber)" class="text-red-600 text-sm mt-1"/>
+                </div>
+            </div>
+        }
+        else if (activeTab == "openingHours") {
+            <div class="space-y-4">
+                <div class="rounded-lg bg-blue-50 border border-blue-100 p-4">
+                    <p class="text-sm text-blue-800">Enter merchant opening and closing times in HHmm format, for example 0800 and 1700.</p>
+                </div>
+
+                <div class="space-y-3">
+                    @foreach (var day in GetOpeningHoursRows()) {
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end rounded-lg border border-gray-200 p-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">@day.DayName</label>
+                                <p class="text-sm text-gray-500">Opening and closing times</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Opening</label>
+                                <InputText id="@($"{day.DayName.ToLowerInvariant()}Opening")" @bind-Value="day.Hours.Opening" class="input w-full" maxlength="4" placeholder="0800" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Closing</label>
+                                <InputText id="@($"{day.DayName.ToLowerInvariant()}Closing")" @bind-Value="day.Hours.Closing" class="input w-full" maxlength="4" placeholder="1700" />
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         }
@@ -388,6 +417,21 @@
                         }
                         else {
                             <span>Save</span>
+                        }
+                    </button>
+                </div>
+            </div>
+        }
+        else if (activeTab == "openingHours") {
+            <div class="px-6 pb-6 pt-0 border-t">
+                <div class="flex justify-end pt-4">
+                    <button id="saveOpeningHoursButton" type="button" class="btn btn-primary" disabled="@isSaving" @onclick="SaveOpeningHours">
+                        @if (isSaving) {
+                            <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+                            <span>Saving...</span>
+                        }
+                        else {
+                            <span>Save Opening Hours</span>
                         }
                     </button>
                 </div>

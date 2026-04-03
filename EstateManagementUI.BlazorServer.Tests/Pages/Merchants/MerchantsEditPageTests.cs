@@ -122,6 +122,24 @@ public class MerchantsEditPageTests : BaseTest
     }
 
     [Fact]
+    public void MerchantsEdit_TabSwitch_ToOpeningHours_UpdatesActiveTab()
+    {
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? openingHoursButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Opening Hours"));
+        openingHoursButton?.Click();
+
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Save Opening Hours"), timeout: TimeSpan.FromSeconds(5));
+        cut.Markup.ShouldContain("Sunday");
+        cut.Markup.ShouldContain("Saturday");
+    }
+
+    [Fact]
     public void MerchantsEdit_TabSwitch_ToOperators_UpdatesActiveTab()
     {
         // Arrange
@@ -868,6 +886,52 @@ public class MerchantsEditPageTests : BaseTest
         // Assert - Use longer timeout to account for async operations
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to update merchant"), timeout: TimeSpan.FromSeconds(10));
         this.MerchantUIService.Verify(m => m.UpdateMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantEditModel>()), Times.Once);
+    }
+
+    [Fact]
+    public void MerchantsEdit_SaveOpeningHours_Success_ShowsSuccessMessageAndCallsService()
+    {
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+
+        this.MerchantUIService.Setup(m => m.UpdateMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId, It.IsAny<MerchantModels.MerchantOpeningHoursModel>()))
+            .ReturnsAsync(Result.Success);
+
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        IElement? openingHoursButton = cut.FindAll("button").FirstOrDefault(b => b.TextContent.Contains("Opening Hours"));
+        openingHoursButton?.Click();
+
+        cut.Find("#sundayOpening").Change("8:00");
+        cut.Find("#sundayClosing").Change("1800");
+        cut.Find("#mondayOpening").Change("0800");
+        cut.Find("#mondayClosing").Change("1700");
+        cut.Find("#tuesdayOpening").Change("0800");
+        cut.Find("#tuesdayClosing").Change("1700");
+        cut.Find("#wednesdayOpening").Change("0800");
+        cut.Find("#wednesdayClosing").Change("1700");
+        cut.Find("#thursdayOpening").Change("0800");
+        cut.Find("#thursdayClosing").Change("1700");
+        cut.Find("#fridayOpening").Change("0800");
+        cut.Find("#fridayClosing").Change("1700");
+        cut.Find("#saturdayOpening").Change("0900");
+        cut.Find("#saturdayClosing").Change("1600");
+
+        cut.Find("#saveOpeningHoursButton").Click();
+
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant opening hours updated successfully"), timeout: TimeSpan.FromSeconds(10));
+        this.MerchantUIService.Verify(m => m.UpdateMerchantOpeningHours(
+            It.IsAny<CorrelationId>(),
+            It.IsAny<Guid>(),
+            merchantId,
+            It.Is<MerchantModels.MerchantOpeningHoursModel>(hours =>
+                hours.Sunday.Opening == "0800" &&
+                hours.Sunday.Closing == "1800" &&
+                hours.Saturday.Opening == "0900" &&
+                hours.Saturday.Closing == "1600")),
+            Times.Once);
     }
 
     [Fact]

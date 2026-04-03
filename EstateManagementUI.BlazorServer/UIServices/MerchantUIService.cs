@@ -47,6 +47,11 @@ public interface IMerchantUIService {
                                 Guid merchantId,
                                 MerchantModels.MerchantEditModel editMerchantModel);
 
+    Task<Result> UpdateMerchantOpeningHours(CorrelationId correlationId,
+                                            Guid estateId,
+                                            Guid merchantId,
+                                            MerchantModels.MerchantOpeningHoursModel openingHoursModel);
+
     Task<Result> AddOperatorToMerchant(CorrelationId correlationId,
                                        Guid estateId,
                                        Guid merchantId,
@@ -182,6 +187,27 @@ public class MerchantUIService : IMerchantUIService {
 
         MerchantCommands.UpdateMerchantCommand command = new(correlationId, estateId, merchantId, editMerchantModel.MerchantName, editMerchantModel.SettlementSchedule, 
             address,contact);
+        var result = await this.Mediator.Send(command);
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        return Result.Success();
+    }
+
+    public async Task<Result> UpdateMerchantOpeningHours(CorrelationId correlationId,
+                                                         Guid estateId,
+                                                         Guid merchantId,
+                                                         MerchantModels.MerchantOpeningHoursModel openingHoursModel) {
+        MerchantCommands.UpdateMerchantOpeningHoursCommand command = new(correlationId, estateId, merchantId, new BusinessLogic.Models.MerchantModels.MerchantOpeningHoursModel
+        {
+            Sunday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Sunday.Opening, Closing = openingHoursModel.Sunday.Closing },
+            Monday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Monday.Opening, Closing = openingHoursModel.Monday.Closing },
+            Tuesday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Tuesday.Opening, Closing = openingHoursModel.Tuesday.Closing },
+            Wednesday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Wednesday.Opening, Closing = openingHoursModel.Wednesday.Closing },
+            Thursday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Thursday.Opening, Closing = openingHoursModel.Thursday.Closing },
+            Friday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Friday.Opening, Closing = openingHoursModel.Friday.Closing },
+            Saturday = new BusinessLogic.Models.MerchantModels.DayOpeningHoursModel { Opening = openingHoursModel.Saturday.Opening, Closing = openingHoursModel.Saturday.Closing }
+        });
+
         var result = await this.Mediator.Send(command);
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
