@@ -373,7 +373,7 @@ public  static class FactoryExtensions{
         return model;
     }
 
-    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHoursResponse>? openingHours) {
+    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, OpeningHoursResponse>? openingHours) {
         MerchantModels.MerchantOpeningHoursModel model = new();
 
         if (openingHours == null)
@@ -381,7 +381,7 @@ public  static class FactoryExtensions{
             return model;
         }
 
-        foreach (KeyValuePair<DayOfWeek, TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHoursResponse> entry in openingHours)
+        foreach (KeyValuePair<DayOfWeek, OpeningHoursResponse> entry in openingHours)
         {
             MerchantModels.DayOpeningHoursModel dayModel = new()
             {

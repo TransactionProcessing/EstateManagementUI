@@ -1,5 +1,6 @@
 using MediatR;
 using SimpleResults;
+using EstateManagementUI.BusinessLogic.Models;
 
 namespace EstateManagementUI.BusinessLogic.Requests;
 
