@@ -389,33 +389,40 @@ public  static class FactoryExtensions{
                 Closing = entry.Value.Closing
             };
 
-            switch (entry.Key)
-            {
-                case DayOfWeek.Sunday:
-                    model.Sunday = dayModel;
-                    break;
-                case DayOfWeek.Monday:
-                    model.Monday = dayModel;
-                    break;
-                case DayOfWeek.Tuesday:
-                    model.Tuesday = dayModel;
-                    break;
-                case DayOfWeek.Wednesday:
-                    model.Wednesday = dayModel;
-                    break;
-                case DayOfWeek.Thursday:
-                    model.Thursday = dayModel;
-                    break;
-                case DayOfWeek.Friday:
-                    model.Friday = dayModel;
-                    break;
-                case DayOfWeek.Saturday:
-                    model.Saturday = dayModel;
-                    break;
-            }
+            AssignOpeningHours(model, entry.Key, dayModel);
         }
 
         return model;
+    }
+
+    private static void AssignOpeningHours(MerchantModels.MerchantOpeningHoursModel model, DayOfWeek dayOfWeek, MerchantModels.DayOpeningHoursModel dayModel)
+    {
+        switch (dayOfWeek)
+        {
+            case DayOfWeek.Sunday:
+                model.Sunday = dayModel;
+                break;
+            case DayOfWeek.Monday:
+                model.Monday = dayModel;
+                break;
+            case DayOfWeek.Tuesday:
+                model.Tuesday = dayModel;
+                break;
+            case DayOfWeek.Wednesday:
+                model.Wednesday = dayModel;
+                break;
+            case DayOfWeek.Thursday:
+                model.Thursday = dayModel;
+                break;
+            case DayOfWeek.Friday:
+                model.Friday = dayModel;
+                break;
+            case DayOfWeek.Saturday:
+                model.Saturday = dayModel;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(dayOfWeek), dayOfWeek, "Unsupported day of week.");
+        }
     }
 
     public static List<MerchantModels.MerchantOperatorModel> ToMerchantOperators(this List<MerchantOperator> apiResultData)
