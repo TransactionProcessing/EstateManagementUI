@@ -1,9 +1,10 @@
-﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using ContractProductTransactionFee = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.ContractProductTransactionFee;
+using MerchantOpeningHoursResponse = TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHoursResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -373,7 +374,7 @@ public  static class FactoryExtensions{
         return model;
     }
 
-    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, OpeningHoursResponse>? openingHours) {
+    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, MerchantOpeningHoursResponse>? openingHours) {
         MerchantModels.MerchantOpeningHoursModel model = new();
 
         if (openingHours == null)
@@ -381,7 +382,7 @@ public  static class FactoryExtensions{
             return model;
         }
 
-        foreach (KeyValuePair<DayOfWeek, OpeningHoursResponse> entry in openingHours)
+        foreach (KeyValuePair<DayOfWeek, MerchantOpeningHoursResponse> entry in openingHours)
         {
             MerchantModels.DayOpeningHoursModel dayModel = new()
             {
