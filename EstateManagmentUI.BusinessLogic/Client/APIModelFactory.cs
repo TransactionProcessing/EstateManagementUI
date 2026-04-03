@@ -4,7 +4,6 @@ using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using ContractProductTransactionFee = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.ContractProductTransactionFee;
-using MerchantOpeningHoursResponse = TransactionProcessor.DataTransferObjects.Requests.Merchant.OpeningHoursResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -374,7 +373,7 @@ public  static class FactoryExtensions{
         return model;
     }
 
-    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, MerchantOpeningHoursResponse>? openingHours) {
+    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours<TOpeningHours>(this Dictionary<DayOfWeek, TOpeningHours>? openingHours) where TOpeningHours : class {
         MerchantModels.MerchantOpeningHoursModel model = new();
 
         if (openingHours == null)
@@ -382,18 +381,25 @@ public  static class FactoryExtensions{
             return model;
         }
 
-        foreach (KeyValuePair<DayOfWeek, MerchantOpeningHoursResponse> entry in openingHours)
+        foreach (KeyValuePair<DayOfWeek, TOpeningHours> entry in openingHours)
         {
-            MerchantModels.DayOpeningHoursModel dayModel = new()
-            {
-                Opening = entry.Value.Opening,
-                Closing = entry.Value.Closing
-            };
+            MerchantModels.DayOpeningHoursModel dayModel = ToDayOpeningHoursModel(entry.Value);
 
             AssignOpeningHours(model, entry.Key, dayModel);
         }
 
         return model;
+    }
+
+    private static MerchantModels.DayOpeningHoursModel ToDayOpeningHoursModel<TOpeningHours>(TOpeningHours openingHours) where TOpeningHours : class
+    {
+        Type openingHoursType = openingHours.GetType();
+
+        return new MerchantModels.DayOpeningHoursModel
+        {
+            Opening = openingHoursType.GetProperty(nameof(MerchantModels.DayOpeningHoursModel.Opening))?.GetValue(openingHours) as string,
+            Closing = openingHoursType.GetProperty(nameof(MerchantModels.DayOpeningHoursModel.Closing))?.GetValue(openingHours) as string
+        };
     }
 
     private static void AssignOpeningHours(MerchantModels.MerchantOpeningHoursModel model, DayOfWeek dayOfWeek, MerchantModels.DayOpeningHoursModel dayModel)
