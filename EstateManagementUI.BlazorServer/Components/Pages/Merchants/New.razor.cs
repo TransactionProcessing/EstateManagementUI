@@ -4,11 +4,14 @@ using System.ComponentModel.DataAnnotations;
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using SimpleResults;
+using System.Globalization;
+using System.Linq;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {
     public partial class New
     {
+        private static readonly String[] OpeningHoursFormats = ["HHmm", "Hmm", "HH:mm", "H:mm"];
         private readonly MerchantModels.CreateMerchantModel model = new();
         private bool isSaving = false;
 
@@ -29,6 +32,15 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private async Task HandleSubmit() {
             isSaving = true;
             errorMessage = null;
+            successMessage = null;
+
+            Boolean hasOpeningHoursValues = HasOpeningHoursValues();
+            if (hasOpeningHoursValues && TryNormaliseAndValidateOpeningHours(out String validationError) == false) {
+                errorMessage = validationError;
+                isSaving = false;
+                StateHasChanged();
+                return;
+            }
 
             var correlationId = new CorrelationId(Guid.NewGuid());
             var estateId = await this.GetEstateId();
@@ -39,6 +51,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             var result = await this.MerchantUiService.CreateMerchant(correlationId, estateId, merchantId, this.model);
 
             if (result.IsSuccess) {
+                if (hasOpeningHoursValues) {
+                    Result openingHoursResult = await this.MerchantUiService.UpdateMerchantOpeningHours(correlationId, estateId, merchantId, this.model.OpeningHours);
+                    if (openingHoursResult.IsFailed) {
+                        this.errorMessage = "Merchant created but opening hours could not be saved";
+                        isSaving = false;
+                        StateHasChanged();
+                        return;
+                    }
+                }
+
                 successMessage = "Merchant created successfully";
 
                 StateHasChanged();
@@ -57,5 +79,89 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         }
 
         private void Cancel() => NavigationManager.NavigateToMerchantList();
+
+        private IReadOnlyList<OpeningHoursRow> GetOpeningHoursRows() =>
+        [
+            new("Monday", model.OpeningHours.Monday),
+            new("Tuesday", model.OpeningHours.Tuesday),
+            new("Wednesday", model.OpeningHours.Wednesday),
+            new("Thursday", model.OpeningHours.Thursday),
+            new("Friday", model.OpeningHours.Friday),
+            new("Saturday", model.OpeningHours.Saturday),
+            new("Sunday", model.OpeningHours.Sunday)
+        ];
+
+        private Boolean HasOpeningHoursValues() =>
+            this.GetOpeningHoursRows().Any(row => String.IsNullOrWhiteSpace(row.Hours.Opening) == false ||
+                                                 String.IsNullOrWhiteSpace(row.Hours.Closing) == false);
+
+        private Boolean TryNormaliseAndValidateOpeningHours(out String validationError) {
+            foreach (OpeningHoursRow row in this.GetOpeningHoursRows()) {
+                if (TryValidateOpeningHoursRow(row, out validationError) == false) {
+                    return false;
+                }
+            }
+
+            validationError = String.Empty;
+            return true;
+        }
+
+        private static String? NormaliseOpeningHoursValue(String? value) {
+            if (String.IsNullOrWhiteSpace(value)) {
+                return value;
+            }
+
+            String trimmedValue = value.Trim();
+
+            if (DateTime.TryParseExact(trimmedValue,
+                                       OpeningHoursFormats,
+                                       CultureInfo.InvariantCulture,
+                                       DateTimeStyles.None,
+                                       out DateTime parsed) == false) {
+                return trimmedValue;
+            }
+
+            return parsed.ToString("HHmm", CultureInfo.InvariantCulture);
+        }
+
+        private static Boolean TryParseOpeningHoursValue(String? value, out TimeSpan time) {
+            time = default;
+
+            if (String.IsNullOrWhiteSpace(value)) {
+                return false;
+            }
+
+            if (DateTime.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed) == false) {
+                return false;
+            }
+
+            time = parsed.TimeOfDay;
+            return true;
+        }
+
+        private static Boolean TryValidateOpeningHoursRow(OpeningHoursRow row, out String validationError) {
+            row.Hours.Opening = NormaliseOpeningHoursValue(row.Hours.Opening);
+            row.Hours.Closing = NormaliseOpeningHoursValue(row.Hours.Closing);
+
+            if (TryParseOpeningHoursValue(row.Hours.Opening, out TimeSpan openingTime) == false) {
+                validationError = $"{row.DayName} opening time must be entered in HHmm format.";
+                return false;
+            }
+
+            if (TryParseOpeningHoursValue(row.Hours.Closing, out TimeSpan closingTime) == false) {
+                validationError = $"{row.DayName} closing time must be entered in HHmm format.";
+                return false;
+            }
+
+            if (closingTime <= openingTime) {
+                validationError = $"{row.DayName} closing time must be later than opening time.";
+                return false;
+            }
+
+            validationError = String.Empty;
+            return true;
+        }
+
+        private sealed record OpeningHoursRow(String DayName, MerchantModels.DayOpeningHoursModel Hours);
     }
 }

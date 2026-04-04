@@ -304,7 +304,7 @@ public class MerchantsViewPageTests : BaseTest
                     {
                         ProductId = Guid.NewGuid(),
                         ProductName = "Test Product",
-                        DisplayText = "£10 Topup"
+                        DisplayText = "ï¿½10 Topup"
                     }
                 }
             }
@@ -500,6 +500,46 @@ public class MerchantsViewPageTests : BaseTest
             cut.Markup.ShouldContain("John Doe");
             cut.Markup.ShouldContain("john.doe@test.com");
             cut.Markup.ShouldContain("01234567890");
+        }, timeout: TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public void MerchantsView_DisplaysOpeningHours_WhenPresent()
+    {
+        var merchant = new MerchantModels.MerchantModel
+        {
+            MerchantId = Guid.NewGuid(),
+            MerchantName = "Test Merchant",
+            MerchantReference = "REF001",
+            OpeningHours = new MerchantModels.MerchantOpeningHoursModel
+            {
+                Monday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+                Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+                Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+                Thursday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+                Friday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+                Saturday = new MerchantModels.DayOpeningHoursModel { Opening = "0900", Closing = "1600" },
+                Sunday = new MerchantModels.DayOpeningHoursModel { Opening = "1000", Closing = "1500" }
+            }
+        };
+
+        SetupSuccessfulDataLoadWithMerchant(merchant);
+
+        var cut = RenderComponent<View>(parameters => parameters
+            .Add(p => p.MerchantId, merchant.MerchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IElement? openingHoursButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Opening Hours"));
+        openingHoursButton?.Click();
+
+        cut.WaitForAssertion(() => {
+            cut.Markup.ShouldContain("Monday");
+            cut.Markup.ShouldContain("Opening: 0800");
+            cut.Markup.ShouldContain("Closing: 1700");
+            cut.Markup.ShouldContain("Sunday");
+            cut.Markup.ShouldContain("Opening: 1000");
+            cut.Markup.ShouldContain("Closing: 1500");
         }, timeout: TimeSpan.FromSeconds(5));
     }
 

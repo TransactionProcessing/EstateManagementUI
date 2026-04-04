@@ -209,6 +209,19 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 : baseClass + "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300";
         }
 
+        private IReadOnlyList<OpeningHoursRow> GetOpeningHoursRows() =>
+        [
+            new("Monday", merchant?.OpeningHours.Monday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Tuesday", merchant?.OpeningHours.Tuesday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Wednesday", merchant?.OpeningHours.Wednesday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Thursday", merchant?.OpeningHours.Thursday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Friday", merchant?.OpeningHours.Friday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Saturday", merchant?.OpeningHours.Saturday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Sunday", merchant?.OpeningHours.Sunday ?? new MerchantModels.DayOpeningHoursModel())
+        ];
+
         private void BackToList() => NavigationManager.NavigateToMerchantList();
+
+        private sealed record OpeningHoursRow(String DayName, MerchantModels.DayOpeningHoursModel Hours);
     }
 }

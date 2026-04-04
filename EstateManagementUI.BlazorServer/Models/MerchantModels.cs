@@ -127,6 +127,8 @@ public class MerchantModels
 
         [Required(ErrorMessage = "Phone number is required")]
         public string? PhoneNumber { get; set; }
+
+        public MerchantOpeningHoursModel OpeningHours { get; set; } = new();
     }
 
     public class MerchantEditModel
