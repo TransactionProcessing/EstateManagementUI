@@ -222,6 +222,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private void BackToList() => NavigationManager.NavigateToMerchantList();
 
-        private sealed record OpeningHoursRow(String DayName, MerchantModels.DayOpeningHoursModel Hours);
+        private sealed record OpeningHoursRow(string DayName, MerchantModels.DayOpeningHoursModel Hours);
     }
 }

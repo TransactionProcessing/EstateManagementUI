@@ -11,7 +11,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {
     public partial class New
     {
-        private static readonly String[] OpeningHoursFormats = ["HHmm", "Hmm", "HH:mm", "H:mm"];
+        private static readonly string[] OpeningHoursFormats = ["HHmm", "Hmm", "HH:mm", "H:mm"];
         private readonly MerchantModels.CreateMerchantModel model = new();
         private bool isSaving = false;
 
@@ -34,8 +34,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             errorMessage = null;
             successMessage = null;
 
-            Boolean hasOpeningHoursValues = HasOpeningHoursValues();
-            if (hasOpeningHoursValues && TryNormaliseAndValidateOpeningHours(out String validationError) == false) {
+            bool hasOpeningHoursValues = HasOpeningHoursValues();
+            if (hasOpeningHoursValues && TryNormaliseAndValidateOpeningHours(out string validationError) == false) {
                 errorMessage = validationError;
                 isSaving = false;
                 StateHasChanged();
@@ -91,27 +91,27 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             new("Sunday", model.OpeningHours.Sunday)
         ];
 
-        private Boolean HasOpeningHoursValues() =>
-            this.GetOpeningHoursRows().Any(row => String.IsNullOrWhiteSpace(row.Hours.Opening) == false ||
-                                                 String.IsNullOrWhiteSpace(row.Hours.Closing) == false);
+        private bool HasOpeningHoursValues() =>
+            this.GetOpeningHoursRows().Any(row => string.IsNullOrWhiteSpace(row.Hours.Opening) == false ||
+                                                 string.IsNullOrWhiteSpace(row.Hours.Closing) == false);
 
-        private Boolean TryNormaliseAndValidateOpeningHours(out String validationError) {
+        private bool TryNormaliseAndValidateOpeningHours(out string validationError) {
             foreach (OpeningHoursRow row in this.GetOpeningHoursRows()) {
                 if (TryValidateOpeningHoursRow(row, out validationError) == false) {
                     return false;
                 }
             }
 
-            validationError = String.Empty;
+            validationError = string.Empty;
             return true;
         }
 
-        private static String? NormaliseOpeningHoursValue(String? value) {
-            if (String.IsNullOrWhiteSpace(value)) {
+        private static string? NormaliseOpeningHoursValue(string? value) {
+            if (string.IsNullOrWhiteSpace(value)) {
                 return value;
             }
 
-            String trimmedValue = value.Trim();
+            string trimmedValue = value.Trim();
 
             if (DateTime.TryParseExact(trimmedValue,
                                        OpeningHoursFormats,
@@ -124,10 +124,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             return parsed.ToString("HHmm", CultureInfo.InvariantCulture);
         }
 
-        private static Boolean TryParseOpeningHoursValue(String? value, out TimeSpan time) {
+        private static bool TryParseOpeningHoursValue(string? value, out TimeSpan time) {
             time = default;
 
-            if (String.IsNullOrWhiteSpace(value)) {
+            if (string.IsNullOrWhiteSpace(value)) {
                 return false;
             }
 
@@ -139,7 +139,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             return true;
         }
 
-        private static Boolean TryValidateOpeningHoursRow(OpeningHoursRow row, out String validationError) {
+        private static bool TryValidateOpeningHoursRow(OpeningHoursRow row, out string validationError) {
             row.Hours.Opening = NormaliseOpeningHoursValue(row.Hours.Opening);
             row.Hours.Closing = NormaliseOpeningHoursValue(row.Hours.Closing);
 
@@ -158,10 +158,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 return false;
             }
 
-            validationError = String.Empty;
+            validationError = string.Empty;
             return true;
         }
 
-        private sealed record OpeningHoursRow(String DayName, MerchantModels.DayOpeningHoursModel Hours);
+        private sealed record OpeningHoursRow(string DayName, MerchantModels.DayOpeningHoursModel Hours);
     }
 }
