@@ -475,11 +475,10 @@ public class MerchantRequestHandlerTests
             CorrelationIdHelper.New(),
             Guid.NewGuid(),
             Guid.NewGuid(),
-            new MerchantModels.MerchantOpeningHoursModel
-            {
-                Sunday = new() { Opening = "0800", Closing = "1800" },
-                Monday = new() { Opening = "0800", Closing = "1700" }
-            });
+            new(new MerchantCommands.OpeningHours("0800","1700"), new MerchantCommands.OpeningHours("0800", "1700"), 
+                new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
+                new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
+                new MerchantCommands.OpeningHours("0800", "1700")));
 
         _mockApiClient.Setup(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Success());
@@ -497,7 +496,10 @@ public class MerchantRequestHandlerTests
             CorrelationIdHelper.New(),
             Guid.NewGuid(),
             Guid.NewGuid(),
-            new MerchantModels.MerchantOpeningHoursModel());
+            new(new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
+                new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
+                new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
+                new MerchantCommands.OpeningHours("0800", "1700")));
 
         _mockApiClient.Setup(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()))
             .ReturnsAsync(Result.Failure("api error"));

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 
@@ -42,4 +43,7 @@ public class Merchant
     public String ContactEmail { get; set; }
     [JsonProperty("contact_phone")]
     public String ContactPhone { get; set; }
+
+    [JsonProperty("opening_hours")]
+    public Dictionary<DayOfWeek, OpeningHoursResponse> OpeningHours { get; set; }
 }

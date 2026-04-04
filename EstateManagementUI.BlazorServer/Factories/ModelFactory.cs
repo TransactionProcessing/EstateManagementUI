@@ -16,6 +16,7 @@ using MerchantDropDownModel = EstateManagementUI.BlazorServer.Models.MerchantMod
 using MerchantKpiModel = EstateManagementUI.BlazorServer.Models.TransactionModels.MerchantKpiModel;
 using MerchantListModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantListModel;
 using MerchantModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantModel;
+using MerchantModels = EstateManagementUI.BlazorServer.Models.MerchantModels;
 using MerchantOperatorModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantOperatorModel;
 using MerchantSettlementHistoryModel = EstateManagementUI.BlazorServer.Models.MerchantSettlementHistoryModel;
 using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorModel;
