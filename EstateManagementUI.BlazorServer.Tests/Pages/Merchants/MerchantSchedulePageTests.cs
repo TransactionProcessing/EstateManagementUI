@@ -11,14 +11,10 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
 public class MerchantSchedulePageTests : BaseTest
 {
-    private System.Reflection.MethodInfo GetSaveScheduleMethod()
+    private (System.Reflection.MethodInfo SaveScheduleAsyncMethod, System.Reflection.FieldInfo ErrorMessageField) GetScheduleValidationMembers(object instance)
     {
-        return typeof(Schedule).GetMethod("SaveScheduleAsync",
+        System.Reflection.MethodInfo saveScheduleAsyncMethod = typeof(Schedule).GetMethod("SaveScheduleAsync",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-    }
-
-    private System.Reflection.FieldInfo GetErrorMessageField(object instance)
-    {
         Type currentType = instance.GetType();
         System.Reflection.FieldInfo field = null;
 
@@ -29,7 +25,7 @@ public class MerchantSchedulePageTests : BaseTest
             currentType = currentType.BaseType;
         }
 
-        return field;
+        return (saveScheduleAsyncMethod, field);
     }
 
     [Fact]
@@ -143,19 +139,18 @@ public class MerchantSchedulePageTests : BaseTest
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-11-closed-days").Change("31");
 
-        var saveScheduleMethod = GetSaveScheduleMethod();
-        var errorMessageField = GetErrorMessageField(cut.Instance);
+        var validationMembers = GetScheduleValidationMembers(cut.Instance);
 
-        saveScheduleMethod.ShouldNotBeNull();
-        errorMessageField.ShouldNotBeNull();
+        validationMembers.SaveScheduleAsyncMethod.ShouldNotBeNull();
+        validationMembers.ErrorMessageField.ShouldNotBeNull();
 
         await cut.InvokeAsync(async () =>
         {
-            var task = (Task)saveScheduleMethod.Invoke(cut.Instance, null);
+            var task = (Task)validationMembers.SaveScheduleAsyncMethod.Invoke(cut.Instance, null);
             await task;
         });
 
-        errorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 30 can be supplied for November {futureYear}.");
+        validationMembers.ErrorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 30 can be supplied for November {futureYear}.");
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -210,19 +205,18 @@ public class MerchantSchedulePageTests : BaseTest
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-2-closed-days").Change("29");
 
-        var saveScheduleMethod = GetSaveScheduleMethod();
-        var errorMessageField = GetErrorMessageField(cut.Instance);
+        var validationMembers = GetScheduleValidationMembers(cut.Instance);
 
-        saveScheduleMethod.ShouldNotBeNull();
-        errorMessageField.ShouldNotBeNull();
+        validationMembers.SaveScheduleAsyncMethod.ShouldNotBeNull();
+        validationMembers.ErrorMessageField.ShouldNotBeNull();
 
         await cut.InvokeAsync(async () =>
         {
-            var task = (Task)saveScheduleMethod.Invoke(cut.Instance, null);
+            var task = (Task)validationMembers.SaveScheduleAsyncMethod.Invoke(cut.Instance, null);
             await task;
         });
 
-        errorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
+        validationMembers.ErrorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
