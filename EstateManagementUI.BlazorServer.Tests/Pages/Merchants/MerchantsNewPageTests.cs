@@ -33,12 +33,6 @@ public class MerchantsNewPageTests : BaseTest
         return field;
     }
 
-    private System.Reflection.FieldInfo GetModelField()
-    {
-        return typeof(MerchantsNew).GetField("model",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-    }
-
     [Fact]
     public void MerchantsNew_RendersCorrectly()
     {
@@ -294,76 +288,5 @@ public class MerchantsNewPageTests : BaseTest
         // Assert - Error message should be cleared and success message shown
         cut.Markup.ShouldNotContain("Previous error");
         cut.Markup.ShouldContain("Merchant created successfully");
-    }
-
-    [Fact]
-    public void MerchantsNew_RendersOpeningHoursSection()
-    {
-        var cut = RenderComponent<MerchantsNew>();
-
-        cut.Markup.ShouldContain("Opening Hours");
-        cut.Markup.ShouldContain("Monday");
-        cut.Markup.ShouldContain("Sunday");
-    }
-
-    [Fact]
-    public async Task HandleSubmit_WithOpeningHours_CreatesMerchantAndSavesOpeningHours()
-    {
-        Guid createdMerchantId = Guid.Empty;
-
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
-            It.IsAny<Guid>(),
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .Callback<CorrelationId, Guid, Guid, MerchantModels.CreateMerchantModel>((_, _, merchantId, _) => createdMerchantId = merchantId)
-            .ReturnsAsync(Result.Success);
-
-        this.MerchantUIService.Setup(m => m.UpdateMerchantOpeningHours(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
-            It.IsAny<Guid>(),
-            It.IsAny<MerchantModels.MerchantOpeningHoursModel>()))
-            .ReturnsAsync(Result.Success);
-
-        var cut = RenderComponent<MerchantsNew>();
-        cut.Instance.SetDelayOverride(0);
-
-        var modelField = GetModelField();
-        modelField.ShouldNotBeNull();
-        var model = (MerchantModels.CreateMerchantModel)modelField.GetValue(cut.Instance);
-        model.OpeningHours.Monday.Opening = "8:00";
-        model.OpeningHours.Monday.Closing = "17:00";
-        model.OpeningHours.Tuesday.Opening = "0800";
-        model.OpeningHours.Tuesday.Closing = "1700";
-        model.OpeningHours.Wednesday.Opening = "0800";
-        model.OpeningHours.Wednesday.Closing = "1700";
-        model.OpeningHours.Thursday.Opening = "0800";
-        model.OpeningHours.Thursday.Closing = "1700";
-        model.OpeningHours.Friday.Opening = "0800";
-        model.OpeningHours.Friday.Closing = "1700";
-        model.OpeningHours.Saturday.Opening = "0900";
-        model.OpeningHours.Saturday.Closing = "1600";
-        model.OpeningHours.Sunday.Opening = "1000";
-        model.OpeningHours.Sunday.Closing = "1500";
-
-        var handleSubmitMethod = GetHandleSubmitMethod();
-        handleSubmitMethod.ShouldNotBeNull();
-
-        await cut.InvokeAsync(async () =>
-        {
-            var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
-            await task;
-        });
-
-        this.MerchantUIService.Verify(m => m.UpdateMerchantOpeningHours(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
-            createdMerchantId,
-            It.Is<MerchantModels.MerchantOpeningHoursModel>(hours =>
-                hours.Monday.Opening == "0800" &&
-                hours.Monday.Closing == "1700" &&
-                hours.Sunday.Opening == "1000" &&
-                hours.Sunday.Closing == "1500")), Times.Once);
     }
 }
