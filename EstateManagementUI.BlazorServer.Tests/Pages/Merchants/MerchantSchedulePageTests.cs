@@ -121,7 +121,9 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#loadYearButton").Click();
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-11-closed-days").Change("31");
+        cut.Find("#month-11-closed-days").GetAttribute("value").ShouldBe("31");
         cut.Find("#saveScheduleButton").Click();
+        cut.Render();
 
         cut.WaitForAssertion(() =>
             cut.Markup.ShouldContain($"Only days between 1 and 30 can be supplied for November {futureYear}."),
@@ -179,7 +181,9 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#loadYearButton").Click();
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-2-closed-days").Change("29");
+        cut.Find("#month-2-closed-days").GetAttribute("value").ShouldBe("29");
         cut.Find("#saveScheduleButton").Click();
+        cut.Render();
 
         cut.WaitForAssertion(() =>
             cut.Markup.ShouldContain($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."),
