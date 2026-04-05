@@ -120,7 +120,9 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#month-11-closed-days").Change("31");
         cut.Find("#saveScheduleButton").Click();
 
-        cut.Markup.ShouldContain($"Only days between 1 and 30 can be supplied for November {futureYear}.");
+        cut.WaitForAssertion(() =>
+            cut.Markup.ShouldContain($"Only days between 1 and 30 can be supplied for November {futureYear}."),
+            timeout: TimeSpan.FromSeconds(5));
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -174,7 +176,9 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#month-2-closed-days").Change("29");
         cut.Find("#saveScheduleButton").Click();
 
-        cut.Markup.ShouldContain($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
+        cut.WaitForAssertion(() =>
+            cut.Markup.ShouldContain($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."),
+            timeout: TimeSpan.FromSeconds(5));
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -214,9 +218,10 @@ public class MerchantSchedulePageTests : BaseTest
             }
         });
 
+        _fakeNavigationManager.NavigateTo($"/merchants/{merchantId}/schedule?readOnly=true");
+
         var cut = RenderComponent<Schedule>(parameters => parameters
-            .Add(p => p.MerchantId, merchantId)
-            .Add(p => p.ReadOnly, true));
+            .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Markup.ShouldContain("Selected Year Schedule");
@@ -249,7 +254,7 @@ public class MerchantSchedulePageTests : BaseTest
 
     private static Int32 GetNextLeapYear(Int32 startYear)
     {
-        var year = startYear;
+        var year = startYear + 1;
         while (DateTime.IsLeapYear(year) == false)
         {
             year++;
@@ -260,6 +265,12 @@ public class MerchantSchedulePageTests : BaseTest
 
     private static Int32 GetNextNonLeapYear(Int32 startYear)
     {
-        return DateTime.IsLeapYear(startYear) ? startYear + 1 : startYear;
+        var year = startYear + 1;
+        while (DateTime.IsLeapYear(year))
+        {
+            year++;
+        }
+
+        return year;
     }
 }
