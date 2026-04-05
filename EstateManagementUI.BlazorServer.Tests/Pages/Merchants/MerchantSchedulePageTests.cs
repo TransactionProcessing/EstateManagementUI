@@ -66,6 +66,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         cut.Find("#selectedYear").Change(futureYear.ToString());
         cut.Find("#loadYearButton").Click();
+        cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#clonePreviousYearButton").Click();
 
         cut.Find("#month-1-closed-days").GetAttribute("value").ShouldBe("1, 2, 15");
@@ -89,6 +90,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         cut.Find("#selectedYear").Change(futureYear.ToString());
         cut.Find("#loadYearButton").Click();
+        cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-1-closed-days").Change("1, 2, 15");
         cut.Find("#saveScheduleButton").Click();
 
@@ -117,6 +119,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         cut.Find("#selectedYear").Change(futureYear.ToString());
         cut.Find("#loadYearButton").Click();
+        cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-11-closed-days").Change("31");
         cut.Find("#saveScheduleButton").Click();
 
@@ -145,6 +148,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         cut.Find("#selectedYear").Change(leapYear.ToString());
         cut.Find("#loadYearButton").Click();
+        cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-2-closed-days").Change("29");
         cut.Find("#saveScheduleButton").Click();
 
@@ -173,6 +177,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         cut.Find("#selectedYear").Change(nonLeapYear.ToString());
         cut.Find("#loadYearButton").Click();
+        cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-2-closed-days").Change("29");
         cut.Find("#saveScheduleButton").Click();
 
