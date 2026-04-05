@@ -249,14 +249,15 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 List<Int32> closedDays = monthLookup.TryGetValue(month, out MerchantModels.MerchantScheduleMonthModel? scheduleMonth)
                     ? scheduleMonth.ClosedDays.OrderBy(day => day).ToList()
                     : [];
+                Boolean isReadOnly = this.IsMonthReadOnly(this.selectedYear, month);
 
                 return new ScheduleMonthEditor
                 {
                     Month = month,
                     MonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month),
                     ClosedDaysInput = this.FormatClosedDays(closedDays),
-                    IsReadOnly = this.IsMonthReadOnly(this.selectedYear, month),
-                    Description = this.IsMonthReadOnly(this.selectedYear, month)
+                    IsReadOnly = isReadOnly,
+                    Description = isReadOnly
                         ? "This month has passed and cannot be changed."
                         : "Closed days can still be updated."
                 };
