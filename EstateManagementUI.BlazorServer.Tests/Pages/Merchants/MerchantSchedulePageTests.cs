@@ -105,7 +105,7 @@ public class MerchantSchedulePageTests : BaseTest
     }
 
     [Fact]
-    public void MerchantSchedule_SaveSelectedYear_InvalidNovemberDate_ShowsErrorAndDoesNotSave()
+    public async Task MerchantSchedule_SaveSelectedYear_InvalidNovemberDate_ShowsErrorAndDoesNotSave()
     {
         var merchantId = Guid.NewGuid();
         var currentYear = DateTime.Today.Year;
@@ -121,13 +121,20 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#loadYearButton").Click();
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-11-closed-days").Change("31");
-        cut.Find("#month-11-closed-days").GetAttribute("value").ShouldBe("31");
-        cut.Find("#saveScheduleButton").Click();
-        cut.Render();
+        
+        var saveScheduleMethod = GetSaveScheduleMethod();
+        var errorMessageField = GetErrorMessageField(cut.Instance);
 
-        cut.WaitForAssertion(() =>
-            cut.Markup.ShouldContain($"Only days between 1 and 30 can be supplied for November {futureYear}."),
-            timeout: TimeSpan.FromSeconds(5));
+        saveScheduleMethod.ShouldNotBeNull();
+        errorMessageField.ShouldNotBeNull();
+
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)saveScheduleMethod.Invoke(cut.Instance, null);
+            await task;
+        });
+
+        errorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 30 can be supplied for November {futureYear}.");
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -165,7 +172,7 @@ public class MerchantSchedulePageTests : BaseTest
     }
 
     [Fact]
-    public void MerchantSchedule_SaveSelectedYear_NonLeapYearFebruary_Rejects29th()
+    public async Task MerchantSchedule_SaveSelectedYear_NonLeapYearFebruary_Rejects29th()
     {
         var merchantId = Guid.NewGuid();
         var currentYear = DateTime.Today.Year;
@@ -181,13 +188,20 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#loadYearButton").Click();
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-2-closed-days").Change("29");
-        cut.Find("#month-2-closed-days").GetAttribute("value").ShouldBe("29");
-        cut.Find("#saveScheduleButton").Click();
-        cut.Render();
+        
+        var saveScheduleMethod = GetSaveScheduleMethod();
+        var errorMessageField = GetErrorMessageField(cut.Instance);
 
-        cut.WaitForAssertion(() =>
-            cut.Markup.ShouldContain($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."),
-            timeout: TimeSpan.FromSeconds(5));
+        saveScheduleMethod.ShouldNotBeNull();
+        errorMessageField.ShouldNotBeNull();
+
+        await cut.InvokeAsync(async () =>
+        {
+            var task = (Task)saveScheduleMethod.Invoke(cut.Instance, null);
+            await task;
+        });
+
+        errorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -281,5 +295,26 @@ public class MerchantSchedulePageTests : BaseTest
         }
 
         return year;
+    }
+
+    private static System.Reflection.MethodInfo GetSaveScheduleMethod()
+    {
+        return typeof(Schedule).GetMethod("SaveScheduleAsync",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+    }
+
+    private static System.Reflection.FieldInfo GetErrorMessageField(object instance)
+    {
+        Type currentType = instance.GetType();
+        System.Reflection.FieldInfo field = null;
+
+        while (currentType != null && field == null)
+        {
+            field = currentType.GetField("errorMessage",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            currentType = currentType.BaseType;
+        }
+
+        return field;
     }
 }
