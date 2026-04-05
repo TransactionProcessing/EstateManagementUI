@@ -149,7 +149,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result<MerchantModels.MerchantScheduleModel> scheduleResult = this.BuildScheduleToSave();
                 if (scheduleResult.IsFailed)
                 {
-                    this.errorMessage ??= scheduleResult.Errors.SingleOrDefault() ?? "Invalid schedule.";
+                    this.errorMessage = this.errorMessage ?? scheduleResult.Errors.SingleOrDefault() ?? "Invalid schedule.";
                     return;
                 }
 
