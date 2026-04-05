@@ -391,12 +391,12 @@ public static class ModelFactory {
         return merchantList;
     }
 
-    public static MerchantScheduleModel ConvertFrom(BusinessLogic.Models.MerchantModels.MerchantScheduleModel resultData) {
-        return new MerchantScheduleModel {
+    public static MerchantModels.MerchantScheduleModel ConvertFrom(BusinessLogic.Models.MerchantModels.MerchantScheduleModel resultData) {
+        return new MerchantModels.MerchantScheduleModel {
             Year = resultData.Year,
             Months = resultData.Months
                 .OrderBy(month => month.Month)
-                .Select(month => new MerchantScheduleMonthModel {
+                .Select(month => new MerchantModels.MerchantScheduleMonthModel {
                     Month = month.Month,
                     ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
                 }).ToList()
