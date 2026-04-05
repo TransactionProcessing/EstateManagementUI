@@ -95,6 +95,18 @@ namespace EstateManagementUI.BusinessLogic.Models {
             public int MerchantsWithSaleInLastHour { get; set; }
         }
 
+        public class MerchantScheduleModel
+        {
+            public Int32 Year { get; set; }
+            public List<MerchantScheduleMonthModel> Months { get; set; } = [];
+        }
+
+        public class MerchantScheduleMonthModel
+        {
+            public Int32 Month { get; set; }
+            public List<Int32> ClosedDays { get; set; } = [];
+        }
+
         public class MerchantOpeningHoursModel
         {
             public DayOpeningHoursModel Sunday { get; set; } = new();

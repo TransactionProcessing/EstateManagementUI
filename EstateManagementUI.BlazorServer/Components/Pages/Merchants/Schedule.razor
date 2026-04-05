@@ -1,0 +1,100 @@
+@page "/merchants/{MerchantId:guid}/schedule"
+@rendermode InteractiveServer
+@using EstateManagementUI.BlazorServer.Models
+@using EstateManagementUI.BlazorServer.UIServices
+@using Microsoft.AspNetCore.Components.Forms
+@inherits AuthorizedComponentBase
+@inject IMerchantUIService MerchantUIService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Merchant Schedule</PageTitle>
+
+<div class="space-y-6">
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+    }
+    else if (merchant != null)
+    {
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Merchant Schedule: @merchant.MerchantName</h1>
+                <p class="text-gray-600 mt-1">Reference: @merchant.MerchantReference</p>
+            </div>
+            <div class="flex space-x-2">
+                <button class="btn btn-secondary" @onclick="BackToMerchant">
+                    Back to Merchant
+                </button>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Success</p>
+                <p class="text-sm">@successMessage</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                <p class="font-medium">Error</p>
+                <p class="text-sm">@errorMessage</p>
+            </div>
+        }
+
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-6">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-900">Selected Year Maintenance</h2>
+                    <p class="text-sm text-gray-600">Only the selected year can be updated. Past months become read only once they have passed.</p>
+                </div>
+                <div class="flex flex-wrap items-end gap-3">
+                    <div>
+                        <label for="selectedYear" class="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                        <InputNumber id="selectedYear" @bind-Value="yearInput" class="input w-32" />
+                    </div>
+                    <button type="button" id="loadYearButton" class="btn btn-secondary" @onclick="LoadSelectedYearAsync">
+                        Load Year
+                    </button>
+                    <button type="button" id="clonePreviousYearButton" class="btn btn-secondary" @onclick="ClonePreviousYearAsync" disabled="@(!CanClonePreviousYear)">
+                        Clone Previous Year
+                    </button>
+                    <button type="button" id="saveScheduleButton" class="btn btn-primary" @onclick="SaveScheduleAsync" disabled="@(!CanSave)">
+                        @(isSaving ? "Saving..." : "Save Selected Year")
+                    </button>
+                </div>
+            </div>
+
+            <div class="rounded-lg bg-blue-50 border border-blue-100 p-4">
+                <p class="text-sm text-blue-800">Enter closed days as comma-separated day numbers, for example <span class="font-medium">1, 2, 15</span>. Saving only updates editable months in the year you currently have loaded.</p>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                @foreach (var month in monthEditors)
+                {
+                    <div class="rounded-lg border p-4 @(month.IsReadOnly ? "bg-gray-50 border-gray-200" : "bg-white border-blue-100")">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <h3 class="text-base font-semibold text-gray-900">@month.MonthName</h3>
+                                <p class="text-sm text-gray-600">@month.Description</p>
+                            </div>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full @(month.IsReadOnly ? "bg-gray-200 text-gray-700" : "bg-green-100 text-green-800")">
+                                @(month.IsReadOnly ? "Read Only" : "Editable")
+                            </span>
+                        </div>
+
+                        <div class="mt-4 space-y-2">
+                            <label for="@month.InputId" class="block text-sm font-medium text-gray-700">Closed Days</label>
+                            <InputText id="@month.InputId" @bind-Value="month.ClosedDaysInput" class="input w-full" disabled="@month.IsReadOnly" />
+                            <p class="text-xs text-gray-500">Use comma-separated day numbers for this month.</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

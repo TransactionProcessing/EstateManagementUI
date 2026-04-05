@@ -5,6 +5,7 @@ using SecurityService.DataTransferObjects.Responses;
 using Shared.Results;
 using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
+using TransactionProcessor.DataTransferObjects.Requests.MerchantSchedule;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 
 namespace EstateManagementUI.BusinessLogic.Client
@@ -16,10 +17,12 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result<List<MerchantModels.MerchantListModel>>> GetMerchants(MerchantQueries.GetMerchantsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantModels.MerchantDropDownModel>>> GetMerchants(MerchantQueries.GetMerchantsForDropDownQuery request, CancellationToken cancellationToken);
         Task<Result<MerchantModels.MerchantModel>> GetMerchant(MerchantQueries.GetMerchantQuery request, CancellationToken cancellationToken);
+        Task<Result<MerchantModels.MerchantScheduleModel>> GetMerchantSchedule(MerchantQueries.GetMerchantScheduleQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantModels.MerchantOperatorModel>>> GetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantModels.MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request, CancellationToken cancellationToken);
         Task<Result<List<MerchantModels.MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchant(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result> CreateMerchantSchedule(MerchantCommands.CreateMerchantScheduleCommand request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchantOpeningHours(MerchantCommands.UpdateMerchantOpeningHoursCommand request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
         Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request, CancellationToken cancellationToken);
@@ -152,6 +155,29 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success();
         }
 
+        public async Task<Result> CreateMerchantSchedule(MerchantCommands.CreateMerchantScheduleCommand request,
+                                                         CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            CreateMerchantScheduleRequest apiRequest = new() {
+                Year = request.Schedule.Year,
+                Months = request.Schedule.Months
+                    .OrderBy(month => month.Month)
+                    .Select(month => new MerchantScheduleMonthRequest {
+                        Month = month.Month,
+                        ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
+                    }).ToList()
+            };
+
+            Result apiResult = await this.TransactionProcessorClient.CreateMerchantSchedule(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
         public async Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request,
                                                              CancellationToken cancellationToken) {
             var token = await this.GetToken(cancellationToken);
@@ -232,6 +258,22 @@ namespace EstateManagementUI.BusinessLogic.Client
             MerchantModels.MerchantModel merchant = apiResult.Data.ToMerchant();
 
             return Result.Success(merchant);
+        }
+
+        public async Task<Result<MerchantModels.MerchantScheduleModel>> GetMerchantSchedule(MerchantQueries.GetMerchantScheduleQuery request,
+                                                                                            CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<MerchantScheduleResponse> apiResult = await this.TransactionProcessorClient.GetMerchantSchedule(token.Data, request.EstateId, request.MerchantId, request.Year, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            MerchantModels.MerchantScheduleModel merchantSchedule = APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(merchantSchedule);
         }
 
         public async Task<Result<List<MerchantModels.MerchantOperatorModel>>> GetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery request,

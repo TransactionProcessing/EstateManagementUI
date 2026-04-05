@@ -18,6 +18,7 @@ public static class MerchantCommands {
     public record SwapMerchantDeviceCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, string OldDevice, string NewDevice) : IRequest<Result>;
     public record MakeMerchantDepositCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, decimal Amount, DateTime Date, string Reference) : IRequest<Result>;
     public record CreateMerchantCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, string Name, String SettlementSchedule, MerchantAddress MerchantAddress, MerchantContact MerchantContact) : IRequest<Result>;
+    public record CreateMerchantScheduleCommand(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId, MerchantModels.MerchantScheduleModel Schedule) : IRequest<Result>;
 
 
     public record MerchantOpeningHours(OpeningHours Sunday, OpeningHours Monday, OpeningHours Tuesday, OpeningHours Wednesday, OpeningHours Thursday, OpeningHours Friday, OpeningHours Saturday);

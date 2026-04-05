@@ -220,6 +220,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             new("Sunday", merchant?.OpeningHours.Sunday ?? new MerchantModels.DayOpeningHoursModel())
         ];
 
+        private void ManageSchedule() => NavigationManager.NavigateToMerchantSchedule(this.MerchantId);
+
         private void BackToList() => NavigationManager.NavigateToMerchantList();
 
         private sealed record OpeningHoursRow(string DayName, MerchantModels.DayOpeningHoursModel Hours);

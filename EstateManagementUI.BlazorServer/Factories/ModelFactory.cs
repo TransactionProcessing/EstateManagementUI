@@ -391,6 +391,18 @@ public static class ModelFactory {
         return merchantList;
     }
 
+    public static MerchantScheduleModel ConvertFrom(BusinessLogic.Models.MerchantModels.MerchantScheduleModel resultData) {
+        return new MerchantScheduleModel {
+            Year = resultData.Year,
+            Months = resultData.Months
+                .OrderBy(month => month.Month)
+                .Select(month => new MerchantScheduleMonthModel {
+                    Month = month.Month,
+                    ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
+                }).ToList()
+        };
+    }
+
     public static List<MerchantOperatorModel> ConvertFrom(List<BusinessLogic.Models.MerchantModels.MerchantOperatorModel> resultData) {
         List<MerchantOperatorModel> merchantOperators = new();
         foreach (BusinessLogic.Models.MerchantModels.MerchantOperatorModel merchantOperatorModel in resultData)
