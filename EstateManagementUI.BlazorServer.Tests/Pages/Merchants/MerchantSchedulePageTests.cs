@@ -130,7 +130,7 @@ public class MerchantSchedulePageTests : BaseTest
     {
         var merchantId = Guid.NewGuid();
         var currentYear = DateTime.Today.Year;
-        var leapYear = Enumerable.Range(currentYear, 10).First(DateTime.IsLeapYear);
+        var leapYear = GetNextLeapYear(currentYear);
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(leapYear, new MerchantModels.MerchantScheduleModel { Year = leapYear, Months = [] });
@@ -161,7 +161,7 @@ public class MerchantSchedulePageTests : BaseTest
     {
         var merchantId = Guid.NewGuid();
         var currentYear = DateTime.Today.Year;
-        var nonLeapYear = Enumerable.Range(currentYear, 10).First(year => DateTime.IsLeapYear(year) == false);
+        var nonLeapYear = GetNextNonLeapYear(currentYear);
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(nonLeapYear, new MerchantModels.MerchantScheduleModel { Year = nonLeapYear, Months = [] });
@@ -219,5 +219,21 @@ public class MerchantSchedulePageTests : BaseTest
     {
         this.MerchantUIService.Setup(m => m.GetMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), year))
             .ReturnsAsync(Result.Success(schedule));
+    }
+
+    private static Int32 GetNextLeapYear(Int32 startYear)
+    {
+        var year = startYear;
+        while (DateTime.IsLeapYear(year) == false)
+        {
+            year++;
+        }
+
+        return year;
+    }
+
+    private static Int32 GetNextNonLeapYear(Int32 startYear)
+    {
+        return DateTime.IsLeapYear(startYear) ? startYear + 1 : startYear;
     }
 }
