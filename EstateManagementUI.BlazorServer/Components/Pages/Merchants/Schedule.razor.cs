@@ -167,6 +167,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             finally
             {
                 this.isSaving = false;
+                this.StateHasChanged();
             }
         }
 
