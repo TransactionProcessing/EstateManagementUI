@@ -200,7 +200,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result<List<Int32>> parseResult = this.ParseClosedDays(month.ClosedDaysInput, month.Month);
                 if (parseResult.IsFailed)
                 {
-                    return Result.Failure(parseResult.Errors.SingleOrDefault() ?? $"Invalid closed days for {month.MonthName}.");
+                    return Result.Failure<MerchantModels.MerchantScheduleModel>(parseResult.Errors.SingleOrDefault() ?? $"Invalid closed days for {month.MonthName}.");
                 }
 
                 month.ClosedDaysInput = this.FormatClosedDays(parseResult.Data);
