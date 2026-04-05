@@ -25,7 +25,7 @@
             </div>
             <div class="flex space-x-2">
                 <button class="btn btn-secondary" @onclick="BackToMerchant">
-                    Back to Merchant
+                    @(ReadOnly ? "Back to Merchant" : "Back to Edit Merchant")
                 </button>
             </div>
         </div>
@@ -49,8 +49,8 @@
         <div class="bg-white rounded-lg shadow-md p-6 space-y-6">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div>
-                    <h2 class="text-lg font-semibold text-gray-900">Selected Year Maintenance</h2>
-                    <p class="text-sm text-gray-600">Only the selected year can be updated. Past months become read only once they have passed.</p>
+                    <h2 class="text-lg font-semibold text-gray-900">@(ReadOnly ? "Selected Year Schedule" : "Selected Year Maintenance")</h2>
+                    <p class="text-sm text-gray-600">@(ReadOnly ? "View the selected year's schedule. Months are shown read only from the merchant view screen." : "Only the selected year can be updated. Past months become read only once they have passed.")</p>
                 </div>
                 <div class="flex flex-wrap items-end gap-3">
                     <div>
@@ -65,17 +65,27 @@
                     <button type="button" id="loadYearButton" class="btn btn-secondary" @onclick="LoadSelectedYearAsync">
                         Load Year
                     </button>
-                    <button type="button" id="clonePreviousYearButton" class="btn btn-secondary" @onclick="ClonePreviousYearAsync" disabled="@(!CanClonePreviousYear)">
-                        Clone Previous Year
-                    </button>
-                    <button type="button" id="saveScheduleButton" class="btn btn-primary" @onclick="SaveScheduleAsync" disabled="@(!CanSave)">
-                        @(isSaving ? "Saving..." : "Save Selected Year")
-                    </button>
+                    @if (ReadOnly == false)
+                    {
+                        <button type="button" id="clonePreviousYearButton" class="btn btn-secondary" @onclick="ClonePreviousYearAsync" disabled="@(!CanClonePreviousYear)">
+                            Clone Previous Year
+                        </button>
+                        <button type="button" id="saveScheduleButton" class="btn btn-primary" @onclick="SaveScheduleAsync" disabled="@(!CanSave)">
+                            @(isSaving ? "Saving..." : "Save Selected Year")
+                        </button>
+                    }
                 </div>
             </div>
 
             <div class="rounded-lg bg-blue-50 border border-blue-100 p-4">
-                <p class="text-sm text-blue-800">Enter closed days as comma-separated day numbers, for example <span class="font-medium">1, 2, 15</span>. Saving only updates editable months in the year you currently have loaded.</p>
+                @if (ReadOnly)
+                {
+                    <p class="text-sm text-blue-800">Closed days are shown as comma-separated day numbers for the selected year.</p>
+                }
+                else
+                {
+                    <p class="text-sm text-blue-800">Enter closed days as comma-separated day numbers, for example <span class="font-medium">1, 2, 15</span>. Saving only updates editable months in the year you currently have loaded.</p>
+                }
             </div>
 
             <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">

@@ -563,7 +563,7 @@ public class MerchantsViewPageTests : BaseTest
     }
 
     [Fact]
-    public void MerchantsView_ManageScheduleButton_NavigatesToMerchantSchedule()
+    public void MerchantsView_ViewScheduleButton_NavigatesToReadOnlyMerchantSchedule()
     {
         var merchantId = Guid.NewGuid();
         SetupSuccessfulDataLoad(new MerchantModels.MerchantModel
@@ -576,9 +576,9 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
-        cut.Find("#manageScheduleButton").Click();
+        cut.Find("#viewScheduleButton").Click();
 
-        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/schedule");
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/schedule?readOnly=true");
     }
 
     // Helper methods

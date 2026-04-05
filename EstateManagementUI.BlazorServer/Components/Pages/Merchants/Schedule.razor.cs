@@ -3,6 +3,7 @@ using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
+using Microsoft.AspNetCore.Components;
 using Shared.Results;
 using SimpleResults;
 
@@ -12,6 +13,10 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
     {
         [Parameter]
         public Guid MerchantId { get; set; }
+
+        [Parameter]
+        [SupplyParameterFromQuery(Name = "readOnly")]
+        public Boolean ReadOnly { get; set; }
 
         private readonly DateTime today = DateTime.Today;
         private readonly IReadOnlyList<Int32> availableYears = Enumerable.Range(DateTime.Today.Year, 10).ToList();
@@ -24,8 +29,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private string? errorMessage;
         private string? successMessage;
 
-        private bool CanSave => this.isSaving == false && this.monthEditors.Any(month => month.IsReadOnly == false);
-        private bool CanClonePreviousYear => this.isSaving == false && this.selectedYear > 1900 && this.monthEditors.Any(month => month.IsReadOnly == false);
+        private bool CanSave => this.ReadOnly == false && this.isSaving == false && this.monthEditors.Any(month => month.IsReadOnly == false);
+        private bool CanClonePreviousYear => this.ReadOnly == false && this.isSaving == false && this.selectedYear > 1900 && this.monthEditors.Any(month => month.IsReadOnly == false);
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -34,7 +39,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 return;
             }
 
-            Result result = await OnAfterRender(PermissionSection.Merchant, PermissionFunction.Edit, this.LoadPage);
+            PermissionFunction permissionFunction = this.ReadOnly ? PermissionFunction.View : PermissionFunction.Edit;
+            Result result = await OnAfterRender(PermissionSection.Merchant, permissionFunction, this.LoadPage);
             if (result.IsFailed)
             {
                 return;
@@ -250,7 +256,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 List<Int32> closedDays = monthLookup.TryGetValue(month, out MerchantModels.MerchantScheduleMonthModel? scheduleMonth)
                     ? scheduleMonth.ClosedDays.OrderBy(day => day).ToList()
                     : [];
-                Boolean isReadOnly = this.IsMonthReadOnly(this.selectedYear, month);
+                Boolean isReadOnly = this.ReadOnly || this.IsMonthReadOnly(this.selectedYear, month);
 
                 return new ScheduleMonthEditor
                 {
@@ -259,7 +265,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                     ClosedDaysInput = this.FormatClosedDays(closedDays),
                     IsReadOnly = isReadOnly,
                     Description = isReadOnly
-                        ? "This month has passed and cannot be changed."
+                        ? this.ReadOnly
+                            ? "This schedule is read only from the merchant view screen."
+                            : "This month has passed and cannot be changed."
                         : "Closed days can still be updated."
                 };
             }).ToList();
@@ -278,7 +286,16 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private String FormatClosedDays(IEnumerable<Int32> closedDays) => String.Join(", ", closedDays.OrderBy(day => day));
 
-        private void BackToMerchant() => this.NavigationManager.NavigateToMerchant(this.MerchantId);
+        private void BackToMerchant()
+        {
+            if (this.ReadOnly)
+            {
+                this.NavigationManager.NavigateToMerchant(this.MerchantId);
+                return;
+            }
+
+            this.NavigationManager.NavigateToEditMerchant(this.MerchantId);
+        }
 
         private sealed class ScheduleMonthEditor
         {

@@ -84,6 +84,22 @@ public class MerchantsEditPageTests : BaseTest
     }
 
     [Fact]
+    public void MerchantsEdit_EditScheduleButton_NavigatesToEditableMerchantSchedule()
+    {
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(merchantId);
+
+        IRenderedComponent<MerchantsEdit> cut = RenderComponent<MerchantsEdit>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        cut.Find("#editScheduleButton").Click();
+
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/schedule");
+        _fakeNavigationManager.Uri.ShouldNotContain("readOnly=true");
+    }
+
+    [Fact]
     public void MerchantsEdit_TabSwitch_ToAddress_UpdatesActiveTab()
     {
         // Arrange

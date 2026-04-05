@@ -199,6 +199,32 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#saveScheduleButton").HasAttribute("disabled").ShouldBeTrue();
     }
 
+    [Fact]
+    public void MerchantSchedule_ReadOnlyMode_DisablesEditingControls()
+    {
+        var merchantId = Guid.NewGuid();
+        var currentYear = DateTime.Today.Year;
+
+        SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel
+        {
+            Year = currentYear,
+            Months = new List<MerchantModels.MerchantScheduleMonthModel>
+            {
+                new() { Month = currentYear == DateTime.Today.Year && DateTime.Today.Month == 12 ? 12 : DateTime.Today.Month + 1, ClosedDays = new List<Int32> { 1, 2 } }
+            }
+        });
+
+        var cut = RenderComponent<Schedule>(parameters => parameters
+            .Add(p => p.MerchantId, merchantId)
+            .Add(p => p.ReadOnly, true));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        cut.Markup.ShouldContain("Selected Year Schedule");
+        cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeTrue();
+        cut.FindAll("#clonePreviousYearButton").Count.ShouldBe(0);
+        cut.FindAll("#saveScheduleButton").Count.ShouldBe(0);
+    }
+
     private void SetupPageData(Guid merchantId,
                                Int32 scheduleYear,
                                MerchantModels.MerchantScheduleModel schedule)

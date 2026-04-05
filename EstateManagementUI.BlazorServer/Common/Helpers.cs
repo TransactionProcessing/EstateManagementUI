@@ -210,9 +210,11 @@ namespace EstateManagementUI.BlazorServer.Common
             navigationManager.NavigateTo($"/merchants/{merchantId}/deposit");
         }
 
-        public static void NavigateToMerchantSchedule(this NavigationManager navigationManager, Guid merchantId)
+        public static void NavigateToMerchantSchedule(this NavigationManager navigationManager, Guid merchantId, Boolean readOnly = false)
         {
-            navigationManager.NavigateTo($"/merchants/{merchantId}/schedule");
+            navigationManager.NavigateTo(readOnly
+                ? $"/merchants/{merchantId}/schedule?readOnly=true"
+                : $"/merchants/{merchantId}/schedule");
         }
 
         public static void NavigateToNewMerchant(this NavigationManager navigationManager)

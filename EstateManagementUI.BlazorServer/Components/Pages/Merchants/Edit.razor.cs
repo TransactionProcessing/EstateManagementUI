@@ -554,5 +554,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
         private void BackToList() => NavigationManager.NavigateToMerchantList();
 
+        private void EditSchedule() => NavigationManager.NavigateToMerchantSchedule(this.MerchantId);
+
         private sealed record OpeningHoursRow(String DayName, MerchantModels.DayOpeningHoursModel Hours);
     }
