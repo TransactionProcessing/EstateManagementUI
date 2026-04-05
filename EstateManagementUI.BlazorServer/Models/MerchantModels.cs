@@ -21,6 +21,7 @@ public class MerchantModels
         public decimal? Balance { get; set; }
         public decimal? AvailableBalance { get; set; }
         public string? SettlementSchedule { get; set; }
+        public MerchantOpeningHoursModel OpeningHours { get; set; } = new();
         public Guid AddressId { get; set; }
         public string? AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
@@ -178,6 +179,23 @@ public class MerchantModels
 
         [Required(ErrorMessage = "Reference is required")]
         public string? Reference { get; set; }
+    }
+
+    public class MerchantOpeningHoursModel
+    {
+        public DayOpeningHoursModel Sunday { get; set; } = new();
+        public DayOpeningHoursModel Monday { get; set; } = new();
+        public DayOpeningHoursModel Tuesday { get; set; } = new();
+        public DayOpeningHoursModel Wednesday { get; set; } = new();
+        public DayOpeningHoursModel Thursday { get; set; } = new();
+        public DayOpeningHoursModel Friday { get; set; } = new();
+        public DayOpeningHoursModel Saturday { get; set; } = new();
+    }
+
+    public class DayOpeningHoursModel
+    {
+        public string? Opening { get; set; }
+        public string? Closing { get; set; }
     }
 
     private class DateNotInFutureAttribute : ValidationAttribute

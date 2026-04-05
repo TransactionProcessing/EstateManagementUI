@@ -321,6 +321,51 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         }
 
         [Fact]
+        public async Task UpdateMerchantOpeningHours_SendsUpdateCommand_AndReturnsSuccess()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var openingHours = new BlazorServer.Models.MerchantModels.MerchantOpeningHoursModel
+            {
+                Sunday = new() { Opening = "0800", Closing = "1800" },
+                Monday = new() { Opening = "0800", Closing = "1700" },
+                Tuesday = new() { Opening = "0800", Closing = "1700" },
+                Wednesday = new() { Opening = "0800", Closing = "1700" },
+                Thursday = new() { Opening = "0800", Closing = "1700" },
+                Friday = new() { Opening = "0800", Closing = "1700" },
+                Saturday = new() { Opening = "0900", Closing = "1600" }
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.UpdateMerchantOpeningHoursCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success);
+
+            var result = await _service.UpdateMerchantOpeningHours(CorrelationIdHelper.New(), estateId, merchantId, openingHours);
+
+            result.IsSuccess.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.Is<MerchantCommands.UpdateMerchantOpeningHoursCommand>(c =>
+                c.EstateId == estateId &&
+                c.MerchantId == merchantId &&
+                c.OpeningHours.Sunday.Opening == "0800" &&
+                c.OpeningHours.Sunday.Closing == "1800" &&
+                c.OpeningHours.Saturday.Opening == "0900" &&
+                c.OpeningHours.Saturday.Closing == "1600"
+            ), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateMerchantOpeningHours_ReturnsFailure_WhenMediatorFails()
+        {
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.UpdateMerchantOpeningHoursCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure);
+
+            var result = await _service.UpdateMerchantOpeningHours(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantOpeningHoursModel());
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
         public async Task AddAndRemoveOperatorToMerchant_SendCorrectCommands()
         {
             var estateId = Guid.NewGuid();

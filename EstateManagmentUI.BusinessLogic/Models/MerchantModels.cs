@@ -12,6 +12,7 @@ namespace EstateManagementUI.BusinessLogic.Models {
             public decimal? Balance { get; set; }
             public decimal? AvailableBalance { get; set; }
             public string? SettlementSchedule { get; set; }
+            public MerchantOpeningHoursModel OpeningHours { get; set; } = new();
 
             public Guid AddressId { get; set; }
             public string? AddressLine1 { get; set; }
@@ -92,6 +93,23 @@ namespace EstateManagementUI.BusinessLogic.Models {
             public int MerchantsWithNoSaleInLast7Days { get; set; }
             public int MerchantsWithNoSaleToday { get; set; }
             public int MerchantsWithSaleInLastHour { get; set; }
+        }
+
+        public class MerchantOpeningHoursModel
+        {
+            public DayOpeningHoursModel Sunday { get; set; } = new();
+            public DayOpeningHoursModel Monday { get; set; } = new();
+            public DayOpeningHoursModel Tuesday { get; set; } = new();
+            public DayOpeningHoursModel Wednesday { get; set; } = new();
+            public DayOpeningHoursModel Thursday { get; set; } = new();
+            public DayOpeningHoursModel Friday { get; set; } = new();
+            public DayOpeningHoursModel Saturday { get; set; } = new();
+        }
+
+        public class DayOpeningHoursModel
+        {
+            public string? Opening { get; set; }
+            public string? Closing { get; set; }
         }
     }
 }

@@ -3,10 +3,9 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Shared.Results;
 using SimpleResults;
+using Shared.Results;
 using Spectre.Console;
-using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using static EstateManagementUI.BlazorServer.Models.MerchantModels;
 
 namespace EstateManagementUI.BlazorServer.UIServices;
@@ -46,6 +45,11 @@ public interface IMerchantUIService {
                                 Guid estateId,
                                 Guid merchantId,
                                 MerchantModels.MerchantEditModel editMerchantModel);
+
+    Task<Result> UpdateMerchantOpeningHours(CorrelationId correlationId,
+                                            Guid estateId,
+                                            Guid merchantId,
+                                            MerchantModels.MerchantOpeningHoursModel openingHoursModel);
 
     Task<Result> AddOperatorToMerchant(CorrelationId correlationId,
                                        Guid estateId,
@@ -182,6 +186,28 @@ public class MerchantUIService : IMerchantUIService {
 
         MerchantCommands.UpdateMerchantCommand command = new(correlationId, estateId, merchantId, editMerchantModel.MerchantName, editMerchantModel.SettlementSchedule, 
             address,contact);
+        var result = await this.Mediator.Send(command);
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        return Result.Success();
+    }
+
+    public async Task<Result> UpdateMerchantOpeningHours(CorrelationId correlationId,
+                                                         Guid estateId,
+                                                         Guid merchantId,
+                                                         MerchantModels.MerchantOpeningHoursModel openingHoursModel) {
+        var opening = new MerchantCommands.MerchantOpeningHours(new MerchantCommands.OpeningHours(openingHoursModel.Sunday.Opening, openingHoursModel.Sunday.Closing),
+                new MerchantCommands.OpeningHours(openingHoursModel.Monday.Opening, openingHoursModel.Monday.Closing),
+                new MerchantCommands.OpeningHours(openingHoursModel.Tuesday.Opening, openingHoursModel.Tuesday.Closing),
+                new MerchantCommands.OpeningHours(openingHoursModel.Wednesday.Opening, openingHoursModel.Wednesday.Closing),
+                new MerchantCommands.OpeningHours(openingHoursModel.Thursday.Opening, openingHoursModel.Thursday.Closing),
+                new MerchantCommands.OpeningHours(openingHoursModel.Friday.Opening, openingHoursModel.Friday.Closing),
+                new MerchantCommands.OpeningHours(openingHoursModel.Saturday.Opening, openingHoursModel.Saturday.Closing)
+            );
+
+
+        MerchantCommands.UpdateMerchantOpeningHoursCommand command = new(correlationId, estateId, merchantId, opening);
+        
         var result = await this.Mediator.Send(command);
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);

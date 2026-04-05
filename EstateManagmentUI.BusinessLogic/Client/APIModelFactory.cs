@@ -1,9 +1,13 @@
-﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
+using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using ContractProductTransactionFee = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.ContractProductTransactionFee;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace EstateManagementUI.BusinessLogic.Client;
 
@@ -365,8 +369,104 @@ public  static class FactoryExtensions{
             PostalCode = apiResultData.PostCode,
             SettlementSchedule = ((SettlementSchedule)apiResultData.SettlementSchedule).ToString(),
             Town = apiResultData.Town,
+            OpeningHours = apiResultData.OpeningHours.ToMerchantOpeningHours()
         };
         return model;
+    }
+
+    private static MerchantModels.MerchantOpeningHoursModel ToMerchantOpeningHours(this Dictionary<DayOfWeek, OpeningHoursResponse> openingHours) {
+        MerchantModels.MerchantOpeningHoursModel model = new();
+
+        if (openingHours == null)
+        {
+            MerchantModels.DayOpeningHoursModel sunday = new()
+            {
+                Opening = "00:00",
+                Closing = "00:59"
+            };
+            MerchantModels.DayOpeningHoursModel monday = new()
+            {
+                Opening = "01:00",
+                Closing = "01:59"
+            };
+            MerchantModels.DayOpeningHoursModel tuesday = new()
+            {
+                Opening = "02:00",
+                Closing = "02:59"
+            };
+            MerchantModels.DayOpeningHoursModel wednesday = new()
+            {
+                Opening = "03:00",
+                Closing = "03:59"
+            };
+            MerchantModels.DayOpeningHoursModel thursday = new()
+            {
+                Opening = "04:00",
+                Closing = "04:59"
+            };
+            MerchantModels.DayOpeningHoursModel friday = new()
+            {
+                Opening = "05:00",
+                Closing = "05:59"
+            };
+            MerchantModels.DayOpeningHoursModel saturday = new()
+            {
+                Opening = "06:00",
+                Closing = "06:59"
+            };
+
+            AssignOpeningHours(model, DayOfWeek.Sunday, sunday);
+            AssignOpeningHours(model, DayOfWeek.Monday, monday);
+            AssignOpeningHours(model, DayOfWeek.Tuesday, tuesday);
+            AssignOpeningHours(model, DayOfWeek.Wednesday, wednesday);
+            AssignOpeningHours(model, DayOfWeek.Thursday, thursday);
+            AssignOpeningHours(model, DayOfWeek.Friday, friday);
+            AssignOpeningHours(model, DayOfWeek.Saturday, saturday);
+            return model;
+        }
+
+        foreach (KeyValuePair<DayOfWeek, OpeningHoursResponse> entry in openingHours)
+        {
+            MerchantModels.DayOpeningHoursModel dayModel = new()
+            {
+                Opening = entry.Value.Opening,
+                Closing = entry.Value.Closing
+            };
+
+            AssignOpeningHours(model, entry.Key, dayModel);
+        }
+
+        return model;
+    }
+
+    private static void AssignOpeningHours(MerchantModels.MerchantOpeningHoursModel model, DayOfWeek dayOfWeek, MerchantModels.DayOpeningHoursModel dayModel)
+    {
+        switch (dayOfWeek)
+        {
+            case DayOfWeek.Sunday:
+                model.Sunday = dayModel;
+                break;
+            case DayOfWeek.Monday:
+                model.Monday = dayModel;
+                break;
+            case DayOfWeek.Tuesday:
+                model.Tuesday = dayModel;
+                break;
+            case DayOfWeek.Wednesday:
+                model.Wednesday = dayModel;
+                break;
+            case DayOfWeek.Thursday:
+                model.Thursday = dayModel;
+                break;
+            case DayOfWeek.Friday:
+                model.Friday = dayModel;
+                break;
+            case DayOfWeek.Saturday:
+                model.Saturday = dayModel;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(dayOfWeek), dayOfWeek, "Unsupported day of week.");
+        }
     }
 
     public static List<MerchantModels.MerchantOperatorModel> ToMerchantOperators(this List<MerchantOperator> apiResultData)

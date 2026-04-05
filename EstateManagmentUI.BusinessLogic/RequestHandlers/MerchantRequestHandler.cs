@@ -17,6 +17,7 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
     IRequestHandler<MerchantCommands.SwapMerchantDeviceCommand, Result>,
     IRequestHandler<MerchantCommands.UpdateMerchantCommand, Result>,
+    IRequestHandler<MerchantCommands.UpdateMerchantOpeningHoursCommand, Result>,
     IRequestHandler<MerchantCommands.AssignContractToMerchantCommand, Result>,
     IRequestHandler<MerchantQueries.GetRecentMerchantsQuery, Result<List<MerchantModels.RecentMerchantsModel>>>,
     IRequestHandler<MerchantQueries.GetMerchantsForDropDownQuery, Result<List<MerchantModels.MerchantDropDownModel>>>,
@@ -88,6 +89,11 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
             return ResultHelpers.CreateFailure(updateMerchantContactResult);
 
         return Result.Success();
+    }
+
+    public async Task<Result> Handle(MerchantCommands.UpdateMerchantOpeningHoursCommand request,
+                                     CancellationToken cancellationToken) {
+        return await this.ApiClient.UpdateMerchantOpeningHours(request, cancellationToken);
     }
 
     public async Task<Result<MerchantModels.MerchantModel>> Handle(MerchantQueries.GetMerchantQuery request,
