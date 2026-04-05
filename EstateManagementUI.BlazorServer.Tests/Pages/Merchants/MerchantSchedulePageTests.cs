@@ -27,6 +27,23 @@ public class MerchantSchedulePageTests : BaseTest
     }
 
     [Fact]
+    public void MerchantSchedule_YearSelector_DisplaysNextTenYears()
+    {
+        var merchantId = Guid.NewGuid();
+        var currentYear = DateTime.Today.Year;
+        SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
+
+        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        var options = cut.FindAll("#selectedYear option");
+
+        options.Count.ShouldBe(10);
+        options.First().GetAttribute("value").ShouldBe(currentYear.ToString());
+        options.Last().GetAttribute("value").ShouldBe((currentYear + 9).ToString());
+    }
+
+    [Fact]
     public void MerchantSchedule_ClonePreviousYear_CopiesEditableMonths()
     {
         var merchantId = Guid.NewGuid();

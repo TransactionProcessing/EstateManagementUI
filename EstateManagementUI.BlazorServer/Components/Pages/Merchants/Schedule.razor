@@ -55,7 +55,12 @@
                 <div class="flex flex-wrap items-end gap-3">
                     <div>
                         <label for="selectedYear" class="block text-sm font-medium text-gray-700 mb-1">Year</label>
-                        <InputNumber id="selectedYear" @bind-Value="yearInput" class="input w-32" />
+                        <InputSelect id="selectedYear" @bind-Value="yearInput" class="input w-40">
+                            @foreach (var year in availableYears)
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        </InputSelect>
                     </div>
                     <button type="button" id="loadYearButton" class="btn btn-secondary" @onclick="LoadSelectedYearAsync">
                         Load Year

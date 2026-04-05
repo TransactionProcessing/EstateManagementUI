@@ -14,6 +14,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         public Guid MerchantId { get; set; }
 
         private readonly DateTime today = DateTime.Today;
+        private readonly IReadOnlyList<Int32> availableYears = Enumerable.Range(DateTime.Today.Year, 10).ToList();
         private MerchantModels.MerchantModel? merchant;
         private List<ScheduleMonthEditor> monthEditors = [];
         private bool isLoading = true;
