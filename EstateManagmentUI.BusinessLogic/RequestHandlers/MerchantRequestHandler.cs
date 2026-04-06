@@ -9,9 +9,11 @@ namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchantsQuery, Result<List<MerchantModels.MerchantListModel>>>,
     IRequestHandler<MerchantQueries.GetMerchantQuery, Result<MerchantModels.MerchantModel>>,
+    IRequestHandler<MerchantQueries.GetMerchantScheduleQuery, Result<MerchantModels.MerchantScheduleModel>>,
     IRequestHandler<MerchantCommands.AddMerchantDeviceCommand, Result>,
     IRequestHandler<MerchantCommands.AddOperatorToMerchantCommand, Result>,
     IRequestHandler<MerchantCommands.CreateMerchantCommand, Result>,
+    IRequestHandler<MerchantCommands.CreateMerchantScheduleCommand, Result>,
     IRequestHandler<MerchantCommands.MakeMerchantDepositCommand, Result>,
     IRequestHandler<MerchantCommands.RemoveContractFromMerchantCommand, Result>,
     IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
@@ -101,6 +103,11 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
         return await this.ApiClient.GetMerchant(request, cancellationToken);
     }
 
+    public async Task<Result<MerchantModels.MerchantScheduleModel>> Handle(MerchantQueries.GetMerchantScheduleQuery request,
+                                                                           CancellationToken cancellationToken) {
+        return await this.ApiClient.GetMerchantSchedule(request, cancellationToken);
+    }
+
     public async Task<Result> Handle(MerchantCommands.AssignContractToMerchantCommand request,
                                      CancellationToken cancellationToken) {
         return await this.ApiClient.AddContractToMerchant(request, cancellationToken);
@@ -109,6 +116,11 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     public async Task<Result<List<MerchantModels.RecentMerchantsModel>>> Handle(MerchantQueries.GetRecentMerchantsQuery request,
                                                                                 CancellationToken cancellationToken) {
         return await this.ApiClient.GetRecentMerchants(request, cancellationToken);
+    }
+
+    public async Task<Result> Handle(MerchantCommands.CreateMerchantScheduleCommand request,
+                                     CancellationToken cancellationToken) {
+        return await this.ApiClient.CreateMerchantSchedule(request, cancellationToken);
     }
 
     public async Task<Result<List<MerchantModels.MerchantDropDownModel>>> Handle(MerchantQueries.GetMerchantsForDropDownQuery request,

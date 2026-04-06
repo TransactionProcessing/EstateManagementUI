@@ -562,6 +562,25 @@ public class MerchantsViewPageTests : BaseTest
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
     }
 
+    [Fact]
+    public void MerchantsView_ViewScheduleButton_NavigatesToReadOnlyMerchantSchedule()
+    {
+        var merchantId = Guid.NewGuid();
+        SetupSuccessfulDataLoad(new MerchantModels.MerchantModel
+        {
+            MerchantId = merchantId,
+            MerchantName = "Test Merchant",
+            MerchantReference = "REF001"
+        });
+
+        var cut = RenderComponent<View>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        cut.Find("#viewScheduleButton").Click();
+
+        _fakeNavigationManager.Uri.ShouldContain($"/merchants/{merchantId}/schedule?readOnly=true");
+    }
+
     // Helper methods
     private void SetupSuccessfulDataLoad(
         MerchantModels.MerchantModel? merchant = null,

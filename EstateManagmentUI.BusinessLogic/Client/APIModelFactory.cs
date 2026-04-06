@@ -39,6 +39,23 @@ public static class APIModelFactory {
         return model;
     }
 
+    public static MerchantModels.MerchantScheduleModel ConvertFrom(MerchantScheduleResponse apiResult)
+    {
+        MerchantModels.MerchantScheduleModel model = new()
+        {
+            Year = apiResult.Year,
+            Months = apiResult.Months
+                .OrderBy(month => month.Month)
+                .Select(month => new MerchantModels.MerchantScheduleMonthModel
+                {
+                    Month = month.Month,
+                    ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
+                }).ToList()
+        };
+
+        return model;
+    }
+
     public static TodaysSalesModel ConvertFrom(TodaysSales apiResultData) {
         TodaysSalesModel model = new TodaysSalesModel {
             ComparisonAverageValue = apiResultData.ComparisonAverageSalesValue,
