@@ -1208,7 +1208,7 @@ public class MerchantsEditPageTests : BaseTest
             Town = "Test Town",
             Region = "Test Region",
             PostalCode = "12345",
-            Country = "GB",
+            Country = "United Kingdom",
             ContactId = Guid.NewGuid(),
             ContactName = "Test Contact",
             ContactEmailAddress = "test@example.com",

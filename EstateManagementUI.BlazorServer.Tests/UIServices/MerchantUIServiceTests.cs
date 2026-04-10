@@ -288,7 +288,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                 Town = "T",
                 Region = "R",
                 PostalCode = "P",
-                Country = "C",
+                Country = "United Kingdom",
                 ContactId = contactId,
                 ContactName = "CN",
                 ContactEmailAddress = "e@x",
