@@ -43,7 +43,35 @@ public class Merchant
     public String ContactEmail { get; set; }
     [JsonProperty("contact_phone")]
     public String ContactPhone { get; set; }
+}
 
-    [JsonProperty("opening_hours")]
-    public Dictionary<DayOfWeek, OpeningHoursResponse> OpeningHours { get; set; }
+
+public class MerchantOpeningHour
+{
+    [JsonProperty("merchant_id")]
+    public Guid MerchantId { get; set; }
+    [JsonProperty("day_of_week")]
+    public DayOfWeek DayOfWeek { get; set; }
+    [JsonProperty("opening_time")]
+    public String OpeningTime { get; set; }
+    [JsonProperty("closing_time")]
+    public String ClosingTime { get; set; }
+}
+
+public class MerchantScheduleResponse
+{
+    [JsonProperty("year")]
+    public int Year { get; set; }
+
+    [JsonProperty("months")]
+    public List<MerchantScheduleMonthResponse> Months { get; set; }
+}
+
+public class MerchantScheduleMonthResponse
+{
+    [JsonProperty("month")]
+    public int Month { get; set; }
+
+    [JsonProperty("closed_days")]
+    public List<int> ClosedDays { get; set; }
 }

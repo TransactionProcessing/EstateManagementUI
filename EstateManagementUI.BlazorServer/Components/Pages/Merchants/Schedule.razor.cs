@@ -15,7 +15,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         public Guid MerchantId { get; set; }
 
         [Parameter]
-        [SupplyParameterFromQuery(Name = "readOnly")]
+        //[SupplyParameterFromQuery(Name = "readOnly")]
         public Boolean ReadOnly { get; set; }
 
         private readonly DateTime today = DateTime.Today;
@@ -149,7 +149,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result<MerchantModels.MerchantScheduleModel> scheduleResult = this.BuildScheduleToSave();
                 if (scheduleResult.IsFailed)
                 {
-                    this.errorMessage = scheduleResult.Errors.SingleOrDefault() ?? "Invalid schedule.";
+                    this.errorMessage = scheduleResult switch
+                    {
+                        _ when scheduleResult.Errors.Any() => scheduleResult.Errors.First(),
+                        _ when String.IsNullOrEmpty(scheduleResult.Message) == false => scheduleResult.Message,
+                        _ => "Invalid schedule."
+                    };
                     return;
                 }
 
@@ -158,7 +163,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result result = await this.MerchantUIService.SaveMerchantSchedule(correlationId, estateId, this.MerchantId, scheduleResult.Data);
                 if (result.IsFailed)
                 {
-                    this.errorMessage = result.Errors.SingleOrDefault() ?? "Failed to save merchant schedule.";
+                    this.errorMessage = result switch {
+                        _ when result.Errors.Any() => result.Errors.First(),
+                        _ when String.IsNullOrEmpty(result.Message) == false => result.Message,
+                        _ => "Failed to save merchant schedule."
+                    };
                     return;
                 }
 

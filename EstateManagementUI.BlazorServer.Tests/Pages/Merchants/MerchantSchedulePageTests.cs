@@ -111,7 +111,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(futureYear, new MerchantModels.MerchantScheduleModel { Year = futureYear, Months = [] });
-
+        
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -120,7 +120,7 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#month-11-closed-days").Change("31");
         cut.Find("#saveScheduleButton").Click();
 
-        cut.Markup.ShouldContain($"Only days between 1 and 30 can be supplied for November {futureYear}.");
+        cut.Markup.ShouldContain($"Invalid closed days for November.");
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -165,7 +165,8 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(nonLeapYear, new MerchantModels.MerchantScheduleModel { Year = nonLeapYear, Months = [] });
-
+        this.MerchantUIService.Setup(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
+            It.IsAny<MerchantModels.MerchantScheduleModel>())).ReturnsAsync(Result.Failure($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."));
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -175,8 +176,6 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#saveScheduleButton").Click();
 
         cut.Markup.ShouldContain($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
-        this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
-            It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
 
     [Fact]

@@ -14,6 +14,7 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     IRequestHandler<MerchantCommands.AddOperatorToMerchantCommand, Result>,
     IRequestHandler<MerchantCommands.CreateMerchantCommand, Result>,
     IRequestHandler<MerchantCommands.CreateMerchantScheduleCommand, Result>,
+    IRequestHandler<MerchantCommands.UpdateMerchantScheduleCommand, Result>,
     IRequestHandler<MerchantCommands.MakeMerchantDepositCommand, Result>,
     IRequestHandler<MerchantCommands.RemoveContractFromMerchantCommand, Result>,
     IRequestHandler<MerchantCommands.RemoveOperatorFromMerchantCommand, Result>,
@@ -26,7 +27,8 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     IRequestHandler<MerchantQueries.GetMerchantContractsQuery, Result<List<MerchantModels.MerchantContractModel>>>,
     IRequestHandler<MerchantQueries.GetMerchantOperatorsQuery, Result<List<MerchantModels.MerchantOperatorModel>>>,
     IRequestHandler<MerchantQueries.GetMerchantDevicesQuery, Result<List<MerchantModels.MerchantDeviceModel>>>,
-    IRequestHandler<MerchantQueries.GetMerchantKpiQuery, Result<MerchantModels.MerchantKpiModel>>
+    IRequestHandler<MerchantQueries.GetMerchantKpiQuery, Result<MerchantModels.MerchantKpiModel>>,
+    IRequestHandler<MerchantQueries.GetMerchantOpeningHoursQuery, Result<MerchantModels.MerchantOpeningHoursModel>>
 {
 
     private readonly IApiClient ApiClient;
@@ -146,5 +148,15 @@ public class MerchantRequestHandler : IRequestHandler<MerchantQueries.GetMerchan
     public async Task<Result<MerchantModels.MerchantKpiModel>> Handle(MerchantQueries.GetMerchantKpiQuery request,
                                                                       CancellationToken cancellationToken) {
         return await this.ApiClient.GetMerchantKpi(request, cancellationToken);
+    }
+
+    public async Task<Result<MerchantModels.MerchantOpeningHoursModel>> Handle(MerchantQueries.GetMerchantOpeningHoursQuery request,
+                                                                               CancellationToken cancellationToken) {
+        return await this.ApiClient.GetMerchantOpeningHours(request, cancellationToken);
+    }
+
+    public async Task<Result> Handle(MerchantCommands.UpdateMerchantScheduleCommand request,
+                                     CancellationToken cancellationToken) {
+        return await this.ApiClient.UpdateMerchantSchedule(request, cancellationToken);
     }
 }

@@ -98,6 +98,8 @@ public interface IMerchantUIService {
     Task<Result<MerchantModels.MerchantScheduleModel>> GetMerchantSchedule(CorrelationId correlationId, Guid estateId, Guid merchantId, Int32 year);
 
     Task<Result> SaveMerchantSchedule(CorrelationId correlationId, Guid estateId, Guid merchantId, MerchantModels.MerchantScheduleModel scheduleModel);
+
+    Task<Result<MerchantModels.MerchantOpeningHoursModel>> GetMerchantOpeningHours(CorrelationId correlationId, Guid estateId, Guid merchantId);
 }
 
 public class MerchantUIService : IMerchantUIService {
@@ -344,21 +346,44 @@ public class MerchantUIService : IMerchantUIService {
                                                    Guid estateId,
                                                    Guid merchantId,
                                                    MerchantModels.MerchantScheduleModel scheduleModel) {
+        Result<MerchantModels.MerchantScheduleModel> loadResult = await this.GetMerchantSchedule(correlationId, estateId, merchantId, scheduleModel.Year);
+        if (loadResult.IsFailed && loadResult.Status != ResultStatus.NotFound)
+            return ResultHelpers.CreateFailure(loadResult);
+
         BusinessLogic.Models.MerchantModels.MerchantScheduleModel businessLogicModel = new() {
             Year = scheduleModel.Year,
             Months = scheduleModel.Months
                 .OrderBy(month => month.Month)
+                .Where(month => month.ClosedDays.Any())
                 .Select(month => new BusinessLogic.Models.MerchantModels.MerchantScheduleMonthModel {
                     Month = month.Month,
                     ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
                 }).ToList()
         };
 
-        MerchantCommands.CreateMerchantScheduleCommand command = new(correlationId, estateId, merchantId, businessLogicModel);
+        IRequest<Result> command;
+        if (loadResult.Status == ResultStatus.NotFound) {
+            command = new MerchantCommands.CreateMerchantScheduleCommand(correlationId, estateId, merchantId, businessLogicModel);
+        }
+        else {
+            command = new MerchantCommands.UpdateMerchantScheduleCommand(correlationId, estateId, merchantId, businessLogicModel);
+        }
+
         var result = await this.Mediator.Send(command);
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
 
         return Result.Success();
+    }
+
+    public async Task<Result<MerchantOpeningHoursModel>> GetMerchantOpeningHours(CorrelationId correlationId,
+                                                                                 Guid estateId,
+                                                                                 Guid merchantId) {
+        MerchantQueries.GetMerchantOpeningHoursQuery query = new(correlationId, estateId, merchantId);
+        var result = await this.Mediator.Send(query);
+        if (result.IsFailed)
+            return ResultHelpers.CreateFailure(result);
+        var openingHours = ModelFactory.ConvertFrom(result.Data);
+        return Result.Success(openingHours);
     }
 }
