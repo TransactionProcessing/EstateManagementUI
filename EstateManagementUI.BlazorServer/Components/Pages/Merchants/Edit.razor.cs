@@ -98,7 +98,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                     ContactEmailAddress = merchant.ContactEmailAddress,
                     ContactPhoneNumber = merchant.ContactPhoneNumber,
                 };
-                
+
                 var operatorsResultTask = this.MerchantUiService.GetMerchantOperators(correlationId, estateId, MerchantId);
                 var contractsResultTask = this.MerchantUiService.GetMerchantContracts(correlationId, estateId, MerchantId);
                 var devicesResultTask = this.MerchantUiService.GetMerchantDevices(correlationId, estateId, MerchantId);
@@ -115,26 +115,37 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 if (devicesResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
 
-                if (openingHoursResultTask.Result.IsFailed)
+                if (openingHoursResultTask.Result.IsFailed && openingHoursResultTask.Result.Status != ResultStatus.NotFound)
                     return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
 
                 assignedOperators = operatorsResultTask.Result.Data;
                 assignedContracts = contractsResultTask.Result.Data;
                 this.assignedDevices = devicesResultTask.Result.Data;
 
-            merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel
-            {
-                Sunday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Sunday.Opening, Closing = openingHoursResultTask.Result.Data.Sunday.Closing },
-                Monday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Monday.Opening, Closing = openingHoursResultTask.Result.Data.Monday.Closing },
-                Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Tuesday.Opening, Closing = openingHoursResultTask.Result.Data.Tuesday.Closing },
-                Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Wednesday.Opening, Closing = openingHoursResultTask.Result.Data.Wednesday.Closing },
-                Thursday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Thursday.Opening, Closing = openingHoursResultTask.Result.Data.Thursday.Closing },
-                Friday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Friday.Opening, Closing = openingHoursResultTask.Result.Data.Friday.Closing },
-                Saturday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Saturday.Opening, Closing = openingHoursResultTask.Result.Data.Saturday.Closing }
-            };
-
-
-            Task<Result<List<OperatorModels.OperatorDropDownModel>>> operatorsDropDownTask = this.OperatorUiService.GetOperatorsForDropDown(correlationId, estateId);
+                if (openingHoursResultTask.Result.Data == null) {
+                    merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel {
+                        Friday = new MerchantModels.DayOpeningHoursModel(),
+                        Monday = new MerchantModels.DayOpeningHoursModel(),
+                        Saturday = new MerchantModels.DayOpeningHoursModel(),
+                        Sunday = new MerchantModels.DayOpeningHoursModel(),
+                        Thursday = new MerchantModels.DayOpeningHoursModel(),
+                        Tuesday = new MerchantModels.DayOpeningHoursModel(),
+                        Wednesday = new MerchantModels.DayOpeningHoursModel()
+                    };
+                }
+                else {
+                    merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel {
+                        Sunday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Sunday.Opening, Closing = openingHoursResultTask.Result.Data.Sunday.Closing },
+                        Monday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Monday.Opening, Closing = openingHoursResultTask.Result.Data.Monday.Closing },
+                        Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Tuesday.Opening, Closing = openingHoursResultTask.Result.Data.Tuesday.Closing },
+                        Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Wednesday.Opening, Closing = openingHoursResultTask.Result.Data.Wednesday.Closing },
+                        Thursday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Thursday.Opening, Closing = openingHoursResultTask.Result.Data.Thursday.Closing },
+                        Friday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Friday.Opening, Closing = openingHoursResultTask.Result.Data.Friday.Closing },
+                        Saturday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Saturday.Opening, Closing = openingHoursResultTask.Result.Data.Saturday.Closing }
+                    };
+                }
+                
+                Task<Result<List<OperatorModels.OperatorDropDownModel>>> operatorsDropDownTask = this.OperatorUiService.GetOperatorsForDropDown(correlationId, estateId);
                 Task<Result<List<ContractModels.ContractDropDownModel>>> contractsDropDownTask = this.ContractUiService.GetContractsForDropDown(correlationId, estateId);
 
                 await Task.WhenAll(operatorsDropDownTask, contractsDropDownTask);
