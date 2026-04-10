@@ -187,8 +187,8 @@ public class MerchantUIService : IMerchantUIService {
                                              Guid estateId,
                                              Guid merchantId,
                                              MerchantModels.MerchantEditModel editMerchantModel) {
-        MerchantCommands.MerchantAddress address = new(Guid.NewGuid(), editMerchantModel.AddressLine1, editMerchantModel.Town, editMerchantModel.Region, editMerchantModel.PostalCode, editMerchantModel.Country);
-        MerchantCommands.MerchantContact contact = new(Guid.NewGuid(), editMerchantModel.ContactName, editMerchantModel.ContactEmailAddress, editMerchantModel.ContactPhoneNumber);
+        MerchantCommands.MerchantAddress address = new(editMerchantModel.AddressId, editMerchantModel.AddressLine1, editMerchantModel.Town, editMerchantModel.Region, editMerchantModel.PostalCode, editMerchantModel.Country);
+        MerchantCommands.MerchantContact contact = new(editMerchantModel.ContactId, editMerchantModel.ContactName, editMerchantModel.ContactEmailAddress, editMerchantModel.ContactPhoneNumber);
 
         MerchantCommands.UpdateMerchantCommand command = new(correlationId, estateId, merchantId, editMerchantModel.MerchantName, editMerchantModel.SettlementSchedule, 
             address,contact);

@@ -11,7 +11,7 @@
         <span class="truncate flex items-center gap-2">
             @if (!string.IsNullOrEmpty(Value))
             {
-                var selected = Countries.FirstOrDefault(c => c.Name == Value);
+                var selected = Countries.FirstOrDefault(c => c.Name == Value || c.Code == Value);
                 if (selected != null)
                 {
                     <span class="text-xl">@selected.Flag</span>
@@ -40,7 +40,7 @@
             {
                 @foreach (var country in Countries)
                 {
-                    var isSelected = Value == country.Name;
+                    var isSelected = Value == country.Name || Value == country.Code;
                     
                     <button type="button"
                             @onclick="@(() => SelectCountry(country.Name))"

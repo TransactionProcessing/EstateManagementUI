@@ -277,15 +277,19 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
 
+            var addressId = Guid.NewGuid();
+            var contactId = Guid.NewGuid();
             var editModel = new BlazorServer.Models.MerchantModels.MerchantEditModel
             {
                 MerchantName = "Upd",
                 SettlementSchedule = "S",
+                AddressId = addressId,
                 AddressLine1 = "A1",
                 Town = "T",
                 Region = "R",
                 PostalCode = "P",
-                Country = "C",
+                Country = "United Kingdom",
+                ContactId = contactId,
                 ContactName = "CN",
                 ContactEmailAddress = "e@x",
                 ContactPhoneNumber = "ph"
@@ -303,7 +307,9 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                 c.MerchantId == merchantId &&
                 c.Name == editModel.MerchantName &&
                 c.SettlementSchedule == editModel.SettlementSchedule &&
+                c.MerchantAddress.AddressId == addressId &&
                 c.MerchantAddress.AddressLine1 == editModel.AddressLine1 &&
+                c.MerchantContact.ContactId == contactId &&
                 c.MerchantContact.ContactName == editModel.ContactName
             ), It.IsAny<CancellationToken>()), Times.Once);
         }
