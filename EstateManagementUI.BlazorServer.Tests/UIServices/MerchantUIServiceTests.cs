@@ -597,7 +597,34 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         }
 
         [Fact]
-        public async Task SaveMerchantSchedule_SendsCreateCommand_AndReturnsSuccess()
+        public async Task SaveMerchantSchedule_NewSchedule_SendsCreateCommand_AndReturnsSuccess()
+        {
+            var estateId = Guid.NewGuid();
+            var merchantId = Guid.NewGuid();
+            var schedule = new BlazorServer.Models.MerchantModels.MerchantScheduleModel
+            {
+                Year = DateTime.Today.Year + 1,
+                Months = new List<BlazorServer.Models.MerchantModels.MerchantScheduleMonthModel>
+                {
+                    new() { Month = 1, ClosedDays = new List<int> { 1, 2, 15 } },
+                    new() { Month = 2, ClosedDays = new List<int>() }
+                }
+            };
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantScheduleQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.NotFound());
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.CreateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success);
+
+            var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), estateId, merchantId, schedule);
+
+            result.IsSuccess.ShouldBeTrue();
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.CreateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task SaveMerchantSchedule_ExistingSchedule_SendsUpdateCommand_AndReturnsSuccess()
         {
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
@@ -611,28 +638,67 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                 }
             };
 
+            var year = DateTime.Today.Year;
+            var businessLogicSchedule = new BusinessLogic.Models.MerchantModels.MerchantScheduleModel
+            {
+                Year = year,
+                Months = new List<BusinessLogic.Models.MerchantModels.MerchantScheduleMonthModel>
+                {
+                    new() { Month = 1, ClosedDays = new List<int> { 1, 2, 15 } }
+                }
+            };
+
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<MerchantCommands.CreateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()))
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantScheduleQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(businessLogicSchedule));
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.UpdateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Success);
 
             var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), estateId, merchantId, schedule);
 
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<MerchantCommands.CreateMerchantScheduleCommand>(c =>
-                c.EstateId == estateId &&
-                c.MerchantId == merchantId &&
-                c.Schedule.Year == schedule.Year &&
-                c.Schedule.Months.Count == 2 &&
-                c.Schedule.Months[0].Month == 1 &&
-                c.Schedule.Months[0].ClosedDays.SequenceEqual(new[] { 1, 2, 15 })
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Verify(m => m.Send(It.IsAny<MerchantCommands.UpdateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
-        public async Task SaveMerchantSchedule_ReturnsFailure_WhenMediatorFails()
+        public async Task SaveMerchantSchedule_NewSchedule_ReturnsFailure_WhenMediatorFails()
         {
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantScheduleQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.NotFound());
             _mockMediator
                 .Setup(m => m.Send(It.IsAny<MerchantCommands.CreateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Failure("err"));
+
+            var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantScheduleModel
+            {
+                Year = DateTime.Today.Year,
+                Months = new List<BlazorServer.Models.MerchantModels.MerchantScheduleMonthModel>()
+            });
+
+            result.IsFailed.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task SaveMerchantSchedule_ExistingSchedule_ReturnsFailure_WhenMediatorFails()
+        {
+            var year = DateTime.Today.Year;
+            var businessLogicSchedule = new BusinessLogic.Models.MerchantModels.MerchantScheduleModel
+            {
+                Year = year,
+                Months = new List<BusinessLogic.Models.MerchantModels.MerchantScheduleMonthModel>
+                {
+                    new() { Month = 1, ClosedDays = new List<int> { 1, 2, 15 } }
+                }
+            };
+
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantQueries.GetMerchantScheduleQuery>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success(businessLogicSchedule));
+            _mockMediator
+                .Setup(m => m.Send(It.IsAny<MerchantCommands.UpdateMerchantScheduleCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantScheduleModel

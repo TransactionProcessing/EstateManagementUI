@@ -1,11 +1,13 @@
-﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+﻿using Azure.Core;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using Newtonsoft.Json;
 using Shared.Results;
 using SimpleResults;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Newtonsoft.Json;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using MerchantScheduleResponse = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.MerchantScheduleResponse;
 
 namespace EstateManagementUI.BusinessLogic.BackendAPI
 {
@@ -101,6 +103,17 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                                    Guid estateId,
                                                                    DateTime comparisonDate,
                                                                    CancellationToken cancellationToken);
+
+        Task<Result<MerchantScheduleResponse>> GetMerchantSchedule(String accessToken,
+                                                                   Guid estateId,
+                                                                   Guid merchantId,
+                                                                   Int32 year,
+                                                                   CancellationToken cancellationToken);
+
+        Task<Result<List<MerchantOpeningHour>>> GetMerchantOpeningHours(String accessToken,
+                                                                        Guid estateId,
+                                                                        Guid merchantId,
+                                                                        CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -618,6 +631,61 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting todays settlement for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<MerchantScheduleResponse>> GetMerchantSchedule(String accessToken,
+                                                                                Guid estateId,
+                                                                                Guid merchantId,
+                                                                                Int32 year,
+                                                                                CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/schedule/{year}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<MerchantScheduleResponse> result = await this.SendHttpGetRequest<MerchantScheduleResponse>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting merchant schedule for merchant id {merchantId} for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<MerchantOpeningHour>>> GetMerchantOpeningHours(String accessToken,
+                                                                                     Guid estateId,
+                                                                                     Guid merchantId,
+                                                                                     CancellationToken cancellationToken) {
+            String requestUri = this.BuildRequestUrl($"/api/merchants/{merchantId}/openinghours");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<MerchantOpeningHour>> result = await this.SendHttpGetRequest<List<MerchantOpeningHour>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting merchant opening hours for merchant id {merchantId} for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

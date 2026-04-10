@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+﻿using Azure.Core;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using SecurityService.DataTransferObjects.Responses;
@@ -7,6 +8,7 @@ using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 using TransactionProcessor.DataTransferObjects.Requests.MerchantSchedule;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using MerchantScheduleResponse = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.MerchantScheduleResponse;
 
 namespace EstateManagementUI.BusinessLogic.Client
 {
@@ -34,6 +36,9 @@ namespace EstateManagementUI.BusinessLogic.Client
         Task<Result> SwapMerchantDevice(MerchantCommands.SwapMerchantDeviceCommand request, CancellationToken cancellationToken);
         Task<Result> MakeMerchantDeposit(MerchantCommands.MakeMerchantDepositCommand request, CancellationToken cancellationToken);
         Task<Result> CreateMerchant(MerchantCommands.CreateMerchantCommand request, CancellationToken cancellationToken);
+        Task<Result<MerchantModels.MerchantOpeningHoursModel>> GetMerchantOpeningHours(MerchantQueries.GetMerchantOpeningHoursQuery request,
+                                                                                       CancellationToken cancellationToken);
+        Task<Result> UpdateMerchantSchedule(MerchantCommands.UpdateMerchantScheduleCommand request, CancellationToken cancellationToken);
     }
 
     public partial class ApiClient : IApiClient {
@@ -155,6 +160,46 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success();
         }
 
+        public async Task<Result<MerchantModels.MerchantOpeningHoursModel>> GetMerchantOpeningHours(MerchantQueries.GetMerchantOpeningHoursQuery request,
+                                                                                                    CancellationToken cancellationToken) {
+            Result<String> token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            Result<List<MerchantOpeningHour>> apiResult = await this.EstateReportingApiClient.GetMerchantOpeningHours(token.Data, request.EstateId, request.MerchantId, cancellationToken);
+
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            MerchantModels.MerchantOpeningHoursModel merchantOpeningHours= APIModelFactory.ConvertFrom(apiResult.Data);
+
+            return Result.Success(merchantOpeningHours);
+        }
+
+        public async Task<Result> UpdateMerchantSchedule(MerchantCommands.UpdateMerchantScheduleCommand request,
+                                                         CancellationToken cancellationToken) {
+            var token = await this.GetToken(cancellationToken);
+            if (token.IsFailed)
+                return ResultHelpers.CreateFailure(token);
+
+            UpdateMerchantScheduleRequest apiRequest = new()
+            {
+                Months = request.Schedule.Months
+                    .OrderBy(month => month.Month)
+                    .Select(month => new MerchantScheduleMonthRequest
+                    {
+                        Month = month.Month,
+                        ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
+                    }).ToList()
+            };
+
+            Result apiResult = await this.TransactionProcessorClient.UpdateMerchantSchedule(token.Data, request.EstateId, request.MerchantId, request.Schedule.Year, apiRequest, cancellationToken);
+            if (apiResult.IsFailed)
+                return ResultHelpers.CreateFailure(apiResult);
+
+            return Result.Success();
+        }
+
         public async Task<Result> CreateMerchantSchedule(MerchantCommands.CreateMerchantScheduleCommand request,
                                                          CancellationToken cancellationToken) {
             var token = await this.GetToken(cancellationToken);
@@ -170,7 +215,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                         ClosedDays = month.ClosedDays.OrderBy(day => day).ToList()
                     }).ToList()
             };
-
+            
             Result apiResult = await this.TransactionProcessorClient.CreateMerchantSchedule(token.Data, request.EstateId, request.MerchantId, apiRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
@@ -266,7 +311,7 @@ namespace EstateManagementUI.BusinessLogic.Client
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
-            Result<MerchantScheduleResponse> apiResult = await this.TransactionProcessorClient.GetMerchantSchedule(token.Data, request.EstateId, request.MerchantId, request.Year, cancellationToken);
+            Result<MerchantScheduleResponse> apiResult = await this.EstateReportingApiClient.GetMerchantSchedule(token.Data, request.EstateId, request.MerchantId, request.Year, cancellationToken);
 
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);

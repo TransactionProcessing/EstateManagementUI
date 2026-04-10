@@ -21,7 +21,6 @@ public class MerchantModels
         public decimal? Balance { get; set; }
         public decimal? AvailableBalance { get; set; }
         public string? SettlementSchedule { get; set; }
-        public MerchantOpeningHoursModel OpeningHours { get; set; } = new();
         public Guid AddressId { get; set; }
         public string? AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }

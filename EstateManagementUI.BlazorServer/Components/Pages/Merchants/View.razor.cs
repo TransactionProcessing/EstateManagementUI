@@ -23,6 +23,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private List<MerchantModels.MerchantOperatorModel> assignedOperators = new();
         private List<MerchantModels.MerchantContractModel> assignedContracts = new();
         private List<MerchantModels.MerchantDeviceModel> assignedDevices = new();
+        private MerchantModels.MerchantOpeningHoursModel merchantOpeningHoursModel = new();
 
         // Settlement transaction history data
         private List<TransactionDetailModel>? settlementTransactions;
@@ -67,8 +68,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 var operatorsResultTask = this.MerchantUIService.GetMerchantOperators(correlationId, estateId, MerchantId);
                 var contractsResultTask = this.MerchantUIService.GetMerchantContracts(correlationId, estateId, MerchantId);
                 var devicesResultTask = this.MerchantUIService.GetMerchantDevices(correlationId, estateId, MerchantId);
+                var openingHoursResultTask = this.MerchantUIService.GetMerchantOpeningHours(correlationId, estateId, MerchantId);
 
-                await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask);
+                await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask, openingHoursResultTask);
 
                 if (operatorsResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(operatorsResultTask.Result);
@@ -78,10 +80,24 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
                 if (devicesResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
+                if (openingHoursResultTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
 
                 assignedOperators = operatorsResultTask.Result.Data;
                 assignedContracts = contractsResultTask.Result.Data;
                 this.assignedDevices = devicesResultTask.Result.Data;
+
+                merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel
+                {
+                    Sunday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Sunday.Opening, Closing = openingHoursResultTask.Result.Data.Sunday.Closing },
+                    Monday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Monday.Opening, Closing = openingHoursResultTask.Result.Data.Monday.Closing },
+                    Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Tuesday.Opening, Closing = openingHoursResultTask.Result.Data.Tuesday.Closing },
+                    Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Wednesday.Opening, Closing = openingHoursResultTask.Result.Data.Wednesday.Closing },
+                    Thursday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Thursday.Opening, Closing = openingHoursResultTask.Result.Data.Thursday.Closing },
+                    Friday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Friday.Opening, Closing = openingHoursResultTask.Result.Data.Friday.Closing },
+                    Saturday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Saturday.Opening, Closing = openingHoursResultTask.Result.Data.Saturday.Closing }
+                };
+
 
                 return Result.Success();
             }
@@ -211,13 +227,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private IReadOnlyList<OpeningHoursRow> GetOpeningHoursRows() =>
         [
-            new("Monday", merchant?.OpeningHours.Monday ?? new MerchantModels.DayOpeningHoursModel()),
-            new("Tuesday", merchant?.OpeningHours.Tuesday ?? new MerchantModels.DayOpeningHoursModel()),
-            new("Wednesday", merchant?.OpeningHours.Wednesday ?? new MerchantModels.DayOpeningHoursModel()),
-            new("Thursday", merchant?.OpeningHours.Thursday ?? new MerchantModels.DayOpeningHoursModel()),
-            new("Friday", merchant?.OpeningHours.Friday ?? new MerchantModels.DayOpeningHoursModel()),
-            new("Saturday", merchant?.OpeningHours.Saturday ?? new MerchantModels.DayOpeningHoursModel()),
-            new("Sunday", merchant?.OpeningHours.Sunday ?? new MerchantModels.DayOpeningHoursModel())
+            new("Monday", merchantOpeningHoursModel.Monday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Tuesday", merchantOpeningHoursModel.Tuesday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Wednesday", merchantOpeningHoursModel.Wednesday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Thursday", merchantOpeningHoursModel.Thursday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Friday", merchantOpeningHoursModel.Friday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Saturday", merchantOpeningHoursModel.Saturday ?? new MerchantModels.DayOpeningHoursModel()),
+            new("Sunday", merchantOpeningHoursModel.Sunday ?? new MerchantModels.DayOpeningHoursModel())
         ];
 
         private void ViewSchedule() => NavigationManager.NavigateToMerchantSchedule(this.MerchantId, readOnly: true);

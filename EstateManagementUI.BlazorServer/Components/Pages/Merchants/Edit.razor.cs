@@ -98,22 +98,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                     ContactEmailAddress = merchant.ContactEmailAddress,
                     ContactPhoneNumber = merchant.ContactPhoneNumber,
                 };
-                merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel
-                {
-                    Sunday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Sunday.Opening, Closing = merchant.OpeningHours.Sunday.Closing },
-                    Monday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Monday.Opening, Closing = merchant.OpeningHours.Monday.Closing },
-                    Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Tuesday.Opening, Closing = merchant.OpeningHours.Tuesday.Closing },
-                    Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Wednesday.Opening, Closing = merchant.OpeningHours.Wednesday.Closing },
-                    Thursday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Thursday.Opening, Closing = merchant.OpeningHours.Thursday.Closing },
-                    Friday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Friday.Opening, Closing = merchant.OpeningHours.Friday.Closing },
-                    Saturday = new MerchantModels.DayOpeningHoursModel { Opening = merchant.OpeningHours.Saturday.Opening, Closing = merchant.OpeningHours.Saturday.Closing }
-                };
-
+                
                 var operatorsResultTask = this.MerchantUiService.GetMerchantOperators(correlationId, estateId, MerchantId);
                 var contractsResultTask = this.MerchantUiService.GetMerchantContracts(correlationId, estateId, MerchantId);
                 var devicesResultTask = this.MerchantUiService.GetMerchantDevices(correlationId, estateId, MerchantId);
+                var openingHoursResultTask = this.MerchantUiService.GetMerchantOpeningHours(correlationId, estateId, MerchantId);
 
-                await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask);
+                await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask, openingHoursResultTask);
 
                 if (operatorsResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(operatorsResultTask.Result);
@@ -124,11 +115,26 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 if (devicesResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
 
+                if (openingHoursResultTask.Result.IsFailed)
+                    return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
+
                 assignedOperators = operatorsResultTask.Result.Data;
                 assignedContracts = contractsResultTask.Result.Data;
                 this.assignedDevices = devicesResultTask.Result.Data;
 
-                Task<Result<List<OperatorModels.OperatorDropDownModel>>> operatorsDropDownTask = this.OperatorUiService.GetOperatorsForDropDown(correlationId, estateId);
+            merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel
+            {
+                Sunday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Sunday.Opening, Closing = openingHoursResultTask.Result.Data.Sunday.Closing },
+                Monday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Monday.Opening, Closing = openingHoursResultTask.Result.Data.Monday.Closing },
+                Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Tuesday.Opening, Closing = openingHoursResultTask.Result.Data.Tuesday.Closing },
+                Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Wednesday.Opening, Closing = openingHoursResultTask.Result.Data.Wednesday.Closing },
+                Thursday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Thursday.Opening, Closing = openingHoursResultTask.Result.Data.Thursday.Closing },
+                Friday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Friday.Opening, Closing = openingHoursResultTask.Result.Data.Friday.Closing },
+                Saturday = new MerchantModels.DayOpeningHoursModel { Opening = openingHoursResultTask.Result.Data.Saturday.Opening, Closing = openingHoursResultTask.Result.Data.Saturday.Closing }
+            };
+
+
+            Task<Result<List<OperatorModels.OperatorDropDownModel>>> operatorsDropDownTask = this.OperatorUiService.GetOperatorsForDropDown(correlationId, estateId);
                 Task<Result<List<ContractModels.ContractDropDownModel>>> contractsDropDownTask = this.ContractUiService.GetContractsForDropDown(correlationId, estateId);
 
                 await Task.WhenAll(operatorsDropDownTask, contractsDropDownTask);
@@ -216,18 +222,18 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
             if (result.IsSuccess) {
                 successMessage = "Merchant opening hours updated successfully";
-                if (merchant != null) {
-                    merchant.OpeningHours = new MerchantModels.MerchantOpeningHoursModel
-                    {
-                        Sunday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Sunday.Opening, Closing = merchantOpeningHoursModel.Sunday.Closing },
-                        Monday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Monday.Opening, Closing = merchantOpeningHoursModel.Monday.Closing },
-                        Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Tuesday.Opening, Closing = merchantOpeningHoursModel.Tuesday.Closing },
-                        Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Wednesday.Opening, Closing = merchantOpeningHoursModel.Wednesday.Closing },
-                        Thursday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Thursday.Opening, Closing = merchantOpeningHoursModel.Thursday.Closing },
-                        Friday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Friday.Opening, Closing = merchantOpeningHoursModel.Friday.Closing },
-                        Saturday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Saturday.Opening, Closing = merchantOpeningHoursModel.Saturday.Closing }
-                    };
-                }
+                //if (merchant != null) {
+                    //merchant.OpeningHours = new MerchantModels.MerchantOpeningHoursModel
+                    //{
+                    //    Sunday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Sunday.Opening, Closing = merchantOpeningHoursModel.Sunday.Closing },
+                    //    Monday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Monday.Opening, Closing = merchantOpeningHoursModel.Monday.Closing },
+                    //    Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Tuesday.Opening, Closing = merchantOpeningHoursModel.Tuesday.Closing },
+                    //    Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Wednesday.Opening, Closing = merchantOpeningHoursModel.Wednesday.Closing },
+                    //    Thursday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Thursday.Opening, Closing = merchantOpeningHoursModel.Thursday.Closing },
+                    //    Friday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Friday.Opening, Closing = merchantOpeningHoursModel.Friday.Closing },
+                    //    Saturday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Saturday.Opening, Closing = merchantOpeningHoursModel.Saturday.Closing }
+                    //};
+                //}
             }
             else {
                 errorMessage = "Failed to update merchant opening hours";

@@ -14,4 +14,5 @@ public static class MerchantQueries {
     public record GetMerchantOperatorsQuery(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId) : IRequest<Result<List<MerchantModels.MerchantOperatorModel>>>;
     public record GetMerchantContractsQuery(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId) : IRequest<Result<List<MerchantModels.MerchantContractModel>>>;
     public record GetMerchantDevicesQuery(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId) : IRequest<Result<List<MerchantModels.MerchantDeviceModel>>>;
+    public record GetMerchantOpeningHoursQuery(CorrelationId CorrelationId, Guid EstateId, Guid MerchantId) : IRequest<Result<MerchantModels.MerchantOpeningHoursModel>>;
 }

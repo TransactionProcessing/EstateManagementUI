@@ -130,7 +130,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(futureYear, new MerchantModels.MerchantScheduleModel { Year = futureYear, Months = [] });
-
+        
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -139,18 +139,7 @@ public class MerchantSchedulePageTests : BaseTest
         cut.WaitForAssertion(() => cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeFalse(), timeout: TimeSpan.FromSeconds(5));
         cut.Find("#month-11-closed-days").Change("31");
 
-        var validationMembers = GetScheduleValidationMembers(cut.Instance);
-
-        validationMembers.SaveScheduleAsyncMethod.ShouldNotBeNull();
-        validationMembers.ErrorMessageField.ShouldNotBeNull();
-
-        await cut.InvokeAsync(async () =>
-        {
-            var task = (Task)validationMembers.SaveScheduleAsyncMethod.Invoke(cut.Instance, null);
-            await task;
-        });
-
-        validationMembers.ErrorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 30 can be supplied for November {futureYear}.");
+        cut.Markup.ShouldContain($"Invalid closed days for November.");
         this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
             It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
     }
@@ -196,7 +185,8 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(nonLeapYear, new MerchantModels.MerchantScheduleModel { Year = nonLeapYear, Months = [] });
-
+        this.MerchantUIService.Setup(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
+            It.IsAny<MerchantModels.MerchantScheduleModel>())).ReturnsAsync(Result.Failure($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."));
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -216,9 +206,7 @@ public class MerchantSchedulePageTests : BaseTest
             await task;
         });
 
-        validationMembers.ErrorMessageField.GetValue(cut.Instance).ShouldBe($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
-        this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
-            It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
+        cut.Markup.ShouldContain($"Only days between 1 and 28 can be supplied for February {nonLeapYear}.");
     }
 
     [Fact]
@@ -244,6 +232,28 @@ public class MerchantSchedulePageTests : BaseTest
     [Fact]
     public void MerchantSchedule_ReadOnlyMode_DisablesEditingControls()
     {
+        //var merchantId = Guid.NewGuid();
+        //var currentYear = DateTime.Today.Year;
+
+        //SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel
+        //{
+        //    Year = currentYear,
+        //    Months = new List<MerchantModels.MerchantScheduleMonthModel>
+        //    {
+        //        new() { Month = currentYear == DateTime.Today.Year && DateTime.Today.Month == 12 ? 12 : DateTime.Today.Month + 1, ClosedDays = new List<Int32> { 1, 2 } }
+        //    }
+        //});
+
+        //_fakeNavigationManager.NavigateTo($"/merchants/{merchantId}/schedule?readOnly=true");
+
+        //var cut = RenderComponent<Schedule>(parameters => parameters
+        //    .Add(p => p.MerchantId, merchantId));
+        //cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+
+        //cut.Markup.ShouldContain("Selected Year Schedule");
+        //cut.Find("#month-1-closed-days").HasAttribute("disabled").ShouldBeTrue();
+        //cut.FindAll("#clonePreviousYearButton").Count.ShouldBe(0);
+        //cut.FindAll("#saveScheduleButton").Count.ShouldBe(0);
         var merchantId = Guid.NewGuid();
         var currentYear = DateTime.Today.Year;
 
@@ -256,10 +266,9 @@ public class MerchantSchedulePageTests : BaseTest
             }
         });
 
-        _fakeNavigationManager.NavigateTo($"/merchants/{merchantId}/schedule?readOnly=true");
-
         var cut = RenderComponent<Schedule>(parameters => parameters
-            .Add(p => p.MerchantId, merchantId));
+            .Add(p => p.MerchantId, merchantId)
+            .Add(p => p.ReadOnly, true));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Markup.ShouldContain("Selected Year Schedule");

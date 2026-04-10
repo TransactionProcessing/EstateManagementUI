@@ -32,6 +32,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -58,7 +59,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
-
+        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -87,6 +88,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -114,7 +116,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
-
+        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
@@ -506,27 +508,10 @@ public class MerchantsViewPageTests : BaseTest
     [Fact]
     public void MerchantsView_DisplaysOpeningHours_WhenPresent()
     {
-        var merchant = new MerchantModels.MerchantModel
-        {
-            MerchantId = Guid.NewGuid(),
-            MerchantName = "Test Merchant",
-            MerchantReference = "REF001",
-            OpeningHours = new MerchantModels.MerchantOpeningHoursModel
-            {
-                Monday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
-                Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
-                Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
-                Thursday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
-                Friday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
-                Saturday = new MerchantModels.DayOpeningHoursModel { Opening = "0900", Closing = "1600" },
-                Sunday = new MerchantModels.DayOpeningHoursModel { Opening = "1000", Closing = "1500" }
-            }
-        };
-
-        SetupSuccessfulDataLoadWithMerchant(merchant);
+        SetupSuccessfulDataLoad();
 
         var cut = RenderComponent<View>(parameters => parameters
-            .Add(p => p.MerchantId, merchant.MerchantId));
+            .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
@@ -595,6 +580,17 @@ public class MerchantsViewPageTests : BaseTest
             MerchantReference = "REF001"
         };
 
+        var openingHours = new MerchantModels.MerchantOpeningHoursModel
+        {
+            Monday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Thursday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Friday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Saturday = new MerchantModels.DayOpeningHoursModel { Opening = "0900", Closing = "1600" },
+            Sunday = new MerchantModels.DayOpeningHoursModel { Opening = "1000", Closing = "1500" }
+        };
+
         this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(merchant));
         this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
@@ -603,6 +599,8 @@ public class MerchantsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contracts ?? new List<MerchantModels.MerchantContractModel>()));
         this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(devices ?? new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(openingHours ?? new MerchantModels.MerchantOpeningHoursModel()));
     }
 
     private void SetupSuccessfulDataLoadWithMerchant(MerchantModels.MerchantModel merchant)

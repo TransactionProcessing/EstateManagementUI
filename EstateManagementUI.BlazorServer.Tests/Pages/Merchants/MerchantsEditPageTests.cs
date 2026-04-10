@@ -1217,7 +1217,18 @@ public class MerchantsEditPageTests : BaseTest
             Balance = 1000.00m,
             AvailableBalance = 500.00m
         };
-        
+
+        var openingHours = new MerchantModels.MerchantOpeningHoursModel
+        {
+            Monday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Thursday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Friday = new MerchantModels.DayOpeningHoursModel { Opening = "0800", Closing = "1700" },
+            Saturday = new MerchantModels.DayOpeningHoursModel { Opening = "0900", Closing = "1600" },
+            Sunday = new MerchantModels.DayOpeningHoursModel { Opening = "1000", Closing = "1500" }
+        };
+
         this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
             .ReturnsAsync(Result.Success(merchant));
         
@@ -1229,7 +1240,9 @@ public class MerchantsEditPageTests : BaseTest
         
         this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
             .ReturnsAsync(Result.Success(assignedDevices ?? new List<MerchantModels.MerchantDeviceModel>()));
-        
+        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+            .ReturnsAsync(Result.Success(openingHours));
+
         this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(availableOperators ?? new List<OperatorModels.OperatorDropDownModel>()));
         
