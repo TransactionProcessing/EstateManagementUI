@@ -3,11 +3,12 @@ using EstateManagementUI.BlazorServer.Components;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Sentry.Extensibility;
+using Shared.Extensions;
 using Shared.General;
+using Shared.Serialisation;
 using Spectre.Console;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using Shared.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
 
@@ -72,7 +73,7 @@ builder = builder.RegisterPermissionServices();
 //    TestMode.Full => builder.RegisterTestMediator(),
 //    _ => builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices()
 //};
-builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices();
+builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices().RegisterSerialiser();
 
 // Add Health Checks - read URLs from configuration
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
@@ -97,6 +98,13 @@ builder.Services.AddHealthChecks().AddSecurityService().AddUrlGroup(estateReport
 builder.Host.UseWindowsService();
 
 WebApplication app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var serialiser = scope.ServiceProvider.GetRequiredService<IStringSerialiser>();
+    StringSerialiser.Initialise(serialiser);
+}
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

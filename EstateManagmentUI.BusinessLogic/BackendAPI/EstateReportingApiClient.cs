@@ -1,12 +1,7 @@
-﻿using Azure.Core;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-using Newtonsoft.Json;
+﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using Shared.Results;
 using SimpleResults;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using MerchantScheduleResponse = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.MerchantScheduleResponse;
 
 namespace EstateManagementUI.BusinessLogic.BackendAPI
@@ -121,7 +116,10 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
         private readonly Func<String, String> BaseAddressResolver;
         private const String EstateIdHeaderName = "EstateId";
         public EstateReportingApiClient(Func<String, String> baseAddressResolver,
-                                        HttpClient httpClient) : base(httpClient) {
+                                        HttpClient httpClient,
+                                        Func<object, string> serialise,
+                                        Func<string, Type, object> deserialise) : base(httpClient, serialise, deserialise)
+        {
             this.BaseAddressResolver = baseAddressResolver;
         }
 
@@ -137,7 +135,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<Operator> result = await this.SendHttpGetRequest<Operator>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<Operator> result = await this.Get<Operator>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -164,7 +162,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<Estate> result = await this.SendHttpGetRequest<Estate>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<Estate> result = await this.Get<Estate>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -192,7 +190,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<List<MerchantOperator>> result = await this.SendHttpGetRequest<List<MerchantOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<MerchantOperator>> result = await this.Get<List<MerchantOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -220,7 +218,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<List<EstateOperator>> result = await this.SendHttpGetRequest<List<EstateOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<EstateOperator>> result = await this.Get<List<EstateOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -247,7 +245,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<List<Operator>> result = await this.SendHttpGetRequest<List<Operator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<Operator>> result = await this.Get<List<Operator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -274,7 +272,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<List<ComparisonDate>> result = await this.SendHttpGetRequest<List<ComparisonDate>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<ComparisonDate>> result = await this.Get<List<ComparisonDate>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -299,7 +297,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<MerchantKpi>? result = await this.SendHttpGetRequest<MerchantKpi>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<MerchantKpi>? result = await this.Get<MerchantKpi>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -324,7 +322,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<Merchant>> result = await this.SendHttpGetRequest<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<Merchant>> result = await this.Get<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -362,7 +360,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<Merchant>> result = await this.SendHttpGetRequest<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<Merchant>> result = await this.Get<List<Merchant>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -389,7 +387,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<Merchant> result = await this.SendHttpGetRequest<Merchant>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<Merchant> result = await this.Get<Merchant>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -417,7 +415,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<MerchantContract>> result = await this.SendHttpGetRequest<List<MerchantContract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<MerchantContract>> result = await this.Get<List<MerchantContract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -445,7 +443,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<MerchantOperator>> result = await this.SendHttpGetRequest<List<MerchantOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<MerchantOperator>> result = await this.Get<List<MerchantOperator>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -472,7 +470,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<TransactionDetailReportResponse>? result = await this.SendHttpPostRequest<TransactionDetailReportRequest, TransactionDetailReportResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
+                Result<TransactionDetailReportResponse>? result = await this.Post<TransactionDetailReportRequest, TransactionDetailReportResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -499,7 +497,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<TransactionSummaryByMerchantResponse>? result = await this.SendHttpPostRequest<TransactionSummaryByMerchantRequest, TransactionSummaryByMerchantResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
+                Result<TransactionSummaryByMerchantResponse>? result = await this.Post<TransactionSummaryByMerchantRequest, TransactionSummaryByMerchantResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -526,7 +524,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<TransactionSummaryByOperatorResponse>? result = await this.SendHttpPostRequest<TransactionSummaryByOperatorRequest, TransactionSummaryByOperatorResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
+                Result<TransactionSummaryByOperatorResponse>? result = await this.Post<TransactionSummaryByOperatorRequest, TransactionSummaryByOperatorResponse>(requestUri, request, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -558,7 +556,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<ProductPerformanceResponse> result = await this.SendHttpGetRequest<ProductPerformanceResponse>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<ProductPerformanceResponse> result = await this.Get<ProductPerformanceResponse>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -589,7 +587,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
                 
-                Result<List<TodaysSalesByHour>>? result = await this.SendHttpGetRequest<List<TodaysSalesByHour>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<TodaysSalesByHour>>? result = await this.Get<List<TodaysSalesByHour>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -620,7 +618,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                     (EstateIdHeaderName, estateId.ToString())
                 ];
 
-                Result<TodaysSettlement>? result = await this.SendHttpGetRequest<TodaysSettlement>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<TodaysSettlement>? result = await this.Get<TodaysSettlement>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -648,7 +646,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<MerchantScheduleResponse> result = await this.SendHttpGetRequest<MerchantScheduleResponse>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<MerchantScheduleResponse> result = await this.Get<MerchantScheduleResponse>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -675,7 +673,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<MerchantOpeningHour>> result = await this.SendHttpGetRequest<List<MerchantOpeningHour>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<MerchantOpeningHour>> result = await this.Get<List<MerchantOpeningHour>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -703,7 +701,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<MerchantDevice>> result = await this.SendHttpGetRequest<List<MerchantDevice>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<MerchantDevice>> result = await this.Get<List<MerchantDevice>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -730,7 +728,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<Contract>> result = await this.SendHttpGetRequest<List<Contract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<Contract>> result = await this.Get<List<Contract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -758,7 +756,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<Contract> result = await this.SendHttpGetRequest<Contract>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<Contract> result = await this.Get<Contract>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -784,7 +782,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<List<Contract>> result = await this.SendHttpGetRequest<List<Contract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<List<Contract>> result = await this.Get<List<Contract>>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -814,7 +812,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<TodaysSales>? result = await this.SendHttpGetRequest<TodaysSales>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<TodaysSales>? result = await this.Get<TodaysSales>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);
@@ -845,7 +843,7 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                 List<(String headerName, String headerValue)> additionalHeaders = [
                     (EstateIdHeaderName, estateId.ToString())
                 ];
-                Result<TodaysSales>? result = await this.SendHttpGetRequest<TodaysSales>(requestUri, accessToken, additionalHeaders, cancellationToken);
+                Result<TodaysSales>? result = await this.Get<TodaysSales>(requestUri, accessToken, additionalHeaders, cancellationToken);
 
                 if (result.IsFailed)
                     return ResultHelpers.CreateFailure(result);

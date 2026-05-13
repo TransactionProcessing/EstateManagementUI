@@ -2,7 +2,6 @@
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using SecurityService.Client;
-using SecurityService.DataTransferObjects.Responses;
 using Shared.Results;
 using SimpleResults;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using SecurityService.DataTransferObjects;
 using Shared.General;
 using TransactionProcessor.Client;
 

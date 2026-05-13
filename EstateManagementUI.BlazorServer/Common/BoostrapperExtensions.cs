@@ -1,5 +1,3 @@
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
 using ClientProxyBase;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.TokenManagement;
@@ -15,6 +13,10 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using SecurityService.Client;
 using Shared.General;
+using Shared.Serialisation;
+using System.Data.SqlTypes;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using TransactionProcessor.Client;
 
 namespace EstateManagementUI.BlazorServer.Common;
@@ -263,6 +265,17 @@ public static class BoostrapperExtensions {
         builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
         builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
         builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
+        return builder;
+    }
+
+    public static WebApplicationBuilder RegisterSerialiser(this WebApplicationBuilder builder) {
+        builder.Services.AddSingleton<IStringSerialiser, SystemTextJsonSerializer>();
+        builder.Services.AddSingleton<Func<Object, String>>(_ => obj => StringSerialiser.Serialise(obj));
+        builder.Services.AddSingleton<Func<String, Type, Object>>(_ => (str, type) => StringSerialiser.DeserializeObject<Object>(str, type));
+
+        var serialiserSettings = SystemTextJsonSerializer.GetDefaultJsonSerializerOptions();
+
+        builder.Services.AddSingleton(serialiserSettings);
         return builder;
     }
 }

@@ -1,7 +1,8 @@
 ﻿namespace EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-public class MerchantDetailSummary
+
+public class OperatorDetailSummary
 {
-    public Int32 TotalMerchants { get; set; }
+    public Int32 TotalOperators { get; set; }
     public Int32 TotalCount { get; set; }
     public Decimal TotalValue { get; set; }
     public Decimal AverageValue { get; set; }
