@@ -1,10 +1,4 @@
-﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EstateManagementUI.BusinessLogic.Models
+﻿namespace EstateManagementUI.BusinessLogic.Models
 {
     public class TransactionModels
     {

@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EstateManagementUI.BusinessLogic.Models {
+﻿namespace EstateManagementUI.BusinessLogic.Models {
     public class MerchantModels {
         public class MerchantModel {
             public Guid MerchantId { get; set; }

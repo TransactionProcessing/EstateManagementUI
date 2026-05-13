@@ -2,7 +2,6 @@
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using SecurityService.DataTransferObjects.Responses;
 using Shared.Results;
 using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
