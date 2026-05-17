@@ -1,0 +1,149 @@
+@page "/file-processing/{ImportLogId:guid}"
+@using Microsoft.AspNetCore.Components
+@using EstateManagementUI.BlazorServer.Models
+@using EstateManagementUI.BlazorServer.Permissions
+@inject NavigationManager NavigationManager
+@inherits AuthorizedComponentBase
+
+<PageTitle>File Import Log Details</PageTitle>
+
+@if (importLog is null)
+{
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <p class="text-gray-600">File import log not found.</p>
+        <button class="btn btn-primary mt-4" @onclick='() => NavigationManager.NavigateTo("/file-processing")'>Back to file processing</button>
+    </div>
+}
+else
+{
+    <div class="space-y-6">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Files for import log @importLog.ImportLogDate.ToString("dd MMM yyyy")</h1>
+                <p class="text-sm text-gray-600 mt-1">Drill into each file to inspect the processed lines.</p>
+            </div>
+            <button class="btn btn-secondary" @onclick='() => NavigationManager.NavigateTo("/file-processing")'>Back</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">File count</p>
+                <p class="text-3xl font-bold text-gray-900">@importLog.NumberOfFilesProcessed</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">Total lines</p>
+                <p class="text-3xl font-bold text-gray-900">@importLog.TotalFileLines</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">Successful lines</p>
+                <p class="text-3xl font-bold text-green-600">@importLog.SuccessfulLines</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <p class="text-sm text-gray-600 mb-1">Failed lines</p>
+                <p class="text-3xl font-bold text-red-600">@importLog.FailedLines</p>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            @foreach (var file in importLog.Files)
+            {
+                <details class="bg-white rounded-lg shadow-md overflow-hidden" open="@ReferenceEquals(file, importLog.Files.First())">
+                    <summary class="list-none cursor-pointer p-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                        <div>
+                            <p class="text-lg font-semibold text-gray-900">@file.FileName</p>
+                            <p class="text-sm text-gray-600">@file.FileProfile • @file.MerchantName</p>
+                            <p class="text-sm text-gray-500">Uploaded @file.DateTimeUploaded.ToString("dd MMM yyyy HH:mm") by @file.UploadedBy</p>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <div class="text-sm">
+                                <div class="text-gray-500">Total</div>
+                                <div class="font-semibold text-gray-900">@file.TotalLines</div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="text-gray-500">Successful</div>
+                                <div class="font-semibold text-green-600">@file.SuccessfulLines</div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="text-gray-500">Failed</div>
+                                <div class="font-semibold text-red-600">@file.FailedLines</div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="text-gray-500">Ignored</div>
+                                <div class="font-semibold text-amber-600">@file.IgnoredLines</div>
+                            </div>
+                        </div>
+                    </summary>
+
+                    <div class="border-t border-gray-200 p-6">
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-500">File Name</p>
+                                    <p class="font-medium text-gray-900">@file.FileName</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-500">Merchant Name</p>
+                                    <p class="font-medium text-gray-900">@file.MerchantName</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-500">Successful lines</p>
+                                    <p class="font-medium text-green-600">@file.SuccessfulLines</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs uppercase tracking-wide text-gray-500">Failed lines</p>
+                                    <p class="font-medium text-red-600">@file.FailedLines</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Line Number</th>
+                                    <th>Line Contents</th>
+                                    <th>Line Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var line in file.FileLines)
+                                {
+                                    <tr>
+                                        <td class="font-medium">@line.LineNumber</td>
+                                        <td class="font-mono text-sm">@line.LineContents</td>
+                                        <td>
+                                            @switch (line.LineStatus)
+                                            {
+                                                case FileProcessingLineStatus.Successful:
+                                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">Successful</span>
+                                                    break;
+                                                case FileProcessingLineStatus.Failed:
+                                                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 text-sm font-medium">Failed</span>
+                                                    break;
+                                                default:
+                                                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">Ignored</span>
+                                                    break;
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid ImportLogId { get; set; }
+
+    private FileImportLogDetailsModel? importLog;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.List);
+        importLog = FileProcessingSeedData.GetImportLog(ImportLogId);
+    }
+}
