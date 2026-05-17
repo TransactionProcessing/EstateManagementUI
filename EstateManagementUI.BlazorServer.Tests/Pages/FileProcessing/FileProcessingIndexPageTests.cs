@@ -50,7 +50,7 @@ public class FileProcessingIndexPageTests : BaseTest
 
         cut.FindAll("button").First(button => button.TextContent.Contains("View details")).Click();
 
-        _fakeNavigationManager.LastUri.ShouldBe($"http://localhost/file-processing/{firstLog.FileImportLogId}");
+        _fakeNavigationManager.LastUri.ShouldBe($"http://localhost/file-processing/import-log/{firstLog.FileImportLogId}");
     }
 
     [Fact]

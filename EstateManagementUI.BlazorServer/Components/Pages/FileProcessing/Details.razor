@@ -1,3 +1,4 @@
+@page "/file-processing/import-log/{ImportLogId:guid}"
 @page "/file-processing/{ImportLogId:guid}"
 @using Microsoft.AspNetCore.Components
 @using EstateManagementUI.BlazorServer.Models
@@ -141,7 +142,7 @@ else
 
     private FileImportLogDetailsModel? importLog;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.List);
         importLog = FileProcessingSeedData.GetImportLog(ImportLogId);
