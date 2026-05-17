@@ -1,0 +1,123 @@
+@page "/file-processing/upload"
+@using System.ComponentModel.DataAnnotations
+@using EstateManagementUI.BlazorServer.Permissions
+@using Microsoft.AspNetCore.Components.Forms
+@inherits AuthorizedComponentBase
+@inject NavigationManager NavigationManager
+
+<PageTitle>Upload File</PageTitle>
+
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Upload File</h1>
+            <p class="text-gray-600 mt-1">Select a file profile and CSV file to upload for processing</p>
+        </div>
+        <button class="btn btn-secondary" @onclick="Cancel">
+            Cancel
+        </button>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            <p class="font-medium">Success</p>
+            <p class="text-sm">@successMessage</p>
+        </div>
+    }
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <EditForm EditContext="@editContext" OnSubmit="@HandleSubmit">
+            <DataAnnotationsValidator />
+
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        File Profile <span class="text-red-500">*</span>
+                    </label>
+                    <InputSelect @bind-Value="model.FileProfile" class="input w-full" name="FileProfile">
+                        <option value="">Select a file profile...</option>
+                        @foreach (var fileProfile in fileProfiles)
+                        {
+                            <option value="@fileProfile">@fileProfile</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => model.FileProfile)" class="text-red-600 text-sm mt-1" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        CSV File <span class="text-red-500">*</span>
+                    </label>
+                    <InputFile OnChange="@HandleFileSelected" accept=".csv" class="input w-full" />
+                    @if (selectedFile != null)
+                    {
+                        <p class="text-sm text-gray-600 mt-2">@selectedFile.Name</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(fileErrorMessage))
+                    {
+                        <p class="text-red-600 text-sm mt-1">@fileErrorMessage</p>
+                    }
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-4 border-t">
+                    <button type="button" class="btn btn-secondary" @onclick="Cancel">
+                        Cancel
+                    </button>
+                    <button id="uploadFileButton" type="submit" class="btn btn-primary">
+                        Upload File
+                    </button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private readonly UploadFileModel model = new();
+    private EditContext editContext = default!;
+    private string? fileErrorMessage;
+    private string? successMessage;
+    private IBrowserFile? selectedFile;
+    private readonly List<string> fileProfiles = ["SafaricomTopup", "AirtelTopup", "SettlementFile"];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.Create);
+        editContext = new EditContext(model);
+    }
+
+    private void Cancel() => NavigationManager.NavigateTo("/file-processing");
+
+    private Task HandleSubmit(EditContext context)
+    {
+        fileErrorMessage = null;
+        successMessage = null;
+
+        var isModelValid = context.Validate();
+        if (selectedFile == null)
+        {
+            fileErrorMessage = "A file is required.";
+        }
+
+        if (!isModelValid || selectedFile == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        successMessage = "File selected and ready for upload.";
+        return Task.CompletedTask;
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs args)
+    {
+        selectedFile = args.File;
+        fileErrorMessage = null;
+    }
+
+    private sealed class UploadFileModel
+    {
+        [Required(ErrorMessage = "File profile is required.")]
+        public string? FileProfile { get; set; }
+    }
+}
