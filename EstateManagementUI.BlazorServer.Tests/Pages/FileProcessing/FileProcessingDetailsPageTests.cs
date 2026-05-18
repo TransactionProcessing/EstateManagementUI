@@ -22,8 +22,28 @@ public class FileProcessingDetailsPageTests : BaseTest
             cut.Markup.ShouldContain("Successful");
             cut.Markup.ShouldContain("Failed");
             cut.Markup.ShouldContain("Ignored");
-            cut.FindAll("details").Count.ShouldBe(15);
+            cut.Markup.ShouldContain("Ignored lines");
+            cut.Markup.ShouldContain("Showing 1-5 of 15 files");
+            cut.FindAll("details").Count.ShouldBe(5);
             cut.FindAll("details").Any(detail => detail.HasAttribute("open")).ShouldBeFalse();
+        });
+    }
+
+    [Fact]
+    public void FileProcessingDetails_PaginatesTheFileList()
+    {
+        var log = FileProcessingSeedData.ImportLogs[0];
+
+        var cut = RenderComponent<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
+
+        cut.FindAll("button").Single(button => button.TextContent.Contains("Next")).Click();
+
+        cut.WaitForAssertion(() =>
+        {
+            cut.Markup.ShouldContain("Showing 6-10 of 15 files");
+            cut.Markup.ShouldContain(log.Files[5].FileName);
+            cut.Markup.ShouldNotContain(log.Files[0].FileName);
+            cut.FindAll("details").Count.ShouldBe(5);
         });
     }
 
