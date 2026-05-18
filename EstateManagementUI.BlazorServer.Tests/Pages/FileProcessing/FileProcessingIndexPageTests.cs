@@ -29,11 +29,14 @@ public class FileProcessingIndexPageTests : BaseTest
         var cut = RenderComponent<FileProcessingIndex>();
 
         var targetDate = FileProcessingSeedData.ImportLogs[1].ImportLogDate.Date;
+        // Use InvokeAsync to ensure DOM updates and event handler registration
+        // happen synchronously with the test renderer. Re-query inputs after
+        // each render to avoid stale element references (unknown event handler IDs).
+        cut.InvokeAsync(() => cut.FindAll("input[type='date']")[0].Change(targetDate.ToString("yyyy-MM-dd")));
         var dateInputs = cut.FindAll("input[type='date']");
-        dateInputs[0].Change(targetDate.ToString("yyyy-MM-dd"));
-        dateInputs[1].Change(targetDate.ToString("yyyy-MM-dd"));
+        cut.InvokeAsync(() => dateInputs[1].Change(targetDate.ToString("yyyy-MM-dd")));
 
-        cut.FindAll("button").Single(button => button.TextContent.Contains("Apply filter")).Click();
+        cut.InvokeAsync(() => cut.FindAll("button").Single(button => button.TextContent.Contains("Apply filter")).Click());
 
         cut.WaitForAssertion(() =>
         {
