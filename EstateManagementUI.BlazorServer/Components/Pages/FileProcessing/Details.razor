@@ -50,100 +50,117 @@ else
             </div>
         </div>
 
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="file-name-filter">File name filter</label>
+            <div class="flex flex-col gap-3 md:flex-row md:items-end">
+                <input id="file-name-filter" class="input w-full md:max-w-md" placeholder="Filter by file name" @bind="FileNameFilter" />
+                <button class="btn btn-secondary" type="button" disabled="@string.IsNullOrWhiteSpace(FileNameFilter)" @onclick="ClearFileNameFilter">Clear</button>
+            </div>
+        </div>
+
         <div class="space-y-4">
             <div class="flex items-center justify-between gap-4">
-                <p class="text-sm text-gray-600">Showing @FirstFileOnPage-@LastFileOnPage of @importLog.NumberOfFilesProcessed files</p>
+                <p class="text-sm text-gray-600">Showing @FirstFileOnPage-@LastFileOnPage of @FilteredFileCount files</p>
                 <div class="flex items-center gap-2">
                     <button class="btn btn-secondary" disabled="@IsPreviousPageDisabled" @onclick="PreviousPage">Previous</button>
                     <button class="btn btn-secondary" disabled="@IsNextPageDisabled" @onclick="NextPage">Next</button>
                 </div>
             </div>
 
-            @foreach (var file in PagedFiles)
+            @if (PagedFiles.Any())
             {
-                <details class="bg-white rounded-lg shadow-md overflow-hidden">
-                    <summary class="list-none cursor-pointer p-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-                        <div>
-                            <p class="text-lg font-semibold text-gray-900">@file.FileName</p>
-                            <p class="text-sm text-gray-600">@file.FileProfile • @file.MerchantName</p>
-                            <p class="text-sm text-gray-500">Uploaded @file.DateTimeUploaded.ToString("dd MMM yyyy HH:mm") by @file.UploadedBy</p>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            <div class="text-sm">
-                                <div class="text-gray-500">Total</div>
-                                <div class="font-semibold text-gray-900">@file.TotalLines</div>
+                @foreach (var file in PagedFiles)
+                {
+                    <details class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <summary class="list-none cursor-pointer p-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900">@file.FileName</p>
+                                <p class="text-sm text-gray-600">@file.FileProfile • @file.MerchantName</p>
+                                <p class="text-sm text-gray-500">Uploaded @file.DateTimeUploaded.ToString("dd MMM yyyy HH:mm") by @file.UploadedBy</p>
                             </div>
-                            <div class="text-sm">
-                                <div class="text-gray-500">Successful</div>
-                                <div class="font-semibold text-green-600">@file.SuccessfulLines</div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <div class="text-sm">
+                                    <div class="text-gray-500">Total</div>
+                                    <div class="font-semibold text-gray-900">@file.TotalLines</div>
+                                </div>
+                                <div class="text-sm">
+                                    <div class="text-gray-500">Successful</div>
+                                    <div class="font-semibold text-green-600">@file.SuccessfulLines</div>
+                                </div>
+                                <div class="text-sm">
+                                    <div class="text-gray-500">Failed</div>
+                                    <div class="font-semibold text-red-600">@file.FailedLines</div>
+                                </div>
+                                <div class="text-sm">
+                                    <div class="text-gray-500">Ignored</div>
+                                    <div class="font-semibold text-amber-600">@file.IgnoredLines</div>
+                                </div>
                             </div>
-                            <div class="text-sm">
-                                <div class="text-gray-500">Failed</div>
-                                <div class="font-semibold text-red-600">@file.FailedLines</div>
-                            </div>
-                            <div class="text-sm">
-                                <div class="text-gray-500">Ignored</div>
-                                <div class="font-semibold text-amber-600">@file.IgnoredLines</div>
-                            </div>
-                        </div>
-                    </summary>
+                        </summary>
 
-                    <div class="border-t border-gray-200 p-6">
-                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div>
-                                    <p class="text-xs uppercase tracking-wide text-gray-500">File Name</p>
-                                    <p class="font-medium text-gray-900">@file.FileName</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs uppercase tracking-wide text-gray-500">Merchant Name</p>
-                                    <p class="font-medium text-gray-900">@file.MerchantName</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs uppercase tracking-wide text-gray-500">Successful lines</p>
-                                    <p class="font-medium text-green-600">@file.SuccessfulLines</p>
-                                </div>
-                                <div>
-                                    <p class="text-xs uppercase tracking-wide text-gray-500">Failed lines</p>
-                                    <p class="font-medium text-red-600">@file.FailedLines</p>
+                        <div class="border-t border-gray-200 p-6">
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <p class="text-xs uppercase tracking-wide text-gray-500">File Name</p>
+                                        <p class="font-medium text-gray-900">@file.FileName</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs uppercase tracking-wide text-gray-500">Merchant Name</p>
+                                        <p class="font-medium text-gray-900">@file.MerchantName</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs uppercase tracking-wide text-gray-500">Successful lines</p>
+                                        <p class="font-medium text-green-600">@file.SuccessfulLines</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs uppercase tracking-wide text-gray-500">Failed lines</p>
+                                        <p class="font-medium text-red-600">@file.FailedLines</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Line Number</th>
-                                    <th>Line Contents</th>
-                                    <th>Line Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var line in file.FileLines)
-                                {
+                            <table class="table">
+                                <thead>
                                     <tr>
-                                        <td class="font-medium">@line.LineNumber</td>
-                                        <td class="font-mono text-sm">@line.LineContents</td>
-                                        <td>
-                                            @switch (line.LineStatus)
-                                            {
-                                                case FileProcessingLineStatus.Successful:
-                                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">Successful</span>
-                                                    break;
-                                                case FileProcessingLineStatus.Failed:
-                                                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 text-sm font-medium">Failed</span>
-                                                    break;
-                                                default:
-                                                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">Ignored</span>
-                                                    break;
-                                            }
-                                        </td>
+                                        <th>Line Number</th>
+                                        <th>Line Contents</th>
+                                        <th>Line Status</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
+                                </thead>
+                                <tbody>
+                                    @foreach (var line in file.FileLines)
+                                    {
+                                        <tr>
+                                            <td class="font-medium">@line.LineNumber</td>
+                                            <td class="font-mono text-sm">@line.LineContents</td>
+                                            <td>
+                                                @switch (line.LineStatus)
+                                                {
+                                                    case FileProcessingLineStatus.Successful:
+                                                        <span class="px-3 py-1 rounded-full bg-green-100 text-green-800 text-sm font-medium">Successful</span>
+                                                        break;
+                                                    case FileProcessingLineStatus.Failed:
+                                                        <span class="px-3 py-1 rounded-full bg-red-100 text-red-800 text-sm font-medium">Failed</span>
+                                                        break;
+                                                    default:
+                                                        <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm font-medium">Ignored</span>
+                                                        break;
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                }
+            }
+            else
+            {
+                <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                    <p class="text-gray-600">No files match the current filter.</p>
+                </div>
             }
         </div>
     </div>
@@ -157,6 +174,22 @@ else
 
     private FileImportLogDetailsModel? importLog;
     private int currentPage = 1;
+    private string fileNameFilter = string.Empty;
+
+    private string FileNameFilter
+    {
+        get => fileNameFilter;
+        set
+        {
+            if (fileNameFilter == value)
+            {
+                return;
+            }
+
+            fileNameFilter = value;
+            currentPage = 1;
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -165,22 +198,34 @@ else
         importLog = FileProcessingSeedData.GetImportLog(ImportLogId);
     }
 
+    private IReadOnlyList<FileProcessingFileModel> FilteredFiles =>
+        importLog?.Files
+            .Where(file => string.IsNullOrWhiteSpace(FileNameFilter) || file.FileName.Contains(FileNameFilter, StringComparison.OrdinalIgnoreCase))
+            .ToList() ?? [];
+
+    private int FilteredFileCount => FilteredFiles.Count;
+
     private IReadOnlyList<FileProcessingFileModel> PagedFiles =>
-        importLog?.Files.Skip((currentPage - 1) * PageSize).Take(PageSize).ToList() ?? [];
+        FilteredFiles.Skip((currentPage - 1) * PageSize).Take(PageSize).ToList();
 
-    private int TotalPages => importLog is null || importLog.Files.Count == 0
+    private int TotalPages => FilteredFileCount == 0
         ? 1
-        : (int)Math.Ceiling(importLog.Files.Count / (double)PageSize);
+        : (int)Math.Ceiling(FilteredFileCount / (double)PageSize);
 
-    private int FirstFileOnPage => importLog is null || importLog.Files.Count == 0 ? 0 : ((currentPage - 1) * PageSize) + 1;
+    private int FirstFileOnPage => FilteredFileCount == 0 ? 0 : ((currentPage - 1) * PageSize) + 1;
 
-    private int LastFileOnPage => importLog is null || importLog.Files.Count == 0
+    private int LastFileOnPage => FilteredFileCount == 0
         ? 0
-        : Math.Min(currentPage * PageSize, importLog.Files.Count);
+        : Math.Min(currentPage * PageSize, FilteredFileCount);
 
     private bool IsPreviousPageDisabled => currentPage <= 1;
 
     private bool IsNextPageDisabled => currentPage >= TotalPages;
+
+    private void ClearFileNameFilter()
+    {
+        FileNameFilter = string.Empty;
+    }
 
     private void PreviousPage()
     {

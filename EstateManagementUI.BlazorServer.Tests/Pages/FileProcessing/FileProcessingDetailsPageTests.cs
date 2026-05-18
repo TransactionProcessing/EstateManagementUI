@@ -48,6 +48,23 @@ public class FileProcessingDetailsPageTests : BaseTest
     }
 
     [Fact]
+    public void FileProcessingDetails_FileNameFilter_FiltersTheVisibleFiles()
+    {
+        var log = FileProcessingSeedData.ImportLogs[0];
+
+        var cut = RenderComponent<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
+
+        cut.Find("#file-name-filter").Change(log.Files[6].FileName);
+
+        cut.WaitForAssertion(() =>
+        {
+            cut.Markup.ShouldContain("Showing 1-1 of 1 files");
+            cut.Markup.ShouldContain(log.Files[6].FileName);
+            cut.FindAll("details").Count.ShouldBe(1);
+        });
+    }
+
+    [Fact]
     public void FileProcessingDetails_BackButton_NavigatesToIndex()
     {
         var log = FileProcessingSeedData.ImportLogs[0];
