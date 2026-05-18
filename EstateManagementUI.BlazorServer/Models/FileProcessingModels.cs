@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EstateManagementUI.BlazorServer.Models;
 
-[ExcludeFromCodeCoverage]
+//[ExcludeFromCodeCoverage]
 public enum FileProcessingLineStatus
 {
     Successful,
