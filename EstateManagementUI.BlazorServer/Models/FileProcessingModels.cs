@@ -78,39 +78,7 @@ public static class FileProcessingSeedData
             {
                 FileImportLogId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 ImportLogDate = today.AddDays(-1),
-                Files =
-                [
-                    new FileProcessingFileModel
-                    {
-                        FileId = Guid.Parse("22222222-2222-2222-2222-222222222221"),
-                        FileName = "airtime-import-01.csv",
-                        FileProfile = "AirtelTopup",
-                        DateTimeUploaded = today.AddDays(-1).AddHours(8).AddMinutes(15),
-                        UploadedBy = "jane.doe@estate.com",
-                        MerchantName = "Acme Retail",
-                        FileLines =
-                        [
-                            new FileProcessingLineModel { LineNumber = 1, LineContents = "254700100001,1000", LineStatus = FileProcessingLineStatus.Successful },
-                            new FileProcessingLineModel { LineNumber = 2, LineContents = "254700100002,1000", LineStatus = FileProcessingLineStatus.Failed },
-                            new FileProcessingLineModel { LineNumber = 3, LineContents = "254700100003,1000", LineStatus = FileProcessingLineStatus.Ignored },
-                        ]
-                    },
-                    new FileProcessingFileModel
-                    {
-                        FileId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                        FileName = "airtime-import-02.csv",
-                        FileProfile = "AirtelTopup",
-                        DateTimeUploaded = today.AddDays(-1).AddHours(10).AddMinutes(45),
-                        UploadedBy = "john.smith@estate.com",
-                        MerchantName = "Acme Retail",
-                        FileLines =
-                        [
-                            new FileProcessingLineModel { LineNumber = 1, LineContents = "254700100011,2000", LineStatus = FileProcessingLineStatus.Successful },
-                            new FileProcessingLineModel { LineNumber = 2, LineContents = "254700100012,2000", LineStatus = FileProcessingLineStatus.Successful },
-                            new FileProcessingLineModel { LineNumber = 3, LineContents = "254700100013,2000", LineStatus = FileProcessingLineStatus.Successful },
-                        ]
-                    }
-                ]
+                Files = BuildAirtimeImportFiles(today.AddDays(-1))
             },
             new FileImportLogDetailsModel
             {
@@ -187,6 +155,60 @@ public static class FileProcessingSeedData
                         ]
                     }
                 ]
+            }
+        ];
+    }
+
+    private static List<FileProcessingFileModel> BuildAirtimeImportFiles(DateTime importDate)
+    {
+        List<FileProcessingFileModel> files = [];
+
+        for (int fileNumber = 1; fileNumber <= 15; fileNumber++)
+        {
+            files.Add(new FileProcessingFileModel
+            {
+                FileId = Guid.Parse($"22222222-2222-2222-2222-{fileNumber:000000000000}"),
+                FileName = $"airtime-import-{fileNumber:00}.csv",
+                FileProfile = "AirtelTopup",
+                DateTimeUploaded = importDate.AddHours(8).AddMinutes(15 + (fileNumber - 1) * 10),
+                UploadedBy = fileNumber % 2 == 0 ? "john.smith@estate.com" : "jane.doe@estate.com",
+                MerchantName = "Acme Retail",
+                FileLines = BuildAirtimeImportLines(fileNumber)
+            });
+        }
+
+        return files;
+    }
+
+    private static List<FileProcessingLineModel> BuildAirtimeImportLines(int fileNumber)
+    {
+        FileProcessingLineStatus secondLineStatus = fileNumber % 3 == 0
+            ? FileProcessingLineStatus.Ignored
+            : FileProcessingLineStatus.Failed;
+
+        FileProcessingLineStatus thirdLineStatus = fileNumber % 2 == 0
+            ? FileProcessingLineStatus.Successful
+            : FileProcessingLineStatus.Ignored;
+
+        return
+        [
+            new FileProcessingLineModel
+            {
+                LineNumber = 1,
+                LineContents = $"2547001{fileNumber:000000},1000",
+                LineStatus = FileProcessingLineStatus.Successful
+            },
+            new FileProcessingLineModel
+            {
+                LineNumber = 2,
+                LineContents = $"2547001{fileNumber:000000},1000",
+                LineStatus = secondLineStatus
+            },
+            new FileProcessingLineModel
+            {
+                LineNumber = 3,
+                LineContents = $"2547001{fileNumber:000000},1000",
+                LineStatus = thirdLineStatus
             }
         ];
     }

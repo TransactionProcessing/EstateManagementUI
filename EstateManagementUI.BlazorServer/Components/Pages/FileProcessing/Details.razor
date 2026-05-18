@@ -49,7 +49,7 @@ else
         <div class="space-y-4">
             @foreach (var file in importLog.Files)
             {
-                <details class="bg-white rounded-lg shadow-md overflow-hidden" open="@ReferenceEquals(file, importLog.Files.First())">
+                <details class="bg-white rounded-lg shadow-md overflow-hidden">
                     <summary class="list-none cursor-pointer p-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
                             <p class="text-lg font-semibold text-gray-900">@file.FileName</p>

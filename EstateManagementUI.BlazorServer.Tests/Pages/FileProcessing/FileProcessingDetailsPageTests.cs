@@ -22,6 +22,8 @@ public class FileProcessingDetailsPageTests : BaseTest
             cut.Markup.ShouldContain("Successful");
             cut.Markup.ShouldContain("Failed");
             cut.Markup.ShouldContain("Ignored");
+            cut.FindAll("details").Count.ShouldBe(15);
+            cut.FindAll("details").Any(detail => detail.HasAttribute("open")).ShouldBeFalse();
         });
     }
 
