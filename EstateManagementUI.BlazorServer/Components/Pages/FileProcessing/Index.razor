@@ -1,10 +1,10 @@
 @page "/file-processing"
 @rendermode InteractiveServer
-@using EstateManagementUI.BlazorServer.Models
-@using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @inject NavigationManager NavigationManager
 @inject IPermissionKeyProvider PermissionKeyProvider
 @inherits AuthorizedComponentBase
+@inject IFileProcessingUIService FileProcessingUIService
 
 <PageTitle>File Processing</PageTitle>
 
@@ -98,45 +98,3 @@
         </div>
     }
 </div>
-
-@code {
-    private bool isLoading = true;
-    private DateTime? startDate;
-    private DateTime? endDate;
-    private List<FileImportLogDetailsModel> filteredLogs = [];
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.List);
-
-        startDate = DateTime.Today.AddDays(-30);
-        endDate = DateTime.Today;
-        ApplyFilter();
-        isLoading = false;
-    }
-
-    private int TotalFiles => filteredLogs.Sum(log => log.NumberOfFilesProcessed);
-    private int TotalLines => filteredLogs.Sum(log => log.TotalFileLines);
-    private int SuccessfulLines => filteredLogs.Sum(log => log.SuccessfulLines);
-    private string SuccessRateText => TotalLines == 0 ? "0%" : $"{Math.Round(SuccessfulLines * 100m / TotalLines, 1):0.#}%";
-
-    private void ApplyDateFilter()
-    {
-        ApplyFilter();
-    }
-
-    private void ResetDateFilter()
-    {
-        startDate = DateTime.Today.AddDays(-30);
-        endDate = DateTime.Today;
-        ApplyFilter();
-    }
-
-    private void ApplyFilter()
-    {
-        filteredLogs = FileProcessingSeedData.FilterByDate(startDate, endDate).ToList();
-    }
-
-    private void NavigateToImportLog(Guid fileImportLogId) =>
-        NavigationManager.NavigateTo($"/file-processing/import-log/{fileImportLogId}");
-}

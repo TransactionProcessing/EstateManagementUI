@@ -17,6 +17,7 @@ using Shared.Serialisation;
 using System.Data.SqlTypes;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using FileProcessor.Client;
 using TransactionProcessor.Client;
 
 namespace EstateManagementUI.BlazorServer.Common;
@@ -258,6 +259,7 @@ public static class BoostrapperExtensions {
         builder.Services.AddSingleton<IMerchantUIService, MerchantUIService>();
         builder.Services.AddSingleton<ICalendarUIService, CalendarUIService>();
         builder.Services.AddSingleton<ITransactionUIService, TransactionUIService>();
+        builder.Services.AddSingleton<IFileProcessingUIService, FileProcessingUIService>();
 
         return builder;
     }
@@ -265,6 +267,7 @@ public static class BoostrapperExtensions {
         builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
         builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
         builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
+        builder.Services.RegisterHttpClient<IFileProcessorClient, FileProcessorClient>();
         return builder;
     }
 

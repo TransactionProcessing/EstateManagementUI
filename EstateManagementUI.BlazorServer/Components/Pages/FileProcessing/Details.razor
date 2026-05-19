@@ -1,11 +1,10 @@
 @page "/file-processing/import-log/{ImportLogId:guid}"
 @page "/file-processing/{ImportLogId:guid}"
 @rendermode InteractiveServer
-@using Microsoft.AspNetCore.Components
-@using EstateManagementUI.BlazorServer.Models
-@using EstateManagementUI.BlazorServer.Permissions
+@using EstateManagementUI.BlazorServer.UIServices
 @inject NavigationManager NavigationManager
 @inherits AuthorizedComponentBase
+@inject IFileProcessingUIService FileProcessingUIService
 
 <PageTitle>File Import Log Details</PageTitle>
 
@@ -164,82 +163,4 @@ else
             }
         </div>
     </div>
-}
-
-@code {
-    [Parameter]
-    public Guid ImportLogId { get; set; }
-
-    private const int PageSize = 5;
-
-    private FileImportLogDetailsModel? importLog;
-    private int currentPage = 1;
-    private string fileNameFilter = string.Empty;
-
-    private string FileNameFilter
-    {
-        get => fileNameFilter;
-        set
-        {
-            if (fileNameFilter == value)
-            {
-                return;
-            }
-
-            fileNameFilter = value;
-            currentPage = 1;
-        }
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.List);
-        currentPage = 1;
-        importLog = FileProcessingSeedData.GetImportLog(ImportLogId);
-    }
-
-    private IReadOnlyList<FileProcessingFileModel> FilteredFiles =>
-        importLog?.Files
-            .Where(file => string.IsNullOrWhiteSpace(FileNameFilter) || file.FileName.Contains(FileNameFilter, StringComparison.OrdinalIgnoreCase))
-            .ToList() ?? [];
-
-    private int FilteredFileCount => FilteredFiles.Count;
-
-    private IReadOnlyList<FileProcessingFileModel> PagedFiles =>
-        FilteredFiles.Skip((currentPage - 1) * PageSize).Take(PageSize).ToList();
-
-    private int TotalPages => FilteredFileCount == 0
-        ? 1
-        : (int)Math.Ceiling(FilteredFileCount / (double)PageSize);
-
-    private int FirstFileOnPage => FilteredFileCount == 0 ? 0 : ((currentPage - 1) * PageSize) + 1;
-
-    private int LastFileOnPage => FilteredFileCount == 0
-        ? 0
-        : Math.Min(currentPage * PageSize, FilteredFileCount);
-
-    private bool IsPreviousPageDisabled => currentPage <= 1;
-
-    private bool IsNextPageDisabled => currentPage >= TotalPages;
-
-    private void ClearFileNameFilter()
-    {
-        FileNameFilter = string.Empty;
-    }
-
-    private void PreviousPage()
-    {
-        if (currentPage > 1)
-        {
-            currentPage--;
-        }
-    }
-
-    private void NextPage()
-    {
-        if (currentPage < TotalPages)
-        {
-            currentPage++;
-        }
-    }
 }

@@ -1,13 +1,17 @@
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
+using FileProcessor.DataTransferObjects.Responses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using NLog.LayoutRenderers.Wrappers;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
+using static EstateManagementUI.BusinessLogic.Models.FileProcessingModels;
 using ContractProductTransactionFee = EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects.ContractProductTransactionFee;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using FileImportLog = EstateManagementUI.BusinessLogic.BackendAPI.FileImportLog;
 
 namespace EstateManagementUI.BusinessLogic.Client;
 
@@ -579,5 +583,40 @@ public  static class FactoryExtensions{
         }
 
         return contract;
+    }
+
+    public static List<FileImportLogDetailsModel> ToFileImportLogList(this List<BackendAPI.FileImportLog> apiResultData) {
+        List<FileImportLogDetailsModel> result = new();
+        foreach (FileImportLog fileImportLog in apiResultData) {
+            result.Add(fileImportLog.ToFileImportLog());
+        }
+
+        return result;
+    }
+
+    public static FileImportLogDetailsModel ToFileImportLog(this BackendAPI.FileImportLog fileImportLog) {
+        return new FileImportLogDetailsModel {
+            FileImportLogId = fileImportLog.FileImportLogId,
+            ImportLogDate = fileImportLog.ImportLogDateTime,
+            Files = fileImportLog.FileDetailsList.Select(f => new FileProcessingFileModel {
+                FileId = f.FileId,
+                FileName = f.FileName,
+                FileProfile = f.FileProfile,
+                DateTimeUploaded = f.DateTimeUploaded,
+                MerchantName = f.MerchantName,
+                UploadedById = f.UserId,
+                UploadedBy = f.UploadedBy,
+                MerchantId = f.MerchantId,
+                FileLines = f.FileLines.Select(fl => new FileProcessingLineModel {
+                    LineNumber = fl.LineNumber,
+                    LineContents = fl.LineContents,
+                    LineStatus = fl.LineStatus switch {
+                        "S" => FileProcessingLineStatus.Successful,
+                        "F" => FileProcessingLineStatus.Failed,
+                        _ => FileProcessingLineStatus.Ignored
+                    }
+                }).ToList()
+            }).ToList()
+        };
     }
 }
