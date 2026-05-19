@@ -1,14 +1,16 @@
 ﻿using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
+using FileProcessor.DataTransferObjects.Responses;
 using MediatR;
+using Shared.Results;
 using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
-public class FileRequestHandler : IRequestHandler<Queries.GetFileImportLogsListQuery, Result<List<FileImportLogModel>>>, 
-    IRequestHandler<Queries.GetFileImportLogQuery, Result<FileImportLogModel>>, 
-    IRequestHandler<Queries.GetFileDetailsQuery, Result<FileDetailsModel>> {
+public class FileRequestHandler : IRequestHandler<FileProcessingQueries.GetFileImportLogsListQuery, Result<List<FileProcessingModels.FileImportLogDetailsModel>>>,
+    IRequestHandler<FileProcessingQueries.GetFileImportLogQuery, Result<FileProcessingModels.FileImportLogDetailsModel>>
+    {
 
     private readonly IApiClient ApiClient;
 
@@ -16,19 +18,14 @@ public class FileRequestHandler : IRequestHandler<Queries.GetFileImportLogsListQ
     {
         this.ApiClient = apiClient;
     }
-
-    public async Task<Result<List<FileImportLogModel>>> Handle(Queries.GetFileImportLogsListQuery request,
-                                                               CancellationToken cancellationToken) {
-        return Result.Success(StubTestData.GetMockFileImportLogs());
+    
+    public async Task<Result<List<FileProcessingModels.FileImportLogDetailsModel>>> Handle(FileProcessingQueries.GetFileImportLogsListQuery request,
+                                                                                           CancellationToken cancellationToken) {
+        return await this.ApiClient.GetFileImportLogsList(request, cancellationToken);
     }
 
-    public async Task<Result<FileImportLogModel>> Handle(Queries.GetFileImportLogQuery request,
-                                                         CancellationToken cancellationToken) {
-        return Result.Success(StubTestData.GetMockFileImportLog());
-    }
-
-    public async Task<Result<FileDetailsModel>> Handle(Queries.GetFileDetailsQuery request,
-                                                       CancellationToken cancellationToken) {
-        return Result.Success(StubTestData.GetMockFileDetails());
+    public async Task<Result<FileProcessingModels.FileImportLogDetailsModel>> Handle(FileProcessingQueries.GetFileImportLogQuery request,
+                                                                                     CancellationToken cancellationToken) {
+        return await this.ApiClient.GetFileImportLog(request, cancellationToken);
     }
 }

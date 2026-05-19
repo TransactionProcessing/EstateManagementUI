@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+using FileProcessor.Client;
 using SecurityService.DataTransferObjects;
 using Shared.General;
 using TransactionProcessor.Client;
@@ -24,13 +25,16 @@ namespace EstateManagementUI.BusinessLogic.Client
         private readonly IEstateReportingApiClient EstateReportingApiClient;
         private readonly ISecurityServiceClient SecurityServiceClient;
         private readonly ITransactionProcessorClient TransactionProcessorClient;
+        private readonly IFileProcessorClient FileProcessorClient;
 
         public ApiClient(IEstateReportingApiClient estateReportingApiClient, 
                          ISecurityServiceClient securityServiceClient,
-                         ITransactionProcessorClient transactionProcessorClient) {
+                         ITransactionProcessorClient transactionProcessorClient,
+                         IFileProcessorClient fileProcessorClient) {
             this.EstateReportingApiClient = estateReportingApiClient;
             this.SecurityServiceClient = securityServiceClient;
             this.TransactionProcessorClient = transactionProcessorClient;
+            this.FileProcessorClient = fileProcessorClient;
         }
         public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(Queries.GetComparisonDatesQuery request,
                                                                                 CancellationToken cancellationToken) {

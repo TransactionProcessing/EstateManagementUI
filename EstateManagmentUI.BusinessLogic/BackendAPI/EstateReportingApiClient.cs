@@ -1,4 +1,5 @@
-﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+﻿using Azure.Core;
+using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using Shared.Results;
 using SimpleResults;
 using System.Text;
@@ -109,6 +110,19 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
                                                                         Guid estateId,
                                                                         Guid merchantId,
                                                                         CancellationToken cancellationToken);
+
+        Task<Result<List<FileImportLog>>> GetFileImportLogsList(String tokenData,
+                                                                Guid estateId,
+                                                                Guid? merchantId,
+                                                                DateTime queryStartDate,
+                                                                DateTime queryEndDate,
+                                                                CancellationToken cancellationToken);
+
+        Task<Result<FileImportLog>> GetFileImportLog(String tokenData,
+                                                     Guid estateId,
+                                                     Guid? merchantId,
+                                                     Guid fileImportLogId,
+                                                     CancellationToken cancellationToken);
     }
 
     public class EstateReportingApiClient : ClientProxyBase.ClientProxyBase, IEstateReportingApiClient {
@@ -684,6 +698,72 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
             {
                 // An exception has occurred, add some additional information to the message
                 Exception exception = new Exception($"Error getting merchant opening hours for merchant id {merchantId} for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<List<FileImportLog>>> GetFileImportLogsList(String accessToken,
+                                                                             Guid estateId,
+                                                                             Guid? merchantId,
+                                                                             DateTime startDate,
+                                                                             DateTime endDate,
+                                                                             CancellationToken cancellationToken) {
+
+            QueryStringBuilder builder = new();
+            builder.AddParameter("merchantId", merchantId);
+            builder.AddParameter("startDate", startDate);
+            builder.AddParameter("endDate", endDate);
+
+            String requestUri = this.BuildRequestUrl($"/api/fileimportlogs?{builder.BuildQueryString()}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<List<FileImportLog>> result = await this.Get<List<FileImportLog>>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting file import logs for merchant id {merchantId} for estate {estateId}.", ex);
+
+                return Result.Failure(exception.Message);
+            }
+        }
+
+        public async Task<Result<FileImportLog>> GetFileImportLog(String accessToken,
+                                                                  Guid estateId,
+                                                                  Guid? merchantId,
+                                                                  Guid fileImportLogId,
+                                                                  CancellationToken cancellationToken) {
+            QueryStringBuilder builder = new();
+            builder.AddParameter("merchantId", merchantId);
+            
+            String requestUri = this.BuildRequestUrl($"/api/fileimportlogs/{fileImportLogId}?{builder.BuildQueryString()}");
+
+            try
+            {
+                List<(String headerName, String headerValue)> additionalHeaders = [
+                    (EstateIdHeaderName, estateId.ToString())
+                ];
+                Result<FileImportLog> result = await this.Get<FileImportLog>(requestUri, accessToken, additionalHeaders, cancellationToken);
+
+                if (result.IsFailed)
+                    return ResultHelpers.CreateFailure(result);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                // An exception has occurred, add some additional information to the message
+                Exception exception = new Exception($"Error getting file import logs for merchant id {merchantId} for estate {estateId}.", ex);
 
                 return Result.Failure(exception.Message);
             }

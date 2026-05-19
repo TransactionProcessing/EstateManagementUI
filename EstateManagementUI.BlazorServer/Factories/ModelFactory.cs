@@ -9,6 +9,7 @@ using ContractProductModel = EstateManagementUI.BlazorServer.Models.ContractMode
 using ContractProductTransactionFeeModel = EstateManagementUI.BlazorServer.Models.ContractModels.ContractProductTransactionFeeModel;
 using FileDetailsModel = EstateManagementUI.BlazorServer.Models.FileDetailsModel;
 using FileImportLogModel = EstateManagementUI.BlazorServer.Models.FileImportLogModel;
+using FileProcessingLineStatus = EstateManagementUI.BusinessLogic.Models.FileProcessingLineStatus;
 using MerchantContractModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantContractModel;
 using MerchantContractProductModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantContractProductModel;
 using MerchantDeviceModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDeviceModel;
@@ -619,6 +620,42 @@ public static class ModelFactory {
         MerchantModels.DayOpeningHoursModel model = new();
         model.Opening = resultData.Opening;
         model.Closing = resultData.Closing;
+        return model;
+    }
+
+    public static List<FileImportLogDetailsModel> ConvertFrom(List<FileProcessingModels.FileImportLogDetailsModel> resultData) {
+        List<FileImportLogDetailsModel> model = new();
+        foreach (FileProcessingModels.FileImportLogDetailsModel fileImportLogDetails in resultData) {
+            model.Add(ConvertFrom(fileImportLogDetails));
+        }
+        return model;
+    }
+    public static FileImportLogDetailsModel ConvertFrom(FileProcessingModels.FileImportLogDetailsModel resultData)
+    {
+        FileImportLogDetailsModel model = new() {
+                FileImportLogId = resultData.FileImportLogId,
+                ImportLogDate = resultData.ImportLogDate,
+                Files = resultData.Files.Select(f => new FileProcessingFileModel()
+                {
+                    FileId = f.FileId,
+                    MerchantName = f.MerchantName,
+                    DateTimeUploaded = f.DateTimeUploaded,
+                    FileName = f.FileName,
+                    FileProfile = f.FileProfile,
+                    UploadedBy = f.UploadedBy,
+                    FileLines = f.FileLines.Select(fl => new FileProcessingLineModel()
+                    {
+                        LineContents = fl.LineContents,
+                        LineNumber = fl.LineNumber,
+                        LineStatus = fl.LineStatus switch
+                        {
+                            FileProcessingLineStatus.Failed => Models.FileProcessingLineStatus.Failed,
+                            FileProcessingLineStatus.Successful => Models.FileProcessingLineStatus.Successful,
+                            _ => Models.FileProcessingLineStatus.Ignored
+                        }
+                    }).ToList()
+                }).ToList()
+            };
         return model;
     }
 }
