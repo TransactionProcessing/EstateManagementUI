@@ -712,8 +712,8 @@ namespace EstateManagementUI.BusinessLogic.BackendAPI
 
             QueryStringBuilder builder = new();
             builder.AddParameter("merchantId", merchantId);
-            builder.AddParameter("startDate", startDate);
-            builder.AddParameter("endDate", endDate);
+            builder.AddParameter("startDate", startDate.ToString("yyyy-MM-dd"));
+            builder.AddParameter("endDate", endDate.ToString("yyyy-MM-dd"));
 
             String requestUri = this.BuildRequestUrl($"/api/fileimportlogs?{builder.BuildQueryString()}");
 
