@@ -21,7 +21,6 @@ using MerchantModels = EstateManagementUI.BlazorServer.Models.MerchantModels;
 using MerchantOperatorModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantOperatorModel;
 using MerchantSettlementHistoryModel = EstateManagementUI.BlazorServer.Models.MerchantSettlementHistoryModel;
 using OperatorModel = EstateManagementUI.BlazorServer.Models.OperatorModels.OperatorModel;
-//using OperatorTransactionSummaryModel = EstateManagementUI.BlazorServer.Models.OperatorTransactionSummaryModel;
 using ProductPerformanceResponse = EstateManagementUI.BlazorServer.Models.TransactionModels.ProductPerformanceResponse;
 using RecentContractModel = EstateManagementUI.BlazorServer.Models.ContractModels.RecentContractModel;
 using RecentMerchantsModel = EstateManagementUI.BlazorServer.Models.MerchantModels.RecentMerchantsModel;

@@ -6,14 +6,14 @@ using SimpleResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers
 {
-    public class DateRequestHandler : IRequestHandler<Queries.GetComparisonDatesQuery, Result<List<ComparisonDateModel>>>
+    public class DateRequestHandler : IRequestHandler<DateQueries.GetComparisonDatesQuery, Result<List<ComparisonDateModel>>>
     {
         private readonly IApiClient ApiClient;
         
         public DateRequestHandler(IApiClient apiClient) {
             this.ApiClient = apiClient;
         }
-        public async Task<Result<List<ComparisonDateModel>>> Handle(Queries.GetComparisonDatesQuery request,
+        public async Task<Result<List<ComparisonDateModel>>> Handle(DateQueries.GetComparisonDatesQuery request,
                                                                     CancellationToken cancellationToken) {
             return await this.ApiClient.GetComparisonDates(request, cancellationToken);
         }

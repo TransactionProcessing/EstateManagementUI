@@ -449,8 +449,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
             Result? apiResult = await this.TransactionProcessorClient.UpdateMerchantContact(token.Data, request.EstateId, request.MerchantId, request.MerchantContact.ContactId,
                 apiRequest, cancellationToken);
-            ;
-
+            
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
