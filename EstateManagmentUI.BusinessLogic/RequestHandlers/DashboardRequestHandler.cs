@@ -7,17 +7,13 @@ using SimpleResults;
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 
 public class DashboardRequestHandler : 
-   
-    //IRequestHandler<Queries.GetTodaysSalesValueByHourQuery, Result<List<TodaysSalesValueByHourModel>>>,
-    
     IRequestHandler<Queries.GetTopProductDataQuery, Result<List<TopBottomProductDataModel>>>,
     IRequestHandler<Queries.GetBottomProductDataQuery, Result<List<TopBottomProductDataModel>>>,
     IRequestHandler<Queries.GetTopMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>,
     IRequestHandler<Queries.GetBottomMerchantDataQuery, Result<List<TopBottomMerchantDataModel>>>,
     IRequestHandler<Queries.GetTopOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
     IRequestHandler<Queries.GetBottomOperatorDataQuery, Result<List<TopBottomOperatorDataModel>>>,
-    IRequestHandler<Queries.GetLastSettlementQuery, Result<LastSettlementModel>>//,
-    //IRequestHandler<Queries.GetTransactionDetailQuery, Result<List<TransactionDetailModel>>>
+    IRequestHandler<Queries.GetLastSettlementQuery, Result<LastSettlementModel>>
 {
     private readonly IApiClient ApiClient;
 
@@ -25,18 +21,6 @@ public class DashboardRequestHandler :
         this.ApiClient = apiClient;
             
     }
-
-    // Implementations similar to above handlers returning stub data
-    
-    //public async Task<Result<List<TodaysSalesByHourModel>>> Handle(TransactionQueries.GetTodaysSalesByHourQuery request,
-    //                                                                    CancellationToken cancellationToken) {
-    //    return Result.Success(StubTestData.GetMockSalesCountByHour());
-    //}
-
-    //public async Task<Result<List<TodaysSalesValueByHourModel>>> Handle(Queries.GetTodaysSalesValueByHourQuery request,
-    //                                                                    CancellationToken cancellationToken) {
-    //    return Result.Success(StubTestData.GetMockSalesValueByHour());
-    //}
     
     public async Task<Result<List<TopBottomProductDataModel>>> Handle(Queries.GetTopProductDataQuery request,
                                                                       CancellationToken cancellationToken) {

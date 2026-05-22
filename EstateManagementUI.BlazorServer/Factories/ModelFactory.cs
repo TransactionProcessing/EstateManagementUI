@@ -34,26 +34,7 @@ using TransactionModels = EstateManagementUI.BlazorServer.Models.TransactionMode
 namespace EstateManagementUI.BlazorServer.Factories;
 
 public static class ModelFactory {
-    //public static EstateModel ConvertFrom(BusinessLogic.Models.EstateModels.EstateModel model) {
-    //    EstateModel result = new EstateModel(model.EstateId, model.EstateName, model.Reference);
-    //    result = result with { AllOperators = new List<OperatorDropDownModel>(), AssignedOperators = new List<OperatorModel>(), RecentContracts = new List<RecentContractModel>(), RecentMerchants = new List<RecentMerchantsModel>() };
-    //    if (model.Operators != null && model.Operators.Any()) {
-    //        model.Operators.ForEach((o) => result.Operators.Add(ConvertFrom(o)));
-    //    }
-    //    if (model.Merchants != null && model.Merchants.Any()) {
-    //        model.Merchants.ForEach((m) => result.Merchants.Add(ConvertFrom(m)));
-    //    }
-    //    if (model.Contracts != null && model.Contracts.Any()) {
-    //        model.Contracts.ForEach((m) => result.Contracts.Add(ConvertFrom(m)));
-    //    }
-    //    if (model.Users != null && model.Users.Any())
-    //    {
-    //        model.Users.ForEach((m) => result.Users.Add(ConvertFrom(m)));
-    //    }
-
-    //    return result;
-    //}
-
+    
     private static EstateModels.EstateUserModel ConvertFrom(BusinessLogic.Models.EstateModels.EstateUserModel model) {
         return new EstateModels.EstateUserModel() { CreatedDateTime = model.CreatedDateTime, EmailAddress = model.EmailAddress, UserId = model.UserId };
     }
@@ -301,25 +282,7 @@ public static class ModelFactory {
             TotalTransactionValue = model.TotalTransactionValue
         };
     }
-
-    //public static List<MerchantTransactionSummaryModel> ConvertFrom(List<BusinessLogic.Models.MerchantTransactionSummaryModel> models) {
-    //    List<MerchantTransactionSummaryModel> result = new List<MerchantTransactionSummaryModel>();
-    //    models.ForEach(m => result.Add(ConvertFrom(m)));
-    //    return result;
-    //}
-
-    //private static MerchantTransactionSummaryModel ConvertFrom(BusinessLogic.Models.MerchantTransactionSummaryModel model) {
-    //    return new MerchantTransactionSummaryModel() {
-    //        MerchantName = model.MerchantName,
-    //        TotalTransactionCount = model.TotalTransactionCount,
-    //        TotalTransactionValue = model.TotalTransactionValue,
-    //        MerchantId = model.MerchantId,
-    //        AverageTransactionValue = model.AverageTransactionValue,
-    //        FailedTransactionCount = model.FailedTransactionCount,
-    //        SuccessfulTransactionCount = model.SuccessfulTransactionCount
-    //    };
-    //}
-
+    
     public static List<FileImportLogModel> ConvertFrom(List<BusinessLogic.Models.FileImportLogModel> models) {
         List<FileImportLogModel> result = new List<FileImportLogModel>();
         models.ForEach(m => result.Add(ConvertFrom(m)));

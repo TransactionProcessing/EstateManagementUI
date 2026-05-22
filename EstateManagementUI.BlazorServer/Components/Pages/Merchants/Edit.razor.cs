@@ -233,18 +233,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
             if (result.IsSuccess) {
                 successMessage = "Merchant opening hours updated successfully";
-                //if (merchant != null) {
-                    //merchant.OpeningHours = new MerchantModels.MerchantOpeningHoursModel
-                    //{
-                    //    Sunday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Sunday.Opening, Closing = merchantOpeningHoursModel.Sunday.Closing },
-                    //    Monday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Monday.Opening, Closing = merchantOpeningHoursModel.Monday.Closing },
-                    //    Tuesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Tuesday.Opening, Closing = merchantOpeningHoursModel.Tuesday.Closing },
-                    //    Wednesday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Wednesday.Opening, Closing = merchantOpeningHoursModel.Wednesday.Closing },
-                    //    Thursday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Thursday.Opening, Closing = merchantOpeningHoursModel.Thursday.Closing },
-                    //    Friday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Friday.Opening, Closing = merchantOpeningHoursModel.Friday.Closing },
-                    //    Saturday = new MerchantModels.DayOpeningHoursModel { Opening = merchantOpeningHoursModel.Saturday.Opening, Closing = merchantOpeningHoursModel.Saturday.Closing }
-                    //};
-                //}
             }
             else {
                 errorMessage = "Failed to update merchant opening hours";
@@ -333,16 +321,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 merchantNumberError = null;
                 terminalNumberError = null;
                 showAddOperator = false;
-
-                //// Add to assigned list (in real implementation, reload from server)
-                //var op = availableOperators?.FirstOrDefault(o => o.OperatorId == operatorId);
-                //if (op != null && !assignedOperators.Any(a => a.OperatorId == operatorId))
-                //{
-                //    assignedOperators.Add(new MerchantModels.MerchantOperatorModel() {
-                //        OperatorId = op.OperatorId,
-                //        OperatorName = op.OperatorName,
-                //    });
-                //}
+                
                 await this.LoadMerchant();
             }
             else {

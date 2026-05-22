@@ -86,21 +86,21 @@ public class HomePageTests : BaseTest
         {
             new MerchantModels.RecentMerchantsModel
             {
-                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                MerchantId = Guid.Parse("974774C4-2928-49D2-B54D-E71DDFE77099"),
                 Name = "Test Merchant 1",
                 Reference = "MERCH001",
                 CreatedDateTime = DateTime.Now
             },
             new MerchantModels.RecentMerchantsModel
             {
-                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
+                MerchantId = Guid.Parse("6ECC0B88-E028-4840-AE6A-86F979349575"),
                 Name = "Test Merchant 2",
                 Reference = "MERCH002",
                 CreatedDateTime = DateTime.Now.AddDays(-1)
             },
             new MerchantModels.RecentMerchantsModel
             {
-                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
+                MerchantId = Guid.Parse("2C407ABE-8B1D-40A8-BA7C-943AE189D6BC"),
                 Name = "Test Merchant 3",
                 Reference = "MERCH003",
                 CreatedDateTime = DateTime.Now.AddDays(-5)
@@ -164,21 +164,21 @@ public class HomePageTests : BaseTest
         {
             new MerchantModels.RecentMerchantsModel
             {
-                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                MerchantId = Guid.Parse("974774C4-2928-49D2-B54D-E71DDFE77099"),
                 Name = "Test Merchant 1",
                 Reference = "MERCH001",
                 CreatedDateTime = DateTime.Now
             },
             new MerchantModels.RecentMerchantsModel
             {
-                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222223"),
+                MerchantId = Guid.Parse("6ECC0B88-E028-4840-AE6A-86F979349575"),
                 Name = "Test Merchant 2",
                 Reference = "MERCH002",
                 CreatedDateTime = DateTime.Now.AddDays(-1)
             },
             new MerchantModels.RecentMerchantsModel
             {
-                MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222224"),
+                MerchantId = Guid.Parse("2C407ABE-8B1D-40A8-BA7C-943AE189D6BC"),
                 Name = "Test Merchant 3",
                 Reference = "MERCH003",
                 CreatedDateTime = DateTime.Now.AddDays(-5)

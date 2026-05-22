@@ -234,16 +234,8 @@ public static class BoostrapperExtensions {
         builder.Services.AddSingleton<IPermissionStore, InMemoryPermissionStore>();
         builder.Services.AddScoped<IPermissionService, PermissionService>();
         builder.Services.AddScoped<IPermissionKeyProvider, PermissionKeyProvider>();
-        // Console.WriteLine("Registered Permission services");
         return builder;
     }
-
-    //public static WebApplicationBuilder RegisterTestMediator(this WebApplicationBuilder builder) {
-    //    Console.WriteLine("Registering TestMediatorService with in-memory test data store");
-    //    builder.Services.AddSingleton<ITestDataStore, TestDataStore>();
-    //    builder.Services.AddSingleton<IMediator, TestMediatorService>();
-    //    return builder;
-    //}
 
     public static WebApplicationBuilder RegisterProductionMeriator(this WebApplicationBuilder builder) {
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EstateRequestHandler).Assembly));
