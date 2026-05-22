@@ -24,7 +24,7 @@ public class DateRequestHandlerTests
     {
         // Arrange
         var estateId = Guid.NewGuid();
-        var query = new Queries.GetComparisonDatesQuery(CorrelationIdHelper.New(), estateId);
+        var query = new DateQueries.GetComparisonDatesQuery(CorrelationIdHelper.New(), estateId);
         var dates = new List<ComparisonDateModel>
         {
             new() { Date = DateTime.UtcNow.Date.AddDays(-1), Description = "Yesterday" },
@@ -52,7 +52,7 @@ public class DateRequestHandlerTests
     public async Task Handle_ReturnsFailure_WhenApiClientFails()
     {
         // Arrange
-        var query = new Queries.GetComparisonDatesQuery(CorrelationIdHelper.New(), Guid.NewGuid());
+        var query = new DateQueries.GetComparisonDatesQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
             .Setup(c => c.GetComparisonDates(query, It.IsAny<CancellationToken>()))

@@ -36,7 +36,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Success(bizList));
 
             // Act
@@ -49,7 +49,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             result.Data[0].Description.ShouldBe("Last Week");
             result.Data[1].Description.ShouldBe("Last Month");
 
-            _mockMediator.Verify(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Verify(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Failure("backend error"));
 
             // Act
@@ -65,7 +65,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
 
             // Assert
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.IsAny<Queries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Verify(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }
