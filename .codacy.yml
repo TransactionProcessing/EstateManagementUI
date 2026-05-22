@@ -38,3 +38,4 @@ exclude_paths:
   - "*.suo"
   - "*.db"
   - "*.sqlite"
+  - "*StubTestData.cs"
