@@ -68,11 +68,6 @@ builder.Services.AddHttpContextAccessor();
 // Register Permission services
 builder = builder.RegisterPermissionServices();
 
-//builder = testMode switch {
-//    TestMode.BackedByTestDataStore => builder.RegisterTestMediator(),
-//    TestMode.Full => builder.RegisterTestMediator(),
-//    _ => builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices()
-//};
 builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices().RegisterSerialiser();
 
 // Add Health Checks - read URLs from configuration

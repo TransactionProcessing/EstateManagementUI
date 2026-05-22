@@ -11,7 +11,7 @@ namespace EstateManagementUI.BlazorServer.Common;
 /// </summary>
 public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    public const string SchemeName = "TestAuthentication";
+    public static readonly string SchemeName = "TestAuthentication";
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
 

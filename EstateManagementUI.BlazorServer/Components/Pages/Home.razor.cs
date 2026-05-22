@@ -26,16 +26,7 @@ public partial class Home
     private List<MerchantModels.RecentMerchantsModel>? recentMerchants;
     private string _selectedComparisonDate = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
     private int changeEventCounter = 0;
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    // Keep prerender work minimal. This will still run during prerender,
-    //    // so avoid doing heavy/interactive-only tasks here.
-    //    await this.LogToConsole("OnInitializedAsync (prerender/early) START");
-    //    // Do not call LoadDashboardData() here to avoid double-load when prerendering.
-    //    await base.OnInitializedAsync();
-    //}
-
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) {

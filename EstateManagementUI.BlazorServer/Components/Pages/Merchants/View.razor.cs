@@ -120,44 +120,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private async Task LoadSettlementTransactions()
         {
-            //loadingSettlementTransactions = true;
-            //try
-            //{
-            //    var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            //    var accessToken = "stubbed-token";
-            //    var correlationId = CorrelationIdHelper.New();
-
-            //    // Load last 6 months of transaction data for this merchant
-            //    var query = new Queries.GetTransactionDetailQuery(
-            //        correlationId,
-            //        accessToken,
-            //        estateId,
-            //        DateTime.Today.AddMonths(-6),
-            //        DateTime.Today,
-            //        new List<Guid> { MerchantId }, // Filter by this merchant only
-            //        null, // All operators
-            //        null  // All products
-            //    );
-
-            //    var result = await Mediator.Send(query);
-            //    if (result.IsSuccess && result.Data != null)
-            //    {
-            //        settlementTransactions = ModelFactory.ConvertFrom(result.Data);
-            //    }
-            //    else
-            //    {
-            //        settlementTransactions = new List<TransactionDetailModel>();
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    // Handle error silently for now
-            //    settlementTransactions = new List<TransactionDetailModel>();
-            //}
-            //finally
-            //{
-            //    loadingSettlementTransactions = false;
-            //}
+            
         }
 
         private string GetResultBadgeClass(string? status)

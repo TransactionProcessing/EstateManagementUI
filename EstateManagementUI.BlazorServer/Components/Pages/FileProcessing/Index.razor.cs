@@ -13,16 +13,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.FileProcessing
         private DateTime endDate;
         private List<FileImportLogDetailsModel> filteredLogs = [];
 
-        //protected override async Task OnInitializedAsync()
-        //{
-        //    await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.List);
-
-        //    startDate = DateTime.Today.AddDays(-30);
-        //    endDate = DateTime.Today;
-        //    await ApplyFilter();
-        //    isLoading = false;
-        //}
-
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)

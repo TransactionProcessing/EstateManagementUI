@@ -1,8 +1,5 @@
 ﻿using EstateManagementUI.BlazorServer.Common;
-using EstateManagementUI.BlazorServer.Factories;
-using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
-using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Shared.Results;
 using SimpleResults;
@@ -66,11 +63,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             get => _pageSize;
             set { _pageSize = value; _currentPage = 1;  }
         }
-
-        // Cached results
-        //private List<MerchantListModel> _filteredMerchants = new();
-        //private List<MerchantListModel> filteredMerchants => _filteredMerchants;
-
+        
         private List<MerchantListModel> _pagedMerchants = new();
         private List<MerchantListModel> pagedMerchants => _pagedMerchants;
 
@@ -134,11 +127,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private void FirstPage()
         {
-            if (_currentPage != 1)
-            {
-                _currentPage = 1;
-                //UpdatePagedMerchants();
-            }
+            _currentPage = 1;
         }
 
         private void PreviousPage()
@@ -146,7 +135,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             if (_currentPage > 1)
             {
                 _currentPage--;
-                //UpdatePagedMerchants();
             }
         }
 
@@ -155,18 +143,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             if (_currentPage < _totalPages)
             {
                 _currentPage++;
-               // UpdatePagedMerchants();
             }
         }
 
         private void LastPage()
         {
-            var lastPage = _totalPages > 0 ? _totalPages : 1;
-            if (_currentPage != lastPage)
-            {
-                _currentPage = lastPage;
-               // UpdatePagedMerchants();
-            }
+            _currentPage = _totalPages > 0 ? _totalPages : 1;
         }
 
         private void ViewMerchant(Guid merchantId) => NavigationManager.NavigateToMerchant(merchantId);

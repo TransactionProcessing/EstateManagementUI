@@ -15,9 +15,7 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
     protected AuthenticationState AuthState { get; private set; } = default!;
     
     protected override async Task OnInitializedAsync() {
-        
-        //this.AuthState = await AuthenticationStateTask;
-        //User = this.AuthState.User;
+
     }
 
     [Inject] protected IPermissionService PermissionService { get; set; } = default!;

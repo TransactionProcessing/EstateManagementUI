@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
+﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Shared.Results;
@@ -427,8 +426,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
             Result? apiResult = await this.TransactionProcessorClient.UpdateMerchantAddress(token.Data, request.EstateId, request.MerchantId,request.MerchantAddress.AddressId,
                 apiRequest, cancellationToken);
-            ;
-
+            
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 

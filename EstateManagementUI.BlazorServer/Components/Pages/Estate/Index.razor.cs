@@ -1,10 +1,6 @@
-﻿using EstateManagementUI.BlazorServer.Common;
-using EstateManagementUI.BlazorServer.Factories;
-using EstateManagementUI.BlazorServer.Models;
+﻿using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using MediatR;
-using Microsoft.AspNetCore.Components.Authorization;
 using Shared.Results;
 using SimpleResults;
 
@@ -13,7 +9,6 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Estate;
 public partial class Index {
     private bool isLoading = true;
     private EstateModel? estate;
-    //private string activeTab = "overview";
     private bool showAddOperator = false;
     private string? selectedOperatorId;
 

@@ -159,15 +159,7 @@ public partial class Edit
 
     private async Task RemoveProduct(Guid productId)
     {
-        //if (contractModel == null || contractModel.Products == null) return;
-
-        //var product = contractModel.Products.FirstOrDefault(p => p.ContractProductId == productId);
-        //if (product != null)
-        //{
-        // Note: Backend API for product removal not yet implemented
-        // For now, show a message to the user
         errorMessage = "Product removal is not yet supported by the backend API. This feature will be available once the backend endpoint is implemented.";
-        //}
     }
 
     private async Task RemoveFee(Guid productId, Guid feeId)

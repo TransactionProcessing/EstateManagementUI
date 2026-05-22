@@ -199,7 +199,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             }
             catch (Exception ex)
             {
-                
+                return;
             }
         }
 
