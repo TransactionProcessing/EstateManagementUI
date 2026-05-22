@@ -17,7 +17,7 @@ using TransactionProcessor.Client;
 namespace EstateManagementUI.BusinessLogic.Client
 {
     public partial interface IApiClient {
-        Task<Result<List<ComparisonDateModel>>> GetComparisonDates(Queries.GetComparisonDatesQuery request,
+        Task<Result<List<ComparisonDateModel>>> GetComparisonDates(DateQueries.GetComparisonDatesQuery request,
                                                                    CancellationToken cancellationToken);
     }
 
@@ -36,7 +36,7 @@ namespace EstateManagementUI.BusinessLogic.Client
             this.TransactionProcessorClient = transactionProcessorClient;
             this.FileProcessorClient = fileProcessorClient;
         }
-        public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(Queries.GetComparisonDatesQuery request,
+        public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(DateQueries.GetComparisonDatesQuery request,
                                                                                 CancellationToken cancellationToken) {
 
             // Get a token here 

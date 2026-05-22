@@ -53,26 +53,6 @@ public class TodaysSettlementModel
     public int TodaysPendingSettlementCount { get; set; }
     public decimal TodaysPendingSettlementValue { get; set; }
 }
-
-
-//public class TopBottomProductDataModel
-//{
-//    public string? ProductName { get; set; }
-//    public decimal SalesValue { get; set; }
-//}
-
-//public class TopBottomMerchantDataModel
-//{
-//    public string? MerchantName { get; set; }
-//    public decimal SalesValue { get; set; }
-//}
-
-//public class TopBottomOperatorDataModel
-//{
-//    public string? OperatorName { get; set; }
-//    public decimal SalesValue { get; set; }
-//}
-
 public class LastSettlementModel
 {
     public DateTime SettlementDate { get; set; }
@@ -81,7 +61,6 @@ public class LastSettlementModel
     public decimal SalesValue { get; set; }
     public decimal SettlementValue { get; set; }
 }
-
 
 public class OperatorTransactionSummaryModel
 {
@@ -94,7 +73,6 @@ public class OperatorTransactionSummaryModel
     public int FailedTransactionCount { get; set; }
     public decimal TotalFeesEarned { get; set; }
 }
-
 public class ProductPerformanceModel
 {
     public string? ProductName { get; set; }

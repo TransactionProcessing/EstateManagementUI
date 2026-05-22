@@ -19,7 +19,7 @@ public class CalendarUIService : ICalendarUIService {
     }
 
     public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(CorrelationId correlationId, Guid estateId) {
-        var query = new Queries.GetComparisonDatesQuery(correlationId, estateId);
+        var query = new DateQueries.GetComparisonDatesQuery(correlationId, estateId);
         var result = await this.Mediator.Send(query);
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
