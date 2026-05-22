@@ -294,43 +294,7 @@
     
     private async Task LoadSummaryData()
     {
-        try
-        {
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            var accessToken = "stubbed-token";
-            
-            var startDate = _startDate.ToDateTime(TimeOnly.MinValue);
-            var endDate = _endDate.ToDateTime(TimeOnly.MaxValue);
-            
-            Guid? merchantId = string.IsNullOrEmpty(_selectedMerchantId) ? null : Guid.Parse(_selectedMerchantId);
-            string? status = string.IsNullOrEmpty(_selectedStatus) ? null : _selectedStatus;
-            
-            var result = await Mediator.Send(new Queries.GetSettlementSummaryQuery(
-                correlationId, 
-                accessToken, 
-                estateId, 
-                startDate, 
-                endDate, 
-                merchantId, 
-                status
-            ));
-            
-            if (result.IsSuccess && result.Data != null)
-            {
-                summaryData = ModelFactory.ConvertFrom(result.Data);
-                CalculateKPIs();
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to load settlement summary data";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Failed to load settlement summary data: {ex.Message}";
-            Logger.LogError(ex, "Error loading settlement summary data");
-        }
+        // TODO
     }
     
     private void CalculateKPIs()

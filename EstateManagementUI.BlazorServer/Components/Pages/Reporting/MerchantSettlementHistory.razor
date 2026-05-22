@@ -237,40 +237,6 @@
 
     private async Task LoadSettlementHistory()
     {
-        isLoading = true;
-        errorMessage = null;
-        
-        try
-        {
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111"); // Test estate ID
-            Guid? merchantId = string.IsNullOrEmpty(selectedMerchantId) ? null : Guid.Parse(selectedMerchantId);
-            
-            var query = new Queries.GetMerchantSettlementHistoryQuery(
-                CorrelationIdHelper.New(),
-                "test-token",
-                estateId,
-                merchantId,
-                startDate,
-                endDate
-            );
-
-            var result = await Mediator.Send(query);
-            if (result.IsSuccess)
-            {
-                settlements = ModelFactory.ConvertFrom(result.Data);
-            }
-            else
-            {
-                errorMessage = result.Message ?? "Failed to load settlement history";
-            }
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Error loading settlement history: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-        }
+        // TODO:
     }
 }
