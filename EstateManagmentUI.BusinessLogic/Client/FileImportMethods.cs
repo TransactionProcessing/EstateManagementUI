@@ -1,12 +1,7 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using FileProcessor.DataTransferObjects.Responses;
-using Microsoft.AspNetCore.Http;
 using Shared.Results;
 using SimpleResults;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {

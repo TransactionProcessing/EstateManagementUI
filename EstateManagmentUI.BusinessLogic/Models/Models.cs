@@ -55,23 +55,23 @@ public class TodaysSettlementModel
 }
 
 
-public class TopBottomProductDataModel
-{
-    public string? ProductName { get; set; }
-    public decimal SalesValue { get; set; }
-}
+//public class TopBottomProductDataModel
+//{
+//    public string? ProductName { get; set; }
+//    public decimal SalesValue { get; set; }
+//}
 
-public class TopBottomMerchantDataModel
-{
-    public string? MerchantName { get; set; }
-    public decimal SalesValue { get; set; }
-}
+//public class TopBottomMerchantDataModel
+//{
+//    public string? MerchantName { get; set; }
+//    public decimal SalesValue { get; set; }
+//}
 
-public class TopBottomOperatorDataModel
-{
-    public string? OperatorName { get; set; }
-    public decimal SalesValue { get; set; }
-}
+//public class TopBottomOperatorDataModel
+//{
+//    public string? OperatorName { get; set; }
+//    public decimal SalesValue { get; set; }
+//}
 
 public class LastSettlementModel
 {
