@@ -1,6 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages;
 using Shouldly;
+using TestContext = Bunit.TestContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
