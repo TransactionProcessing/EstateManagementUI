@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -56,9 +57,9 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         // Create test user claims
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, $"test-user-{roleName.ToLower()}"),
+            new Claim(ClaimTypes.NameIdentifier, $"test-user-{roleName.ToLower(CultureInfo.CurrentCulture)}"),
             new Claim(ClaimTypes.Name, userName),
-            new Claim(ClaimTypes.Email, $"{roleName.ToLower()}@test.com"),
+            new Claim(ClaimTypes.Email, $"{roleName.ToLower(CultureInfo.CurrentCulture)}@test.com"),
             new Claim("estateId", "11111111-1111-1111-1111-111111111111"),
             new Claim(ClaimTypes.Role, roleName),
             new Claim("role", roleName)
