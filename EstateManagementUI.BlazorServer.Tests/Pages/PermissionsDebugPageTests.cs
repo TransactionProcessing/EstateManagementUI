@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Shouldly;
 using System.Security.Claims;
+using TestContext = Bunit.TestContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 

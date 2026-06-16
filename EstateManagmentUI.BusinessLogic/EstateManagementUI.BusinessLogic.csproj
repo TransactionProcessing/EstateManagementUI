@@ -10,15 +10,15 @@
 	<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="ClientProxyBase" Version="2026.5.6" />
-		<PackageReference Include="FileProcessor.Client" Version="2026.5.1" />
-		<PackageReference Include="MediatR" Version="14.0.0" />
-		<PackageReference Include="SecurityService.Client" Version="2026.5.1" />
-		<PackageReference Include="Shared" Version="2026.5.6" />
-		<PackageReference Include="Shared.Results" Version="2026.5.6" />
-		<PackageReference Include="SimpleResults" Version="4.0.0" />
-		<PackageReference Include="TransactionProcessor.Client" Version="2026.5.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.0" PrivateAssets="all" />
-		<PackageReference Include="Roslynator.Analyzers" Version="4.15.0" PrivateAssets="all" />
+		<PackageReference Include="ClientProxyBase" />
+		<PackageReference Include="FileProcessor.Client" />
+		<PackageReference Include="MediatR" />
+		<PackageReference Include="SecurityService.Client" />
+		<PackageReference Include="Shared" />
+		<PackageReference Include="Shared.Results" />
+		<PackageReference Include="SimpleResults" />
+		<PackageReference Include="TransactionProcessor.Client" />
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" PrivateAssets="all" />
+		<PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
 	</ItemGroup>
 </Project>

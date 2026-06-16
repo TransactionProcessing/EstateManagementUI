@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using TestContext = Bunit.TestContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 

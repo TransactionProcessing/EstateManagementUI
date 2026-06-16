@@ -4,6 +4,8 @@ using Shouldly;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
+using TestContext = Bunit.TestContext;
+
 public class NotFoundPageTests : TestContext
 {
     [Fact]
