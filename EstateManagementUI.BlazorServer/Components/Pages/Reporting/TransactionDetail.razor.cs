@@ -247,6 +247,21 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             await LoadDetailData();
         }
 
+        private static readonly Dictionary<string, Func<TransactionModels.TransactionDetail, object?>> SortSelectors =
+            new()
+            {
+                [nameof(TransactionModels.TransactionDetailModel.TransactionDateTime)] = t => t.DateTime,
+                [nameof(TransactionModels.TransactionDetailModel.MerchantName)] = t => t.Merchant,
+                [nameof(TransactionModels.TransactionDetailModel.OperatorName)] = t => t.Operator,
+                [nameof(TransactionModels.TransactionDetailModel.ProductName)] = t => t.Product,
+                [nameof(TransactionModels.TransactionDetailModel.TransactionNumber)] = t => t.TransactionNumber,
+                [nameof(TransactionModels.TransactionDetailModel.TransactionType)] = t => t.Type,
+                [nameof(TransactionModels.TransactionDetailModel.TransactionStatus)] = t => t.Status,
+                [nameof(TransactionModels.TransactionDetailModel.GrossAmount)] = t => t.Value,
+                [nameof(TransactionModels.TransactionDetailModel.FeesCommission)] = t => t.TotalFees,
+                [nameof(TransactionModels.TransactionDetailModel.NetAmount)] = t => t.NetAmount,
+            };
+
         private void SortBy(string columnName)
         {
             if (detailData.Transactions == null || !detailData.Transactions.Any())
@@ -264,40 +279,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 
             _currentPage = 1; // Reset to first page when sorting changes
 
-            detailData.Transactions = columnName switch
+            if (SortSelectors.TryGetValue(columnName, out var selector))
             {
-                nameof(TransactionModels.TransactionDetailModel.TransactionDateTime) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.DateTime).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.DateTime).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.MerchantName) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Merchant).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Merchant).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.OperatorName) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Operator).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Operator).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.ProductName) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Product).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Product).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.TransactionNumber) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.TransactionNumber).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.TransactionNumber).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.TransactionType) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Type).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Type).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.TransactionStatus) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Status).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Status).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.GrossAmount) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.Value).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.Value).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.FeesCommission) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.TotalFees).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.TotalFees).ToList(),
-                nameof(TransactionModels.TransactionDetailModel.NetAmount) => _sortAscending
-                    ? detailData.Transactions.OrderBy(t => t.NetAmount).ToList()
-                    : detailData.Transactions.OrderByDescending(t => t.NetAmount).ToList(),
-                _ => detailData.Transactions
-            };
+                detailData.Transactions = _sortAscending
+                    ? detailData.Transactions.OrderBy(selector).ToList()
+                    : detailData.Transactions.OrderByDescending(selector).ToList();
+            }
 
             CalculateKPIs();
         }
