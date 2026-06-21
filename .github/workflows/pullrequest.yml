@@ -97,6 +97,13 @@ jobs:
         Browser: Chrome
         IsCI: true
       run: dotnet test "EstateManagementUI.IntegrationTests\EstateManagementUI.IntegrationTests.csproj" # --filter Category=PRTest
+
+    - name: Upload Playwright screenshots on failure
+      uses: actions/upload-artifact@v4.4.0
+      if: ${{ failure() }}
+      with:
+        name: chrometestresults
+        path: EstateManagementUI.IntegrationTests/TestResults/
       
     - uses: actions/upload-artifact@v4.4.0
       if: ${{ failure() }}

@@ -2,6 +2,7 @@ using Microsoft.Playwright;
 using Reqnroll;
 using System.Net;
 using System.Net.Sockets;
+using System.IO;
 
 namespace EstateManagementUI.IntegrationTests.Hooks;
 
@@ -65,7 +66,9 @@ public class BrowserHooks
             if (_scenarioContext.TestError != null)
             {
                 var scenarioName = _scenarioContext.ScenarioInfo.Title.Replace(" ", "_");
-                var screenshotPath = $"screenshot-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.png";
+                var screenshotDirectory = Path.Combine(Environment.CurrentDirectory, "TestResults", "Screenshots");
+                Directory.CreateDirectory(screenshotDirectory);
+                var screenshotPath = Path.Combine(screenshotDirectory, $"screenshot-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.png");
                 await page.ScreenshotAsync(new PageScreenshotOptions 
                 { 
                     Path = screenshotPath, 
