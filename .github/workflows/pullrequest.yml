@@ -48,9 +48,8 @@ jobs:
           name: test-results
           path: '**/TestResults/*.trx'
           retention-days: 30
-
-
-  chrometests:
+          
+   chrometests:
     name: "Build and Test UI - Chrome"
     env:
         ASPNETCORE_ENVIRONMENT: "Production"
