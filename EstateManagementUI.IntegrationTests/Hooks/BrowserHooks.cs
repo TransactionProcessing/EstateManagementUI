@@ -3,6 +3,7 @@ using Reqnroll;
 using System.Net;
 using System.Net.Sockets;
 using System.IO;
+using System.Text;
 
 namespace EstateManagementUI.IntegrationTests.Hooks;
 
@@ -58,7 +59,15 @@ public class BrowserHooks
     [AfterScenario(Order = 0)]
     public async Task AfterScenario()
     {
-        var page = _scenarioContext.ScenarioContainer.Resolve<IPage>();
+        IPage? page = null;
+        try
+        {
+            page = _scenarioContext.ScenarioContainer.Resolve<IPage>();
+        }
+        catch
+        {
+            return;
+        }
         
         if (page != null)
         {
@@ -67,7 +76,20 @@ public class BrowserHooks
             {
                 var scenarioName = _scenarioContext.ScenarioInfo.Title.Replace(" ", "_");
                 var screenshotDirectory = Path.Combine(Environment.CurrentDirectory, "TestResults", "Screenshots");
+                var diagnosticsDirectory = Path.Combine(Environment.CurrentDirectory, "TestResults", "Diagnostics");
                 Directory.CreateDirectory(screenshotDirectory);
+                Directory.CreateDirectory(diagnosticsDirectory);
+
+                try
+                {
+                    await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+                    await page.WaitForTimeoutAsync(500);
+                }
+                catch
+                {
+                    // Best effort only. If the page is already gone, we still want the failure artifacts.
+                }
+
                 var screenshotPath = Path.Combine(screenshotDirectory, $"screenshot-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.png");
                 await page.ScreenshotAsync(new PageScreenshotOptions 
                 { 
@@ -75,6 +97,18 @@ public class BrowserHooks
                     FullPage = true 
                 });
                 Console.WriteLine($"Screenshot saved to: {screenshotPath}");
+
+                var diagnosticsPath = Path.Combine(diagnosticsDirectory, $"diagnostics-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.txt");
+                var diagnostics = new StringBuilder();
+                diagnostics.AppendLine($"Url: {page.Url}");
+                diagnostics.AppendLine($"Title: {await page.TitleAsync()}");
+                diagnostics.AppendLine("Body text:");
+                diagnostics.AppendLine(await page.Locator("body").InnerTextAsync());
+                diagnostics.AppendLine();
+                diagnostics.AppendLine("HTML:");
+                diagnostics.AppendLine(await page.ContentAsync());
+                await File.WriteAllTextAsync(diagnosticsPath, diagnostics.ToString());
+                Console.WriteLine($"Diagnostics saved to: {diagnosticsPath}");
             }
 
             await page.CloseAsync();
