@@ -15,6 +15,7 @@ public class BrowserHooks
 {
     private static IPlaywright? _playwright;
     private static IBrowser? _browser;
+    private static IBrowserContext? _browserContext;
     private static TcpListener? _securityServiceForwarder;
     private static CancellationTokenSource? _forwarderCancellation;
     private readonly ScenarioContext _scenarioContext;
@@ -68,18 +69,35 @@ public class BrowserHooks
         {
             return;
         }
+
+        var scenarioName = _scenarioContext.ScenarioInfo.Title.Replace(" ", "_");
+        var artifactDirectory = Path.Combine(Environment.CurrentDirectory, "TestResults");
+        var screenshotDirectory = Path.Combine(artifactDirectory, "Screenshots");
+        var diagnosticsDirectory = Path.Combine(artifactDirectory, "Diagnostics");
+        var traceDirectory = Path.Combine(artifactDirectory, "Traces");
+        Directory.CreateDirectory(screenshotDirectory);
+        Directory.CreateDirectory(diagnosticsDirectory);
+        Directory.CreateDirectory(traceDirectory);
+
+        if (_browserContext != null)
+        {
+            try
+            {
+                var tracePath = Path.Combine(traceDirectory, $"trace-{scenarioName}-{DateTime.Now:yyyyMMddHHmmss}.zip");
+                await _browserContext.Tracing.StopAsync(new TracingStopOptions { Path = tracePath });
+                Console.WriteLine($"Trace saved to: {tracePath}");
+            }
+            catch (Exception traceException)
+            {
+                Console.WriteLine($"Failed to save trace: {traceException.Message}");
+            }
+        }
         
         if (page != null)
         {
             // Take screenshot on failure
             if (_scenarioContext.TestError != null)
             {
-                var scenarioName = _scenarioContext.ScenarioInfo.Title.Replace(" ", "_");
-                var screenshotDirectory = Path.Combine(Environment.CurrentDirectory, "TestResults", "Screenshots");
-                var diagnosticsDirectory = Path.Combine(Environment.CurrentDirectory, "TestResults", "Diagnostics");
-                Directory.CreateDirectory(screenshotDirectory);
-                Directory.CreateDirectory(diagnosticsDirectory);
-
                 try
                 {
                     await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
@@ -112,6 +130,12 @@ public class BrowserHooks
             }
 
             await page.CloseAsync();
+        }
+
+        if (_browserContext != null)
+        {
+            await _browserContext.CloseAsync();
+            _browserContext = null;
         }
     }
 
@@ -201,13 +225,25 @@ public class BrowserHooks
             };
         }
 
-        var context = await _browser.NewContextAsync(new BrowserNewContextOptions
+        _browserContext = await _browser.NewContextAsync(new BrowserNewContextOptions
         {
             IgnoreHTTPSErrors = true,
             ViewportSize = new ViewportSize { Width = 1920, Height = 1080 }
         });
 
-        return await context.NewPageAsync();
+        await _browserContext.Tracing.StartAsync(new TracingStartOptions
+        {
+            Screenshots = true,
+            Snapshots = true,
+            Sources = true
+        });
+
+        var page = await _browserContext.NewPageAsync();
+        page.Console += (_, message) => Console.WriteLine($"[browser console] {message.Type}: {message.Text}");
+        page.PageError += (_, error) => Console.WriteLine($"[browser page error] {error}");
+        page.RequestFailed += (_, request) => Console.WriteLine($"[browser request failed] {request.Url} => {request.Failure}");
+
+        return page;
     }
 
     private static async Task EnsureSecurityServiceForwarderAsync(int localPort, int targetPort)
