@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace EstateManagementUI.IntegrationTests.Hooks;
 
@@ -175,6 +176,11 @@ public class BrowserHooks
             ? null
             : $"MAP {securityServiceHost} 127.0.0.1";
 
+        Console.WriteLine($"[browser setup] Browser={browserType}, IsCI={isCI}");
+        Console.WriteLine($"[browser setup] SecurityServiceContainerName={securityServiceHost ?? "<null>"}");
+        Console.WriteLine($"[browser setup] SecurityServiceLocalPort={securityServiceLocalPortText ?? "<null>"}");
+        Console.WriteLine($"[browser setup] SecurityServicePort={securityServicePortText ?? "<null>"}");
+
         if (int.TryParse(securityServiceLocalPortText, out var localPort) &&
             int.TryParse(securityServicePortText, out var targetPort) &&
             localPort != targetPort)
@@ -230,6 +236,30 @@ public class BrowserHooks
             IgnoreHTTPSErrors = true,
             ViewportSize = new ViewportSize { Width = 1920, Height = 1080 }
         });
+
+        if (!string.IsNullOrWhiteSpace(securityServiceHost) &&
+            int.TryParse(securityServicePortText, out var securityServicePort))
+        {
+            var securityServiceRoutePattern = new Regex(
+                $"^https://{Regex.Escape(securityServiceHost)}:\\d+/",
+                RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+            await _browserContext.RouteAsync(securityServiceRoutePattern, async route =>
+            {
+                var requestUri = new Uri(route.Request.Url);
+                var rewrittenUri = new UriBuilder(requestUri)
+                {
+                    Host = "127.0.0.1",
+                    Port = securityServicePort
+                };
+
+                Console.WriteLine($"[browser route rewrite] {route.Request.Url} => {rewrittenUri.Uri}");
+                await route.ContinueAsync(new RouteContinueOptions
+                {
+                    Url = rewrittenUri.Uri.ToString()
+                });
+            });
+        }
 
         await _browserContext.Tracing.StartAsync(new TracingStartOptions
         {
