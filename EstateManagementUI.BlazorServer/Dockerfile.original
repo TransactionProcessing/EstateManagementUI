@@ -13,7 +13,6 @@ RUN curl -fsSL --insecure https://deb.nodesource.com/setup_20.x | bash - && \
 COPY ["EstateManagementUI.BlazorServer/NuGet.Config", "."]
 COPY ["EstateManagementUI.BlazorServer/Certificates/*.*", "Certificates/"]
 COPY ["EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj", "EstateManagementUI.BlazorServer/"]
-COPY ["Directory.Packages.props", "."]
 RUN dotnet restore "./EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj"
 
 COPY . .

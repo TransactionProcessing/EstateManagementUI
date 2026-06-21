@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MessagingService.IntegrationTesting.Helpers" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="NUnit" />
     <PackageReference Include="NUnit3TestAdapter" />
@@ -17,11 +19,16 @@
     <PackageReference Include="Reqnroll.NUnit" />
     <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" />
     <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="SecurityService.Client" />
+    <PackageReference Include="SecurityService.IntegrationTesting.Helpers" />
+    <PackageReference Include="Shared.IntegrationTesting" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="TransactionProcessor.Client" />
+    <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +41,10 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\" />
   </ItemGroup>
 
 </Project>

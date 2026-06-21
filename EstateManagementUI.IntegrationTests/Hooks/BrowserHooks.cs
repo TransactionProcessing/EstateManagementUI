@@ -1,5 +1,7 @@
 using Microsoft.Playwright;
 using Reqnroll;
+using System.Net;
+using System.Net.Sockets;
 
 namespace EstateManagementUI.IntegrationTests.Hooks;
 
@@ -11,6 +13,8 @@ public class BrowserHooks
 {
     private static IPlaywright? _playwright;
     private static IBrowser? _browser;
+    private static TcpListener? _securityServiceForwarder;
+    private static CancellationTokenSource? _forwarderCancellation;
     private readonly ScenarioContext _scenarioContext;
 
     public BrowserHooks(ScenarioContext scenarioContext)
@@ -38,7 +42,7 @@ public class BrowserHooks
     /// <summary>
     /// Create a new browser page for each scenario
     /// </summary>
-    [BeforeScenario(Order = 0)]
+    [BeforeScenario(Order = 1)]
     public async Task BeforeScenario()
     {
         var page = await CreateBrowserPage();
@@ -103,6 +107,19 @@ public class BrowserHooks
             Environment.GetEnvironmentVariable("IsCI"), 
             "true", 
             StringComparison.InvariantCultureIgnoreCase);
+        var securityServiceHost = Environment.GetEnvironmentVariable("SecurityServiceContainerName");
+        var securityServiceLocalPortText = Environment.GetEnvironmentVariable("SecurityServiceLocalPort");
+        var securityServicePortText = Environment.GetEnvironmentVariable("SecurityServicePort");
+        var hostResolverRules = string.IsNullOrWhiteSpace(securityServiceHost)
+            ? null
+            : $"MAP {securityServiceHost} 127.0.0.1";
+
+        if (int.TryParse(securityServiceLocalPortText, out var localPort) &&
+            int.TryParse(securityServicePortText, out var targetPort) &&
+            localPort != targetPort)
+        {
+            await EnsureSecurityServiceForwarderAsync(localPort, targetPort);
+        }
         
         if (_browser == null)
         {
@@ -111,24 +128,38 @@ public class BrowserHooks
                 "Firefox" => await _playwright!.Firefox.LaunchAsync(new BrowserTypeLaunchOptions
                 {
                     Headless = isCI,
-                    Args = new[] { "--ignore-certificate-errors" }
+                    Args = hostResolverRules is null
+                        ? new[] { "--ignore-certificate-errors" }
+                        : new[] { "--ignore-certificate-errors", $"--host-resolver-rules={hostResolverRules}" }
                 }),
                 "WebKit" => await _playwright!.Webkit.LaunchAsync(new BrowserTypeLaunchOptions
                 {
                     Headless = isCI,
-                    Args = new[] { "--ignore-certificate-errors" }
+                    Args = hostResolverRules is null
+                        ? new[] { "--ignore-certificate-errors" }
+                        : new[] { "--ignore-certificate-errors", $"--host-resolver-rules={hostResolverRules}" }
                 }),
                 _ => await _playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
                 {
                     Headless = isCI,
-                    Args = new[] 
-                    { 
-                        "--ignore-certificate-errors",
-                        "--no-sandbox",
-                        "--disable-dev-shm-usage",
-                        "--disable-gpu",
-                        "--disable-extensions"
-                    }
+                    Args = hostResolverRules is null
+                        ? new[]
+                        {
+                            "--ignore-certificate-errors",
+                            "--no-sandbox",
+                            "--disable-dev-shm-usage",
+                            "--disable-gpu",
+                            "--disable-extensions"
+                        }
+                        : new[]
+                        {
+                            "--ignore-certificate-errors",
+                            "--no-sandbox",
+                            "--disable-dev-shm-usage",
+                            "--disable-gpu",
+                            "--disable-extensions",
+                            $"--host-resolver-rules={hostResolverRules}"
+                        }
                 })
             };
         }
@@ -140,5 +171,54 @@ public class BrowserHooks
         });
 
         return await context.NewPageAsync();
+    }
+
+    private static async Task EnsureSecurityServiceForwarderAsync(int localPort, int targetPort)
+    {
+        if (_securityServiceForwarder != null)
+        {
+            return;
+        }
+
+        _forwarderCancellation ??= new CancellationTokenSource();
+        _securityServiceForwarder = new TcpListener(IPAddress.Loopback, localPort);
+        _securityServiceForwarder.Start();
+
+        _ = Task.Run(async () =>
+        {
+            while (!_forwarderCancellation.IsCancellationRequested)
+            {
+                TcpClient? inboundClient = null;
+                TcpClient? outboundClient = null;
+
+                try
+                {
+                    inboundClient = await _securityServiceForwarder.AcceptTcpClientAsync(_forwarderCancellation.Token);
+                    outboundClient = new TcpClient();
+                    await outboundClient.ConnectAsync(IPAddress.Loopback, targetPort, _forwarderCancellation.Token);
+
+                    var inboundStream = inboundClient.GetStream();
+                    var outboundStream = outboundClient.GetStream();
+
+                    var inboundToOutbound = inboundStream.CopyToAsync(outboundStream, _forwarderCancellation.Token);
+                    var outboundToInbound = outboundStream.CopyToAsync(inboundStream, _forwarderCancellation.Token);
+
+                    await Task.WhenAny(Task.WhenAll(inboundToOutbound, outboundToInbound), Task.Delay(Timeout.Infinite, _forwarderCancellation.Token));
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch
+                {
+                    // Ignore connection churn; the browser may open and close several sockets during navigation.
+                }
+                finally
+                {
+                    outboundClient?.Close();
+                    inboundClient?.Close();
+                }
+            }
+        });
     }
 }

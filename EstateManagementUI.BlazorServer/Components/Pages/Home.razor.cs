@@ -34,16 +34,22 @@ public partial class Home
         }
 
         // This runs once after the interactive circuit is established.
-        await this.LogToConsole("OnAfterRenderAsync FIRST RENDER (interactive) - performing interactive initialization");
+        await this.TraceDashboardAsync("OnAfterRenderAsync FIRST RENDER - starting interactive initialization");
+        await this.TraceDashboardAsync($"Current URI: {NavigationManager.Uri}");
 
         try
         {
-            await OnAfterRender(PermissionSection.Dashboard, PermissionFunction.View);
+            var permissionResult = await OnAfterRender(PermissionSection.Dashboard, PermissionFunction.View);
+            await this.TraceDashboardAsync($"Dashboard permission check result: {(permissionResult.IsFailed ? "FAILED" : "SUCCESS")}");
+
             ClaimsPrincipal user = this.AuthState.User;
+            await this.TraceDashboardAsync($"Authentication state: authenticated={user.Identity?.IsAuthenticated}, name={user.Identity?.Name ?? "<null>"}, authType={user.Identity?.AuthenticationType ?? "<null>"}");
+            await this.TraceDashboardAsync($"Claims: {string.Join(", ", user.Claims.Select(c => $"{c.Type}={c.Value}"))}");
 
             // Redirect unauthenticated users to entry screen
             if (!user.Identity?.IsAuthenticated ?? true)
             {
+                await this.TraceDashboardAsync("User is not authenticated - redirecting to entry page");
                 NavigationManager.NavigateToEntryPage();
                 return;
             }
@@ -51,29 +57,33 @@ public partial class Home
             // Determine role and admin flag now that we're interactive
             var role = await PermissionService.GetUserRoleAsync();
             this.isAdministrator = role == "Administrator";
-            await this.LogToConsole($"User role: {role}, isAdministrator: {this.isAdministrator}");
-
-            CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = await this.GetEstateId();
+            await this.TraceDashboardAsync($"User role resolved to '{role}', isAdministrator={this.isAdministrator}");
 
             // Only load dashboard data for non-admins
             if (this.isAdministrator == false)
             {
+                CorrelationId correlationId = new CorrelationId(Guid.NewGuid());
+                var estateId = await this.GetEstateId();
+                await this.TraceDashboardAsync($"Resolved estateId for dashboard data load: {estateId}");
+                await this.TraceDashboardAsync("Non-admin user - loading dashboard data");
                 var result = await this.LoadDashboardData(correlationId, estateId);
                 if (result.IsFailed)
                 {
+                    await this.TraceDashboardAsync($"Dashboard data load failed: {result.Message ?? "<no error message>"}");
                     this.NavigationManager.NavigateToErrorPage();
                     return;
                 }
             }
             else
             {
+                await this.TraceDashboardAsync("Administrator detected - skipping dashboard data load and rendering welcome panel");
                 this.isLoading = false;
                 this.StateHasChanged();
             }
         }
         catch (Exception ex)
         {
+            await this.TraceDashboardAsync($"Initialization exception: {ex}");
             this.errorMessage = $"Initialization error: {ex.Message}";
             this.isLoading = false;
             this.StateHasChanged();
@@ -86,7 +96,7 @@ public partial class Home
         
     private async Task<Result> LoadDashboardData(CorrelationId correlationId, Guid estateId)
     {
-        await this.LogToConsole($"LoadDashboardData START - selectedDate: {this._selectedComparisonDate}");
+        await this.TraceDashboardAsync($"LoadDashboardData START - selectedDate: {this._selectedComparisonDate}");
         try {
             this.isLoading = true;
             this.errorMessage = null;
@@ -142,8 +152,10 @@ public partial class Home
     private async Task<Result<DateTime>> LoadComparisonDates(CorrelationId correlationId, Guid estateId) {
 
         if (this.comparisonDates == null || !this.comparisonDates.Any()) {
+            await this.TraceDashboardAsync($"Loading comparison dates for estateId={estateId}");
             var comparisonDatesResult = await this.CalendarUiService.GetComparisonDates(correlationId, estateId);
             if (comparisonDatesResult.IsFailed) {
+                await this.TraceDashboardAsync($"Comparison dates load failed: {comparisonDatesResult.Message ?? "<no error message>"}");
                 return ResultHelpers.CreateFailure(comparisonDatesResult);
             }
             
@@ -165,7 +177,7 @@ public partial class Home
     private async Task OnComparisonDateChanged()
     {
         this.changeEventCounter++;
-        await this.LogToConsole($"🔥 OnComparisonDateChanged FIRED! Count: {this.changeEventCounter}, New value: {this._selectedComparisonDate}");
+        await this.TraceDashboardAsync($"OnComparisonDateChanged fired. Count={this.changeEventCounter}, New value={this._selectedComparisonDate}");
 
         // This is called after _selectedComparisonDate is updated by @bind-Value
         if (this.isAdministrator == false) {
@@ -173,18 +185,26 @@ public partial class Home
             CorrelationId correlationId = CorrelationIdHelper.New();
             Guid  estateId= await this.GetEstateId();
             
-            await this.LogToConsole($"Loading dashboard data for date: {this._selectedComparisonDate}");
+            await this.TraceDashboardAsync($"Loading dashboard data for date: {this._selectedComparisonDate}");
             var loadResult = await this.LoadDashboardData(correlationId,estateId);
             if (loadResult.IsFailed) {
+                await this.TraceDashboardAsync($"Dashboard refresh failed: {loadResult.Message ?? "<no error message>"}");
                 this.NavigationManager.NavigateToErrorPage();
                 return;
             }
             this.StateHasChanged();
-            await this.LogToConsole("Dashboard data reload complete");
+            await this.TraceDashboardAsync("Dashboard data reload complete");
         }
         else {
-            await this.LogToConsole("User is administrator - skipping data reload");
+            await this.TraceDashboardAsync("Administrator user - skipping dashboard data reload");
         }
+    }
+
+    private async Task TraceDashboardAsync(string message)
+    {
+        var trace = $"[Home.razor {DateTime.Now:HH:mm:ss.fff}] {message}";
+        Console.WriteLine(trace);
+        await this.LogToConsole(message);
     }
 
     private async Task LogToConsole(string message)
