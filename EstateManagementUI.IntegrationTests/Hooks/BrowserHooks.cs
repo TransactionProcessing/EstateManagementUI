@@ -1,10 +1,10 @@
 using Microsoft.Playwright;
 using Reqnroll;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace EstateManagementUI.IntegrationTests.Hooks;
 
@@ -187,6 +187,8 @@ public class BrowserHooks
         {
             await EnsureSecurityServiceForwarderAsync(localPort, targetPort);
         }
+
+        await ProbeSecurityServiceConnectivityAsync(securityServiceHost, securityServiceLocalPortText, securityServicePortText);
         
         if (_browser == null)
         {
@@ -236,30 +238,6 @@ public class BrowserHooks
             IgnoreHTTPSErrors = true,
             ViewportSize = new ViewportSize { Width = 1920, Height = 1080 }
         });
-
-        if (!string.IsNullOrWhiteSpace(securityServiceHost) &&
-            int.TryParse(securityServicePortText, out var securityServicePort))
-        {
-            var securityServiceRoutePattern = new Regex(
-                $"^https://{Regex.Escape(securityServiceHost)}:\\d+/",
-                RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
-            await _browserContext.RouteAsync(securityServiceRoutePattern, async route =>
-            {
-                var requestUri = new Uri(route.Request.Url);
-                var rewrittenUri = new UriBuilder(requestUri)
-                {
-                    Host = "127.0.0.1",
-                    Port = securityServicePort
-                };
-
-                Console.WriteLine($"[browser route rewrite] {route.Request.Url} => {rewrittenUri.Uri}");
-                await route.ContinueAsync(new RouteContinueOptions
-                {
-                    Url = rewrittenUri.Uri.ToString()
-                });
-            });
-        }
 
         await _browserContext.Tracing.StartAsync(new TracingStartOptions
         {
@@ -323,5 +301,51 @@ public class BrowserHooks
                 }
             }
         });
+    }
+
+    private static async Task ProbeSecurityServiceConnectivityAsync(string? securityServiceHost, string? securityServiceLocalPortText, string? securityServicePortText)
+    {
+        var isCI = string.Equals(Environment.GetEnvironmentVariable("IsCI"), "true", StringComparison.InvariantCultureIgnoreCase);
+        if (!isCI)
+        {
+            return;
+        }
+
+        Console.WriteLine("[browser preflight] Starting security service connectivity probe");
+        Console.WriteLine($"[browser preflight] Host={securityServiceHost ?? "<null>"}");
+        Console.WriteLine($"[browser preflight] LocalPort={securityServiceLocalPortText ?? "<null>"}");
+        Console.WriteLine($"[browser preflight] HostPort={securityServicePortText ?? "<null>"}");
+
+        if (!string.IsNullOrWhiteSpace(securityServiceHost))
+        {
+            try
+            {
+                var addresses = await Dns.GetHostAddressesAsync(securityServiceHost);
+                Console.WriteLine($"[browser preflight] DNS={string.Join(", ", addresses.Select(address => address.ToString()))}");
+            }
+            catch (Exception dnsException)
+            {
+                Console.WriteLine($"[browser preflight] DNS failed: {dnsException.Message}");
+            }
+        }
+
+        if (int.TryParse(securityServiceLocalPortText, out var localPort))
+        {
+            try
+            {
+                using var client = new HttpClient(new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                });
+
+                var probeUrl = $"https://127.0.0.1:{localPort}/.well-known/openid-configuration";
+                var response = await client.GetAsync(probeUrl);
+                Console.WriteLine($"[browser preflight] Probe {probeUrl} => {(int)response.StatusCode} {response.StatusCode}");
+            }
+            catch (Exception probeException)
+            {
+                Console.WriteLine($"[browser preflight] Probe failed: {probeException.Message}");
+            }
+        }
     }
 }
