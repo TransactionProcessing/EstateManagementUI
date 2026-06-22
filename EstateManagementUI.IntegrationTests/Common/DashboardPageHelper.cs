@@ -214,6 +214,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.Locator("#newOperatorButton").ClickAsync();
+            await _page.WaitForURLAsync(new Regex(@".*/operators/new.*", RegexOptions.IgnoreCase));
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }, nameof(OpenNewOperatorScreenAsync));
     }
@@ -222,7 +223,13 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Create New Operator" }).IsVisibleAsync()).ShouldBeTrue();
+            (await WaitForAnyVisibleAsync(
+                "h1:has-text('Create New Operator')",
+                "input[placeholder='Enter operator name']",
+                "#createOperatorButton")).ShouldBeTrue();
+
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Create New Operator" });
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
             (await _page.Locator("input[placeholder='Enter operator name']").IsVisibleAsync()).ShouldBeTrue();
             (await _page.Locator("#createOperatorButton").IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertNewOperatorScreenVisibleAsync));
