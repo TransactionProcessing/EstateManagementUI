@@ -39,7 +39,7 @@ public sealed class DashboardPageHelper
             Console.WriteLine($"Sign in before click: {_page.Url}");
 
             await signInButton.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
-            await _page.WaitForTimeoutAsync(2000);
+            await WaitForAuthenticationNavigationAsync();
             Console.WriteLine($"Sign in after click: {_page.Url}");
             Console.WriteLine($"Sign in title after click: {await _page.TitleAsync()}");
             Console.WriteLine($"Sign in body after click: {await _page.Locator("body").InnerTextAsync()}");
@@ -50,14 +50,18 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await WaitForAuthenticationNavigationAsync();
 
             (await WaitForAnyVisibleAsync(
                 "#Input_Username",
                 "input[name='Input.Username']",
+                "#Input_UserName",
+                "input[name='Input.UserName']",
                 "#Username",
                 "input[name='Username']",
                 "input[name='username']",
+                "input[name='UserName']",
+                "input[name='Email']",
                 "input[type='email']",
                 "input[type='text']",
                 "input[autocomplete='username']")).ShouldBeTrue();
@@ -65,9 +69,11 @@ public sealed class DashboardPageHelper
             (await WaitForAnyVisibleAsync(
                 "#Input_Password",
                 "input[name='Input.Password']",
+                "#Input_PasswordInput",
                 "#Password",
                 "input[name='Password']",
                 "input[name='password']",
+                "input[name='current-password']",
                 "input[type='password']",
                 "input[autocomplete='current-password']")).ShouldBeTrue();
         }, nameof(AssertLoginScreenVisibleAsync));
@@ -352,6 +358,23 @@ public sealed class DashboardPageHelper
         }
 
         throw new InvalidOperationException($"Could not find a visible clickable element for selectors: {string.Join(", ", selectors)}");
+    }
+
+    private async Task WaitForAuthenticationNavigationAsync()
+    {
+        try
+        {
+            await _page.WaitForURLAsync(
+                new Regex(@".*/(login|connect/authorize).*", RegexOptions.IgnoreCase),
+                new PageWaitForURLOptions
+                {
+                    Timeout = 60000
+                });
+        }
+        catch
+        {
+            // If the URL is already where we need it, keep going and let the selector wait decide.
+        }
     }
 
     private string ResolveBaseUrl()
