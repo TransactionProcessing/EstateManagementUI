@@ -38,7 +38,7 @@ public sealed class DashboardPageHelper
             (await signInButton.IsVisibleAsync()).ShouldBeTrue();
             Console.WriteLine($"Sign in before click: {_page.Url}");
 
-            await signInButton.ClickAsync();
+            await signInButton.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
             await _page.WaitForTimeoutAsync(2000);
             Console.WriteLine($"Sign in after click: {_page.Url}");
             Console.WriteLine($"Sign in title after click: {await _page.TitleAsync()}");
@@ -345,7 +345,7 @@ public sealed class DashboardPageHelper
                 var first = locator.First;
                 if (await first.IsVisibleAsync())
                 {
-                    await first.ClickAsync();
+                    await first.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
                     return;
                 }
             }
