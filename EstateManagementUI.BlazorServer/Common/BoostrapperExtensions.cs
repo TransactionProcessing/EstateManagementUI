@@ -206,6 +206,8 @@ public static class BoostrapperExtensions {
                 {
                     OnRedirectToIdentityProvider = context =>
                     {
+                        context.ProtocolMessage.IssuerAddress = $"{issuerAddress}/connect/authorize";
+
                         // Pass prompt parameter if specified in authentication properties
                         if (context.Properties.Items.TryGetValue("prompt", out var prompt))
                         {

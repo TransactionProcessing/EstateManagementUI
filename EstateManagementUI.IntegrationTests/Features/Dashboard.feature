@@ -1,88 +1,88 @@
-Feature: Dashboard Integration Tests
-    As a user of the Estate Management UI
-    I want to see appropriate dashboard content based on my role
-    So that I can access the information relevant to my permissions
+@base @background @dashboard
+Feature: Dashboard
+  As an authenticated user
+  I want to view the dashboard
+  So that I can see the estate summary at a glance
 
-Background:
-    Given the user navigates to the Dashboard
+  Background: 
+  Given I create the following roles
+	| Role Name  |
+	| Administrator |
+	| Estate |
 
-@DashboardTests @AdminRole
-Scenario: Administrator user sees limited dashboard view
-    Given the user is authenticated as an "Administrator" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the Administrator welcome message is displayed
-    And no merchant KPI cards are displayed
-    And no sales data cards are displayed
+	Given I create the following api scopes
+	| Name                 | DisplayName                      | Description                          |
+	| transactionProcessor | Transaction Processor REST Scope | Scope for Transaction Processor REST |
+	| fileProcessor        | File Processor REST Scope        | Scope for File Processor REST        |
+	| estateReporting      | Estate Reporting REST Scope      | Scope for Estate Reporting REST      |
 
-@DashboardTests @EstateRole
-Scenario: Estate user sees full dashboard with merchant KPIs
-    Given the user is authenticated as an "Estate" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the merchant KPI cards are displayed
-    And the Merchants with Sales in Last Hour shows "45"
-    And the Merchants with No Sales Today shows "12"
-    And the Merchants with No Sales in Last 7 Days shows "5"
+	Given I create the following api resources
+	| Name                 | DisplayName                | Secret  | Scopes               | UserClaims               |	
+	| transactionProcessor | Transaction Processor REST | Secret1 | transactionProcessor | merchantId,estateId,role |
+	| fileProcessor        | File Processor REST        | Secret1 | fileProcessor        | merchantId,estateId,role |
+	| estateReporting      | Estate Reporting REST      | Secret1 | estateReporting      | merchantId,estateId,role |
 
-@DashboardTests @EstateRole
-Scenario: Estate user sees sales data on dashboard
-    Given the user is authenticated as an "Estate" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the Today's Sales card is displayed
-    And the Today's Sales card shows "523" transactions
-    And the Today's Sales card shows a value greater than $0
-    And the Failed Sales card is displayed
-    And the Failed Sales card shows "15" transactions
+	Given I create the following identity resources
+	| Name    | DisplayName          | Description                                                 | UserClaims                                                             |
+	| openid  | Your user identifier |                                                             | sub                                                                    |
+	| profile | User profile         | Your user profile information (first name, last name, etc.) | name,role,email,given_name,middle_name,family_name,estateId,merchantId |
+	| email   | Email                | Email and Email Verified Flags                              | email_verified,email                                                   |
 
-@DashboardTests @EstateRole
-Scenario: Estate user sees comparison date selector
-    Given the user is authenticated as an "Estate" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the comparison date selector is displayed
+	Given I create the following clients
+	| ClientId       | Name            | Secret  | Scopes                                                                  | GrantTypes         | RedirectUris                         | PostLogoutRedirectUris                | RequireConsent | AllowOfflineAccess | ClientUri            |
+	| serviceClient  | Service Client  | Secret1 | transactionProcessor,fileProcessor,estateReporting                      | client_credentials |                                      |                                       |                |                    |                      |
+	| estateUIClient | Merchant Client | Secret1 | fileProcessor,transactionProcessor,estateReporting,openid,email,profile | hybrid             | https://127.0.0.1:[port]/signin-oidc | https://127.0.0.1:[port]/signout-oidc | false          | true               | https://127.0.0.1:[port] |
 
-@DashboardTests @EstateRole
-Scenario: Estate user sees recently created merchants
-    Given the user is authenticated as an "Estate" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the Recently Created Merchants section is displayed
-    And at least "1" merchant is shown in Recently Created Merchants
+	Given I create the following users
+	| Email Address             | Phone Number | Given Name | Middle Name | Family Name | Claims | Roles         | Password |
+	| administrator@admin.co.uk |    123456789 | Test       |             | User 1      |        | Administrator | 123456         |
 
-@DashboardTests @ViewerRole
-Scenario: Viewer user sees full dashboard with merchant KPIs
-    Given the user is authenticated as a "Viewer" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the merchant KPI cards are displayed
-    And the Merchants with Sales in Last Hour shows "45"
-    And the Merchants with No Sales Today shows "12"
-    And the Merchants with No Sales in Last 7 Days shows "5"
+	Given I have a token to access the transaction Processor resource
+	| ClientId      |
+	| serviceClient |
 
-@DashboardTests @ViewerRole
-Scenario: Viewer user sees sales data on dashboard
-    Given the user is authenticated as a "Viewer" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the Today's Sales card is displayed
-    And the Today's Sales card shows "523" transactions
-    And the Today's Sales card shows a value greater than $0
-    And the Failed Sales card is displayed
-    And the Failed Sales card shows "15" transactions
+	Given I have created the following estates
+	| EstateName  |
+	| Test Estate |
 
-@DashboardTests @ViewerRole
-Scenario: Viewer user sees comparison date selector
-    Given the user is authenticated as a "Viewer" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the comparison date selector is displayed
+	And I have created the following operators
+	| EstateName  | OperatorName  | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+	| Test Estate | Test Operator | True                        | True                        |
 
-@DashboardTests @ViewerRole
-Scenario: Viewer user sees recently created merchants
-    Given the user is authenticated as a "Viewer" user
-    When the user navigates to the Dashboard
-    Then the Dashboard page is displayed
-    And the Recently Created Merchants section is displayed
-    And at least "1" merchant is shown in Recently Created Merchants
+	And I have assigned the following operators to the estates
+	| EstateName  | OperatorName  |
+	| Test Estate | Test Operator |
+
+	And I have created the following security users
+	| EmailAddress                 | Password | GivenName  | FamilyName | EstateName  |
+	| estateuser@testestate1.co.uk | 123456   | TestEstate | User1      | Test Estate |
+
+  @Dashboard
+  Scenario: The home page is displayed
+    Given the user navigates to the app address
+    Then the home page is displayed
+
+  @Dashboard @EstateRole
+  Scenario: Estate users can view the dashboard analytics	
+  Given the user navigates to the app address
+	And I click on the Sign In Button
+	Then I am presented with a login screen
+	When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
+	Then I should see the dashboard heading
+    And I should see the dashboard welcome message
+    And I should see the comparison date selector
+    And I should see the merchant KPI summary cards
+    And I should see the sales comparison cards
+    And I should not see the recent merchants section
+
+  @Dashboard @AdministratorRole
+  Scenario: Administrators see the dashboard welcome panel
+  Given the user navigates to the app address
+	And I click on the Sign In Button
+	Then I am presented with a login screen
+	When I login with the username 'administrator@admin.co.uk' and password '123456'
+    Then I should see the dashboard heading
+    And I should see the administrator welcome panel
+    And I should not see the merchant KPI summary cards
+    And I should not see the sales comparison cards
+    And I should not see the recent merchants section

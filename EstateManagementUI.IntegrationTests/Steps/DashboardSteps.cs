@@ -1,187 +1,127 @@
+using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll;
-using EstateManagementUI.IntegrationTests.Common;
 
 namespace EstateManagementUI.IntegrationTests.Steps;
 
-/// <summary>
-/// Step definitions for Dashboard integration tests
-/// Links feature file scenarios to browser automation code
-/// </summary>
 [Binding]
-public class DashboardSteps
+[Scope(Tag = "dashboard")]
+public sealed class DashboardSteps
 {
     private readonly IPage _page;
-    private readonly DashboardPageHelper _dashboardHelper;
-    private readonly ScenarioContext _scenarioContext;
+    private readonly TestingContext TestingContext;
 
-    public DashboardSteps(ScenarioContext scenarioContext)
-    {
-        _scenarioContext = scenarioContext;
-        _page = scenarioContext.ScenarioContainer.Resolve<IPage>();
-        
-        // Get base URL from environment variable or use default
-        var baseUrl = Environment.GetEnvironmentVariable("APP_URL") ?? "https://localhost:5001";
-        _dashboardHelper = new DashboardPageHelper(_page, baseUrl);
+    public DashboardSteps(IPage page, TestingContext testingContext) {
+        _page = page;
+        this.TestingContext = testingContext;
     }
 
-    #region Navigation Steps
-
-    [Given(@"the user navigates to the Dashboard")]
-    [When(@"the user navigates to the Dashboard")]
-    public async Task GivenTheUserNavigatesToTheDashboard()
+    [Given("the user navigates to the app address")]
+    [When("the user navigates to the app address")]
+    public async Task GivenTheUserNavigatesToTheAppAddress()
     {
-        await _dashboardHelper.NavigateToDashboard();
+        await GetHelper().NavigateToAppAddressAsync();
     }
 
-    #endregion
-
-    #region Authentication/Role Steps
-
-    [Given(@"the user is authenticated as an ""(.*)"" user")]
-    public async Task GivenTheUserIsAuthenticatedAsAUser(string role)
+    [Given("I click on the Sign In Button")]
+    public async Task WhenIClickOnTheSignInButton()
     {
-        // Store the role in scenario context for reference
-        _scenarioContext["UserRole"] = role;
-        
-        // Note: This step assumes the application will be started in test mode
-        // with the appropriate role already configured. The actual authentication
-        // setup will be handled when the application startup is implemented.
-        await Task.CompletedTask;
+        await GetHelper().ClickSignInButtonAsync();
     }
 
-    #endregion
-
-    #region Verification Steps - Common
-
-    [Then(@"the Dashboard page is displayed")]
-    public async Task ThenTheDashboardPageIsDisplayed()
+    [Then("I am presented with a login screen")]
+    public async Task ThenIAmPresentedWithALoginScreen()
     {
-        await _dashboardHelper.VerifyDashboardPageTitle();
+        await GetHelper().AssertLoginScreenVisibleAsync();
     }
 
-    #endregion
-
-    #region Verification Steps - Administrator Role
-
-    [Then(@"the Administrator welcome message is displayed")]
-    public async Task ThenTheAdministratorWelcomeMessageIsDisplayed()
+    [When("I login with the username {string} and password {string}")]
+    public async Task WhenILoginWithTheUsernameAndPassword(string username, string password)
     {
-        await _dashboardHelper.VerifyAdministratorWelcomeMessage();
+        //var loginPassword = password;
+
+        //if (this.TestingContext.Users.TryGetValue(username, out var seededPassword) && !string.IsNullOrWhiteSpace(seededPassword))
+        //{
+        //    loginPassword = seededPassword;
+        //}
+
+        await GetHelper().LoginAsync(username, password);
     }
 
-    [Then(@"no merchant KPI cards are displayed")]
-    public async Task ThenNoMerchantKpiCardsAreDisplayed()
+    [Then("I should see the dashboard heading")]
+    public async Task ThenIShouldSeeTheDashboardHeading()
     {
-        await _dashboardHelper.VerifyKpiCardsAreNotVisible();
+        await GetHelper().AssertDashboardShellVisibleAsync();
     }
 
-    [Then(@"no sales data cards are displayed")]
-    public async Task ThenNoSalesDataCardsAreDisplayed()
+    [Then("the home page is displayed")]
+    public async Task ThenTheHomePageIsDisplayed()
     {
-        await _dashboardHelper.VerifyComparisonDateSelectorIsNotVisible();
-        await _dashboardHelper.VerifyRecentlyCreatedMerchantsIsNotVisible();
+        await GetHelper().AssertHomePageVisibleAsync();
     }
 
-    #endregion
-
-    #region Verification Steps - Estate/Viewer Roles
-
-    [Then(@"the merchant KPI cards are displayed")]
-    public async Task ThenTheMerchantKpiCardsAreDisplayed()
+    [Then("I should see the dashboard welcome message")]
+    public async Task ThenIShouldSeeTheDashboardWelcomeMessage()
     {
-        await _dashboardHelper.VerifyKpiCardsAreVisible();
+        await GetHelper().AssertDashboardWelcomeMessageVisibleAsync();
     }
 
-    [Then(@"the Merchants with Sales in Last Hour shows ""(.*)""")]
-    public async Task ThenTheMerchantsWithSalesInLastHourShows(int expectedValue)
+    [Then("I should see the comparison date selector")]
+    public async Task ThenIShouldSeeTheComparisonDateSelector()
     {
-        // This will be verified as part of the full KPI verification
-        _scenarioContext["ExpectedSalesLastHour"] = expectedValue;
+        await GetHelper().AssertComparisonDateSelectorVisibleAsync();
     }
 
-    [Then(@"the Merchants with No Sales Today shows ""(.*)""")]
-    public async Task ThenTheMerchantsWithNoSalesTodayShows(int expectedValue)
+    [Then("I should see the merchant KPI summary cards")]
+    public async Task ThenIShouldSeeTheMerchantKpiSummaryCards()
     {
-        _scenarioContext["ExpectedNoSalesToday"] = expectedValue;
+        await GetHelper().AssertMerchantKpiSummaryCardsVisibleAsync();
     }
 
-    [Then(@"the Merchants with No Sales in Last 7 Days shows ""(.*)""")]
-    public async Task ThenTheMerchantsWithNoSalesInLast7DaysShows(int expectedValue)
+    [Then("I should see the sales comparison cards")]
+    public async Task ThenIShouldSeeTheSalesComparisonCards()
     {
-        _scenarioContext["ExpectedNoSales7Days"] = expectedValue;
-        
-        // Now verify all KPI values
-        var salesLastHour = (int)_scenarioContext["ExpectedSalesLastHour"];
-        var noSalesToday = (int)_scenarioContext["ExpectedNoSalesToday"];
-        var noSales7Days = expectedValue;
-        
-        await _dashboardHelper.VerifyMerchantKpiValues(salesLastHour, noSalesToday, noSales7Days);
+        await GetHelper().AssertSalesComparisonCardsVisibleAsync();
     }
 
-    [Then(@"the Today's Sales card is displayed")]
-    public async Task ThenTheTodaysSalesCardIsDisplayed()
+    [Then("I should see the recent merchants section")]
+    public async Task ThenIShouldSeeTheRecentMerchantsSection()
     {
-        await _dashboardHelper.VerifyTodaysSalesCardIsDisplayed();
+        await GetHelper().AssertRecentMerchantsSectionVisibleAsync();
     }
 
-    [Then(@"the Today's Sales card shows ""(.*)"" transactions")]
-    public async Task ThenTheTodaysSalesCardShowsTransactions(int transactionCount)
+    [Then("I should see the administrator welcome panel")]
+    public async Task ThenIShouldSeeTheAdministratorWelcomePanel()
     {
-        // Store for later verification
-        _scenarioContext["TodaysSalesCount"] = transactionCount;
+        await GetHelper().AssertAdministratorDashboardVisibleAsync();
     }
 
-    [Then(@"the Today's Sales card shows a value greater than \$(.*)")]
-    public async Task ThenTheTodaysSalesCardShowsAValueGreaterThan(decimal minimumValue)
+    [Then("I should not see the merchant KPI summary cards")]
+    public async Task ThenIShouldNotSeeTheMerchantKpiSummaryCards()
     {
-        // Verify sales values
-        var salesCount = (int)_scenarioContext["TodaysSalesCount"];
-        await _dashboardHelper.VerifyTodaysSalesValues(salesCount, minimumValue);
+        await GetHelper().AssertMerchantKpiSummaryCardsNotVisibleAsync();
     }
 
-    [Then(@"the Failed Sales card is displayed")]
-    public async Task ThenTheFailedSalesCardIsDisplayed()
+    [Then("I should not see the sales comparison cards")]
+    public async Task ThenIShouldNotSeeTheSalesComparisonCards()
     {
-        await _dashboardHelper.VerifyFailedSalesCardIsDisplayed();
+        await GetHelper().AssertSalesComparisonCardsNotVisibleAsync();
     }
 
-    [Then(@"the Failed Sales card shows ""(.*)"" transactions")]
-    public async Task ThenTheFailedSalesCardShowsTransactions(int transactionCount)
+    [Then("I should not see the recent merchants section")]
+    public async Task ThenIShouldNotSeeTheRecentMerchantsSection()
     {
-        await _dashboardHelper.VerifyFailedSalesValues(transactionCount);
+        await GetHelper().AssertRecentMerchantsSectionNotVisibleAsync();
     }
 
-    [Then(@"the comparison date selector is displayed")]
-    public async Task ThenTheComparisonDateSelectorIsDisplayed()
+    [Then("I should see the dashboard navigation link")]
+    public async Task ThenIShouldSeeTheDashboardNavigationLink()
     {
-        await _dashboardHelper.VerifyComparisonDateSelectorIsVisible();
+        await GetHelper().AssertDashboardNavigationLinkVisibleAsync();
     }
 
-    [Then(@"the Recently Created Merchants section is displayed")]
-    public async Task ThenTheRecentlyCreatedMerchantsSectionIsDisplayed()
+    private DashboardPageHelper GetHelper()
     {
-        await _dashboardHelper.VerifyRecentlyCreatedMerchantsIsVisible();
+        return new DashboardPageHelper(_page, this.TestingContext);
     }
-
-    [Then(@"at least ""(.*)"" merchant is shown in Recently Created Merchants")]
-    public async Task ThenAtLeastMerchantIsShownInRecentlyCreatedMerchants(int minCount)
-    {
-        if (minCount > 0)
-        {
-            await _dashboardHelper.VerifyRecentlyCreatedMerchantsHasData();
-        }
-    }
-
-    #endregion
-
-    #region Interaction Steps
-
-    [When(@"the user selects ""(.*)"" from the comparison date selector")]
-    public async Task WhenTheUserSelectsFromTheComparisonDateSelector(string dateOption)
-    {
-        await _dashboardHelper.SelectComparisonDate(dateOption);
-    }
-
-    #endregion
 }
