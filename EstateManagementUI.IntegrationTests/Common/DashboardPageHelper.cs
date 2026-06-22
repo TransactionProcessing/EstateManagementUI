@@ -101,8 +101,14 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await WaitForOperatorManagementAsync();
-            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Operator Management" }).IsVisibleAsync()).ShouldBeTrue();
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Operator Management" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertOperatorManagementHeadingVisibleAsync));
     }
 
