@@ -23,37 +23,6 @@ public sealed class DashboardSteps
         await GetHelper().NavigateToAppAddressAsync();
     }
 
-    [Given("I click on the Sign In Button")]
-    public async Task WhenIClickOnTheSignInButton()
-    {
-        await GetHelper().ClickSignInButtonAsync();
-    }
-
-    [Then("I am presented with a login screen")]
-    public async Task ThenIAmPresentedWithALoginScreen()
-    {
-        await GetHelper().AssertLoginScreenVisibleAsync();
-    }
-
-    [When("I login with the username {string} and password {string}")]
-    public async Task WhenILoginWithTheUsernameAndPassword(string username, string password)
-    {
-        //var loginPassword = password;
-
-        //if (this.TestingContext.Users.TryGetValue(username, out var seededPassword) && !string.IsNullOrWhiteSpace(seededPassword))
-        //{
-        //    loginPassword = seededPassword;
-        //}
-
-        await GetHelper().LoginAsync(username, password);
-    }
-
-    [Then("I should see the dashboard heading")]
-    public async Task ThenIShouldSeeTheDashboardHeading()
-    {
-        await GetHelper().AssertDashboardShellVisibleAsync();
-    }
-
     [Then("the home page is displayed")]
     public async Task ThenTheHomePageIsDisplayed()
     {
