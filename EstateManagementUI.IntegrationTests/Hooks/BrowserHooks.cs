@@ -1,9 +1,6 @@
 using Microsoft.Playwright;
 using Reqnroll;
 using System.Net;
-using System.Net.Http;
-using System.Net.Sockets;
-using System.IO;
 using System.Text;
 
 namespace EstateManagementUI.IntegrationTests.Hooks;
@@ -18,9 +15,6 @@ public class BrowserHooks
     private readonly ScenarioContext _scenarioContext;
     private IBrowser? _browser;
     private IBrowserContext? _browserContext;
-    private TcpListener? _securityServiceForwarder;
-    private CancellationTokenSource? _forwarderCancellation;
-    private int? _securityServiceForwarderTargetPort;
 
     public BrowserHooks(ScenarioContext scenarioContext)
     {
@@ -146,7 +140,6 @@ public class BrowserHooks
             _browser = null;
         }
 
-        await StopSecurityServiceForwarderAsync();
     }
 
     /// <summary>
@@ -173,7 +166,6 @@ public class BrowserHooks
             "true", 
             StringComparison.InvariantCultureIgnoreCase);
         var securityServiceHost = Environment.GetEnvironmentVariable("SecurityServiceContainerName");
-        var securityServiceLocalPortText = Environment.GetEnvironmentVariable("SecurityServiceLocalPort");
         var securityServicePortText = Environment.GetEnvironmentVariable("SecurityServicePort");
         var hostResolverRules = string.IsNullOrWhiteSpace(securityServiceHost)
             ? null
@@ -181,17 +173,7 @@ public class BrowserHooks
 
         Console.WriteLine($"[browser setup] Browser={browserType}, IsCI={isCI}");
         Console.WriteLine($"[browser setup] SecurityServiceContainerName={securityServiceHost ?? "<null>"}");
-        Console.WriteLine($"[browser setup] SecurityServiceLocalPort={securityServiceLocalPortText ?? "<null>"}");
         Console.WriteLine($"[browser setup] SecurityServicePort={securityServicePortText ?? "<null>"}");
-
-        if (int.TryParse(securityServiceLocalPortText, out var localPort) &&
-            int.TryParse(securityServicePortText, out var targetPort) &&
-            localPort != targetPort)
-        {
-            await EnsureSecurityServiceForwarderAsync(localPort, targetPort);
-        }
-
-        await ProbeSecurityServiceConnectivityAsync(securityServiceHost, securityServiceLocalPortText, securityServicePortText);
         
         _browser = browserType switch
         {
@@ -252,129 +234,5 @@ public class BrowserHooks
         page.RequestFailed += (_, request) => Console.WriteLine($"[browser request failed] {request.Url} => {request.Failure}");
 
         return page;
-    }
-
-    private async Task EnsureSecurityServiceForwarderAsync(int localPort, int targetPort)
-    {
-        if (_securityServiceForwarder != null && _securityServiceForwarderTargetPort == targetPort)
-        {
-            return;
-        }
-
-        await StopSecurityServiceForwarderAsync();
-
-        _forwarderCancellation ??= new CancellationTokenSource();
-        _securityServiceForwarder = new TcpListener(IPAddress.Loopback, localPort);
-        _securityServiceForwarder.Start();
-        _securityServiceForwarderTargetPort = targetPort;
-
-        _ = Task.Run(async () =>
-        {
-            while (!_forwarderCancellation.IsCancellationRequested)
-            {
-                TcpClient? inboundClient = null;
-                TcpClient? outboundClient = null;
-
-                try
-                {
-                    inboundClient = await _securityServiceForwarder.AcceptTcpClientAsync(_forwarderCancellation.Token);
-                    outboundClient = new TcpClient();
-                    await outboundClient.ConnectAsync(IPAddress.Loopback, targetPort, _forwarderCancellation.Token);
-
-                    var inboundStream = inboundClient.GetStream();
-                    var outboundStream = outboundClient.GetStream();
-
-                    var inboundToOutbound = inboundStream.CopyToAsync(outboundStream, _forwarderCancellation.Token);
-                    var outboundToInbound = outboundStream.CopyToAsync(inboundStream, _forwarderCancellation.Token);
-
-                    await Task.WhenAny(Task.WhenAll(inboundToOutbound, outboundToInbound), Task.Delay(Timeout.Infinite, _forwarderCancellation.Token));
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-                catch
-                {
-                    // Ignore connection churn; the browser may open and close several sockets during navigation.
-                }
-                finally
-                {
-                    outboundClient?.Close();
-                    inboundClient?.Close();
-                }
-            }
-        });
-    }
-
-    private static async Task ProbeSecurityServiceConnectivityAsync(string? securityServiceHost, string? securityServiceLocalPortText, string? securityServicePortText)
-    {
-        var isCI = string.Equals(Environment.GetEnvironmentVariable("IsCI"), "true", StringComparison.InvariantCultureIgnoreCase);
-        if (!isCI)
-        {
-            return;
-        }
-
-        Console.WriteLine("[browser preflight] Starting security service connectivity probe");
-        Console.WriteLine($"[browser preflight] Host={securityServiceHost ?? "<null>"}");
-        Console.WriteLine($"[browser preflight] LocalPort={securityServiceLocalPortText ?? "<null>"}");
-        Console.WriteLine($"[browser preflight] HostPort={securityServicePortText ?? "<null>"}");
-
-        if (!string.IsNullOrWhiteSpace(securityServiceHost))
-        {
-            try
-            {
-                var addresses = await Dns.GetHostAddressesAsync(securityServiceHost);
-                Console.WriteLine($"[browser preflight] DNS={string.Join(", ", addresses.Select(address => address.ToString()))}");
-            }
-            catch (Exception dnsException)
-            {
-                Console.WriteLine($"[browser preflight] DNS failed: {dnsException.Message}");
-            }
-        }
-
-        if (int.TryParse(securityServiceLocalPortText, out var localPort) &&
-            !string.IsNullOrWhiteSpace(securityServiceHost))
-        {
-            try
-            {
-                using var client = new HttpClient(new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-                });
-
-                var probeUrl = $"https://{securityServiceHost}:{localPort}/.well-known/openid-configuration";
-                var response = await client.GetAsync(probeUrl);
-                Console.WriteLine($"[browser preflight] Probe {probeUrl} => {(int)response.StatusCode} {response.StatusCode}");
-            }
-            catch (Exception probeException)
-            {
-                Console.WriteLine($"[browser preflight] Probe failed: {probeException.Message}");
-            }
-        }
-    }
-
-    private async Task StopSecurityServiceForwarderAsync()
-    {
-        if (_forwarderCancellation == null && _securityServiceForwarder == null)
-        {
-            return;
-        }
-
-        try
-        {
-            _forwarderCancellation?.Cancel();
-            _securityServiceForwarder?.Stop();
-        }
-        catch
-        {
-            // Best effort cleanup only.
-        }
-
-        _forwarderCancellation?.Dispose();
-        _forwarderCancellation = null;
-        _securityServiceForwarder = null;
-        _securityServiceForwarderTargetPort = null;
-
-        await Task.CompletedTask;
     }
 }
