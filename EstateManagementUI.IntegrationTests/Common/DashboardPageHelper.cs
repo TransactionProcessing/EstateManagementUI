@@ -357,7 +357,7 @@ public sealed class DashboardPageHelper
     private string ResolveBaseUrl()
     {
         var hostPort = this.TestingContext.DockerHelper.GetHostPort(ContainerType.EstateManagementUI);
-        return $"https://localhost:{hostPort}";
+        return $"https://127.0.0.1:{hostPort}";
     }
 
     private async Task RunWithFailureArtifactsAsync(Func<Task> action, string context)
