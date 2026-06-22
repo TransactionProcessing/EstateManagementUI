@@ -329,7 +329,8 @@ public class BrowserHooks
             }
         }
 
-        if (int.TryParse(securityServiceLocalPortText, out var localPort))
+        if (int.TryParse(securityServiceLocalPortText, out var localPort) &&
+            !string.IsNullOrWhiteSpace(securityServiceHost))
         {
             try
             {
@@ -338,7 +339,7 @@ public class BrowserHooks
                     ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
                 });
 
-                var probeUrl = $"https://127.0.0.1:{localPort}/.well-known/openid-configuration";
+                var probeUrl = $"https://{securityServiceHost}:{localPort}/.well-known/openid-configuration";
                 var response = await client.GetAsync(probeUrl);
                 Console.WriteLine($"[browser preflight] Probe {probeUrl} => {(int)response.StatusCode} {response.StatusCode}");
             }
