@@ -29,6 +29,56 @@ public sealed class DashboardPageHelper
         }, nameof(NavigateToAppAddressAsync));
     }
 
+    public async Task NavigateToEntryScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GotoAsync(ResolveBaseUrl() + "/entry");
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(NavigateToEntryScreenAsync));
+    }
+
+    public async Task AssertEntryScreenVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Manage estate details").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Manage estate users").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Operator Management").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertEntryScreenVisibleAsync));
+    }
+
+    public async Task OpenEstateInfoFromEntryAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("a[href='/estate-info']").ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenEstateInfoFromEntryAsync));
+    }
+
+    public async Task AssertEstateInfoPageVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#loginButton").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Comprehensive estate management and configuration").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#loginButton").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertEstateInfoPageVisibleAsync));
+    }
+
     public async Task ClickSignInButtonAsync()
     {
         await RunWithFailureArtifactsAsync(async () =>
@@ -122,6 +172,131 @@ public sealed class DashboardPageHelper
             (await _page.GetByText("Welcome to Estate Management System").IsVisibleAsync()).ShouldBeTrue();
             (await _page.Locator("#dashboardLink").IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertDashboardShellVisibleAsync));
+    }
+
+    public async Task OpenEstateManagementScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var estateLink = _page.Locator("#estateDetailsLink");
+            if (await estateLink.CountAsync() > 0 && await estateLink.First.IsVisibleAsync())
+            {
+                await estateLink.First.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                await _page.GotoAsync(ResolveEstateManagementBaseUrl() + "/estate");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenEstateManagementScreenAsync));
+    }
+
+    public async Task AssertEstateManagementHeadingVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await WaitForEstateOverviewAsync();
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertEstateManagementHeadingVisibleAsync));
+    }
+
+    public async Task AssertEstateOverviewVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await WaitForEstateOverviewAsync();
+
+            (await _page.GetByText("Total Merchants").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Total Operators").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Total Contracts").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText("Total Users").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertEstateOverviewVisibleAsync));
+    }
+
+    public async Task SwitchToOperatorsTabAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Operators" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(SwitchToOperatorsTabAsync));
+    }
+
+    public async Task AssertAssignedOperatorsSectionVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Assigned Operators" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertAssignedOperatorsSectionVisibleAsync));
+    }
+
+    public async Task AddOperatorToEstateAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#addOperatorButton").ClickAsync();
+
+            var option = _page.Locator($"select option:has-text('{operatorName}')");
+            await option.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Attached,
+                Timeout = 10000
+            });
+
+            (await option.CountAsync()).ShouldBeGreaterThan(0);
+
+            var optionValue = await option.First.GetAttributeAsync("value");
+            optionValue.ShouldNotBeNull();
+
+            await _page.Locator("select").SelectOptionAsync(new[] { optionValue! });
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add" }).ClickAsync();
+        }, nameof(AddOperatorToEstateAsync));
+    }
+
+    public async Task RemoveOperatorFromEstateAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var operatorRow = GetAssignedOperatorRow(operatorName);
+            await operatorRow.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await operatorRow.GetByRole(AriaRole.Button, new() { Name = "Remove" }).ClickAsync();
+        }, nameof(RemoveOperatorFromEstateAsync));
+    }
+
+    public async Task AssertAssignedOperatorVisibleAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var operatorRow = GetAssignedOperatorRow(operatorName);
+            await operatorRow.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await operatorRow.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertAssignedOperatorVisibleAsync));
+    }
+
+    public async Task AssertAssignedOperatorNotVisibleAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var operatorRow = GetAssignedOperatorRow(operatorName);
+            await operatorRow.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Hidden,
+                Timeout = 10000
+            });
+
+            (await operatorRow.CountAsync()).ShouldBe(0);
+        }, nameof(AssertAssignedOperatorNotVisibleAsync));
     }
 
     public async Task AssertHomePageVisibleAsync()
@@ -308,6 +483,21 @@ public sealed class DashboardPageHelper
         return false;
     }
 
+    private async Task WaitForEstateOverviewAsync()
+    {
+        await _page.Locator(".animate-spin").WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Hidden,
+            Timeout = 10000
+        });
+    }
+
+    private ILocator GetAssignedOperatorRow(string operatorName)
+    {
+        return _page.Locator("div.flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg")
+            .Filter(new() { HasText = operatorName });
+    }
+
     private async Task<bool> IsAnyVisibleAsync(params string[] selectors)
     {
         foreach (var selector in selectors)
@@ -378,6 +568,12 @@ public sealed class DashboardPageHelper
     }
 
     private string ResolveBaseUrl()
+    {
+        var hostPort = this.TestingContext.DockerHelper.GetHostPort(ContainerType.EstateManagementUI);
+        return $"https://127.0.0.1:{hostPort}";
+    }
+
+    private string ResolveEstateManagementBaseUrl()
     {
         var hostPort = this.TestingContext.DockerHelper.GetHostPort(ContainerType.EstateManagementUI);
         return $"https://127.0.0.1:{hostPort}";
