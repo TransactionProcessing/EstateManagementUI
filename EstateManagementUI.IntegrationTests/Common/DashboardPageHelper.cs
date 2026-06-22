@@ -79,6 +79,158 @@ public sealed class DashboardPageHelper
         }, nameof(AssertEstateInfoPageVisibleAsync));
     }
 
+    public async Task OpenOperatorManagementScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var operatorLink = _page.Locator("#operatorsLink");
+            if (await operatorLink.CountAsync() > 0 && await operatorLink.First.IsVisibleAsync())
+            {
+                await operatorLink.First.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                await _page.GotoAsync(ResolveEstateManagementBaseUrl() + "/operators");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenOperatorManagementScreenAsync));
+    }
+
+    public async Task AssertOperatorManagementHeadingVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await WaitForOperatorManagementAsync();
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Operator Management" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertOperatorManagementHeadingVisibleAsync));
+    }
+
+    public async Task AssertOperatorListContainsAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var operatorRow = GetOperatorRow(operatorName);
+            await operatorRow.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await operatorRow.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertOperatorListContainsAsync));
+    }
+
+    public async Task OpenOperatorViewAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var operatorRow = GetOperatorRow(operatorName);
+            await operatorRow.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await operatorRow.ClickAsync();
+        }, nameof(OpenOperatorViewAsync));
+    }
+
+    public async Task AssertOperatorViewVisibleAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = $"View Operator: {operatorName}" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Operator Details" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertOperatorViewVisibleAsync));
+    }
+
+    public async Task BackToOperatorListFromViewAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(BackToOperatorListFromViewAsync));
+    }
+
+    public async Task OpenOperatorEditAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var editButton = GetOperatorRow(operatorName).GetByRole(AriaRole.Button, new() { Name = "Edit" });
+            await editButton.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await editButton.ClickAsync();
+        }, nameof(OpenOperatorEditAsync));
+    }
+
+    public async Task AssertOperatorEditVisibleAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = $"Edit Operator: {operatorName}" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("input[placeholder='Enter operator name']").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Update Operator" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertOperatorEditVisibleAsync));
+    }
+
+    public async Task CancelOperatorEditAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Cancel" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(CancelOperatorEditAsync));
+    }
+
+    public async Task OpenNewOperatorScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#newOperatorButton").ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenNewOperatorScreenAsync));
+    }
+
+    public async Task AssertNewOperatorScreenVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Create New Operator" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("input[placeholder='Enter operator name']").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#createOperatorButton").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertNewOperatorScreenVisibleAsync));
+    }
+
+    public async Task CreateOperatorAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("input[placeholder='Enter operator name']").FillAsync(operatorName);
+            await _page.Locator("#createOperatorButton").ClickAsync();
+        }, nameof(CreateOperatorAsync));
+    }
+
     public async Task ClickSignInButtonAsync()
     {
         await RunWithFailureArtifactsAsync(async () =>
@@ -492,10 +644,28 @@ public sealed class DashboardPageHelper
         });
     }
 
+    private async Task WaitForOperatorManagementAsync()
+    {
+        var spinner = _page.Locator(".animate-spin");
+        if (await spinner.CountAsync() > 0)
+        {
+            await spinner.First.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Hidden,
+                Timeout = 10000
+            });
+        }
+    }
+
     private ILocator GetAssignedOperatorRow(string operatorName)
     {
         return _page.Locator("div.flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg")
             .Filter(new() { HasText = operatorName });
+    }
+
+    private ILocator GetOperatorRow(string operatorName)
+    {
+        return _page.Locator("tbody tr").Filter(new() { HasText = operatorName });
     }
 
     private async Task<bool> IsAnyVisibleAsync(params string[] selectors)
