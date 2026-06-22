@@ -54,6 +54,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.Locator("a[href='/estate-info']").ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            await _page.WaitForURLAsync(new Regex(@".*/estate-info.*", RegexOptions.IgnoreCase));
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }, nameof(OpenEstateInfoFromEntryAsync));
     }
@@ -63,6 +64,11 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.GetByText("Comprehensive estate management and configuration").WaitForAsync(new LocatorWaitForOptions
             {
                 State = WaitForSelectorState.Visible,
                 Timeout = 10000
