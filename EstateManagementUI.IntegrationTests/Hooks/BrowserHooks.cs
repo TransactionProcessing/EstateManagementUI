@@ -15,11 +15,12 @@ namespace EstateManagementUI.IntegrationTests.Hooks;
 public class BrowserHooks
 {
     private static IPlaywright? _playwright;
-    private static IBrowser? _browser;
-    private static IBrowserContext? _browserContext;
-    private static TcpListener? _securityServiceForwarder;
-    private static CancellationTokenSource? _forwarderCancellation;
     private readonly ScenarioContext _scenarioContext;
+    private IBrowser? _browser;
+    private IBrowserContext? _browserContext;
+    private TcpListener? _securityServiceForwarder;
+    private CancellationTokenSource? _forwarderCancellation;
+    private int? _securityServiceForwarderTargetPort;
 
     public BrowserHooks(ScenarioContext scenarioContext)
     {
@@ -138,6 +139,14 @@ public class BrowserHooks
             await _browserContext.CloseAsync();
             _browserContext = null;
         }
+
+        if (_browser != null)
+        {
+            await _browser.CloseAsync();
+            _browser = null;
+        }
+
+        await StopSecurityServiceForwarderAsync();
     }
 
     /// <summary>
@@ -146,12 +155,6 @@ public class BrowserHooks
     [AfterTestRun]
     public static async Task AfterTestRun()
     {
-        if (_browser != null)
-        {
-            await _browser.CloseAsync();
-            _browser = null;
-        }
-
         if (_playwright != null)
         {
             _playwright.Dispose();
@@ -190,48 +193,45 @@ public class BrowserHooks
 
         await ProbeSecurityServiceConnectivityAsync(securityServiceHost, securityServiceLocalPortText, securityServicePortText);
         
-        if (_browser == null)
+        _browser = browserType switch
         {
-            _browser = browserType switch
+            "Firefox" => await _playwright!.Firefox.LaunchAsync(new BrowserTypeLaunchOptions
             {
-                "Firefox" => await _playwright!.Firefox.LaunchAsync(new BrowserTypeLaunchOptions
-                {
-                    Headless = isCI,
-                    Args = hostResolverRules is null
-                        ? new[] { "--ignore-certificate-errors" }
-                        : new[] { "--ignore-certificate-errors", $"--host-resolver-rules={hostResolverRules}" }
-                }),
-                "WebKit" => await _playwright!.Webkit.LaunchAsync(new BrowserTypeLaunchOptions
-                {
-                    Headless = isCI,
-                    Args = hostResolverRules is null
-                        ? new[] { "--ignore-certificate-errors" }
-                        : new[] { "--ignore-certificate-errors", $"--host-resolver-rules={hostResolverRules}" }
-                }),
-                _ => await _playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-                {
-                    Headless = isCI,
-                    Args = hostResolverRules is null
-                        ? new[]
-                        {
-                            "--ignore-certificate-errors",
-                            "--no-sandbox",
-                            "--disable-dev-shm-usage",
-                            "--disable-gpu",
-                            "--disable-extensions"
-                        }
-                        : new[]
-                        {
-                            "--ignore-certificate-errors",
-                            "--no-sandbox",
-                            "--disable-dev-shm-usage",
-                            "--disable-gpu",
-                            "--disable-extensions",
-                            $"--host-resolver-rules={hostResolverRules}"
-                        }
-                })
-            };
-        }
+                Headless = isCI,
+                Args = hostResolverRules is null
+                    ? new[] { "--ignore-certificate-errors" }
+                    : new[] { "--ignore-certificate-errors", $"--host-resolver-rules={hostResolverRules}" }
+            }),
+            "WebKit" => await _playwright!.Webkit.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = isCI,
+                Args = hostResolverRules is null
+                    ? new[] { "--ignore-certificate-errors" }
+                    : new[] { "--ignore-certificate-errors", $"--host-resolver-rules={hostResolverRules}" }
+            }),
+            _ => await _playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+            {
+                Headless = isCI,
+                Args = hostResolverRules is null
+                    ? new[]
+                    {
+                        "--ignore-certificate-errors",
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-gpu",
+                        "--disable-extensions"
+                    }
+                    : new[]
+                    {
+                        "--ignore-certificate-errors",
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-gpu",
+                        "--disable-extensions",
+                        $"--host-resolver-rules={hostResolverRules}"
+                    }
+            })
+        };
 
         _browserContext = await _browser.NewContextAsync(new BrowserNewContextOptions
         {
@@ -254,16 +254,19 @@ public class BrowserHooks
         return page;
     }
 
-    private static async Task EnsureSecurityServiceForwarderAsync(int localPort, int targetPort)
+    private async Task EnsureSecurityServiceForwarderAsync(int localPort, int targetPort)
     {
-        if (_securityServiceForwarder != null)
+        if (_securityServiceForwarder != null && _securityServiceForwarderTargetPort == targetPort)
         {
             return;
         }
 
+        await StopSecurityServiceForwarderAsync();
+
         _forwarderCancellation ??= new CancellationTokenSource();
         _securityServiceForwarder = new TcpListener(IPAddress.Loopback, localPort);
         _securityServiceForwarder.Start();
+        _securityServiceForwarderTargetPort = targetPort;
 
         _ = Task.Run(async () =>
         {
@@ -348,5 +351,30 @@ public class BrowserHooks
                 Console.WriteLine($"[browser preflight] Probe failed: {probeException.Message}");
             }
         }
+    }
+
+    private async Task StopSecurityServiceForwarderAsync()
+    {
+        if (_forwarderCancellation == null && _securityServiceForwarder == null)
+        {
+            return;
+        }
+
+        try
+        {
+            _forwarderCancellation?.Cancel();
+            _securityServiceForwarder?.Stop();
+        }
+        catch
+        {
+            // Best effort cleanup only.
+        }
+
+        _forwarderCancellation?.Dispose();
+        _forwarderCancellation = null;
+        _securityServiceForwarder = null;
+        _securityServiceForwarderTargetPort = null;
+
+        await Task.CompletedTask;
     }
 }
