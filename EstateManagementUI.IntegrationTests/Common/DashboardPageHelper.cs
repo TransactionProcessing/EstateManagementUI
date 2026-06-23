@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Globalization;
 using Microsoft.Playwright;
 using Shouldly;
 using System.Text.Json;
@@ -470,6 +471,245 @@ public sealed class DashboardPageHelper
         }, nameof(AssertAssignedOperatorNotVisibleAsync));
     }
 
+    public async Task OpenContractManagementScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var contractsLink = _page.Locator("#contractsLink");
+            if (await contractsLink.CountAsync() > 0 && await contractsLink.First.IsVisibleAsync())
+            {
+                await contractsLink.First.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/contracts");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenContractManagementScreenAsync));
+    }
+
+    public async Task AssertContractManagementHeadingVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Contract Management" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertContractManagementHeadingVisibleAsync));
+    }
+
+    public async Task CreateContractAsync(string contractDescription, string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#newContractButton").ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            await _page.WaitForURLAsync(new Regex(@".*/contracts/new.*", RegexOptions.IgnoreCase));
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            await _page.Locator("input[placeholder='Enter contract description']").FillAsync(contractDescription);
+
+            var operatorOption = _page.Locator("select option").Filter(new() { HasText = operatorName });
+            await operatorOption.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Attached,
+                Timeout = 10000
+            });
+
+            var operatorValue = await operatorOption.First.GetAttributeAsync("value");
+            operatorValue.ShouldNotBeNull();
+
+            await _page.Locator("select").SelectOptionAsync(new[] { operatorValue! });
+            await _page.Locator("#createContractButton").ClickAsync();
+            await _page.WaitForURLAsync(new Regex(@".*/contracts.*", RegexOptions.IgnoreCase));
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(CreateContractAsync));
+    }
+
+    public async Task AssertContractListContainsAsync(string contractDescription)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var contractCard = GetContractCard(contractDescription);
+            await contractCard.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await contractCard.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertContractListContainsAsync));
+    }
+
+    public async Task OpenContractViewAsync(string contractDescription)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var contractCard = GetContractCard(contractDescription);
+            await contractCard.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await contractCard.GetByRole(AriaRole.Button, new() { Name = "View" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenContractViewAsync));
+    }
+
+    public async Task AssertContractViewVisibleAsync(string contractDescription)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = $"View Contract: {contractDescription}" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Contract Details" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertContractViewVisibleAsync));
+    }
+
+    public async Task OpenContractEditAsync(string contractDescription)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var currentContractId = ExtractContractIdFromUrl(_page.Url);
+            if (currentContractId == Guid.Empty)
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/contracts");
+                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+                var contractCard = GetContractCard(contractDescription);
+                await contractCard.WaitForAsync(new LocatorWaitForOptions
+                {
+                    State = WaitForSelectorState.Visible,
+                    Timeout = 10000
+                });
+
+                await contractCard.GetByRole(AriaRole.Button, new() { Name = "Edit" }).ClickAsync();
+            }
+            else
+            {
+                await _page.GotoAsync($"{ResolveBaseUrl()}/contracts/{currentContractId}/edit");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenContractEditAsync));
+    }
+
+    public async Task AssertContractEditVisibleAsync(string contractDescription)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = $"Edit Contract: {contractDescription}" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Add Product" }).First.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertContractEditVisibleAsync));
+    }
+
+    public async Task AddProductToContractAsync(string productName, string displayText, decimal value)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add Product" }).First.ClickAsync();
+
+            var modal = _page.Locator("div.fixed.inset-0").Filter(new() { HasText = "Add New Product" });
+            await modal.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await modal.Locator("input[placeholder='Enter product name']").FillAsync(productName);
+            await modal.Locator("input[placeholder='Enter display text']").FillAsync(displayText);
+            await modal.Locator("input[placeholder='Enter value']").FillAsync(value.ToString(CultureInfo.InvariantCulture));
+            await modal.GetByRole(AriaRole.Button, new() { Name = "Add Product" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            var productCard = GetContractProductCard(productName);
+            await productCard.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(AddProductToContractAsync));
+    }
+
+    public async Task AssertContractProductVisibleAsync(string productName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var productCard = GetContractProductCard(productName);
+            await productCard.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await productCard.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertContractProductVisibleAsync));
+    }
+
+    public async Task AddFeeToContractAsync(string feeDescription, decimal feeValue)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add Fee" }).First.ClickAsync();
+
+            var modal = _page.Locator("div.fixed.inset-0").Filter(new() { HasText = "Add Transaction Fee" });
+            await modal.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await modal.Locator("input[placeholder='Enter fee description']").FillAsync(feeDescription);
+            await modal.Locator("select").Nth(0).SelectOptionAsync("0");
+            await modal.Locator("select").Nth(1).SelectOptionAsync("0");
+            await modal.Locator("input[placeholder='Enter fee value']").FillAsync(feeValue.ToString(CultureInfo.InvariantCulture));
+            await modal.GetByRole(AriaRole.Button, new() { Name = "Add Fee" }).ClickAsync();
+
+            await _page.GetByText(feeDescription).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(AddFeeToContractAsync));
+    }
+
+    public async Task AssertContractFeeVisibleAsync(string feeDescription)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.GetByText(feeDescription).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertContractFeeVisibleAsync));
+    }
+
+    public async Task BackToContractListAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(BackToContractListAsync));
+    }
+
     public async Task AssertHomePageVisibleAsync()
     {
         await RunWithFailureArtifactsAsync(async () =>
@@ -685,6 +925,30 @@ public sealed class DashboardPageHelper
     private ILocator GetOperatorRow(string operatorName)
     {
         return _page.Locator("tbody tr").Filter(new() { HasText = operatorName });
+    }
+
+    private ILocator GetContractCard(string contractDescription)
+    {
+        return _page.Locator("div.bg-white.rounded-lg.shadow-md.p-6").Filter(new()
+        {
+            Has = _page.GetByRole(AriaRole.Heading, new() { Name = contractDescription })
+        });
+    }
+
+    private ILocator GetContractProductCard(string productName)
+    {
+        return _page.Locator("div.border.border-gray-200.rounded-lg.p-4").Filter(new()
+        {
+            Has = _page.GetByRole(AriaRole.Heading, new() { Name = productName })
+        });
+    }
+
+    private static Guid ExtractContractIdFromUrl(string url)
+    {
+        var match = Regex.Match(url, @"/contracts/(?<id>[0-9a-fA-F-]+)(?:/edit)?(?:\?.*)?$", RegexOptions.IgnoreCase);
+        return match.Success && Guid.TryParse(match.Groups["id"].Value, out var contractId)
+            ? contractId
+            : Guid.Empty;
     }
 
     private async Task<bool> IsAnyVisibleAsync(params string[] selectors)
