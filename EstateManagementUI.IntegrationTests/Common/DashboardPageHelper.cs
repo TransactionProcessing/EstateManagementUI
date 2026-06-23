@@ -583,17 +583,26 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await _page.GotoAsync(ResolveBaseUrl() + "/contracts");
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-            var contractCard = GetContractCard(contractDescription);
-            await contractCard.WaitForAsync(new LocatorWaitForOptions
+            var currentContractId = ExtractContractIdFromUrl(_page.Url);
+            if (currentContractId == Guid.Empty)
             {
-                State = WaitForSelectorState.Visible,
-                Timeout = 10000
-            });
+                await _page.GotoAsync(ResolveBaseUrl() + "/contracts");
+                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-            await contractCard.GetByRole(AriaRole.Button, new() { Name = "Edit" }).ClickAsync();
+                var contractCard = GetContractCard(contractDescription);
+                await contractCard.WaitForAsync(new LocatorWaitForOptions
+                {
+                    State = WaitForSelectorState.Visible,
+                    Timeout = 10000
+                });
+
+                await contractCard.GetByRole(AriaRole.Button, new() { Name = "Edit" }).ClickAsync();
+            }
+            else
+            {
+                await _page.GotoAsync($"{ResolveBaseUrl()}/contracts/{currentContractId}/edit");
+            }
+
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }, nameof(OpenContractEditAsync));
     }
@@ -915,6 +924,14 @@ public sealed class DashboardPageHelper
         {
             Has = _page.GetByRole(AriaRole.Heading, new() { Name = contractDescription })
         });
+    }
+
+    private static Guid ExtractContractIdFromUrl(string url)
+    {
+        var match = Regex.Match(url, @"/contracts/(?<id>[0-9a-fA-F-]+)(?:/edit)?(?:\?.*)?$", RegexOptions.IgnoreCase);
+        return match.Success && Guid.TryParse(match.Groups["id"].Value, out var contractId)
+            ? contractId
+            : Guid.Empty;
     }
 
     private async Task<bool> IsAnyVisibleAsync(params string[] selectors)
