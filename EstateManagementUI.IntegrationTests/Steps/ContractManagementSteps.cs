@@ -8,15 +8,18 @@ namespace EstateManagementUI.IntegrationTests.Steps;
 [Scope(Tag = "estate")]
 public sealed class ContractManagementSteps
 {
+    private const string ContractDescription = "Integration Contract";
+    private const string ProductName = "Integration Product";
+    private const string ProductDisplayText = "Integration Product Display";
+    private const string FeeDescription = "Integration Fee";
+
     private readonly IPage _page;
     private readonly TestingContext _testingContext;
-    private readonly string _contractDescription;
 
     public ContractManagementSteps(IPage page, TestingContext testingContext)
     {
         _page = page;
         _testingContext = testingContext;
-        _contractDescription = $"Integration Contract {Guid.NewGuid():N}";
     }
 
     [When("I open the contract management screen")]
@@ -26,34 +29,34 @@ public sealed class ContractManagementSteps
     public Task ThenIShouldSeeTheContractManagementHeading() => GetHelper().AssertContractManagementHeadingVisibleAsync();
 
     [When("I create a contract")]
-    public Task WhenICreateAContract() => GetHelper().CreateContractAsync(_contractDescription, "Test Operator");
+    public Task WhenICreateAContract() => GetHelper().CreateContractAsync(ContractDescription, "Test Operator");
 
     [Then("I should see the contract in the list")]
-    public Task ThenIShouldSeeTheContractInTheList() => GetHelper().AssertContractListContainsAsync(_contractDescription);
+    public Task ThenIShouldSeeTheContractInTheList() => GetHelper().AssertContractListContainsAsync(ContractDescription);
 
     [When("I view the contract")]
-    public Task WhenIViewTheContract() => GetHelper().OpenContractViewAsync(_contractDescription);
+    public Task WhenIViewTheContract() => GetHelper().OpenContractViewAsync(ContractDescription);
 
     [Then("I should see the contract details page")]
-    public Task ThenIShouldSeeTheContractDetailsPage() => GetHelper().AssertContractViewVisibleAsync(_contractDescription);
+    public Task ThenIShouldSeeTheContractDetailsPage() => GetHelper().AssertContractViewVisibleAsync(ContractDescription);
 
     [When("I edit the contract")]
-    public Task WhenIEditTheContract() => GetHelper().OpenContractEditAsync(_contractDescription);
+    public Task WhenIEditTheContract() => GetHelper().OpenContractEditAsync(ContractDescription);
 
     [Then("I should see the contract edit page")]
-    public Task ThenIShouldSeeTheContractEditPage() => GetHelper().AssertContractEditVisibleAsync(_contractDescription);
+    public Task ThenIShouldSeeTheContractEditPage() => GetHelper().AssertContractEditVisibleAsync(ContractDescription);
 
     [When("I add a product to the contract")]
-    public Task WhenIAddAProductToTheContract() => GetHelper().AddProductToContractAsync("Integration Product", "Integration Product Display", 10m);
+    public Task WhenIAddAProductToTheContract() => GetHelper().AddProductToContractAsync(ProductName, ProductDisplayText, 10m);
 
     [Then("I should see the product in the contract edit view")]
-    public Task ThenIShouldSeeTheProductInTheContractEditView() => GetHelper().AssertContractProductVisibleAsync("Integration Product");
+    public Task ThenIShouldSeeTheProductInTheContractEditView() => GetHelper().AssertContractProductVisibleAsync(ProductName);
 
     [When("I add a fee to the contract")]
-    public Task WhenIAddAFeeToTheContract() => GetHelper().AddFeeToContractAsync("Integration Fee", 1.50m);
+    public Task WhenIAddAFeeToTheContract() => GetHelper().AddFeeToContractAsync(FeeDescription, 1.50m);
 
     [Then("I should see the fee in the contract edit view")]
-    public Task ThenIShouldSeeTheFeeInTheContractEditView() => GetHelper().AssertContractFeeVisibleAsync("Integration Fee");
+    public Task ThenIShouldSeeTheFeeInTheContractEditView() => GetHelper().AssertContractFeeVisibleAsync(FeeDescription);
 
     [When("I return to the contract list")]
     public Task WhenIReturnToTheContractList() => GetHelper().BackToContractListAsync();

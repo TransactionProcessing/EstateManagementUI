@@ -62,7 +62,7 @@ Feature: Contract Management
     And I click on the Sign In Button
     Then I am presented with a login screen
     When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
-    Then I should see the estate info page
+    Then I should see the dashboard heading
     When I open the contract management screen
     Then I should see the contract management heading
     When I create a contract
