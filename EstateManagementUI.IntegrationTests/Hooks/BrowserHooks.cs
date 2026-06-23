@@ -27,13 +27,6 @@ public class BrowserHooks
     [BeforeTestRun]
     public static async Task BeforeTestRun()
     {
-        // Install Playwright browsers if needed
-        var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
-        if (exitCode != 0)
-        {
-            throw new Exception($"Playwright installation failed with exit code {exitCode}");
-        }
-
         // Initialize Playwright
         _playwright = await Playwright.CreateAsync();
     }
@@ -194,6 +187,7 @@ public class BrowserHooks
             _ => await _playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
                 Headless = isCI,
+                ExecutablePath = ResolveChromiumExecutablePath(),
                 Args = hostResolverRules is null
                     ? new[]
                     {
@@ -234,5 +228,26 @@ public class BrowserHooks
         page.RequestFailed += (_, request) => Console.WriteLine($"[browser request failed] {request.Url} => {request.Failure}");
 
         return page;
+    }
+
+    private static string ResolveChromiumExecutablePath()
+    {
+        var candidatePaths = new[]
+        {
+            @"C:\Program Files\Google\Chrome\Application\chrome.exe",
+            @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+            @"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+            @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        };
+
+        foreach (var candidatePath in candidatePaths)
+        {
+            if (File.Exists(candidatePath))
+            {
+                return candidatePath;
+            }
+        }
+
+        throw new FileNotFoundException("Could not locate a system Chrome or Edge executable for Playwright to launch.");
     }
 }

@@ -15,7 +15,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         public Guid MerchantId { get; set; }
 
         [Parameter]
-        //[SupplyParameterFromQuery(Name = "readOnly")]
+        [SupplyParameterFromQuery(Name = "readOnly")]
         public Boolean ReadOnly { get; set; }
 
         private readonly DateTime today = DateTime.Today;

@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
 using Shared.IntegrationTesting;
+using SimpleResults;
+using TransactionProcessor.DataTransferObjects.Requests.MerchantSchedule;
 
 namespace EstateManagementUI.IntegrationTests.Common;
 
@@ -422,7 +424,7 @@ public sealed class DashboardPageHelper
             optionValue.ShouldNotBeNull();
 
             await _page.Locator("select").SelectOptionAsync(new[] { optionValue! });
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Add" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add", Exact = true }).ClickAsync();
         }, nameof(AddOperatorToEstateAsync));
     }
 
@@ -708,6 +710,565 @@ public sealed class DashboardPageHelper
             await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).ClickAsync();
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }, nameof(BackToContractListAsync));
+    }
+
+    public async Task OpenMerchantManagementScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var merchantsLink = _page.Locator("#merchantsLink");
+            if (await merchantsLink.CountAsync() > 0 && await merchantsLink.First.IsVisibleAsync())
+            {
+                await merchantsLink.First.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenMerchantManagementScreenAsync));
+    }
+
+    public async Task AssertMerchantManagementHeadingVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Merchant Management" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantManagementHeadingVisibleAsync));
+    }
+
+    public async Task CreateMerchantAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var newMerchantButton = _page.Locator("#newMerchantButton");
+            if (await newMerchantButton.CountAsync() > 0 && await newMerchantButton.First.IsVisibleAsync())
+            {
+                await newMerchantButton.First.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/merchants/new");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchantName);
+            await _page.Locator("select[name='SettlementSchedule']").SelectOptionAsync("Immediate");
+            await _page.Locator("input[placeholder='Enter address line 1']").FillAsync("1 Integration Road");
+            await _page.Locator("input[placeholder='Enter address line 2 (optional)']").FillAsync("Suite 100");
+            await _page.Locator("input[placeholder='Enter town']").FillAsync("Test Town");
+            await _page.Locator("input[placeholder='Enter region']").FillAsync("Test Region");
+            await _page.Locator("input[placeholder='Enter postcode']").FillAsync("TE1 1ST");
+
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Select country" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "United Kingdom" }).ClickAsync();
+
+            await _page.Locator("input[placeholder='Enter contact name']").FillAsync("Test Contact");
+            await _page.Locator("input[placeholder='Enter email address']").FillAsync("test.contact@example.com");
+            await _page.Locator("input[placeholder='Enter phone number']").FillAsync("01234567890");
+
+            await _page.Locator("#createMerchantButton").ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Merchant Management" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(CreateMerchantAsync));
+    }
+
+    public async Task AssertMerchantListContainsAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var row = GetMerchantRow(merchantName);
+            await row.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await row.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantListContainsAsync));
+    }
+
+    public async Task OpenMerchantViewAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var row = GetMerchantRow(merchantName);
+            await row.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await row.GetByRole(AriaRole.Button, new() { Name = "View" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenMerchantViewAsync));
+    }
+
+    public async Task AssertMerchantViewVisibleAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = $"View Merchant: {merchantName}" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "View Schedule" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantViewVisibleAsync));
+    }
+
+    public async Task SwitchMerchantTabAsync(string tabName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = tabName }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(SwitchMerchantTabAsync));
+    }
+
+    public async Task AssertMerchantPageTextVisibleAsync(string expectedText)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var text = _page.GetByText(expectedText);
+            await text.First.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await text.First.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantPageTextVisibleAsync));
+    }
+
+    public async Task OpenMerchantScheduleFromViewAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "View Schedule" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenMerchantScheduleFromViewAsync));
+    }
+
+    public async Task AssertMerchantReadOnlyScheduleVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Selected Year Schedule" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            _page.Url.ShouldContain("readOnly=true");
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Selected Year Schedule" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#saveScheduleButton").CountAsync()).ShouldBe(0);
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Back to Merchant" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantReadOnlyScheduleVisibleAsync));
+    }
+
+    public async Task BackToMerchantFromViewScheduleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Back to Merchant" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(BackToMerchantFromViewScheduleAsync));
+    }
+
+    public async Task OpenMerchantEditAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var merchantId = ExtractMerchantIdFromUrl(_page.Url);
+            if (merchantId == Guid.Empty)
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
+                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+                var row = GetMerchantRow(merchantName);
+                await row.WaitForAsync(new LocatorWaitForOptions
+                {
+                    State = WaitForSelectorState.Visible,
+                    Timeout = 10000
+                });
+
+                await row.GetByRole(AriaRole.Button, new() { Name = "Edit" }).ClickAsync();
+            }
+            else
+            {
+                await _page.GotoAsync($"{ResolveBaseUrl()}/merchants/{merchantId}/edit");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenMerchantEditAsync));
+    }
+
+    public async Task AssertMerchantEditVisibleAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = $"Edit Merchant: {merchantName}" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Edit Schedule" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantEditVisibleAsync));
+    }
+
+    public async Task AssertMerchantEditOpeningHoursVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByText("Enter merchant opening and closing times in HHmm format").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await _page.Locator("#saveOpeningHoursButton").ScrollIntoViewIfNeededAsync();
+            (await _page.Locator("#saveOpeningHoursButton").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#mondayOpening").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantEditOpeningHoursVisibleAsync));
+    }
+
+    public async Task SaveMerchantOpeningHoursAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#mondayOpening").FillAsync("0800");
+            await _page.Locator("#mondayClosing").FillAsync("1700");
+            await _page.Locator("#tuesdayOpening").FillAsync("0800");
+            await _page.Locator("#tuesdayClosing").FillAsync("1700");
+            await _page.Locator("#wednesdayOpening").FillAsync("0800");
+            await _page.Locator("#wednesdayClosing").FillAsync("1700");
+            await _page.Locator("#thursdayOpening").FillAsync("0800");
+            await _page.Locator("#thursdayClosing").FillAsync("1700");
+            await _page.Locator("#fridayOpening").FillAsync("0800");
+            await _page.Locator("#fridayClosing").FillAsync("1700");
+            await _page.Locator("#saturdayOpening").FillAsync("0900");
+            await _page.Locator("#saturdayClosing").FillAsync("1600");
+            await _page.Locator("#sundayOpening").FillAsync("1000");
+            await _page.Locator("#sundayClosing").FillAsync("1500");
+
+            await _page.Locator("#saveOpeningHoursButton").ClickAsync();
+            await _page.GetByText("Merchant opening hours updated successfully").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(SaveMerchantOpeningHoursAsync));
+    }
+
+    public async Task AddMerchantOperatorAsync(string operatorName, string merchantNumber, string terminalNumber)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#addOperatorButton").ClickAsync();
+
+            var option = _page.Locator("select option").Filter(new() { HasText = operatorName });
+            await option.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Attached,
+                Timeout = 10000
+            });
+
+            var optionValue = await option.First.GetAttributeAsync("value");
+            optionValue.ShouldNotBeNull();
+
+            await _page.Locator("select").SelectOptionAsync(new[] { optionValue! });
+
+            var merchantNumberInput = _page.GetByPlaceholder("Enter merchant number");
+            await merchantNumberInput.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await merchantNumberInput.FillAsync(merchantNumber);
+
+            var terminalNumberInput = _page.GetByPlaceholder("Enter terminal number");
+            await terminalNumberInput.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await terminalNumberInput.FillAsync(terminalNumber);
+
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add", Exact = true }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(AddMerchantOperatorAsync));
+    }
+
+    public async Task AssertMerchantOperatorVisibleAsync(string operatorName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var row = _page.Locator("div.flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg")
+                .Filter(new() { HasText = operatorName });
+            await row.First.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await row.First.GetByRole(AriaRole.Button, new() { Name = "Remove" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantOperatorVisibleAsync));
+    }
+
+    public async Task AssertMerchantContractsTabVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var text = _page.GetByText("No contracts assigned");
+            await text.First.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await text.First.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantContractsTabVisibleAsync));
+    }
+
+    public async Task AddMerchantDeviceAsync(string deviceIdentifier)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#addDeviceButton").ClickAsync();
+            var deviceInput = _page.GetByPlaceholder("Enter device identifier");
+            await deviceInput.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await deviceInput.FillAsync(deviceIdentifier);
+            await deviceInput.PressAsync("Tab");
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add", Exact = true }).ClickAsync();
+
+            var row = _page.Locator("div.flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg")
+                .Filter(new() { HasText = deviceIdentifier });
+            await row.First.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(AddMerchantDeviceAsync));
+    }
+
+    public async Task AssertMerchantDeviceVisibleAsync(string deviceIdentifier)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var row = _page.Locator("div.flex.items-center.justify-between.p-3.bg-gray-50.rounded-lg")
+                .Filter(new() { HasText = deviceIdentifier });
+            await row.First.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await row.First.GetByRole(AriaRole.Button, new() { Name = "Swap" }).IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantDeviceVisibleAsync));
+    }
+
+    public async Task OpenMerchantScheduleFromEditAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var merchantId = ExtractMerchantIdFromUrl(_page.Url);
+            if (merchantId == Guid.Empty)
+            {
+                await _page.Locator("#editScheduleButton").ClickAsync();
+                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                return;
+            }
+
+            await _page.GotoAsync($"{ResolveBaseUrl()}/merchants/{merchantId}/schedule");
+        }, nameof(OpenMerchantScheduleFromEditAsync));
+    }
+
+    public async Task AssertMerchantEditableScheduleVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var deadline = DateTime.UtcNow.AddSeconds(120);
+            while (DateTime.UtcNow < deadline)
+            {
+                bool saveVisible = await _page.Locator("#saveScheduleButton").IsVisibleAsync();
+                bool monthVisible = await _page.Locator("#month-1-closed-days").IsVisibleAsync();
+                bool backVisible = await _page.GetByRole(AriaRole.Button, new() { Name = "Back to Edit Merchant" }).IsVisibleAsync();
+
+                if (saveVisible && monthVisible && backVisible)
+                {
+                    return;
+                }
+
+                await _page.WaitForTimeoutAsync(500);
+            }
+
+            throw new TimeoutException("Editable merchant schedule did not become visible within 120 seconds.");
+        }, nameof(AssertMerchantEditableScheduleVisibleAsync));
+    }
+
+    public async Task SaveMerchantScheduleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var selectedYear = DateTime.Today.Year + 1;
+            await EnsureMerchantScheduleExistsAsync(selectedYear);
+            await _page.Locator("#selectedYear").SelectOptionAsync(selectedYear.ToString(CultureInfo.InvariantCulture));
+            await _page.Locator("#loadYearButton").ClickAsync();
+            await _page.Locator("#month-1-closed-days").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#month-1-closed-days").FillAsync("1, 2, 15");
+            await _page.Locator("#saveScheduleButton").ClickAsync();
+            await _page.GetByText($"Schedule saved for {selectedYear}.").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(SaveMerchantScheduleAsync));
+    }
+
+    private async Task EnsureMerchantScheduleExistsAsync(int year)
+    {
+        var merchantId = ExtractMerchantIdFromUrl(_page.Url);
+        if (merchantId == Guid.Empty || this.TestingContext.Estates.Count != 1)
+        {
+            return;
+        }
+
+        var estateId = this.TestingContext.GetAllEstateIds().Single();
+        var accessToken = this.TestingContext.AccessToken;
+        var client = this.TestingContext.DockerHelper.TransactionProcessorClient;
+        var scheduleRequest = new CreateMerchantScheduleRequest
+        {
+            Year = year,
+            Months =
+            [
+                new MerchantScheduleMonthRequest
+                {
+                    Month = 1,
+                    ClosedDays = [1, 2, 15]
+                }
+            ]
+        };
+
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (DateTime.UtcNow < deadline)
+        {
+            var existing = await client.GetMerchantSchedule(accessToken, estateId, merchantId, year, CancellationToken.None);
+            if (existing.IsSuccess)
+            {
+                return;
+            }
+
+            if (existing.Status != ResultStatus.NotFound)
+            {
+                throw new InvalidOperationException(existing.Errors.FirstOrDefault() ?? existing.Message ?? "Failed to check merchant schedule state.");
+            }
+
+            var createResult = await client.CreateMerchantSchedule(accessToken, estateId, merchantId, scheduleRequest, CancellationToken.None);
+            if (createResult.IsFailed && createResult.Status != ResultStatus.Conflict)
+            {
+                throw new InvalidOperationException(createResult.Errors.FirstOrDefault() ?? createResult.Message ?? "Failed to create merchant schedule.");
+            }
+
+            await _page.WaitForTimeoutAsync(1000);
+        }
+
+        throw new TimeoutException($"Merchant schedule for {year} did not become available.");
+    }
+
+    public async Task BackToMerchantFromEditScheduleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Back to Edit Merchant" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(BackToMerchantFromEditScheduleAsync));
+    }
+
+    public async Task OpenMerchantDepositAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var merchantId = ExtractMerchantIdFromUrl(_page.Url);
+            if (merchantId == Guid.Empty)
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
+                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+                var row = _page.Locator("tbody tr").First;
+                await row.WaitForAsync(new LocatorWaitForOptions
+                {
+                    State = WaitForSelectorState.Visible,
+                    Timeout = 10000
+                });
+
+                await row.GetByRole(AriaRole.Button, new() { Name = "Make Deposit" }).ClickAsync();
+            }
+            else
+            {
+                await _page.GotoAsync($"{ResolveBaseUrl()}/merchants/{merchantId}/deposit");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenMerchantDepositAsync));
+    }
+
+    public async Task AssertMerchantDepositVisibleAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Make Merchant Deposit" }).IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByText($"For merchant: {merchantName}").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#depositAmount").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#depositDate").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#depositReference").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertMerchantDepositVisibleAsync));
+    }
+
+    public async Task SubmitMerchantDepositAsync(decimal amount, string reference)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.Locator("#depositAmount").FillAsync(amount.ToString(CultureInfo.InvariantCulture));
+            await _page.Locator("#depositDate").FillAsync(DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            await _page.Locator("#depositReference").FillAsync(reference);
+            await _page.Locator("#makeDepositButton").ClickAsync();
+            await _page.GetByText("Deposit recorded successfully").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(SubmitMerchantDepositAsync));
     }
 
     public async Task AssertHomePageVisibleAsync()
@@ -1001,6 +1562,19 @@ public sealed class DashboardPageHelper
         }
 
         throw new InvalidOperationException($"Could not find a visible clickable element for selectors: {string.Join(", ", selectors)}");
+    }
+
+    private ILocator GetMerchantRow(string merchantName)
+    {
+        return _page.Locator("tbody tr").Filter(new() { HasText = merchantName });
+    }
+
+    private static Guid ExtractMerchantIdFromUrl(string url)
+    {
+        var match = Regex.Match(url, @"/merchants/(?<id>[0-9a-fA-F-]+)(?:/.*)?(?:\?.*)?$", RegexOptions.IgnoreCase);
+        return match.Success && Guid.TryParse(match.Groups["id"].Value, out var merchantId)
+            ? merchantId
+            : Guid.Empty;
     }
 
     private async Task WaitForAuthenticationNavigationAsync()
