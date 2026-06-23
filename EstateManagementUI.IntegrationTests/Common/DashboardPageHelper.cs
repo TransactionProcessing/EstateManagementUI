@@ -640,8 +640,10 @@ public sealed class DashboardPageHelper
             await modal.Locator("input[placeholder='Enter display text']").FillAsync(displayText);
             await modal.Locator("input[placeholder='Enter value']").FillAsync(value.ToString(CultureInfo.InvariantCulture));
             await modal.GetByRole(AriaRole.Button, new() { Name = "Add Product" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-            await _page.GetByText(productName).WaitForAsync(new LocatorWaitForOptions
+            var productCard = GetContractProductCard(productName);
+            await productCard.WaitForAsync(new LocatorWaitForOptions
             {
                 State = WaitForSelectorState.Visible,
                 Timeout = 10000
@@ -653,7 +655,14 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            (await _page.GetByText(productName).IsVisibleAsync()).ShouldBeTrue();
+            var productCard = GetContractProductCard(productName);
+            await productCard.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await productCard.IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertContractProductVisibleAsync));
     }
 
@@ -923,6 +932,14 @@ public sealed class DashboardPageHelper
         return _page.Locator("div.bg-white.rounded-lg.shadow-md.p-6").Filter(new()
         {
             Has = _page.GetByRole(AriaRole.Heading, new() { Name = contractDescription })
+        });
+    }
+
+    private ILocator GetContractProductCard(string productName)
+    {
+        return _page.Locator("div.border.border-gray-200.rounded-lg.p-4").Filter(new()
+        {
+            Has = _page.GetByRole(AriaRole.Heading, new() { Name = productName })
         });
     }
 
