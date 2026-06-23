@@ -584,6 +584,18 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             var contractCard = GetContractCard(contractDescription);
+            if (await contractCard.CountAsync() == 0 || !await contractCard.First.IsVisibleAsync())
+            {
+                var backButton = _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" });
+                if (await backButton.CountAsync() > 0 && await backButton.First.IsVisibleAsync())
+                {
+                    await backButton.First.ClickAsync();
+                    await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                }
+
+                contractCard = GetContractCard(contractDescription);
+            }
+
             await contractCard.WaitForAsync(new LocatorWaitForOptions
             {
                 State = WaitForSelectorState.Visible,
