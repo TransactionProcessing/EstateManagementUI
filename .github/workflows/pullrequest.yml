@@ -92,14 +92,14 @@ jobs:
     - name: Build Docker Image
       run: docker build . --file EstateManagementUI.BlazorServer/Dockerfile --tag estatemanagementuiblazorserver:latest
 
+    - name: Restore Nuget Packages
+      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+
     - name: Build Integration Tests
       run: dotnet build EstateManagementUI.IntegrationTests/EstateManagementUI.IntegrationTests.csproj --configuration Debug --no-restore
 
     - name: Install Playwright Chromium
       run: pwsh EstateManagementUI.IntegrationTests/bin/Debug/net10.0/playwright.ps1 install --with-deps chromium
-
-    - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
 
     - name: Run Integration Tests (Chrome)
       env:
