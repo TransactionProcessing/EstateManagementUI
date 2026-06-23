@@ -266,9 +266,10 @@ public class MerchantSchedulePageTests : BaseTest
             }
         });
 
+        _fakeNavigationManager.NavigateTo($"/merchants/{merchantId}/schedule?readOnly=true");
+
         var cut = RenderComponent<Schedule>(parameters => parameters
-            .Add(p => p.MerchantId, merchantId)
-            .Add(p => p.ReadOnly, true));
+            .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Markup.ShouldContain("Selected Year Schedule");
