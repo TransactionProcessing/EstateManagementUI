@@ -22,18 +22,11 @@ public class BrowserHooks
     }
 
     /// <summary>
-    /// Install Playwright browsers and initialize Playwright before running any tests
+    /// Initialize Playwright before running any tests
     /// </summary>
     [BeforeTestRun]
     public static async Task BeforeTestRun()
     {
-        // Install Playwright browsers if needed
-        var exitCode = Microsoft.Playwright.Program.Main(new[] { "install" });
-        if (exitCode != 0)
-        {
-            throw new Exception($"Playwright installation failed with exit code {exitCode}");
-        }
-
         // Initialize Playwright
         _playwright = await Playwright.CreateAsync();
     }
@@ -175,6 +168,16 @@ public class BrowserHooks
         Console.WriteLine($"[browser setup] SecurityServiceContainerName={securityServiceHost ?? "<null>"}");
         Console.WriteLine($"[browser setup] SecurityServicePort={securityServicePortText ?? "<null>"}");
         
+        var chromiumExecutablePath = ResolveChromiumExecutablePath();
+        if (!string.IsNullOrWhiteSpace(chromiumExecutablePath))
+        {
+            Console.WriteLine($"[browser setup] Chromium executable: {chromiumExecutablePath}");
+        }
+        else
+        {
+            Console.WriteLine("[browser setup] No system Chromium/Edge executable found; using bundled Playwright Chromium.");
+        }
+
         _browser = browserType switch
         {
             "Firefox" => await _playwright!.Firefox.LaunchAsync(new BrowserTypeLaunchOptions
@@ -194,6 +197,7 @@ public class BrowserHooks
             _ => await _playwright!.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
             {
                 Headless = isCI,
+                ExecutablePath = string.IsNullOrWhiteSpace(chromiumExecutablePath) ? null : chromiumExecutablePath,
                 Args = hostResolverRules is null
                     ? new[]
                     {
@@ -234,5 +238,33 @@ public class BrowserHooks
         page.RequestFailed += (_, request) => Console.WriteLine($"[browser request failed] {request.Url} => {request.Failure}");
 
         return page;
+    }
+
+    private static string? ResolveChromiumExecutablePath()
+    {
+        var candidatePaths = new[]
+        {
+            @"/usr/bin/google-chrome",
+            @"/usr/bin/google-chrome-stable",
+            @"/usr/bin/chromium",
+            @"/usr/bin/chromium-browser",
+            @"/usr/bin/microsoft-edge",
+            @"/snap/bin/google-chrome",
+            @"/snap/bin/chromium",
+            @"C:\Program Files\Google\Chrome\Application\chrome.exe",
+            @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+            @"C:\Program Files\Microsoft\Edge\Application\msedge.exe",
+            @"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        };
+
+        foreach (var candidatePath in candidatePaths)
+        {
+            if (File.Exists(candidatePath))
+            {
+                return candidatePath;
+            }
+        }
+
+        return null;
     }
 }
