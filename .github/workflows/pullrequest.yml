@@ -28,7 +28,7 @@ jobs:
           dotnet-version: '10.0.x'
     
       - name: Restore NuGet packages
-        run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+        run: dotnet restore EstateManagementUI.sln --configfile NuGet.Config
     
       - name: Build solution
         run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
@@ -93,7 +93,7 @@ jobs:
       run: docker build . --file EstateManagementUI.BlazorServer/Dockerfile --tag estatemanagementuiblazorserver:latest
 
     - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+      run: dotnet restore EstateManagementUI.sln --configfile NuGet.Config
 
     - name: Build Integration Tests
       run: dotnet build EstateManagementUI.IntegrationTests/EstateManagementUI.IntegrationTests.csproj --configuration Debug --no-restore

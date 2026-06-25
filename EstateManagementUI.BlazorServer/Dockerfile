@@ -14,7 +14,7 @@ COPY ["NuGet.Config", "."]
 COPY ["EstateManagementUI.BlazorServer/Certificates/*.*", "Certificates/"]
 COPY ["EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj", "EstateManagementUI.BlazorServer/"]
 COPY ["Directory.Packages.props", "."]
-RUN dotnet restore "./EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj"
+RUN dotnet restore "./EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj" --configfile NuGet.Config
 
 COPY . .
 WORKDIR "/src/EstateManagementUI.BlazorServer"
