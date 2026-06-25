@@ -20,7 +20,7 @@ jobs:
       run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
     - name: Restore Nuget Packages
-      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }}
+      run: dotnet restore EstateManagementUI.sln --source ${{ secrets.PUBLICFEEDURL }} --source ${{ secrets.PRIVATEFEED_URL }} -r win-x64
 
     - name: Build Code
       run: dotnet build EstateManagementUI.sln --configuration Release --no-restore
@@ -45,7 +45,7 @@ jobs:
     
     - name: Publish UI
       if: ${{ github.event.release.prerelease == false }} 
-      run: dotnet publish "EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj" --configuration Release --output publishOutput -r win-x64 --self-contained
+      run: dotnet publish "EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj" --configuration Release --output publishOutput -r win-x64 --self-contained --no-restore
               -p:Version=${{ steps.get_version.outputs.VERSION }}
               -p:AssemblyVersion=${{ steps.get_version.outputs.VERSION }}
               -p:FileVersion=${{ steps.get_version.outputs.VERSION }}
