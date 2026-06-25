@@ -10,7 +10,7 @@ WORKDIR /src
 RUN curl -fsSL --insecure https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
-COPY ["EstateManagementUI.BlazorServer/NuGet.Config", "."]
+COPY ["NuGet.Config", "."]
 COPY ["EstateManagementUI.BlazorServer/Certificates/*.*", "Certificates/"]
 COPY ["EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj", "EstateManagementUI.BlazorServer/"]
 RUN dotnet restore "./EstateManagementUI.BlazorServer/EstateManagementUI.BlazorServer.csproj"
