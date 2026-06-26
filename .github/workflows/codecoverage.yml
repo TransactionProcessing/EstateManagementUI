@@ -36,13 +36,13 @@ jobs:
     - name: Run Unit Tests
       run: |
         echo "ASPNETCORE_ENVIRONMENT are > ${ASPNETCORE_ENVIRONMENT}"
-        mkdir -p coverage
-        dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --settings .runsettings /p:CollectCoverage=true /p:Exclude="[xunit*]*" /p:ExcludeByAttribute="Obsolete" /p:ExcludeByAttribute="GeneratedCodeAttribute" /p:ExcludeByAttribute="ExcludeFromCodeCoverageAttribute" /p:CoverletOutput="coverage/coverage" /maxcpucount:1 /p:CoverletOutputFormat="cobertura"
+        mkdir -p "$GITHUB_WORKSPACE/coverage"
+        dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --settings .runsettings /p:CollectCoverage=true /p:Exclude="[xunit*]*" /p:ExcludeByAttribute="Obsolete" /p:ExcludeByAttribute="GeneratedCodeAttribute" /p:ExcludeByAttribute="ExcludeFromCodeCoverageAttribute" /p:CoverletOutput="$GITHUB_WORKSPACE/coverage/coverage" /maxcpucount:1 /p:CoverletOutputFormat="cobertura"
 
     - name: Upload coverage report
       if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
       uses: actions/upload-code-coverage@v1
       with:
-        file: coverage/coverage.cobertura.xml
+        file: ${{ github.workspace }}/coverage/coverage.cobertura.xml
         language: C#
         label: code-coverage/blazor
