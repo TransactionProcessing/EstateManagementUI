@@ -5,6 +5,10 @@ on:
   - cron: "45 22 * * *"
   repository_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   unittests:
     name: "Nightly Build and Unit Test"
@@ -27,6 +31,21 @@ jobs:
     - name: Run Unit Tests
       run: |        
         dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --settings .runsettings /p:CollectCoverage=true /p:Exclude="[xunit*]*" /p:ExcludeByAttribute="Obsolete" /p:ExcludeByAttribute="GeneratedCodeAttribute" /p:ExcludeByAttribute="ExcludeFromCodeCoverageAttribute" /p:CoverletOutput="../lcov1.info" /maxcpucount:1 /p:CoverletOutputFormat="lcov"
+
+    - name: Notify on nightly failure
+      if: ${{ failure() }}
+      uses: TransactionProcessing/org-ci-workflows/.github/actions/nightly-failure-issue@main
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        title: Investigate Nightly Build Failure
+        labels: nightlybuild
+        dedupe_key: nightlybuild
+        body: |
+          Repo: ${{ github.repository }}
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          Commit: ${{ github.sha }}
+          Workflow: ${{ github.workflow }}
+          Job: ${{ github.job }}
 
   # chrometests:
   #   name: "Nightly Build - Chrome"
