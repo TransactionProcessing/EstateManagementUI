@@ -3,8 +3,12 @@
 @using System.ComponentModel.DataAnnotations
 @using EstateManagementUI.BlazorServer.Permissions
 @using Microsoft.AspNetCore.Components.Forms
+@using EstateManagementUI.BlazorServer.UIServices
+@using SimpleResults
 @inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
+@inject IFileProcessingUIService FileProcessingUIService
+@inject IMerchantUIService MerchantUIService
 
 <PageTitle>Upload File</PageTitle>
 
@@ -34,23 +38,53 @@
             <div class="space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Merchant <span class="text-red-500">*</span>
+                    </label>
+                    <InputSelect @bind-Value="model.MerchantId" class="input w-full" name="MerchantId" id="merchantSelect">
+                        <option value="">Select a merchant...</option>
+                        @foreach (var merchant in merchants)
+                        {
+                            <option value="@merchant.MerchantId">@merchant.MerchantName</option>
+                        }
+                    </InputSelect>
+                    @if (isLoadingMerchants)
+                    {
+                        <p class="text-sm text-gray-500 mt-1">Loading merchants...</p>
+                    }
+                    else if (merchants.Count == 0)
+                    {
+                        <p class="text-sm text-amber-600 mt-1">No merchants were returned for this estate.</p>
+                    }
+                    <ValidationMessage For="@(() => model.MerchantId)" class="text-red-600 text-sm mt-1" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
                         File Profile <span class="text-red-500">*</span>
                     </label>
-                    <InputSelect @bind-Value="model.FileProfile" class="input w-full" name="FileProfile">
+                    <InputSelect @bind-Value="model.FileProfileId" class="input w-full" name="FileProfile" id="fileProfileSelect">
                         <option value="">Select a file profile...</option>
                         @foreach (var fileProfile in fileProfiles)
                         {
-                            <option value="@fileProfile">@fileProfile</option>
+                            <option value="@fileProfile.FileProfileId">@fileProfile.Name</option>
                         }
                     </InputSelect>
-                    <ValidationMessage For="@(() => model.FileProfile)" class="text-red-600 text-sm mt-1" />
+                    @if (isLoadingFileProfiles)
+                    {
+                        <p class="text-sm text-gray-500 mt-1">Loading file profiles...</p>
+                    }
+                    else if (fileProfiles.Count == 0)
+                    {
+                        <p class="text-sm text-amber-600 mt-1">No file profiles were returned.</p>
+                    }
+                    <ValidationMessage For="@(() => model.FileProfileId)" class="text-red-600 text-sm mt-1" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         CSV File <span class="text-red-500">*</span>
                     </label>
-                    <InputFile OnChange="@HandleFileSelected" accept=".csv" class="input w-full" />
+                    <InputFile OnChange="@HandleFileSelected" accept=".csv" class="input w-full" id="uploadFileInput" />
                     @if (selectedFile != null)
                     {
                         <p class="text-sm text-gray-600 mt-2">@selectedFile.Name</p>
@@ -80,17 +114,70 @@
     private string? fileErrorMessage;
     private string? successMessage;
     private IBrowserFile? selectedFile;
-    private readonly List<string> fileProfiles = ["SafaricomTopup", "AirtelTopup", "SettlementFile"];
+    private List<global::EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel> merchants = [];
+    private List<global::EstateManagementUI.BlazorServer.Models.FileProfileDropDownModel> fileProfiles = [];
+    private const long MaxUploadSizeBytes = 100 * 1024 * 1024;
+    private bool isLoadingMerchants = true;
+    private bool isLoadingFileProfiles = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await RequirePermission(PermissionSection.FileProcessing, PermissionFunction.Create);
         editContext = new EditContext(model);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        await OnAfterRender(PermissionSection.FileProcessing, PermissionFunction.Create, LoadDataAsync);
     }
 
     private void Cancel() => NavigationManager.NavigateTo("/file-processing");
 
-    private Task HandleSubmit(EditContext context)
+    private async Task<Result> LoadDataAsync()
+    {
+        isLoadingMerchants = true;
+        isLoadingFileProfiles = true;
+        Guid estateId = await GetEstateId();
+        Result<List<global::EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel>> merchantResult = await MerchantUIService.GetMerchantsForDropDown(global::EstateManagementUI.BusinessLogic.Requests.CorrelationIdHelper.New(), estateId);
+        if (merchantResult.IsFailed)
+        {
+            isLoadingMerchants = false;
+            isLoadingFileProfiles = false;
+            await InvokeAsync(StateHasChanged);
+            return global::Shared.Results.ResultHelpers.CreateFailure(merchantResult);
+        }
+
+        Result<List<global::EstateManagementUI.BlazorServer.Models.FileProfileDropDownModel>> fileProfileResult = await FileProcessingUIService.GetFileProfiles();
+        if (fileProfileResult.IsFailed)
+        {
+            isLoadingMerchants = false;
+            isLoadingFileProfiles = false;
+            await InvokeAsync(StateHasChanged);
+            return global::Shared.Results.ResultHelpers.CreateFailure(fileProfileResult);
+        }
+
+        merchants = merchantResult.Data;
+        fileProfiles = fileProfileResult.Data;
+        if (string.IsNullOrWhiteSpace(model.MerchantId) && merchants.Count > 0)
+        {
+            model.MerchantId = merchants[0].MerchantId.ToString();
+        }
+        if (!model.FileProfileId.HasValue && fileProfiles.Count > 0)
+        {
+            model.FileProfileId = fileProfiles[0].FileProfileId;
+        }
+
+        isLoadingMerchants = false;
+        isLoadingFileProfiles = false;
+        await InvokeAsync(StateHasChanged);
+        return Result.Success();
+    }
+
+    private async Task HandleSubmit(EditContext context)
     {
         fileErrorMessage = null;
         successMessage = null;
@@ -103,22 +190,48 @@
 
         if (!isModelValid || selectedFile == null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        successMessage = "File selected and ready for upload.";
-        return Task.CompletedTask;
+        if (!Guid.TryParse(model.MerchantId, out Guid merchantId))
+        {
+            fileErrorMessage = "Merchant is required.";
+            return;
+        }
+
+        Guid estateId = await GetEstateId();
+        Guid userId = await GetUserId();
+
+        await using Stream fileStream = selectedFile.OpenReadStream(MaxUploadSizeBytes);
+        Result<Guid> uploadResult = await FileProcessingUIService.UploadFileAsync(estateId,
+                                                                                   merchantId,
+                                                                                   userId,
+                                                                                   model.FileProfileId!.Value,
+                                                                                   fileStream,
+                                                                                   selectedFile.Name);
+
+        if (uploadResult.IsFailed)
+        {
+            fileErrorMessage = uploadResult.Errors.FirstOrDefault() ?? "The file upload failed.";
+            return;
+        }
+
+        successMessage = $"File '{selectedFile.Name}' uploaded successfully.";
     }
 
     private void HandleFileSelected(InputFileChangeEventArgs args)
     {
         selectedFile = args.File;
         fileErrorMessage = null;
+        successMessage = null;
     }
 
     private sealed class UploadFileModel
     {
+        [Required(ErrorMessage = "Merchant is required.")]
+        public string? MerchantId { get; set; }
+
         [Required(ErrorMessage = "File profile is required.")]
-        public string? FileProfile { get; set; }
+        public Guid? FileProfileId { get; set; }
     }
 }

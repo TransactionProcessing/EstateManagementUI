@@ -49,3 +49,10 @@ public sealed class FileImportLogDetailsModel
     public int FailedLines => Files.Sum(file => file.FailedLines);
     public int IgnoredLines => Files.Sum(file => file.IgnoredLines);
 }
+
+[ExcludeFromCodeCoverage]
+public sealed class FileProfileDropDownModel
+{
+    public Guid FileProfileId { get; set; }
+    public string Name { get; set; } = string.Empty;
+}

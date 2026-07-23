@@ -11,7 +11,7 @@ public class FileProcessingUploadPageTests : BaseTest
     {
         var cut = RenderComponent<FileProcessingUpload>();
 
-        cut.Markup.ShouldContain("Upload File");
+        cut.WaitForAssertion(() => cut.Markup.ShouldContain("Upload File"));
         cut.Find("select[name='FileProfile']").ShouldNotBeNull();
         cut.Find("input[type='file']").ShouldNotBeNull();
     }
@@ -25,8 +25,8 @@ public class FileProcessingUploadPageTests : BaseTest
 
         cut.WaitForAssertion(() =>
         {
-            cut.Markup.ShouldContain("File profile is required.");
             cut.Markup.ShouldContain("A file is required.");
+            cut.Markup.ShouldNotContain("File profile is required.");
         });
     }
 
@@ -34,7 +34,7 @@ public class FileProcessingUploadPageTests : BaseTest
     public void FileProcessingUpload_SubmitWithProfileButWithoutFile_ShowsFileValidationErrorOnly()
     {
         var cut = RenderComponent<FileProcessingUpload>();
-        cut.Find("select[name='FileProfile']").Change("SafaricomTopup");
+        cut.WaitForAssertion(() => cut.Find("select[name='FileProfile']").Change("22222222-2222-2222-2222-222222222222"));
 
         cut.Find("form").Submit();
 

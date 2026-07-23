@@ -4,11 +4,14 @@ using Bunit.TestDoubles;
 using EstateManagementUI.BlazorServer.Components.Permissions;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.UIServices;
+using EstateManagementUI.BusinessLogic.Models;
+using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using SimpleResults;
 using TestContext = Bunit.TestContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
@@ -25,6 +28,35 @@ public abstract class BaseTest :TestContext {
         
         this._mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
         this._mockPermissionService.Setup(x => x.HasPermissionAsync(It.IsAny<PermissionSection>(), It.IsAny<PermissionFunction>())).ReturnsAsync(true);
+        this.MerchantUIService.Setup(x => x.GetMerchantsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+            .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel>
+            {
+                new()
+                {
+                    MerchantId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    MerchantReportingId = 3333,
+                    MerchantName = "Test Merchant"
+                }
+            }));
+        this.FileProcessingUIService.Setup(x => x.GetFileProfiles(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.FileProfileDropDownModel>
+            {
+                new()
+                {
+                    FileProfileId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    Name = "SafaricomTopup"
+                },
+                new()
+                {
+                    FileProfileId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    Name = "AirtelTopup"
+                },
+                new()
+                {
+                    FileProfileId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
+                    Name = "SettlementFile"
+                }
+            }));
 
         this.Services.AddSingleton(this._mockMediator.Object);
         //this.Services.AddSingleton(this._mockNavigationManager.Object);
