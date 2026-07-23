@@ -9,7 +9,7 @@
     <PackageVersion Include="ClientProxyBase" Version="2026.6.1" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
-    <PackageVersion Include="FileProcessor.Client" Version="2026.5.1" />
+    <PackageVersion Include="FileProcessor.Client" Version="2026.6.2-build137" />
     <PackageVersion Include="IdentityModel" Version="6.2.0" />
     <PackageVersion Include="Lamar" Version="16.0.0" />
     <PackageVersion Include="Lamar.Microsoft.DependencyInjection" Version="16.0.0" />
