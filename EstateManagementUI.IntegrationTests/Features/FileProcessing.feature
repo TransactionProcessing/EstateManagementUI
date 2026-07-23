@@ -1,8 +1,8 @@
-@base @background @dashboard @estate
-Feature: Contract Management
+@base @background @estate @fileprocessing @dashboard
+Feature: File Processing
   As an authenticated estate user
-  I want to move through the contract screens
-  So that I can create, inspect, and edit a contract from one journey
+  I want to upload a batch topup file
+  So that I can prove the upload flow works end to end
 
   Background:
     Given I create the following roles
@@ -57,29 +57,27 @@ Feature: Contract Management
       | EmailAddress                 | Password | GivenName  | FamilyName | EstateName  |
       | estateuser@testestate1.co.uk | 123456   | TestEstate | User1      | Test Estate |
 
-  Scenario: Estate users can complete the full contract screen flow
     Given the user navigates to the app address
     And I click on the Sign In Button
     Then I am presented with a login screen
     When I login with the username 'estateuser@testestate1.co.uk' and password '123456'
     Then I should see the dashboard heading
-    When I open the contract management screen
-    Then I should see the contract management heading
-    When I create the following contracts
-      | ContractDescription    | OperatorName  |
-      | Integration Contract 1 | Test Operator |
-    Then I should see the contract in the list
-    When I view the contract
-    Then I should see the contract details page
-    When I edit the contract
-    Then I should see the contract edit page
-    When I add the following products to the contract
-      | ProductName       | DisplayText                | IsVariableValue | Value |
-      | Integration Product | Integration Product Display | False          | 10    |
-    Then I should see the product in the contract edit view
-    When I add the following fees to the contract
-      | FeeDescription | CalculationType | FeeType  | FeeValue |
-      | Integration Fee | Fixed          | Merchant | 1.50     |
-    Then I should see the fee in the contract edit view
-    When I return to the contract list
-    Then I should see the contract management heading
+    And I have created the following merchants
+      | MerchantName    | SettlementSchedule | AddressLine1       | AddressLine2 | Town      | Region      | PostCode | Country         | ContactName | EmailAddress             | PhoneNumber  |
+      | Test Merchant 1 | Immediate          | 1 Integration Road | Suite 100    | Test Town | Test Region | TE1 1ST  | United Kingdom  | Test Contact | test.contact@example.com | 01234567890  |
+    And I have created the following file profiles
+      | FileProfileId                        | Name           | ListeningDirectory        | RequestType | OperatorName  | LineTerminator         | FileFormatHandler   |
+      | 11111111-1111-1111-1111-111111111111 | SafaricomTopup | /tmp                     | BatchTopup  | Test Operator | CarriageReturnLineFeed | CsvFileFormatHandler |
+
+  Scenario: Estate users can upload a batch topup file successfully
+    When I open the file processing screen
+    Then I should see the file processing heading
+    When I open the file upload page
+    Then I should see the file upload page
+    And the upload dropdowns should default to the placeholder option
+    When I upload a batch topup file
+      | PhoneNumber    | Amount |
+      | 254701000001   | 500    |
+      | 254701000002   | 500    |
+      | 254701000003   | 500    |
+    Then I should see the upload success message

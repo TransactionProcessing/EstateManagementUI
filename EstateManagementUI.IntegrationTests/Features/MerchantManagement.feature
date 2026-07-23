@@ -65,7 +65,9 @@ Feature: Merchant Management
     Then I should see the dashboard heading
     When I open the merchant management screen
     Then I should see the merchant management heading
-    When I create a merchant
+    When I create the following merchants
+      | MerchantName           | SettlementSchedule | AddressLine1       | AddressLine2 | Town      | Region      | PostCode | Country        | ContactName  | EmailAddress             | PhoneNumber  |
+      | Integration Merchant 1 | Immediate          | 1 Integration Road | Suite 100    | Test Town | Test Region | TE1 1ST  | United Kingdom | Test Contact | test.contact@example.com | 01234567890  |
     Then I should see the merchant in the list
     When I view the merchant
     Then I should see the merchant view page
@@ -90,22 +92,32 @@ Feature: Merchant Management
     When I switch to the opening hours editor
     Then I should see the merchant opening hours editor
     When I save merchant opening hours
+      | MondayOpening | MondayClosing | TuesdayOpening | TuesdayClosing | WednesdayOpening | WednesdayClosing | ThursdayOpening | ThursdayClosing | FridayOpening | FridayClosing | SaturdayOpening | SaturdayClosing | SundayOpening | SundayClosing |
+      | 0800          | 1700          | 0800           | 1700           | 0800             | 1700             | 0800            | 1700            | 0800          | 1700          | 0900            | 1600            | 1000          | 1500          |
     Then I should see merchant opening hours updated successfully
     When I switch to the merchant operators editor
     And I add the operator to the merchant
+      | OperatorName  | MerchantNumber | TerminalNumber |
+      | Test Operator | 12345678       | 87654321       |
     Then I should see the operator in the merchant list
     When I switch to the contracts editor
     Then I should see no contracts assigned
     When I switch to the devices editor
     And I add the device to the merchant
+      | DeviceIdentifier |
+      | DEVICE-001       |
     Then I should see the device in the merchant list
     When I open the merchant schedule from the edit page
     Then I should see the editable merchant schedule page
     When I save the merchant schedule
+      | Year | ClosedDays |
+      | 2027 | 1, 2, 15   |
     Then I should see schedule saved successfully
     When I return to the merchant edit page
     Then I should see the merchant edit page
     When I open the merchant deposit page
     Then I should see the merchant deposit page
     When I submit the merchant deposit
+      | Amount | Date       | Reference |
+      | 100    | 2026-07-22 | DEP-001   |
     Then I should be back on the merchant list

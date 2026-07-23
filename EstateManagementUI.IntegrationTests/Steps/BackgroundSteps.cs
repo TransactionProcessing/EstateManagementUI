@@ -1,4 +1,6 @@
-﻿using EstateManagementUI.IntegrationTests.Common;
+using EstateManagementUI.IntegrationTests.Common;
+using FileProcessor.DataTransferObjects.Requests;
+using Microsoft.Playwright;
 using Reqnroll;
 using SecurityService.DataTransferObjects;
 using SecurityService.IntegrationTesting.Helpers;
@@ -23,13 +25,18 @@ namespace EstateManagementUI.IntegrationTests.Steps
         private readonly TestingContext TestingContext;
         private readonly SecurityServiceSteps SecurityServiceSteps;
         private readonly TransactionProcessorSteps TransactionProcessorSteps;
+        private readonly IPage Page;
 
-        public BackgroundSteps(TestingContext testingContext) {
+        public BackgroundSteps(TestingContext testingContext, IPage page)
+        {
             this.TestingContext = testingContext;
+            this.Page = page;
             this.SecurityServiceSteps = new SecurityServiceSteps(testingContext.DockerHelper.SecurityServiceClient);
             this.TransactionProcessorSteps = new TransactionProcessorSteps(testingContext.DockerHelper.TransactionProcessorClient,
                 testingContext.DockerHelper.TestHostHttpClient, testingContext.DockerHelper.ProjectionManagementClient);
         }
+
+        private DashboardPageHelper GetHelper() => new(this.Page, this.TestingContext);
 
         [Given(@"I create the following roles")]
         public async Task GivenICreateTheFollowingRoles(DataTable table)
@@ -63,9 +70,10 @@ namespace EstateManagementUI.IntegrationTests.Steps
         }
 
         [Given(@"I create the following clients")]
-        public async Task GivenICreateTheFollowingClients(DataTable table) {
+        public async Task GivenICreateTheFollowingClients(DataTable table)
+        {
             var estateManagementUiPort = this.TestingContext.DockerHelper.GetHostPort(ContainerType.EstateManagementUI);
-            List <CreateClientRequest> requests = table.Rows.ToCreateClientRequests(this.TestingContext.DockerHelper.TestId, estateManagementUiPort);
+            List<CreateClientRequest> requests = table.Rows.ToCreateClientRequests(this.TestingContext.DockerHelper.TestId, estateManagementUiPort);
             List<(String clientId, String secret, List<String> allowedGrantTypes)> clients = await this.SecurityServiceSteps.GivenTheFollowingClientsExist(requests);
             foreach ((String clientId, String secret, List<String> allowedGrantTypes) client in clients)
             {
@@ -103,6 +111,59 @@ namespace EstateManagementUI.IntegrationTests.Steps
             foreach ((String, String) response in results)
             {
                 this.TestingContext.Users.Add(response.Item1, response.Item2);
+            }
+        }
+
+        [Given(@"I have created the following file profiles")]
+        [Then(@"I have created the following file profiles")]
+        [Given(@"I create the following file profiles")]
+        public async Task GivenIHaveCreatedTheFollowingFileProfiles(DataTable table)
+        {
+            foreach (DataTableRow tableRow in table.Rows)
+            {
+                string lineTerminatorValue = ReqnrollTableHelper.GetStringRowValue(tableRow, "LineTerminator");
+
+                CreateFileProfileRequest request = new()
+                {
+                    FileProfileId = Guid.Parse(ReqnrollTableHelper.GetStringRowValue(tableRow, "FileProfileId")),
+                    Name = ReqnrollTableHelper.GetStringRowValue(tableRow, "Name"),
+                    ListeningDirectory = ReqnrollTableHelper.GetStringRowValue(tableRow, "ListeningDirectory"),
+                    RequestType = ReqnrollTableHelper.GetStringRowValue(tableRow, "RequestType"),
+                    OperatorName = ReqnrollTableHelper.GetStringRowValue(tableRow, "OperatorName"),
+                    LineTerminator = Enum.TryParse(lineTerminatorValue, true, out LineTerminatorType lineTerminator)
+                        ? lineTerminator
+                        : null,
+                    FileFormatHandler = ReqnrollTableHelper.GetStringRowValue(tableRow, "FileFormatHandler")
+                };
+
+                Result<FileProcessor.Models.FileProfile> result = await this.TestingContext.DockerHelper.FileProcessorClient.CreateFileProfile(this.TestingContext.AccessToken, request, CancellationToken.None);
+                result.IsSuccess.ShouldBeTrue();
+            }
+        }
+
+        [Given(@"I have created the following merchants")]
+        [Then(@"I have created the following merchants")]
+        public async Task GivenIHaveCreatedTheFollowingMerchants(DataTable table)
+        {
+            DashboardPageHelper helper = this.GetHelper();
+
+            foreach (DataTableRow tableRow in table.Rows)
+            {
+                string? addressLine2 = ReqnrollTableHelper.GetStringRowValue(tableRow, "AddressLine2");
+
+                string merchantName = ReqnrollTableHelper.GetStringRowValue(tableRow, "MerchantName");
+                string settlementSchedule = ReqnrollTableHelper.GetStringRowValue(tableRow, "SettlementSchedule");
+                string addressLine1 = ReqnrollTableHelper.GetStringRowValue(tableRow, "AddressLine1");
+                string town = ReqnrollTableHelper.GetStringRowValue(tableRow, "Town");
+                string region = ReqnrollTableHelper.GetStringRowValue(tableRow, "Region");
+                string postCode = ReqnrollTableHelper.GetStringRowValue(tableRow, "PostCode");
+                string country = ReqnrollTableHelper.GetStringRowValue(tableRow, "Country");
+                string contactName = ReqnrollTableHelper.GetStringRowValue(tableRow, "ContactName");
+                string emailAddress = ReqnrollTableHelper.GetStringRowValue(tableRow, "EmailAddress");
+                string phoneNumber = ReqnrollTableHelper.GetStringRowValue(tableRow, "PhoneNumber");
+
+                await helper.CreateMerchantAsync(merchantName, settlementSchedule, addressLine1, addressLine2, town, region, postCode, country, contactName, emailAddress, phoneNumber);
+                await helper.AssertMerchantListContainsAsync(merchantName);
             }
         }
 

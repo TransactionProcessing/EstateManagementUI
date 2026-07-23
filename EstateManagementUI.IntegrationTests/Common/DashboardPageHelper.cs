@@ -244,11 +244,13 @@ public sealed class DashboardPageHelper
         }, nameof(AssertNewOperatorScreenVisibleAsync));
     }
 
-    public async Task CreateOperatorAsync(string operatorName)
+    public async Task CreateOperatorAsync(string operatorName, bool requireCustomMerchantNumber, bool requireCustomTerminalNumber)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.Locator("input[placeholder='Enter operator name']").FillAsync(operatorName);
+            await _page.Locator("input[type='checkbox']").Nth(0).SetCheckedAsync(requireCustomMerchantNumber);
+            await _page.Locator("input[type='checkbox']").Nth(1).SetCheckedAsync(requireCustomTerminalNumber);
             await _page.Locator("#createOperatorButton").ClickAsync();
         }, nameof(CreateOperatorAsync));
     }
@@ -506,6 +508,130 @@ public sealed class DashboardPageHelper
         }, nameof(AssertContractManagementHeadingVisibleAsync));
     }
 
+    public async Task OpenFileProcessingScreenAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var fileProcessingLink = _page.Locator("#fileProcessingLink");
+            if (await fileProcessingLink.CountAsync() > 0 && await fileProcessingLink.First.IsVisibleAsync())
+            {
+                await fileProcessingLink.First.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                await _page.GotoAsync(ResolveBaseUrl() + "/file-processing");
+            }
+
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenFileProcessingScreenAsync));
+    }
+
+    public async Task AssertFileProcessingHeadingVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "File Processing" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.GetByRole(AriaRole.Button, new() { Name = "Upload File" }).First.IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertFileProcessingHeadingVisibleAsync));
+    }
+
+    public async Task OpenFileUploadPageAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GotoAsync(ResolveBaseUrl() + "/file-processing/upload");
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenFileUploadPageAsync));
+    }
+
+    public async Task AssertFileUploadPageVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Upload File" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#merchantSelect").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#fileProfileSelect").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#uploadFileInput").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator("#uploadFileButton").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertFileUploadPageVisibleAsync));
+    }
+
+    public async Task AssertFileUploadDropdownDefaultsAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.Locator("#merchantSelect").InputValueAsync()).ShouldBe(string.Empty);
+            (await _page.Locator("#fileProfileSelect").InputValueAsync()).ShouldBe(string.Empty);
+        }, nameof(AssertFileUploadDropdownDefaultsAsync));
+    }
+
+    public async Task UploadBatchTopupFileAsync()
+    {
+        await UploadBatchTopupFileAsync("""
+                                  254701000001,500
+                                  254701000002,500
+                                  254701000003,500
+                                  """);
+    }
+
+    public async Task UploadBatchTopupFileAsync(string fileContents)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await SelectFirstRealOptionAsync("#merchantSelect");
+            await SelectFirstRealOptionAsync("#fileProfileSelect");
+
+            string tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.csv");
+            await File.WriteAllTextAsync(tempFilePath, fileContents);
+            string fileName = Path.GetFileName(tempFilePath);
+
+            try
+            {
+                await _page.Locator("#uploadFileInput").SetInputFilesAsync(tempFilePath);
+
+                await _page.Locator("#uploadFileButton").ClickAsync();
+                await _page.GetByText($"File '{fileName}' uploaded successfully.").WaitForAsync(new LocatorWaitForOptions
+                {
+                    State = WaitForSelectorState.Visible,
+                    Timeout = 30000
+                });
+            }
+            finally
+            {
+                try
+                {
+                    File.Delete(tempFilePath);
+                }
+                catch
+                {
+                    // Best effort only. The browser may still be holding the file briefly.
+                }
+            }
+        }, nameof(UploadBatchTopupFileAsync));
+    }
+
+    public async Task AssertFileUploadSuccessMessageVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            (await _page.GetByText("uploaded successfully").IsVisibleAsync()).ShouldBeTrue();
+        }, nameof(AssertFileUploadSuccessMessageVisibleAsync));
+    }
+
     public async Task CreateContractAsync(string contractDescription, string operatorName)
     {
         await RunWithFailureArtifactsAsync(async () =>
@@ -625,7 +751,7 @@ public sealed class DashboardPageHelper
         }, nameof(AssertContractEditVisibleAsync));
     }
 
-    public async Task AddProductToContractAsync(string productName, string displayText, decimal value)
+    public async Task AddProductToContractAsync(string productName, string displayText, bool isVariableValue, decimal? value)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
@@ -640,7 +766,11 @@ public sealed class DashboardPageHelper
 
             await modal.Locator("input[placeholder='Enter product name']").FillAsync(productName);
             await modal.Locator("input[placeholder='Enter display text']").FillAsync(displayText);
-            await modal.Locator("input[placeholder='Enter value']").FillAsync(value.ToString(CultureInfo.InvariantCulture));
+            await modal.Locator("input[type='checkbox']").SetCheckedAsync(isVariableValue);
+            if (isVariableValue == false)
+            {
+                await modal.Locator("input[placeholder='Enter value']").FillAsync(value?.ToString(CultureInfo.InvariantCulture) ?? throw new InvalidOperationException("Value is required when the product is not variable."));
+            }
             await modal.GetByRole(AriaRole.Button, new() { Name = "Add Product" }).ClickAsync();
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
@@ -668,7 +798,7 @@ public sealed class DashboardPageHelper
         }, nameof(AssertContractProductVisibleAsync));
     }
 
-    public async Task AddFeeToContractAsync(string feeDescription, decimal feeValue)
+    public async Task AddFeeToContractAsync(string feeDescription, string calculationType, string feeType, decimal feeValue)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
@@ -682,8 +812,8 @@ public sealed class DashboardPageHelper
             });
 
             await modal.Locator("input[placeholder='Enter fee description']").FillAsync(feeDescription);
-            await modal.Locator("select").Nth(0).SelectOptionAsync("0");
-            await modal.Locator("select").Nth(1).SelectOptionAsync("0");
+            await modal.Locator("select").Nth(0).SelectOptionAsync(ResolveCalculationTypeOptionValue(calculationType));
+            await modal.Locator("select").Nth(1).SelectOptionAsync(ResolveFeeTypeOptionValue(feeType));
             await modal.Locator("input[placeholder='Enter fee value']").FillAsync(feeValue.ToString(CultureInfo.InvariantCulture));
             await modal.GetByRole(AriaRole.Button, new() { Name = "Add Fee" }).ClickAsync();
 
@@ -747,6 +877,33 @@ public sealed class DashboardPageHelper
 
     public async Task CreateMerchantAsync(string merchantName)
     {
+        await CreateMerchantAsync(
+            merchantName,
+            "Immediate",
+            "1 Integration Road",
+            "Suite 100",
+            "Test Town",
+            "Test Region",
+            "TE1 1ST",
+            "United Kingdom",
+            "Test Contact",
+            "test.contact@example.com",
+            "01234567890");
+    }
+
+    public async Task CreateMerchantAsync(
+        string merchantName,
+        string settlementSchedule,
+        string addressLine1,
+        string? addressLine2,
+        string town,
+        string region,
+        string postCode,
+        string country,
+        string contactName,
+        string emailAddress,
+        string phoneNumber)
+    {
         await RunWithFailureArtifactsAsync(async () =>
         {
             var newMerchantButton = _page.Locator("#newMerchantButton");
@@ -762,19 +919,19 @@ public sealed class DashboardPageHelper
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
             await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchantName);
-            await _page.Locator("select[name='SettlementSchedule']").SelectOptionAsync("Immediate");
-            await _page.Locator("input[placeholder='Enter address line 1']").FillAsync("1 Integration Road");
-            await _page.Locator("input[placeholder='Enter address line 2 (optional)']").FillAsync("Suite 100");
-            await _page.Locator("input[placeholder='Enter town']").FillAsync("Test Town");
-            await _page.Locator("input[placeholder='Enter region']").FillAsync("Test Region");
-            await _page.Locator("input[placeholder='Enter postcode']").FillAsync("TE1 1ST");
+            await _page.Locator("select[name='SettlementSchedule']").SelectOptionAsync(settlementSchedule);
+            await _page.Locator("input[placeholder='Enter address line 1']").FillAsync(addressLine1);
+            await _page.Locator("input[placeholder='Enter address line 2 (optional)']").FillAsync(addressLine2 ?? string.Empty);
+            await _page.Locator("input[placeholder='Enter town']").FillAsync(town);
+            await _page.Locator("input[placeholder='Enter region']").FillAsync(region);
+            await _page.Locator("input[placeholder='Enter postcode']").FillAsync(postCode);
 
             await _page.GetByRole(AriaRole.Button, new() { Name = "Select country" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Button, new() { Name = "United Kingdom" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = country }).ClickAsync();
 
-            await _page.Locator("input[placeholder='Enter contact name']").FillAsync("Test Contact");
-            await _page.Locator("input[placeholder='Enter email address']").FillAsync("test.contact@example.com");
-            await _page.Locator("input[placeholder='Enter phone number']").FillAsync("01234567890");
+            await _page.Locator("input[placeholder='Enter contact name']").FillAsync(contactName);
+            await _page.Locator("input[placeholder='Enter email address']").FillAsync(emailAddress);
+            await _page.Locator("input[placeholder='Enter phone number']").FillAsync(phoneNumber);
 
             await _page.Locator("#createMerchantButton").ClickAsync();
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
@@ -954,24 +1111,38 @@ public sealed class DashboardPageHelper
         }, nameof(AssertMerchantEditOpeningHoursVisibleAsync));
     }
 
-    public async Task SaveMerchantOpeningHoursAsync()
+    public async Task SaveMerchantOpeningHoursAsync(
+        string mondayOpening,
+        string mondayClosing,
+        string tuesdayOpening,
+        string tuesdayClosing,
+        string wednesdayOpening,
+        string wednesdayClosing,
+        string thursdayOpening,
+        string thursdayClosing,
+        string fridayOpening,
+        string fridayClosing,
+        string saturdayOpening,
+        string saturdayClosing,
+        string sundayOpening,
+        string sundayClosing)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await _page.Locator("#mondayOpening").FillAsync("0800");
-            await _page.Locator("#mondayClosing").FillAsync("1700");
-            await _page.Locator("#tuesdayOpening").FillAsync("0800");
-            await _page.Locator("#tuesdayClosing").FillAsync("1700");
-            await _page.Locator("#wednesdayOpening").FillAsync("0800");
-            await _page.Locator("#wednesdayClosing").FillAsync("1700");
-            await _page.Locator("#thursdayOpening").FillAsync("0800");
-            await _page.Locator("#thursdayClosing").FillAsync("1700");
-            await _page.Locator("#fridayOpening").FillAsync("0800");
-            await _page.Locator("#fridayClosing").FillAsync("1700");
-            await _page.Locator("#saturdayOpening").FillAsync("0900");
-            await _page.Locator("#saturdayClosing").FillAsync("1600");
-            await _page.Locator("#sundayOpening").FillAsync("1000");
-            await _page.Locator("#sundayClosing").FillAsync("1500");
+            await _page.Locator("#mondayOpening").FillAsync(mondayOpening);
+            await _page.Locator("#mondayClosing").FillAsync(mondayClosing);
+            await _page.Locator("#tuesdayOpening").FillAsync(tuesdayOpening);
+            await _page.Locator("#tuesdayClosing").FillAsync(tuesdayClosing);
+            await _page.Locator("#wednesdayOpening").FillAsync(wednesdayOpening);
+            await _page.Locator("#wednesdayClosing").FillAsync(wednesdayClosing);
+            await _page.Locator("#thursdayOpening").FillAsync(thursdayOpening);
+            await _page.Locator("#thursdayClosing").FillAsync(thursdayClosing);
+            await _page.Locator("#fridayOpening").FillAsync(fridayOpening);
+            await _page.Locator("#fridayClosing").FillAsync(fridayClosing);
+            await _page.Locator("#saturdayOpening").FillAsync(saturdayOpening);
+            await _page.Locator("#saturdayClosing").FillAsync(saturdayClosing);
+            await _page.Locator("#sundayOpening").FillAsync(sundayOpening);
+            await _page.Locator("#sundayClosing").FillAsync(sundayClosing);
 
             await _page.Locator("#saveOpeningHoursButton").ClickAsync();
             await _page.GetByText("Merchant opening hours updated successfully").WaitForAsync(new LocatorWaitForOptions
@@ -1132,22 +1303,21 @@ public sealed class DashboardPageHelper
         }, nameof(AssertMerchantEditableScheduleVisibleAsync));
     }
 
-    public async Task SaveMerchantScheduleAsync()
+    public async Task SaveMerchantScheduleAsync(int year, string closedDays)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            var selectedYear = DateTime.Today.Year + 1;
-            await EnsureMerchantScheduleExistsAsync(selectedYear);
-            await _page.Locator("#selectedYear").SelectOptionAsync(selectedYear.ToString(CultureInfo.InvariantCulture));
+            await EnsureMerchantScheduleExistsAsync(year, closedDays);
+            await _page.Locator("#selectedYear").SelectOptionAsync(year.ToString(CultureInfo.InvariantCulture));
             await _page.Locator("#loadYearButton").ClickAsync();
             await _page.Locator("#month-1-closed-days").WaitForAsync(new LocatorWaitForOptions
             {
                 State = WaitForSelectorState.Visible,
                 Timeout = 10000
             });
-            await _page.Locator("#month-1-closed-days").FillAsync("1, 2, 15");
+            await _page.Locator("#month-1-closed-days").FillAsync(closedDays);
             await _page.Locator("#saveScheduleButton").ClickAsync();
-            await _page.GetByText($"Schedule saved for {selectedYear}.").WaitForAsync(new LocatorWaitForOptions
+            await _page.GetByText($"Schedule saved for {year}.").WaitForAsync(new LocatorWaitForOptions
             {
                 State = WaitForSelectorState.Visible,
                 Timeout = 10000
@@ -1155,7 +1325,7 @@ public sealed class DashboardPageHelper
         }, nameof(SaveMerchantScheduleAsync));
     }
 
-    private async Task EnsureMerchantScheduleExistsAsync(int year)
+    private async Task EnsureMerchantScheduleExistsAsync(int year, string closedDays)
     {
         var merchantId = ExtractMerchantIdFromUrl(_page.Url);
         if (merchantId == Guid.Empty || this.TestingContext.Estates.Count != 1)
@@ -1166,6 +1336,10 @@ public sealed class DashboardPageHelper
         var estateId = this.TestingContext.GetAllEstateIds().Single();
         var accessToken = this.TestingContext.AccessToken;
         var client = this.TestingContext.DockerHelper.TransactionProcessorClient;
+        List<int> closedDayList = closedDays.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(int.Parse)
+            .ToList();
+
         var scheduleRequest = new CreateMerchantScheduleRequest
         {
             Year = year,
@@ -1174,7 +1348,7 @@ public sealed class DashboardPageHelper
                 new MerchantScheduleMonthRequest
                 {
                     Month = 1,
-                    ClosedDays = [1, 2, 15]
+                    ClosedDays = closedDayList
                 }
             ]
         };
@@ -1254,12 +1428,12 @@ public sealed class DashboardPageHelper
         }, nameof(AssertMerchantDepositVisibleAsync));
     }
 
-    public async Task SubmitMerchantDepositAsync(decimal amount, string reference)
+    public async Task SubmitMerchantDepositAsync(decimal amount, DateOnly date, string reference)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.Locator("#depositAmount").FillAsync(amount.ToString(CultureInfo.InvariantCulture));
-            await _page.Locator("#depositDate").FillAsync(DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            await _page.Locator("#depositDate").FillAsync(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
             await _page.Locator("#depositReference").FillAsync(reference);
             await _page.Locator("#makeDepositButton").ClickAsync();
             await _page.GetByText("Deposit recorded successfully").WaitForAsync(new LocatorWaitForOptions
@@ -1269,6 +1443,26 @@ public sealed class DashboardPageHelper
             });
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }, nameof(SubmitMerchantDepositAsync));
+    }
+
+    private static string ResolveCalculationTypeOptionValue(string calculationType)
+    {
+        return calculationType.Trim().ToLowerInvariant() switch
+        {
+            "fixed" or "0" => "0",
+            "percentage" or "1" => "1",
+            _ => throw new InvalidOperationException($"Unsupported calculation type '{calculationType}'.")
+        };
+    }
+
+    private static string ResolveFeeTypeOptionValue(string feeType)
+    {
+        return feeType.Trim().ToLowerInvariant() switch
+        {
+            "merchant" or "0" => "0",
+            "serviceprovider" or "service provider" or "1" => "1",
+            _ => throw new InvalidOperationException($"Unsupported fee type '{feeType}'.")
+        };
     }
 
     public async Task AssertHomePageVisibleAsync()
@@ -1562,6 +1756,26 @@ public sealed class DashboardPageHelper
         }
 
         throw new InvalidOperationException($"Could not find a visible clickable element for selectors: {string.Join(", ", selectors)}");
+    }
+
+    private async Task SelectFirstRealOptionAsync(string selectSelector)
+    {
+        var options = _page.Locator($"{selectSelector} option");
+        var optionCount = await options.CountAsync();
+        for (var index = 0; index < optionCount; index++)
+        {
+            var option = options.Nth(index);
+            var value = await option.GetAttributeAsync("value");
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            await _page.Locator(selectSelector).SelectOptionAsync(new[] { value! });
+            return;
+        }
+
+        throw new InvalidOperationException($"Could not find a non-placeholder option for {selectSelector}");
     }
 
     private ILocator GetMerchantRow(string merchantName)
