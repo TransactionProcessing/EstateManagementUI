@@ -67,7 +67,7 @@ Feature: File Processing
       | Test Merchant 1 | Immediate          | 1 Integration Road | Suite 100    | Test Town | Test Region | TE1 1ST  | United Kingdom  | Test Contact | test.contact@example.com | 01234567890  |
     And I have created the following file profiles
       | FileProfileId                        | Name           | ListeningDirectory        | RequestType | OperatorName  | LineTerminator         | FileFormatHandler   |
-      | 11111111-1111-1111-1111-111111111111 | SafaricomTopup | /var/lib/fileprocessor/in | BatchTopup  | Test Operator | CarriageReturnLineFeed | CsvFileFormatHandler |
+      | 11111111-1111-1111-1111-111111111111 | SafaricomTopup | /tmp                     | BatchTopup  | Test Operator | CarriageReturnLineFeed | CsvFileFormatHandler |
 
   Scenario: Estate users can upload a batch topup file successfully
     When I open the file processing screen

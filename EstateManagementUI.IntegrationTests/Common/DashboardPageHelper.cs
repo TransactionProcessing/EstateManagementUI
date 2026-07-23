@@ -595,9 +595,9 @@ public sealed class DashboardPageHelper
             await SelectFirstRealOptionAsync("#merchantSelect");
             await SelectFirstRealOptionAsync("#fileProfileSelect");
 
-            const string fileName = "safaricom-topup-integration.csv";
             string tempFilePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.csv");
             await File.WriteAllTextAsync(tempFilePath, fileContents);
+            string fileName = Path.GetFileName(tempFilePath);
 
             try
             {

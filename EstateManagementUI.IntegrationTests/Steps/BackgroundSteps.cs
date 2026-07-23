@@ -115,6 +115,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
         }
 
         [Given(@"I have created the following file profiles")]
+        [Then(@"I have created the following file profiles")]
         [Given(@"I create the following file profiles")]
         public async Task GivenIHaveCreatedTheFollowingFileProfiles(DataTable table)
         {
@@ -141,6 +142,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
         }
 
         [Given(@"I have created the following merchants")]
+        [Then(@"I have created the following merchants")]
         public async Task GivenIHaveCreatedTheFollowingMerchants(DataTable table)
         {
             DashboardPageHelper helper = this.GetHelper();
