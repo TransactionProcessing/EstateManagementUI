@@ -1,6 +1,8 @@
 using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll;
+using Shared.IntegrationTesting;
+using System.Globalization;
 
 namespace EstateManagementUI.IntegrationTests.Steps;
 
@@ -8,16 +10,12 @@ namespace EstateManagementUI.IntegrationTests.Steps;
 [Scope(Tag = "estate")]
 public sealed class MerchantManagementSteps
 {
-    private const string OperatorName = "Test Operator";
-    private const string OperatorMerchantNumber = "12345678";
-    private const string OperatorTerminalNumber = "87654321";
-    private const string DepositReference = "DEP-001";
-    private const decimal DepositAmount = 100m;
-
     private readonly IPage _page;
     private readonly TestingContext _testingContext;
-    private readonly string _merchantName = $"Integration Merchant {Guid.NewGuid():N}";
-    private readonly string _deviceIdentifier = $"DEVICE-{Guid.NewGuid():N}";
+    private string _merchantName = string.Empty;
+    private string _operatorName = string.Empty;
+    private string _deviceIdentifier = string.Empty;
+    private string _depositReference = string.Empty;
 
     public MerchantManagementSteps(IPage page, TestingContext testingContext)
     {
@@ -31,8 +29,25 @@ public sealed class MerchantManagementSteps
     [Then("I should see the merchant management heading")]
     public Task ThenIShouldSeeTheMerchantManagementHeading() => GetHelper().AssertMerchantManagementHeadingVisibleAsync();
 
-    [When("I create a merchant")]
-    public Task WhenICreateAMerchant() => GetHelper().CreateMerchantAsync(_merchantName);
+    [When("I create the following merchants")]
+    public async Task WhenICreateTheFollowingMerchants(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _merchantName = ReqnrollTableHelper.GetStringRowValue(row, "MerchantName");
+
+        await GetHelper().CreateMerchantAsync(
+            _merchantName,
+            ReqnrollTableHelper.GetStringRowValue(row, "SettlementSchedule"),
+            ReqnrollTableHelper.GetStringRowValue(row, "AddressLine1"),
+            ReqnrollTableHelper.GetStringRowValue(row, "AddressLine2"),
+            ReqnrollTableHelper.GetStringRowValue(row, "Town"),
+            ReqnrollTableHelper.GetStringRowValue(row, "Region"),
+            ReqnrollTableHelper.GetStringRowValue(row, "PostCode"),
+            ReqnrollTableHelper.GetStringRowValue(row, "Country"),
+            ReqnrollTableHelper.GetStringRowValue(row, "ContactName"),
+            ReqnrollTableHelper.GetStringRowValue(row, "EmailAddress"),
+            ReqnrollTableHelper.GetStringRowValue(row, "PhoneNumber"));
+    }
 
     [Then("I should see the merchant in the list")]
     public Task ThenIShouldSeeTheMerchantInTheList() => GetHelper().AssertMerchantListContainsAsync(_merchantName);
@@ -101,7 +116,25 @@ public sealed class MerchantManagementSteps
     public Task ThenIShouldSeeTheMerchantOpeningHoursEditor() => GetHelper().AssertMerchantEditOpeningHoursVisibleAsync();
 
     [When("I save merchant opening hours")]
-    public Task WhenISaveMerchantOpeningHours() => GetHelper().SaveMerchantOpeningHoursAsync();
+    public async Task WhenISaveMerchantOpeningHours(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        await GetHelper().SaveMerchantOpeningHoursAsync(
+            ReqnrollTableHelper.GetStringRowValue(row, "MondayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "MondayClosing"),
+            ReqnrollTableHelper.GetStringRowValue(row, "TuesdayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "TuesdayClosing"),
+            ReqnrollTableHelper.GetStringRowValue(row, "WednesdayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "WednesdayClosing"),
+            ReqnrollTableHelper.GetStringRowValue(row, "ThursdayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "ThursdayClosing"),
+            ReqnrollTableHelper.GetStringRowValue(row, "FridayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "FridayClosing"),
+            ReqnrollTableHelper.GetStringRowValue(row, "SaturdayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "SaturdayClosing"),
+            ReqnrollTableHelper.GetStringRowValue(row, "SundayOpening"),
+            ReqnrollTableHelper.GetStringRowValue(row, "SundayClosing"));
+    }
 
     [Then("I should see merchant opening hours updated successfully")]
     public Task ThenIShouldSeeMerchantOpeningHoursUpdatedSuccessfully() => GetHelper().AssertMerchantPageTextVisibleAsync("Merchant opening hours updated successfully");
@@ -110,10 +143,19 @@ public sealed class MerchantManagementSteps
     public Task WhenISwitchToTheOperatorsEditor() => GetHelper().SwitchMerchantTabAsync("Assigned Operators");
 
     [When("I add the operator to the merchant")]
-    public Task WhenIAddTheOperatorToTheMerchant() => GetHelper().AddMerchantOperatorAsync(OperatorName, OperatorMerchantNumber, OperatorTerminalNumber);
+    public async Task WhenIAddTheOperatorToTheMerchant(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _operatorName = ReqnrollTableHelper.GetStringRowValue(row, "OperatorName");
+
+        await GetHelper().AddMerchantOperatorAsync(
+            _operatorName,
+            ReqnrollTableHelper.GetStringRowValue(row, "MerchantNumber"),
+            ReqnrollTableHelper.GetStringRowValue(row, "TerminalNumber"));
+    }
 
     [Then("I should see the operator in the merchant list")]
-    public Task ThenIShouldSeeTheOperatorInTheMerchantList() => GetHelper().AssertMerchantOperatorVisibleAsync(OperatorName);
+    public Task ThenIShouldSeeTheOperatorInTheMerchantList() => GetHelper().AssertMerchantOperatorVisibleAsync(_operatorName);
 
     [When("I switch to the contracts editor")]
     public Task WhenISwitchToTheContractsEditor() => GetHelper().SwitchMerchantTabAsync("Assigned Contracts");
@@ -122,7 +164,12 @@ public sealed class MerchantManagementSteps
     public Task WhenISwitchToTheDevicesEditor() => GetHelper().SwitchMerchantTabAsync("Assigned Devices");
 
     [When("I add the device to the merchant")]
-    public Task WhenIAddTheDeviceToTheMerchant() => GetHelper().AddMerchantDeviceAsync(_deviceIdentifier);
+    public async Task WhenIAddTheDeviceToTheMerchant(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _deviceIdentifier = ReqnrollTableHelper.GetStringRowValue(row, "DeviceIdentifier");
+        await GetHelper().AddMerchantDeviceAsync(_deviceIdentifier);
+    }
 
     [Then("I should see the device in the merchant list")]
     public Task ThenIShouldSeeTheDeviceInTheMerchantList() => GetHelper().AssertMerchantDeviceVisibleAsync(_deviceIdentifier);
@@ -134,7 +181,13 @@ public sealed class MerchantManagementSteps
     public Task ThenIShouldSeeTheEditableMerchantSchedulePage() => GetHelper().AssertMerchantEditableScheduleVisibleAsync();
 
     [When("I save the merchant schedule")]
-    public Task WhenISaveTheMerchantSchedule() => GetHelper().SaveMerchantScheduleAsync();
+    public async Task WhenISaveTheMerchantSchedule(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        await GetHelper().SaveMerchantScheduleAsync(
+            int.Parse(ReqnrollTableHelper.GetStringRowValue(row, "Year"), CultureInfo.InvariantCulture),
+            ReqnrollTableHelper.GetStringRowValue(row, "ClosedDays"));
+    }
 
     [Then("I should see schedule saved successfully")]
     public Task ThenIShouldSeeScheduleSavedSuccessfully() => GetHelper().AssertMerchantPageTextVisibleAsync("Schedule saved for");
@@ -149,7 +202,16 @@ public sealed class MerchantManagementSteps
     public Task ThenIShouldSeeTheMerchantDepositPage() => GetHelper().AssertMerchantDepositVisibleAsync(_merchantName);
 
     [When("I submit the merchant deposit")]
-    public Task WhenISubmitTheMerchantDeposit() => GetHelper().SubmitMerchantDepositAsync(DepositAmount, DepositReference);
+    public async Task WhenISubmitTheMerchantDeposit(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _depositReference = ReqnrollTableHelper.GetStringRowValue(row, "Reference");
+
+        await GetHelper().SubmitMerchantDepositAsync(
+            decimal.Parse(ReqnrollTableHelper.GetStringRowValue(row, "Amount"), CultureInfo.InvariantCulture),
+            DateOnly.ParseExact(ReqnrollTableHelper.GetStringRowValue(row, "Date"), "yyyy-MM-dd", CultureInfo.InvariantCulture),
+            _depositReference);
+    }
 
     [Then("I should be back on the merchant list")]
     public Task ThenIShouldBeBackOnTheMerchantList() => GetHelper().AssertMerchantListContainsAsync(_merchantName);

@@ -1,6 +1,8 @@
 using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll;
+using Shared.IntegrationTesting;
+using System.Globalization;
 
 namespace EstateManagementUI.IntegrationTests.Steps;
 
@@ -8,13 +10,11 @@ namespace EstateManagementUI.IntegrationTests.Steps;
 [Scope(Tag = "estate")]
 public sealed class ContractManagementSteps
 {
-    private const string ContractDescription = "Integration Contract";
-    private const string ProductName = "Integration Product";
-    private const string ProductDisplayText = "Integration Product Display";
-    private const string FeeDescription = "Integration Fee";
-
     private readonly IPage _page;
     private readonly TestingContext _testingContext;
+    private string _contractDescription = string.Empty;
+    private string _productName = string.Empty;
+    private string _feeDescription = string.Empty;
 
     public ContractManagementSteps(IPage page, TestingContext testingContext)
     {
@@ -28,35 +28,63 @@ public sealed class ContractManagementSteps
     [Then("I should see the contract management heading")]
     public Task ThenIShouldSeeTheContractManagementHeading() => GetHelper().AssertContractManagementHeadingVisibleAsync();
 
-    [When("I create a contract")]
-    public Task WhenICreateAContract() => GetHelper().CreateContractAsync(ContractDescription, "Test Operator");
+    [When("I create the following contracts")]
+    public async Task WhenICreateTheFollowingContracts(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _contractDescription = ReqnrollTableHelper.GetStringRowValue(row, "ContractDescription");
 
-    [Then("I should see the contract in the list")]
-    public Task ThenIShouldSeeTheContractInTheList() => GetHelper().AssertContractListContainsAsync(ContractDescription);
+        await GetHelper().CreateContractAsync(_contractDescription, ReqnrollTableHelper.GetStringRowValue(row, "OperatorName"));
+    }
+
+    [Then("I should see the created contract in the list")]
+    public Task ThenIShouldSeeTheCreatedContractInTheList() => GetHelper().AssertContractListContainsAsync(_contractDescription);
 
     [When("I view the contract")]
-    public Task WhenIViewTheContract() => GetHelper().OpenContractViewAsync(ContractDescription);
+    public Task WhenIViewTheContract() => GetHelper().OpenContractViewAsync(_contractDescription);
 
     [Then("I should see the contract details page")]
-    public Task ThenIShouldSeeTheContractDetailsPage() => GetHelper().AssertContractViewVisibleAsync(ContractDescription);
+    public Task ThenIShouldSeeTheContractDetailsPage() => GetHelper().AssertContractViewVisibleAsync(_contractDescription);
 
     [When("I edit the contract")]
-    public Task WhenIEditTheContract() => GetHelper().OpenContractEditAsync(ContractDescription);
+    public Task WhenIEditTheContract() => GetHelper().OpenContractEditAsync(_contractDescription);
 
     [Then("I should see the contract edit page")]
-    public Task ThenIShouldSeeTheContractEditPage() => GetHelper().AssertContractEditVisibleAsync(ContractDescription);
+    public Task ThenIShouldSeeTheContractEditPage() => GetHelper().AssertContractEditVisibleAsync(_contractDescription);
 
-    [When("I add a product to the contract")]
-    public Task WhenIAddAProductToTheContract() => GetHelper().AddProductToContractAsync(ProductName, ProductDisplayText, 10m);
+    [When("I add the following products to the contract")]
+    public async Task WhenIAddTheFollowingProductsToTheContract(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _productName = ReqnrollTableHelper.GetStringRowValue(row, "ProductName");
 
-    [Then("I should see the product in the contract edit view")]
-    public Task ThenIShouldSeeTheProductInTheContractEditView() => GetHelper().AssertContractProductVisibleAsync(ProductName);
+        await GetHelper().AddProductToContractAsync(
+            _productName,
+            ReqnrollTableHelper.GetStringRowValue(row, "DisplayText"),
+            bool.Parse(ReqnrollTableHelper.GetStringRowValue(row, "IsVariableValue")),
+            string.IsNullOrWhiteSpace(ReqnrollTableHelper.GetStringRowValue(row, "Value"))
+                ? null
+                : decimal.Parse(ReqnrollTableHelper.GetStringRowValue(row, "Value"), CultureInfo.InvariantCulture));
+    }
 
-    [When("I add a fee to the contract")]
-    public Task WhenIAddAFeeToTheContract() => GetHelper().AddFeeToContractAsync(FeeDescription, 1.50m);
+    [Then("I should see the created product in the contract edit view")]
+    public Task ThenIShouldSeeTheCreatedProductInTheContractEditView() => GetHelper().AssertContractProductVisibleAsync(_productName);
 
-    [Then("I should see the fee in the contract edit view")]
-    public Task ThenIShouldSeeTheFeeInTheContractEditView() => GetHelper().AssertContractFeeVisibleAsync(FeeDescription);
+    [When("I add the following fees to the contract")]
+    public async Task WhenIAddTheFollowingFeesToTheContract(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _feeDescription = ReqnrollTableHelper.GetStringRowValue(row, "FeeDescription");
+
+        await GetHelper().AddFeeToContractAsync(
+            _feeDescription,
+            ReqnrollTableHelper.GetStringRowValue(row, "CalculationType"),
+            ReqnrollTableHelper.GetStringRowValue(row, "FeeType"),
+            decimal.Parse(ReqnrollTableHelper.GetStringRowValue(row, "FeeValue"), CultureInfo.InvariantCulture));
+    }
+
+    [Then("I should see the created fee in the contract edit view")]
+    public Task ThenIShouldSeeTheCreatedFeeInTheContractEditView() => GetHelper().AssertContractFeeVisibleAsync(_feeDescription);
 
     [When("I return to the contract list")]
     public Task WhenIReturnToTheContractList() => GetHelper().BackToContractListAsync();

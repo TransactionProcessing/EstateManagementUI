@@ -19,6 +19,7 @@
     <PackageReference Include="Reqnroll.NUnit" />
     <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" />
     <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="FileProcessor.Client" />
     <PackageReference Include="SecurityService.Client" />
     <PackageReference Include="SecurityService.IntegrationTesting.Helpers" />
     <PackageReference Include="Shared.IntegrationTesting" />

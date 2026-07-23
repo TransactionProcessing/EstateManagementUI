@@ -2,6 +2,7 @@
 using Ductus.FluentDocker.Services;
 using EventStore.Client;
 using NLog;
+using FileProcessor.Client;
 using Reqnroll;
 using SecurityService.Client;
 using SecurityService.DataTransferObjects;
@@ -28,6 +29,8 @@ namespace EstateManagementUI.IntegrationTests.Common
         public HttpClient HttpClient;
 
         public ISecurityServiceClient SecurityServiceClient;
+
+        public IFileProcessorClient FileProcessorClient;
 
         public EventStoreProjectionManagementClient ProjectionManagementClient;
 
@@ -185,6 +188,8 @@ namespace EstateManagementUI.IntegrationTests.Common
             this.TransactionProcessorClient = new TransactionProcessorClient(TransactionProcessorBaseAddressResolver, httpClient, this.Serialise, this.Deserialise);
             Func<String, String> securityServiceBaseAddressResolver = api => $"https://127.0.0.1:{this.SecurityServicePort}";
             this.SecurityServiceClient = new SecurityServiceClient(securityServiceBaseAddressResolver, httpClient, this.Serialise, this.Deserialise);
+            Func<String, String> fileProcessorBaseAddressResolver = api => $"http://127.0.0.1:{this.GetHostPort(ContainerType.FileProcessor)}";
+            this.FileProcessorClient = new FileProcessorClient(fileProcessorBaseAddressResolver, httpClient, this.Serialise, this.Deserialise);
             this.TestHostHttpClient = new HttpClient(clientHandler);
             this.TestHostHttpClient.BaseAddress = new Uri($"http://127.0.0.1:{this.TestHostServicePort}");
             this.ProjectionManagementClient = new EventStoreProjectionManagementClient(ConfigureEventStoreSettings());

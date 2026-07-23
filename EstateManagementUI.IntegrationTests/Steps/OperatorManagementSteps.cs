@@ -1,6 +1,7 @@
 using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll;
+using Shared.IntegrationTesting;
 
 namespace EstateManagementUI.IntegrationTests.Steps;
 
@@ -10,6 +11,7 @@ public sealed class OperatorManagementSteps
 {
     private readonly IPage _page;
     private readonly TestingContext _testingContext;
+    private string _operatorName = string.Empty;
 
     public OperatorManagementSteps(IPage page, TestingContext testingContext)
     {
@@ -50,8 +52,20 @@ public sealed class OperatorManagementSteps
     [Then("I should see the new operator screen")]
     public Task ThenIShouldSeeTheNewOperatorScreen() => GetHelper().AssertNewOperatorScreenVisibleAsync();
 
-    [When("I create the operator {string}")]
-    public Task WhenICreateTheOperator(string operatorName) => GetHelper().CreateOperatorAsync(operatorName);
+    [When("I create the following operators")]
+    public async Task WhenICreateTheFollowingOperators(DataTable table)
+    {
+        DataTableRow row = table.Rows.First();
+        _operatorName = ReqnrollTableHelper.GetStringRowValue(row, "OperatorName");
+
+        await GetHelper().CreateOperatorAsync(
+            _operatorName,
+            bool.Parse(ReqnrollTableHelper.GetStringRowValue(row, "RequireCustomMerchantNumber")),
+            bool.Parse(ReqnrollTableHelper.GetStringRowValue(row, "RequireCustomTerminalNumber")));
+    }
+
+    [Then("I should see the created operator in the operator list")]
+    public Task ThenIShouldSeeTheCreatedOperatorInTheOperatorList() => GetHelper().AssertOperatorListContainsAsync(_operatorName);
 
     private DashboardPageHelper GetHelper() => new(_page, _testingContext);
 }

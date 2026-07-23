@@ -81,6 +81,8 @@ Feature: Operator Management
     Then I should see the operator management heading
     When I open the new operator screen
     Then I should see the new operator screen
-    When I create the operator 'Integration Operator'
+    When I create the following operators
+      | OperatorName        | RequireCustomMerchantNumber | RequireCustomTerminalNumber |
+      | Integration Operator | False                       | True                        |
     Then I should see the operator management heading
-    And I should see the operator 'Integration Operator' in the operator list
+    And I should see the created operator in the operator list
