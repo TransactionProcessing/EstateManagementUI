@@ -162,14 +162,6 @@
 
         merchants = merchantResult.Data;
         fileProfiles = fileProfileResult.Data;
-        if (string.IsNullOrWhiteSpace(model.MerchantId) && merchants.Count > 0)
-        {
-            model.MerchantId = merchants[0].MerchantId.ToString();
-        }
-        if (!model.FileProfileId.HasValue && fileProfiles.Count > 0)
-        {
-            model.FileProfileId = fileProfiles[0].FileProfileId;
-        }
 
         isLoadingMerchants = false;
         isLoadingFileProfiles = false;
