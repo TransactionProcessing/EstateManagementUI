@@ -40,6 +40,9 @@ public sealed class ContractManagementSteps
     [Then("I should see the created contract in the list")]
     public Task ThenIShouldSeeTheCreatedContractInTheList() => GetHelper().AssertContractListContainsAsync(_contractDescription);
 
+    [Then("I should see the contract in the list")]
+    public Task ThenIShouldSeeTheContractInTheList() => ThenIShouldSeeTheCreatedContractInTheList();
+
     [When("I view the contract")]
     public Task WhenIViewTheContract() => GetHelper().OpenContractViewAsync(_contractDescription);
 
@@ -70,6 +73,9 @@ public sealed class ContractManagementSteps
     [Then("I should see the created product in the contract edit view")]
     public Task ThenIShouldSeeTheCreatedProductInTheContractEditView() => GetHelper().AssertContractProductVisibleAsync(_productName);
 
+    [Then("I should see the product in the contract edit view")]
+    public Task ThenIShouldSeeTheProductInTheContractEditView() => ThenIShouldSeeTheCreatedProductInTheContractEditView();
+
     [When("I add the following fees to the contract")]
     public async Task WhenIAddTheFollowingFeesToTheContract(DataTable table)
     {
@@ -85,6 +91,9 @@ public sealed class ContractManagementSteps
 
     [Then("I should see the created fee in the contract edit view")]
     public Task ThenIShouldSeeTheCreatedFeeInTheContractEditView() => GetHelper().AssertContractFeeVisibleAsync(_feeDescription);
+
+    [Then("I should see the fee in the contract edit view")]
+    public Task ThenIShouldSeeTheFeeInTheContractEditView() => ThenIShouldSeeTheCreatedFeeInTheContractEditView();
 
     [When("I return to the contract list")]
     public Task WhenIReturnToTheContractList() => GetHelper().BackToContractListAsync();

@@ -115,6 +115,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
         }
 
         [Given(@"I have created the following file profiles")]
+        [Given(@"I create the following file profiles")]
         public async Task GivenIHaveCreatedTheFollowingFileProfiles(DataTable table)
         {
             foreach (DataTableRow tableRow in table.Rows)
