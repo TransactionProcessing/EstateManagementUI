@@ -47,7 +47,6 @@ else if (_hasSectionAccess)
         _hasSectionAccess = await PermissionService.HasSectionAccessAsync(Section);
         _isChecking = false;
         Console.WriteLine($"RequireSectionAccess: Section={Section}, HasAccess={_hasSectionAccess}");
-        StateHasChanged();
     }
 
     public void Dispose()

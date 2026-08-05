@@ -2,6 +2,7 @@ using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using EstateManagementUI.BlazorServer.Testing;
 using Sentry.Extensibility;
 using Shared.Extensions;
 using Shared.General;
@@ -9,6 +10,8 @@ using Shared.Serialisation;
 using Spectre.Console;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Components.Server;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
 
@@ -53,9 +56,22 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+var dataProtectionBuilder = builder.Services.AddDataProtection()
+    .SetApplicationName("EstateManagementUI");
+if (testMode != TestMode.Disabled)
+{
+    dataProtectionBuilder.PersistKeysToFileSystem(
+        new DirectoryInfo(Path.Combine(Path.GetTempPath(), "EstateManagementUI-DataProtection")));
+
+    builder.Logging.ClearProviders();
+    builder.Logging.AddConsole();
+    builder.Services.Configure<CircuitOptions>(options => options.DetailedErrors = true);
+}
+
 builder = testMode switch {
     TestMode.AuthenticationOnly => builder.ConfigureTestAuthentication(),
     TestMode.Full => builder.ConfigureTestAuthentication(),
+    TestMode.BackedByTestDataStore => builder.ConfigureTestAuthentication(),
     _ => builder.ConfigureLiveAuthentication()
 };
 
@@ -68,7 +84,16 @@ builder.Services.AddHttpContextAccessor();
 // Register Permission services
 builder = builder.RegisterPermissionServices();
 
-builder.RegisterProductionMeriator().RegisterClients().RegisterUIServices().RegisterSerialiser();
+if (testMode == TestMode.BackedByTestDataStore)
+{
+    builder = builder.RegisterTestModeServices();
+}
+else
+{
+    builder.RegisterProductionMeriator().RegisterClients();
+}
+
+builder.RegisterUIServices().RegisterSerialiser();
 
 // Add Health Checks - read URLs from configuration
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
@@ -90,7 +115,10 @@ var estateReportingUri = ValidateAndCreateUri($"{estateReportingApiUrl}/health",
 
 builder.Services.AddHealthChecks().AddSecurityService().AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" });
 
-builder.Host.UseWindowsService();
+if (testMode == TestMode.Disabled)
+{
+    builder.Host.UseWindowsService();
+}
 
 WebApplication app = builder.Build();
 
@@ -110,7 +138,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseHttpsRedirection();
+if (testMode == TestMode.Disabled)
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseSession();
 app.UseAuthentication();
@@ -125,8 +156,14 @@ app.MapRazorComponents<App>()
 app = testMode switch {
     TestMode.AuthenticationOnly => app.ConfigureTestLogin(),
     TestMode.Full => app.ConfigureTestLogin(),
+    TestMode.BackedByTestDataStore => app.ConfigureTestLogin(),
     _ => app.ConfigureLiveLogin()
 };
+
+if (testMode == TestMode.BackedByTestDataStore)
+{
+    app.MapTestSupportEndpoints();
+}
 
 // Map Health Check endpoints
 // /health - standard JSON health check endpoint

@@ -19,6 +19,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using FileProcessor.Client;
 using TransactionProcessor.Client;
+using EstateManagementUI.BlazorServer.Testing;
 
 namespace EstateManagementUI.BlazorServer.Common;
 
@@ -49,12 +50,6 @@ public static class BoostrapperExtensions {
     }
 
     public static WebApplication ConfigureTestLogin(this WebApplication app) {
-        app.MapGet("/login", (HttpContext context) =>
-        {
-            // In test mode, redirect directly to home since authentication is automatic
-            return Results.Redirect("/");
-        }).AllowAnonymous();
-
         app.MapGet("/logout", (HttpContext context) =>
         {
             // In test mode, just redirect to home
@@ -69,43 +64,48 @@ public static class BoostrapperExtensions {
         builder.WebHost.UseKestrel(options =>
         {
             var port = 5004;
+            var testModeConfig = builder.Configuration.GetValue<String>("AppSettings:TestMode", "Disabled");
+            var isTestMode = !string.Equals(testModeConfig, "Disabled", StringComparison.OrdinalIgnoreCase);
 
             options.Listen(IPAddress.Any, port, listenOptions =>
             {
                 // Enable support for HTTP1 and HTTP2
                 listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
 
-                // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
-                var certificatePath = Path.Combine(AppContext.BaseDirectory, "Certificates");
-                Console.WriteLine($"Looking for certificates in: {certificatePath}");
-                Console.WriteLine($"AppContext.BaseDirectory: {AppContext.BaseDirectory}");
-                Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
-
-                if (!Directory.Exists(certificatePath))
+                if (isTestMode == false)
                 {
-                    throw new InvalidOperationException($"Certificates folder not found at: {certificatePath}");
-                }
+                    // Configure Kestrel to use a certificate from a local .PFX file for hosting HTTPS
+                    var certificatePath = Path.Combine(AppContext.BaseDirectory, "Certificates");
+                    Console.WriteLine($"Looking for certificates in: {certificatePath}");
+                    Console.WriteLine($"AppContext.BaseDirectory: {AppContext.BaseDirectory}");
+                    Console.WriteLine($"Current Directory: {Directory.GetCurrentDirectory()}");
 
-                var certificateFiles = Directory.GetFiles(certificatePath, "*.pfx");
-                if (certificateFiles.Length == 0)
-                {
-                    throw new InvalidOperationException($"No .pfx certificate file found in {certificatePath}");
-                }
+                    if (!Directory.Exists(certificatePath))
+                    {
+                        throw new InvalidOperationException($"Certificates folder not found at: {certificatePath}");
+                    }
 
-                var certificateFile = certificateFiles.First();
-                Console.WriteLine($"Loading certificate from: {certificateFile}");
+                    var certificateFiles = Directory.GetFiles(certificatePath, "*.pfx");
+                    if (certificateFiles.Length == 0)
+                    {
+                        throw new InvalidOperationException($"No .pfx certificate file found in {certificatePath}");
+                    }
 
-                try
-                {
-                    var certificate = new X509Certificate2(certificateFile, "password");
-                    Console.WriteLine($"Certificate loaded successfully. Subject: {certificate.Subject}");
-                    listenOptions.UseHttps(certificate);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error loading certificate: {ex.Message}");
-                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                    throw new InvalidOperationException($"Failed to load certificate from {certificateFile}: {ex.Message}", ex);
+                    var certificateFile = certificateFiles.First();
+                    Console.WriteLine($"Loading certificate from: {certificateFile}");
+
+                    try
+                    {
+                        var certificate = new X509Certificate2(certificateFile, "password");
+                        Console.WriteLine($"Certificate loaded successfully. Subject: {certificate.Subject}");
+                        listenOptions.UseHttps(certificate);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error loading certificate: {ex.Message}");
+                        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                        throw new InvalidOperationException($"Failed to load certificate from {certificateFile}: {ex.Message}", ex);
+                    }
                 }
             });
         });
@@ -273,6 +273,16 @@ public static class BoostrapperExtensions {
         var serialiserSettings = SystemTextJsonSerializer.GetDefaultJsonSerializerOptions();
 
         builder.Services.AddSingleton(serialiserSettings);
+        return builder;
+    }
+
+    public static WebApplicationBuilder RegisterTestModeServices(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<TestSupportState>();
+        builder.Services.AddSingleton<ITestDataStore, TestDataStore>();
+        builder.Services.AddSingleton<TestMediator>();
+        builder.Services.AddSingleton<IMediator>(sp => sp.GetRequiredService<TestMediator>());
+        builder.Services.AddSingleton<IApiClient, TestApiClient>();
         return builder;
     }
 }
