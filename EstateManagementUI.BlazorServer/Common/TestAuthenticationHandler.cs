@@ -48,7 +48,7 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false,
+                    Secure = true,
                     Path = "/",
                     SameSite = SameSiteMode.Lax,
                     IsEssential = true
