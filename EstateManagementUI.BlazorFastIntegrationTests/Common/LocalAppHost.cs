@@ -8,6 +8,8 @@ public sealed class LocalAppHost : IAsyncDisposable
     private readonly string _projectPath;
     private Process? _process;
     private readonly HttpClient _httpClient;
+    private readonly List<string> _standardOutput = new();
+    private readonly List<string> _standardError = new();
 
     public LocalAppHost(string projectPath)
     {
@@ -44,12 +46,28 @@ public sealed class LocalAppHost : IAsyncDisposable
             if (!string.IsNullOrWhiteSpace(e.Data))
             {
                 Console.WriteLine($"[app host] {e.Data}");
+                lock (_standardOutput)
+                {
+                    _standardOutput.Add(e.Data);
+                }
+            }
+        }
+
+        void WriteProcessError(object? _, DataReceivedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(e.Data))
+            {
+                Console.WriteLine($"[app host:err] {e.Data}");
+                lock (_standardError)
+                {
+                    _standardError.Add(e.Data);
+                }
             }
         }
 
         _process = Process.Start(startInfo) ?? throw new InvalidOperationException("Failed to start the Blazor app host.");
         _process.OutputDataReceived += WriteProcessLine;
-        _process.ErrorDataReceived += WriteProcessLine;
+        _process.ErrorDataReceived += WriteProcessError;
         _process.BeginOutputReadLine();
         _process.BeginErrorReadLine();
 
@@ -94,6 +112,11 @@ public sealed class LocalAppHost : IAsyncDisposable
         var deadline = DateTime.UtcNow.AddSeconds(120);
         while (DateTime.UtcNow < deadline)
         {
+            if (_process is not null && _process.HasExited)
+            {
+                throw new InvalidOperationException(BuildStartupFailureMessage("The Blazor app exited before it became healthy."));
+            }
+
             try
             {
                 using var response = await _httpClient.GetAsync(new Uri(BaseUri, "/test-support/ping"));
@@ -110,6 +133,28 @@ public sealed class LocalAppHost : IAsyncDisposable
             await Task.Delay(1000);
         }
 
-        throw new TimeoutException("The Blazor app did not become healthy in time.");
+        throw new TimeoutException(BuildStartupFailureMessage("The Blazor app did not become healthy in time."));
+    }
+
+    private string BuildStartupFailureMessage(string headline)
+    {
+        var exitCode = _process?.HasExited == true ? _process.ExitCode.ToString() : "still running";
+        var stdout = string.Join(Environment.NewLine, GetTail(_standardOutput, 40));
+        var stderr = string.Join(Environment.NewLine, GetTail(_standardError, 40));
+
+        return $"{headline}{Environment.NewLine}" +
+               $"Process state: {exitCode}{Environment.NewLine}" +
+               $"Recent stdout:{Environment.NewLine}{stdout}{Environment.NewLine}" +
+               $"Recent stderr:{Environment.NewLine}{stderr}";
+    }
+
+    private static IEnumerable<string> GetTail(List<string> lines, int maxLines)
+    {
+        if (lines.Count <= maxLines)
+        {
+            return lines.ToArray();
+        }
+
+        return lines.Skip(lines.Count - maxLines).ToArray();
     }
 }
