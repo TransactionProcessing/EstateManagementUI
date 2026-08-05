@@ -28,6 +28,14 @@ public abstract class BaseTest :TestContext {
         
         this._mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
         this._mockPermissionService.Setup(x => x.HasPermissionAsync(It.IsAny<PermissionSection>(), It.IsAny<PermissionFunction>())).ReturnsAsync(true);
+        this.MerchantUIService.Setup(x => x.GetMerchants(It.IsAny<CorrelationId>(),
+                                                         It.IsAny<Guid>(),
+                                                         It.IsAny<string>(),
+                                                         It.IsAny<string>(),
+                                                         It.IsAny<int?>(),
+                                                         It.IsAny<string>(),
+                                                         It.IsAny<string>()))
+            .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantListModel>()));
         this.MerchantUIService.Setup(x => x.GetMerchantsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
             .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel>
             {
