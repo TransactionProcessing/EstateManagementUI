@@ -49,8 +49,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                         ? summaryData.Operators.OrderBy(o => o.TotalValue)
                         : summaryData.Operators.OrderByDescending(o => o.TotalValue),
                     "AverageValue" => _sortAscending
-                        ? summaryData.Operators.OrderBy(o => o.AverageValue)
-                        : summaryData.Operators.OrderByDescending(o => o.AverageValue),
+                        ? summaryData.Operators.OrderBy(GetAverageValue)
+                        : summaryData.Operators.OrderByDescending(GetAverageValue),
                     "AuthorisedCount" => _sortAscending
                         ? summaryData.Operators.OrderBy(o => o.AuthorisedCount)
                         : summaryData.Operators.OrderByDescending(o => o.AuthorisedCount),
@@ -218,5 +218,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             var endDate = _endDate.ToString("yyyy-MM-dd");
             Navigation.NavigateTo($"/reporting/transaction-detail?operatorId={operatorReportingId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-operator");
         }
+
+        private static decimal GetAverageValue(TransactionModels.OperatorDetail operatorDetail) =>
+            operatorDetail.TotalCount == 0 ? 0 : operatorDetail.TotalValue / operatorDetail.TotalCount;
     }
 }

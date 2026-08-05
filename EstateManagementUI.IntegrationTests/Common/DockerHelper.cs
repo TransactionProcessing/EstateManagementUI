@@ -195,6 +195,17 @@ namespace EstateManagementUI.IntegrationTests.Common
             this.ProjectionManagementClient = new EventStoreProjectionManagementClient(ConfigureEventStoreSettings());
         }
 
+        public string GetTransactionProcessorReadModelConnectionString(Boolean isLocal)
+        {
+            if (isLocal)
+            {
+                var connString = this.SetConnectionString("TransactionProcessorReadModel", this.UseSecureSqlServerDatabase);
+                return connString.Replace(this.SqlServerContainerName, "127.0.0.1");
+            }
+
+            return this.SetConnectionString("TransactionProcessorReadModel", this.UseSecureSqlServerDatabase);
+        }
+
         protected override ContainerBuilder SetupEstateManagementUiContainer() {
             Trace("About to Start Estate Management UI Container");
 
@@ -660,7 +671,7 @@ namespace EstateManagementUI.IntegrationTests.Common
                                             DockerServices.FileProcessor | DockerServices.MessagingService | DockerServices.SecurityService |
                                             DockerServices.SqlServer | DockerServices.TransactionProcessor |
                                             DockerServices.TransactionProcessorAcl | DockerServices.EstateManagementUI |
-                                            DockerServices.EstateReporting;
+                                            DockerServices.EstateReporting | DockerServices.TestHost;
 
             this.TestingContext.DockerHelper = new DockerHelper();
             this.TestingContext.DockerHelper.Logger = logger;

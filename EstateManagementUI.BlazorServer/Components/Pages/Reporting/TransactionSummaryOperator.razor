@@ -214,7 +214,7 @@
                                         <td class="text-right">@item.TotalCount.ToString("N0")</td>
                                         <td class="text-right">@item.TotalValue.ToString("C")</td>
                                         @* <td class="text-right font-medium text-green-600">@item.TotalFeesEarned.ToString("C")</td> *@
-                                        <td class="text-right">@item.AverageValue.ToString("C")</td>
+                                        <td class="text-right">@GetAverageValue(item).ToString("C")</td>
                                         <td class="text-right text-green-600">@item.AuthorisedCount.ToString("N0")</td>
                                         <td class="text-right text-red-600">@item.DeclinedCount.ToString("N0")</td>
                                         <td class="text-right">

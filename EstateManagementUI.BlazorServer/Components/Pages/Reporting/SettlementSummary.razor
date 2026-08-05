@@ -267,17 +267,10 @@
             isLoading = true;
             errorMessage = null;
             StateHasChanged();
-            
-            var correlationId = new CorrelationId(Guid.NewGuid());
-            var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-            
-            // Load filter options
-            var merchantsResult = await Mediator.Send(new MerchantQueries.GetMerchantsForDropDownQuery(correlationId, estateId));
-            
-            if (merchantsResult.IsSuccess)
-                merchants = ModelFactory.ConvertFrom(merchantsResult.Data);
-            
-            // Load summary data
+
+            // Backend settlement summary support is not implemented yet, so keep the page responsive
+            // and render the placeholder state instead of waiting on service calls.
+            merchants = [];
             await LoadSummaryData();
         }
         catch (Exception ex)
@@ -292,9 +285,12 @@
         }
     }
     
-    private async Task LoadSummaryData()
+    private Task LoadSummaryData()
     {
-        // TODO
+        // Temporary stub until the backend settlement summary query is available.
+        summaryData = [];
+        CalculateKPIs();
+        return Task.CompletedTask;
     }
     
     private void CalculateKPIs()
