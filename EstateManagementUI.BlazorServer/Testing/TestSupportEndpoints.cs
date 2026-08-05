@@ -28,7 +28,7 @@ public static class TestSupportEndpoints
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false,
+                    Secure = true,
                     Path = "/",
                     SameSite = SameSiteMode.Lax,
                     IsEssential = true
@@ -45,7 +45,7 @@ public static class TestSupportEndpoints
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = false,
+                    Secure = true,
                     Path = "/",
                     SameSite = SameSiteMode.Lax,
                     IsEssential = true
