@@ -113,7 +113,13 @@ Uri ValidateAndCreateUri(string url, string configKey)
 
 var estateReportingUri = ValidateAndCreateUri($"{estateReportingApiUrl}/health", "AppSettings:EstateReportingApi");
 
-builder.Services.AddHealthChecks().AddSecurityService().AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" });
+var healthChecks = builder.Services.AddHealthChecks();
+if (testMode == TestMode.Disabled)
+{
+    healthChecks.AddSecurityService();
+}
+
+healthChecks.AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" });
 
 if (testMode == TestMode.Disabled)
 {
