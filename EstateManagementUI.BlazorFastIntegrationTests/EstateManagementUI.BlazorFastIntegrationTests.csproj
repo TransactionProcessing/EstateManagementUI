@@ -1,0 +1,64 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="EventStoreProjections" />
+    <PackageReference Include="MessagingService.IntegrationTesting.Helpers" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="FileProcessor.Client" />
+    <PackageReference Include="SecurityService.Client" />
+    <PackageReference Include="SecurityService.IntegrationTesting.Helpers" />
+    <PackageReference Include="Shared.IntegrationTesting" />
+    <PackageReference Include="TransactionProcessor.Client" />
+    <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" />
+    <PackageReference Include="Reqnroll" />
+    <PackageReference Include="Reqnroll.NUnit" />
+    <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" />
+    <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Hooks\BrowserHooks.cs" Link="Hooks\BrowserHooks.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\DashboardSteps.cs" Link="Steps\DashboardSteps.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\EstateEntrySteps.cs" Link="Steps\EstateEntrySteps.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\EstateManagementSteps.cs" Link="Steps\EstateManagementSteps.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\FileProcessingSteps.cs" Link="Steps\FileProcessingSteps.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\MerchantManagementSteps.cs" Link="Steps\MerchantManagementSteps.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\OperatorManagementSteps.cs" Link="Steps\OperatorManagementSteps.cs" />
+    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\ContractManagementSteps.cs" Link="Steps\ContractManagementSteps.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="..\EstateManagementUI.IntegrationTests\Common\DockerHelper.cs" Link="Common\DockerHelper.cs" />
+    <Compile Remove="..\EstateManagementUI.IntegrationTests\Steps\BackgroundSteps.cs" Link="Steps\BackgroundSteps.cs" />
+    <Compile Remove="..\EstateManagementUI.IntegrationTests\Steps\ReportingSteps.cs" Link="Steps\ReportingSteps.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

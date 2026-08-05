@@ -26,9 +26,13 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            var baseUrl = ResolveBaseUrl();
-            await _page.GotoAsync(baseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.GotoAsync(ResolveBaseUrl() + "/entry");
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
         }, nameof(NavigateToAppAddressAsync));
     }
 
@@ -37,7 +41,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GotoAsync(ResolveBaseUrl() + "/entry");
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(NavigateToEntryScreenAsync));
     }
 
@@ -58,7 +62,7 @@ public sealed class DashboardPageHelper
         {
             await _page.Locator("a[href='/estate-info']").ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
             await _page.WaitForURLAsync(new Regex(@".*/estate-info.*", RegexOptions.IgnoreCase));
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenEstateInfoFromEntryAsync));
     }
 
@@ -102,7 +106,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync(ResolveEstateManagementBaseUrl() + "/operators");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenOperatorManagementScreenAsync));
     }
 
@@ -173,7 +177,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(BackToOperatorListFromViewAsync));
     }
 
@@ -214,7 +218,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Cancel" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(CancelOperatorEditAsync));
     }
 
@@ -223,8 +227,11 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.Locator("#newOperatorButton").ClickAsync();
-            await _page.WaitForURLAsync(new Regex(@".*/operators/new.*", RegexOptions.IgnoreCase));
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Create New Operator" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
         }, nameof(OpenNewOperatorScreenAsync));
     }
 
@@ -260,20 +267,20 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             var entrySignInButton = _page.Locator("#loginButton");
-            var dashboardLoginLink = _page.Locator("a[href='/login']");
 
             Console.WriteLine($"Sign in before click: {_page.Url}");
 
             if (await entrySignInButton.IsVisibleAsync())
             {
-                await entrySignInButton.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+                await entrySignInButton.ClickAsync();
             }
             else
             {
-                (await dashboardLoginLink.IsVisibleAsync()).ShouldBeTrue();
-                await dashboardLoginLink.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+                (await _page.Locator("a[href='/login']").IsVisibleAsync()).ShouldBeTrue();
+                await _page.Locator("a[href='/login']").ClickAsync();
             }
-            await WaitForAuthenticationNavigationAsync();
+
+            await WaitForLoginScreenAsync();
             Console.WriteLine($"Sign in after click: {_page.Url}");
             Console.WriteLine($"Sign in title after click: {await _page.TitleAsync()}");
             Console.WriteLine($"Sign in body after click: {await _page.Locator("body").InnerTextAsync()}");
@@ -284,86 +291,26 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await WaitForAuthenticationNavigationAsync();
-
-            for (var attempt = 1; attempt <= 30; attempt++)
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Sign in" }).WaitForAsync(new LocatorWaitForOptions
             {
-                if (_page.Url.Contains("/entry", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (await _page.GetByText("Sign in to access all features").IsVisibleAsync())
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    var bodyText = await _page.Locator("body").InnerTextAsync();
-                    if (bodyText.Contains("Sign in to access all features", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return;
-                    }
-
-                    var entrySignInButton = _page.Locator("#loginButton");
-                    if (await entrySignInButton.IsVisibleAsync())
-                    {
-                        return;
-                    }
-
-                    if (await WaitForAnyVisibleAsync(
-                        "#Input_Username",
-                        "input[name='Input.Username']",
-                        "#Input_UserName",
-                        "input[name='Input.UserName']",
-                        "#Username",
-                        "input[name='Username']",
-                        "input[name='username']",
-                        "input[name='UserName']",
-                        "input[name='Email']",
-                        "input[type='email']",
-                        "input[type='text']",
-                        "input[autocomplete='username']") &&
-                        await WaitForAnyVisibleAsync(
-                            "#Input_Password",
-                            "input[name='Input.Password']",
-                            "#Input_PasswordInput",
-                            "#Password",
-                            "input[name='Password']",
-                            "input[name='password']",
-                            "input[name='current-password']",
-                            "input[type='password']",
-                            "input[autocomplete='current-password']"))
-                    {
-                        return;
-                    }
-                }
-
-                await Task.Delay(1000);
-            }
-
-            (await WaitForAnyVisibleAsync(
-                "#Input_Username",
-                "input[name='Input.Username']",
-                "#Input_UserName",
-                "input[name='Input.UserName']",
-                "#Username",
-                "input[name='Username']",
-                "input[name='username']",
-                "input[name='UserName']",
-                "input[name='Email']",
-                "input[type='email']",
-                "input[type='text']",
-                "input[autocomplete='username']")).ShouldBeTrue();
-
-            (await WaitForAnyVisibleAsync(
-                "#Input_Password",
-                "input[name='Input.Password']",
-                "#Input_PasswordInput",
-                "#Password",
-                "input[name='Password']",
-                "input[name='password']",
-                "input[name='current-password']",
-                "input[type='password']",
-                "input[autocomplete='current-password']")).ShouldBeTrue();
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#loginUsername").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#loginPassword").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#submitLoginButton").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
         }, nameof(AssertLoginScreenVisibleAsync));
     }
 
@@ -371,44 +318,20 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            var usernameSelectors = new[]
-            {
-                "#Input_Username",
-                "input[name='Input.Username']",
-                "#Username",
-                "input[name='Username']",
-                "input[name='username']",
-                "input[type='email']",
-                "input[type='text']",
-                "input[autocomplete='username']"
-            };
-
-            if (_page.Url.Contains("/entry", StringComparison.OrdinalIgnoreCase) || !await IsAnyVisibleAsync(usernameSelectors))
+            if (!_page.Url.Contains("/login", StringComparison.OrdinalIgnoreCase) ||
+                !await _page.Locator("#loginUsername").IsVisibleAsync())
             {
                 await ClickSignInButtonAsync();
             }
 
-            await FillFirstVisibleAsync(
-                username,
-                usernameSelectors);
-
-            await FillFirstVisibleAsync(
-                password,
-                "#Input_Password",
-                "input[name='Input.Password']",
-                "#Password",
-                "input[name='Password']",
-                "input[name='password']",
-                "input[type='password']",
-                "input[autocomplete='current-password']");
-
-            await ClickFirstVisibleAsync(
-                "button[type='submit']",
-                "input[type='submit']",
-                "button:has-text('Sign In')",
-                "button:has-text('Login')");
-
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.Locator("#loginUsername").FillAsync(username);
+            await _page.Locator("#loginPassword").FillAsync(password);
+            await _page.Locator("#submitLoginButton").ClickAsync();
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Dashboard" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 30000
+            });
         }, nameof(LoginAsync));
     }
 
@@ -416,10 +339,39 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Dashboard" }).IsVisibleAsync()).ShouldBeTrue();
-            (await _page.GetByText("Welcome to Estate Management System").IsVisibleAsync()).ShouldBeTrue();
-            (await _page.Locator("#dashboardLink").IsVisibleAsync()).ShouldBeTrue();
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Dashboard" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.GetByText("Welcome to Estate Management System").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#dashboardLink").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
         }, nameof(AssertDashboardShellVisibleAsync));
+    }
+
+    public async Task AssertAuthenticatedLandingVisibleAsync()
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Estate Management" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.GetByText("Contracts").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+        }, nameof(AssertAuthenticatedLandingVisibleAsync));
     }
 
     public async Task OpenEstateManagementScreenAsync()
@@ -436,7 +388,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync(ResolveEstateManagementBaseUrl() + "/estate");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenEstateManagementScreenAsync));
     }
 
@@ -467,7 +419,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Operators" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(SwitchToOperatorsTabAsync));
     }
 
@@ -561,7 +513,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync(ResolveBaseUrl() + "/contracts");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenContractManagementScreenAsync));
     }
 
@@ -594,7 +546,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync(ResolveBaseUrl() + "/file-processing");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenFileProcessingScreenAsync));
     }
 
@@ -619,7 +571,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GotoAsync(ResolveBaseUrl() + "/file-processing/upload");
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenFileUploadPageAsync));
     }
 
@@ -708,11 +660,17 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await _page.Locator("#newContractButton").ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
-            await _page.WaitForURLAsync(new Regex(@".*/contracts/new.*", RegexOptions.IgnoreCase));
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-            await _page.Locator("input[placeholder='Enter contract description']").FillAsync(contractDescription);
+            await _page.GotoAsync(ResolveBaseUrl() + "/contracts/new");
+            await _page.Locator("input[placeholder='Enter contract description']").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+            await _page.Locator("#createContractButton").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
 
             var operatorOption = _page.Locator("select option").Filter(new() { HasText = operatorName });
             await operatorOption.WaitForAsync(new LocatorWaitForOptions
@@ -725,9 +683,13 @@ public sealed class DashboardPageHelper
             operatorValue.ShouldNotBeNull();
 
             await _page.Locator("select").SelectOptionAsync(new[] { operatorValue! });
+            await _page.Locator("input[placeholder='Enter contract description']").FillAsync(contractDescription);
             await _page.Locator("#createContractButton").ClickAsync();
-            await _page.WaitForURLAsync(new Regex(@".*/contracts.*", RegexOptions.IgnoreCase));
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.Locator("#newContractButton").WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
         }, nameof(CreateContractAsync));
     }
 
@@ -758,7 +720,7 @@ public sealed class DashboardPageHelper
             });
 
             await contractCard.GetByRole(AriaRole.Button, new() { Name = "View" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenContractViewAsync));
     }
 
@@ -787,7 +749,7 @@ public sealed class DashboardPageHelper
             if (currentContractId == Guid.Empty)
             {
                 await _page.GotoAsync(ResolveBaseUrl() + "/contracts");
-                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
                 var contractCard = GetContractCard(contractDescription);
                 await contractCard.WaitForAsync(new LocatorWaitForOptions
@@ -803,7 +765,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync($"{ResolveBaseUrl()}/contracts/{currentContractId}/edit");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenContractEditAsync));
     }
 
@@ -844,7 +806,7 @@ public sealed class DashboardPageHelper
                 await modal.Locator("input[placeholder='Enter value']").FillAsync(value?.ToString(CultureInfo.InvariantCulture) ?? throw new InvalidOperationException("Value is required when the product is not variable."));
             }
             await modal.GetByRole(AriaRole.Button, new() { Name = "Add Product" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
             var productCard = GetContractProductCard(productName);
             await productCard.WaitForAsync(new LocatorWaitForOptions
@@ -910,7 +872,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Back to List" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(BackToContractListAsync));
     }
 
@@ -928,7 +890,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenMerchantManagementScreenAsync));
     }
 
@@ -988,7 +950,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync(ResolveBaseUrl() + "/merchants/new");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
             await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchantName);
             await _page.Locator("select[name='SettlementSchedule']").SelectOptionAsync(settlementSchedule);
@@ -1006,7 +968,7 @@ public sealed class DashboardPageHelper
             await _page.Locator("input[placeholder='Enter phone number']").FillAsync(phoneNumber);
 
             await _page.Locator("#createMerchantButton").ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
             await _page.GetByRole(AriaRole.Heading, new() { Name = "Merchant Management" }).WaitForAsync(new LocatorWaitForOptions
             {
@@ -1043,7 +1005,7 @@ public sealed class DashboardPageHelper
             });
 
             await row.GetByRole(AriaRole.Button, new() { Name = "View" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenMerchantViewAsync));
     }
 
@@ -1069,7 +1031,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = tabName }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(SwitchMerchantTabAsync));
     }
 
@@ -1093,7 +1055,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "View Schedule" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenMerchantScheduleFromViewAsync));
     }
 
@@ -1119,7 +1081,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Back to Merchant" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(BackToMerchantFromViewScheduleAsync));
     }
 
@@ -1131,7 +1093,7 @@ public sealed class DashboardPageHelper
             if (merchantId == Guid.Empty)
             {
                 await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
-                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
                 var row = GetMerchantRow(merchantName);
                 await row.WaitForAsync(new LocatorWaitForOptions
@@ -1147,7 +1109,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync($"{ResolveBaseUrl()}/merchants/{merchantId}/edit");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenMerchantEditAsync));
     }
 
@@ -1260,7 +1222,7 @@ public sealed class DashboardPageHelper
             await terminalNumberInput.FillAsync(terminalNumber);
 
             await _page.GetByRole(AriaRole.Button, new() { Name = "Add", Exact = true }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(AddMerchantOperatorAsync));
     }
 
@@ -1344,7 +1306,7 @@ public sealed class DashboardPageHelper
             if (merchantId == Guid.Empty)
             {
                 await _page.Locator("#editScheduleButton").ClickAsync();
-                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
                 return;
             }
 
@@ -1379,7 +1341,6 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await EnsureMerchantScheduleExistsAsync(year, closedDays);
             await _page.Locator("#selectedYear").SelectOptionAsync(year.ToString(CultureInfo.InvariantCulture));
             await _page.Locator("#loadYearButton").ClickAsync();
             await _page.Locator("#month-1-closed-days").WaitForAsync(new LocatorWaitForOptions
@@ -1456,7 +1417,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Back to Edit Merchant" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(BackToMerchantFromEditScheduleAsync));
     }
 
@@ -1468,7 +1429,7 @@ public sealed class DashboardPageHelper
             if (merchantId == Guid.Empty)
             {
                 await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
-                await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+                await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
                 var row = _page.Locator("tbody tr").First;
                 await row.WaitForAsync(new LocatorWaitForOptions
@@ -1484,7 +1445,7 @@ public sealed class DashboardPageHelper
                 await _page.GotoAsync($"{ResolveBaseUrl()}/merchants/{merchantId}/deposit");
             }
 
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenMerchantDepositAsync));
     }
 
@@ -1493,7 +1454,7 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
             var row = GetMerchantRow(merchantName);
             await row.WaitForAsync(new LocatorWaitForOptions
@@ -1503,7 +1464,7 @@ public sealed class DashboardPageHelper
             });
 
             await row.GetByRole(AriaRole.Button, new() { Name = "Make Deposit" }).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(OpenMerchantDepositAsync));
     }
 
@@ -1568,7 +1529,7 @@ public sealed class DashboardPageHelper
                 State = WaitForSelectorState.Visible,
                 Timeout = 10000
             });
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
         }, nameof(SubmitMerchantDepositAsync));
     }
 
@@ -1625,7 +1586,14 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
+            await WaitForDashboardContentAsync();
             await AssertDashboardShellVisibleAsync();
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Welcome, Administrator" }).WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 30000
+            });
+
             (await _page.GetByRole(AriaRole.Heading, new() { Name = "Welcome, Administrator" }).IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertAdministratorDashboardVisibleAsync));
     }
@@ -1634,8 +1602,9 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
+            await WaitForDashboardContentAsync();
             var selector = _page.Locator("#comparisonDateSelector");
-            var deadline = DateTime.UtcNow.AddSeconds(10);
+            var deadline = DateTime.UtcNow.AddSeconds(30);
 
             while (DateTime.UtcNow < deadline)
             {
@@ -1653,25 +1622,22 @@ public sealed class DashboardPageHelper
 
     public async Task AssertMerchantKpiSummaryCardsVisibleAsync()
     {
-        //await AssertInfoBoxVisibleAsync("Merchants with Sales (Last Hour)", "45");
-        //await AssertInfoBoxVisibleAsync("Merchants with No Sales Today", "12");
-        //await AssertInfoBoxVisibleAsync("Merchants with No Sales (7 Days)", "5");
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await AssertInfoBoxVisibleAsync("Merchants with Sales (Last Hour)", "0");
-            await AssertInfoBoxVisibleAsync("Merchants with No Sales Today", "0");
-            await AssertInfoBoxVisibleAsync("Merchants with No Sales (7 Days)", "0");
+            await WaitForDashboardContentAsync();
+            await AssertInfoBoxVisibleAsync("Merchants with Sales (Last Hour)", "45");
+            await AssertInfoBoxVisibleAsync("Merchants with No Sales Today", "12");
+            await AssertInfoBoxVisibleAsync("Merchants with No Sales (7 Days)", "5");
         }, nameof(AssertMerchantKpiSummaryCardsVisibleAsync));
     }
 
     public async Task AssertSalesComparisonCardsVisibleAsync()
     {
-        //await AssertCardVisibleAsync("Today's Sales", "523 transactions", new Regex(@"[£$]145,000\.00"));
-        //await AssertCardVisibleAsync("Failed Sales (Low Credit)", "15 transactions", new Regex(@"[£$]850\.00"));
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await AssertCardVisibleAsync("Today's Sales", "0 transactions", new Regex(@"[£$¤]\s?0(?:,000)?\.00"));
-            await AssertCardVisibleAsync("Failed Sales (Low Credit)", "0 transactions", new Regex(@"[£$¤]\s?0(?:,000)?\.00"));
+            await WaitForDashboardContentAsync();
+            await AssertCardVisibleAsync("Today's Sales", "523 transactions", new Regex(@"[£$¤]\s?145,000\.00"));
+            await AssertCardVisibleAsync("Failed Sales (Low Credit)", "15 transactions", new Regex(@"[£$¤]\s?850\.00"));
         }, nameof(AssertSalesComparisonCardsVisibleAsync));
     }
 
@@ -1679,6 +1645,7 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
+            await WaitForDashboardContentAsync();
             (await _page.GetByRole(AriaRole.Heading, new() { Name = "Recently Created Merchants" }).IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertRecentMerchantsSectionVisibleAsync));
     }
@@ -1781,8 +1748,14 @@ public sealed class DashboardPageHelper
         await _page.Locator(".animate-spin").WaitForAsync(new LocatorWaitForOptions
         {
             State = WaitForSelectorState.Hidden,
-            Timeout = 10000
+            Timeout = 30000
         });
+    }
+
+    private async Task WaitForDashboardContentAsync()
+    {
+        await WaitForEstateOverviewAsync();
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
     private async Task WaitForOperatorManagementAsync()
@@ -1925,33 +1898,33 @@ public sealed class DashboardPageHelper
             : Guid.Empty;
     }
 
-    private async Task WaitForAuthenticationNavigationAsync()
+    private async Task WaitForLoginScreenAsync()
     {
-        try
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (DateTime.UtcNow < deadline)
         {
-            await _page.WaitForURLAsync(
-                new Regex(@".*/(login|connect/authorize).*", RegexOptions.IgnoreCase),
-                new PageWaitForURLOptions
-                {
-                    Timeout = 60000
-                });
+            if (_page.Url.Contains("/login", StringComparison.OrdinalIgnoreCase) ||
+                await _page.Locator("#loginUsername").IsVisibleAsync())
+            {
+                return;
+            }
+
+            await _page.WaitForTimeoutAsync(250);
         }
-        catch
-        {
-            // If the URL is already where we need it, keep going and let the selector wait decide.
-        }
+
+        throw new TimeoutException("The login screen did not appear in time.");
     }
 
     private string ResolveBaseUrl()
     {
         var hostPort = this.TestingContext.DockerHelper.GetHostPort(ContainerType.EstateManagementUI);
-        return $"https://127.0.0.1:{hostPort}";
+        return $"http://127.0.0.1:{hostPort}";
     }
 
     private string ResolveEstateManagementBaseUrl()
     {
         var hostPort = this.TestingContext.DockerHelper.GetHostPort(ContainerType.EstateManagementUI);
-        return $"https://127.0.0.1:{hostPort}";
+        return $"http://127.0.0.1:{hostPort}";
     }
 
     private async Task RunWithFailureArtifactsAsync(Func<Task> action, string context)
