@@ -21,6 +21,41 @@ public sealed class ReportingPageHelper
         await NavigateAsync("/reporting");
     }
 
+    public async Task OpenTransactionDetailReportAsync()
+    {
+        await NavigateAsync("/reporting/transaction-detail");
+    }
+
+    public async Task OpenTransactionSummaryByMerchantReportAsync()
+    {
+        await NavigateAsync("/reporting/transaction-summary-merchant");
+    }
+
+    public async Task OpenTransactionSummaryByOperatorReportAsync()
+    {
+        await NavigateAsync("/reporting/transaction-summary-operator");
+    }
+
+    public async Task OpenProductPerformanceReportAsync()
+    {
+        await NavigateAsync("/reporting/product-performance");
+    }
+
+    public async Task OpenSettlementSummaryReportAsync()
+    {
+        await NavigateAsync("/reporting/settlement-summary");
+    }
+
+    public async Task OpenMerchantSettlementHistoryReportAsync()
+    {
+        await NavigateAsync("/reporting/merchant-settlement-history");
+    }
+
+    public async Task OpenSettlementReconciliationReportAsync()
+    {
+        await NavigateAsync("/reporting/settlement-reconciliation");
+    }
+
     public async Task AssertReportingDashboardHeadingVisibleAsync()
     {
         await _page.GetByRole(AriaRole.Heading, new() { Name = "Reporting Dashboard" }).WaitForAsync(new LocatorWaitForOptions
@@ -40,6 +75,153 @@ public sealed class ReportingPageHelper
         await AssertVisibleAsync("Merchant Settlement History");
         await AssertVisibleAsync("Settlement vs Transaction Reconciliation Report");
         await AssertVisibleAsync("Analytical Charts (Volume & Value)");
+    }
+
+    public async Task AssertTransactionDetailHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Transaction Detail Report");
+    }
+
+    public async Task AssertTransactionDetailSummaryValuesAsync(DataTable table)
+    {
+        await AssertSummaryValuesAsync(table);
+    }
+
+    public async Task AssertTransactionDetailRowsAsync(DataTable table)
+    {
+        var rows = _page.Locator("table tbody tr");
+        (await rows.CountAsync()).ShouldBe(table.Rows.Count);
+
+        for (var index = 0; index < table.Rows.Count; index++)
+        {
+            var expectedRow = table.Rows[index];
+            var row = rows.Nth(index);
+            await AssertCellTextAsync(row, 1, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Merchant"));
+            await AssertCellTextAsync(row, 3, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Product"));
+            await AssertCellTextAsync(row, 4, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Transaction Number"));
+            await AssertCellTextAsync(row, 5, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Type"));
+            await AssertCellTextAsync(row, 6, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Status"));
+        }
+    }
+
+    public async Task AssertTransactionSummaryByMerchantHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Transaction Summary by Merchant");
+    }
+
+    public async Task AssertMerchantSummaryValuesAsync(DataTable table)
+    {
+        await AssertSummaryValuesAsync(table);
+    }
+
+    public async Task AssertMerchantSummaryRowsAsync(DataTable table)
+    {
+        var rows = _page.Locator("table tbody tr");
+        (await rows.CountAsync()).ShouldBe(table.Rows.Count);
+
+        for (var index = 0; index < table.Rows.Count; index++)
+        {
+            var expectedRow = table.Rows[index];
+            var row = rows.Nth(index);
+            await AssertCellTextAsync(row, 0, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Merchant"));
+            await AssertCellTextAsync(row, 1, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Total Count"));
+            await AssertCellTextAsync(row, 2, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Total Value"));
+            await AssertCellTextAsync(row, 3, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Average Value"));
+            await AssertCellTextAsync(row, 4, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Successful"));
+            await AssertCellTextAsync(row, 5, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Failed"));
+            await AssertCellTextAsync(row, 6, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Success Rate"), normalizePercent: true);
+        }
+    }
+
+    public async Task AssertTransactionSummaryByOperatorHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Transaction Summary by Operator");
+    }
+
+    public async Task AssertOperatorSummaryValuesAsync(DataTable table)
+    {
+        await AssertSummaryValuesAsync(table);
+    }
+
+    public async Task AssertOperatorSummaryRowsAsync(DataTable table)
+    {
+        var rows = _page.Locator("table tbody tr");
+        (await rows.CountAsync()).ShouldBe(table.Rows.Count);
+
+        for (var index = 0; index < table.Rows.Count; index++)
+        {
+            var expectedRow = table.Rows[index];
+            var row = rows.Nth(index);
+            await AssertCellTextAsync(row, 0, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Operator"));
+            await AssertCellTextAsync(row, 1, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Transaction Count"));
+            await AssertCellTextAsync(row, 2, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Transaction Value"));
+            await AssertCellTextAsync(row, 3, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Average Value"));
+            await AssertCellTextAsync(row, 4, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Successful"));
+            await AssertCellTextAsync(row, 5, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Failed"));
+            await AssertCellTextAsync(row, 6, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Success Rate"), normalizePercent: true);
+        }
+    }
+
+    public async Task AssertProductPerformanceHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Product Performance Report");
+    }
+
+    public async Task AssertProductPerformanceSummaryValuesAsync(DataTable table)
+    {
+        await AssertSummaryValuesAsync(table);
+    }
+
+    public async Task AssertProductPerformanceRowsAsync(DataTable table)
+    {
+        var rows = _page.Locator("table tbody tr");
+        (await rows.CountAsync()).ShouldBe(table.Rows.Count);
+
+        for (var index = 0; index < table.Rows.Count; index++)
+        {
+            var expectedRow = table.Rows[index];
+            var row = rows.Nth(index);
+            await AssertCellTextAsync(row, 0, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Product"));
+            await AssertCellTextAsync(row, 1, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Transaction Count"));
+            await AssertCellTextAsync(row, 2, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Transaction Value"));
+            await AssertCellTextAsync(row, 3, ReqnrollTableHelper.GetStringRowValue(expectedRow, "Percentage"), normalizePercent: true);
+        }
+    }
+
+    public async Task AssertProductPerformancePercentageSplitAsync()
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Chart View" }).ClickAsync();
+        await AssertTextVisibleAsync("Percentages sum to 100% - Data validated");
+    }
+
+    public async Task AssertSettlementSummaryHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Settlement Summary Report");
+    }
+
+    public async Task AssertSettlementSummaryPlaceholderVisibleAsync()
+    {
+        await AssertTextVisibleAsync("No settlement data available for the selected period");
+    }
+
+    public async Task AssertMerchantSettlementHistoryHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Merchant Settlement History");
+    }
+
+    public async Task AssertMerchantSettlementHistoryPlaceholderVisibleAsync()
+    {
+        await AssertTextVisibleAsync("No settlement history found for the selected criteria");
+    }
+
+    public async Task AssertSettlementReconciliationHeadingVisibleAsync()
+    {
+        await AssertHeadingVisibleAsync("Settlement vs Transaction Reconciliation Report");
+    }
+
+    public async Task AssertSettlementReconciliationPlaceholderVisibleAsync()
+    {
+        await AssertTextVisibleAsync("Settlement vs transaction reconciliation report functionality will be implemented here.");
     }
 
     public async Task OpenAnalyticalChartsReportAsync()
@@ -162,6 +344,15 @@ public sealed class ReportingPageHelper
             new PageWaitForLoadStateOptions { Timeout = 120000 });
     }
 
+    private async Task AssertHeadingVisibleAsync(string heading)
+    {
+        await _page.GetByRole(AriaRole.Heading, new() { Name = heading }).WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
+            Timeout = 10000
+        });
+    }
+
     private string ResolveBaseUrl()
     {
         return "http://127.0.0.1:5004";
@@ -170,6 +361,8 @@ public sealed class ReportingPageHelper
     private static bool IsMoneyLabel(string label)
     {
         return label.Contains("Value", StringComparison.OrdinalIgnoreCase) ||
+               label.Contains("Amount", StringComparison.OrdinalIgnoreCase) ||
+               label.Contains("Fee", StringComparison.OrdinalIgnoreCase) ||
                label.Contains("Settlement", StringComparison.OrdinalIgnoreCase) ||
                label.Contains("Average", StringComparison.OrdinalIgnoreCase);
     }
@@ -196,6 +389,11 @@ public sealed class ReportingPageHelper
     private async Task AssertVisibleAsync(string text)
     {
         (await _page.GetByRole(AriaRole.Link, new() { Name = text }).IsVisibleAsync()).ShouldBeTrue();
+    }
+
+    private async Task AssertTextVisibleAsync(string text)
+    {
+        (await _page.GetByText(text, new() { Exact = false }).IsVisibleAsync()).ShouldBeTrue();
     }
 
     private async Task AssertInfoBoxValueAsync(string label, int expectedValue)
@@ -254,6 +452,48 @@ public sealed class ReportingPageHelper
         }
 
         throw new FormatException($"Unable to parse money value '{value}'.");
+    }
+
+    private async Task AssertSummaryValuesAsync(DataTable table)
+    {
+        foreach (var row in table.Rows)
+        {
+            var label = ReqnrollTableHelper.GetStringRowValue(row, "Label");
+            var value = ReqnrollTableHelper.GetStringRowValue(row, "Value");
+
+            if (IsMoneyLabel(label))
+            {
+                await AssertMoneyInfoBoxValueAsync(label, decimal.Parse(value, NumberStyles.Number | NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                await AssertInfoBoxValueAsync(label, int.Parse(value, NumberStyles.Integer | NumberStyles.AllowThousands, CultureInfo.InvariantCulture));
+            }
+        }
+    }
+
+    private async Task AssertCellTextAsync(ILocator row, int columnIndex, string expectedText, bool normalizePercent = false)
+    {
+        var actualText = await row.Locator("td").Nth(columnIndex).InnerTextAsync();
+        actualText = actualText?.Trim() ?? string.Empty;
+        expectedText = expectedText.Trim();
+
+        if (normalizePercent)
+        {
+            var actualPercent = actualText.TrimEnd('%').Trim();
+            var expectedPercent = expectedText.TrimEnd('%').Trim();
+            decimal.Parse(actualPercent, NumberStyles.Number | NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture)
+                .ShouldBe(decimal.Parse(expectedPercent, NumberStyles.Number | NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint, CultureInfo.CurrentCulture));
+            return;
+        }
+
+        if (decimal.TryParse(expectedText, NumberStyles.Number | NumberStyles.AllowThousands | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var expectedMoney))
+        {
+            ParseMoney(actualText).ShouldBe(expectedMoney);
+            return;
+        }
+
+        actualText.ShouldBe(expectedText);
     }
 
     private static string ResolveComparisonDateValue(string comparisonDate)

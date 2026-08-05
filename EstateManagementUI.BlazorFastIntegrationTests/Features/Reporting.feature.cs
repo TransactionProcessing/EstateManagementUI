@@ -321,7 +321,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/Reporting.feature.ndjson", 4);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/Reporting.feature.ndjson", 11);
         }
         
         [global::NUnit.Framework.TestAttribute()]
@@ -361,13 +361,13 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
         }
         
         [global::NUnit.Framework.TestAttribute()]
-        [global::NUnit.Framework.DescriptionAttribute("Analytical charts report shows seeded count and value data")]
-        public async global::System.Threading.Tasks.Task AnalyticalChartsReportShowsSeededCountAndValueData()
+        [global::NUnit.Framework.DescriptionAttribute("Settlement summary report still renders the placeholder state")]
+        public async global::System.Threading.Tasks.Task SettlementSummaryReportStillRendersThePlaceholderState()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "1";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Analytical charts report shows seeded count and value data", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Settlement summary report still renders the placeholder state", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = null;
 #line 71
@@ -384,108 +384,534 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
   await this.FeatureBackgroundAsync();
 #line hidden
 #line 72
-    await testRunner.WhenAsync("I open the analytical charts report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+    await testRunner.WhenAsync("I open the settlement summary report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
 #line 73
-    await testRunner.ThenAsync("I should see the analytical charts report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+    await testRunner.ThenAsync("I should see the settlement summary report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 74
+    await testRunner.AndAsync("I should see the settlement summary placeholder", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Merchant settlement history report still renders the placeholder state")]
+        public async global::System.Threading.Tasks.Task MerchantSettlementHistoryReportStillRendersThePlaceholderState()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "2";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Merchant settlement history report still renders the placeholder state", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 76
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 77
+    await testRunner.WhenAsync("I open the merchant settlement history report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 78
+    await testRunner.ThenAsync("I should see the merchant settlement history report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 79
+    await testRunner.AndAsync("I should see the merchant settlement history placeholder", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Settlement reconciliation report still renders the placeholder state")]
+        public async global::System.Threading.Tasks.Task SettlementReconciliationReportStillRendersThePlaceholderState()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "3";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Settlement reconciliation report still renders the placeholder state", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 81
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 82
+    await testRunner.WhenAsync("I open the settlement reconciliation report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 83
+    await testRunner.ThenAsync("I should see the settlement reconciliation report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 84
+    await testRunner.AndAsync("I should see the settlement reconciliation placeholder", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Transaction detail report shows the seeded sales")]
+        public async global::System.Threading.Tasks.Task TransactionDetailReportShowsTheSeededSales()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "4";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Transaction detail report shows the seeded sales", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 86
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 87
+    await testRunner.WhenAsync("I open the transaction detail report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 88
+    await testRunner.ThenAsync("I should see the transaction detail report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
                             "Label",
                             "Value"});
                 table12.AddRow(new string[] {
-                            "Total Count",
-                            "523"});
+                            "Total Transactions",
+                            "5"});
                 table12.AddRow(new string[] {
-                            "Total Value",
-                            "145000.00"});
+                            "Gross Amount",
+                            "50.00"});
                 table12.AddRow(new string[] {
-                            "Average Value",
-                            "277.25"});
+                            "Total Fees",
+                            "6.25"});
                 table12.AddRow(new string[] {
-                            "Net Settlement",
-                            "30.00"});
-#line 74
-    await testRunner.AndAsync("the analytical charts report should show these summary values", ((string)(null)), table12, "And ");
+                            "Net Amount",
+                            "43.75"});
+#line 89
+    await testRunner.AndAsync("the transaction detail report should show these summary values", ((string)(null)), table12, "And ");
 #line hidden
                 global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
-                            "Comparison Date"});
+                            "Transaction Number",
+                            "Merchant",
+                            "Product",
+                            "Type",
+                            "Status"});
                 table13.AddRow(new string[] {
-                            "Yesterday"});
-#line 80
-    await testRunner.AndAsync("the analytical charts report should use this comparison date", ((string)(null)), table13, "And ");
+                            "1001",
+                            "Reporting Merchant A",
+                            "Reporting Product A",
+                            "sale",
+                            "Successful"});
+                table13.AddRow(new string[] {
+                            "1002",
+                            "Reporting Merchant A",
+                            "Reporting Product A",
+                            "sale",
+                            "Successful"});
+                table13.AddRow(new string[] {
+                            "1003",
+                            "Reporting Merchant B",
+                            "Reporting Product B",
+                            "sale",
+                            "Successful"});
+                table13.AddRow(new string[] {
+                            "1004",
+                            "Reporting Merchant A",
+                            "Reporting Product A",
+                            "sale",
+                            "Successful"});
+                table13.AddRow(new string[] {
+                            "1005",
+                            "Reporting Merchant B",
+                            "Reporting Product B",
+                            "sale",
+                            "Successful"});
+#line 95
+    await testRunner.AndAsync("the transaction detail report should list these transactions", ((string)(null)), table13, "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Transaction summary by merchant aggregates seeded sales")]
+        public async global::System.Threading.Tasks.Task TransactionSummaryByMerchantAggregatesSeededSales()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "5";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Transaction summary by merchant aggregates seeded sales", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 103
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 104
+    await testRunner.WhenAsync("I open the transaction summary by merchant report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 105
+    await testRunner.ThenAsync("I should see the transaction summary by merchant report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
                 global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
+                            "Label",
+                            "Value"});
+                table14.AddRow(new string[] {
+                            "Total Merchants",
+                            "2"});
+                table14.AddRow(new string[] {
+                            "Total Transactions",
+                            "5"});
+                table14.AddRow(new string[] {
+                            "Total Value",
+                            "50.00"});
+                table14.AddRow(new string[] {
+                            "Average Transaction",
+                            "10.00"});
+#line 106
+    await testRunner.AndAsync("the merchant summary report should show these summary values", ((string)(null)), table14, "And ");
+#line hidden
+                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
+                            "Merchant",
+                            "Total Count",
+                            "Total Value",
+                            "Average Value",
+                            "Successful",
+                            "Failed",
+                            "Success Rate"});
+                table15.AddRow(new string[] {
+                            "Reporting Merchant A",
+                            "3",
+                            "30.00",
+                            "10.00",
+                            "3",
+                            "0",
+                            "10000.0"});
+                table15.AddRow(new string[] {
+                            "Reporting Merchant B",
+                            "2",
+                            "20.00",
+                            "10.00",
+                            "2",
+                            "0",
+                            "10000.0"});
+#line 112
+    await testRunner.AndAsync("the merchant summary report should list these merchant rows", ((string)(null)), table15, "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Transaction summary by operator aggregates seeded sales")]
+        public async global::System.Threading.Tasks.Task TransactionSummaryByOperatorAggregatesSeededSales()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "6";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Transaction summary by operator aggregates seeded sales", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 117
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 118
+    await testRunner.WhenAsync("I open the transaction summary by operator report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 119
+    await testRunner.ThenAsync("I should see the transaction summary by operator report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table16 = new global::Reqnroll.Table(new string[] {
+                            "Label",
+                            "Value"});
+                table16.AddRow(new string[] {
+                            "Total Operators",
+                            "2"});
+                table16.AddRow(new string[] {
+                            "Total Transactions",
+                            "5"});
+                table16.AddRow(new string[] {
+                            "Total Value",
+                            "50.00"});
+                table16.AddRow(new string[] {
+                            "Average Transaction",
+                            "10.00"});
+#line 120
+    await testRunner.AndAsync("the operator summary report should show these summary values", ((string)(null)), table16, "And ");
+#line hidden
+                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
+                            "Operator",
+                            "Transaction Count",
+                            "Transaction Value",
+                            "Average Value",
+                            "Successful",
+                            "Failed",
+                            "Success Rate"});
+                table17.AddRow(new string[] {
+                            "Safaricom",
+                            "3",
+                            "30.00",
+                            "10.00",
+                            "3",
+                            "0",
+                            "10000.0"});
+                table17.AddRow(new string[] {
+                            "Voucher",
+                            "2",
+                            "20.00",
+                            "10.00",
+                            "2",
+                            "0",
+                            "10000.0"});
+#line 126
+    await testRunner.AndAsync("the operator summary report should list these operator rows", ((string)(null)), table17, "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Product performance report shows the seeded product split")]
+        public async global::System.Threading.Tasks.Task ProductPerformanceReportShowsTheSeededProductSplit()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "7";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Product performance report shows the seeded product split", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 131
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 132
+    await testRunner.WhenAsync("I open the product performance report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 133
+    await testRunner.ThenAsync("I should see the product performance report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table18 = new global::Reqnroll.Table(new string[] {
+                            "Label",
+                            "Value"});
+                table18.AddRow(new string[] {
+                            "Total Products",
+                            "2"});
+                table18.AddRow(new string[] {
+                            "Total Transactions",
+                            "5"});
+                table18.AddRow(new string[] {
+                            "Total Value",
+                            "50.00"});
+                table18.AddRow(new string[] {
+                            "Average per Product",
+                            "25.00"});
+#line 134
+    await testRunner.AndAsync("the product performance report should show these summary values", ((string)(null)), table18, "And ");
+#line hidden
+                global::Reqnroll.Table table19 = new global::Reqnroll.Table(new string[] {
+                            "Product",
+                            "Transaction Count",
+                            "Transaction Value",
+                            "Percentage"});
+                table19.AddRow(new string[] {
+                            "Reporting Product A",
+                            "3",
+                            "30.00",
+                            "60.00"});
+                table19.AddRow(new string[] {
+                            "Reporting Product B",
+                            "2",
+                            "20.00",
+                            "40.00"});
+#line 140
+    await testRunner.AndAsync("the product performance report should list these product rows", ((string)(null)), table19, "And ");
+#line hidden
+#line 144
+    await testRunner.AndAsync("the product performance report should validate the percentage split", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::NUnit.Framework.TestAttribute()]
+        [global::NUnit.Framework.DescriptionAttribute("Analytical charts report shows seeded count and value data")]
+        public async global::System.Threading.Tasks.Task AnalyticalChartsReportShowsSeededCountAndValueData()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "8";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Analytical charts report shows seeded count and value data", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = null;
+#line 146
+  this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 7
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 147
+    await testRunner.WhenAsync("I open the analytical charts report", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 148
+    await testRunner.ThenAsync("I should see the analytical charts report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+                global::Reqnroll.Table table20 = new global::Reqnroll.Table(new string[] {
+                            "Label",
+                            "Value"});
+                table20.AddRow(new string[] {
+                            "Total Count",
+                            "523"});
+                table20.AddRow(new string[] {
+                            "Total Value",
+                            "145000.00"});
+                table20.AddRow(new string[] {
+                            "Average Value",
+                            "277.25"});
+                table20.AddRow(new string[] {
+                            "Net Settlement",
+                            "30.00"});
+#line 149
+    await testRunner.AndAsync("the analytical charts report should show these summary values", ((string)(null)), table20, "And ");
+#line hidden
+                global::Reqnroll.Table table21 = new global::Reqnroll.Table(new string[] {
+                            "Comparison Date"});
+                table21.AddRow(new string[] {
+                            "Yesterday"});
+#line 155
+    await testRunner.AndAsync("the analytical charts report should use this comparison date", ((string)(null)), table21, "And ");
+#line hidden
+                global::Reqnroll.Table table22 = new global::Reqnroll.Table(new string[] {
                             "Chart",
                             "Today",
                             "Comparison"});
-                table14.AddRow(new string[] {
+                table22.AddRow(new string[] {
                             "Volume",
                             "3",
                             "2"});
-                table14.AddRow(new string[] {
+                table22.AddRow(new string[] {
                             "Value",
                             "30.00",
                             "20.00"});
-#line 83
-    await testRunner.AndAsync("the analytical charts report should compare these chart totals", ((string)(null)), table14, "And ");
+#line 158
+    await testRunner.AndAsync("the analytical charts report should compare these chart totals", ((string)(null)), table22, "And ");
 #line hidden
-                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table23 = new global::Reqnroll.Table(new string[] {
                             "Chart",
                             "Hour",
                             "Today",
                             "Comparison"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Volume",
                             "09:00",
                             "1",
                             "0"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Volume",
                             "10:00",
                             "0",
                             "1"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Volume",
                             "13:00",
                             "1",
                             "0"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Volume",
                             "14:00",
                             "0",
                             "1"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Volume",
                             "15:00",
                             "1",
                             "0"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Value",
                             "09:00",
                             "10.00",
                             "0.00"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Value",
                             "10:00",
                             "0.00",
                             "10.00"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Value",
                             "13:00",
                             "10.00",
                             "0.00"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Value",
                             "14:00",
                             "0.00",
                             "10.00"});
-                table15.AddRow(new string[] {
+                table23.AddRow(new string[] {
                             "Value",
                             "15:00",
                             "10.00",
                             "0.00"});
-#line 87
-    await testRunner.AndAsync("the analytical charts report should compare these hourly chart points", ((string)(null)), table15, "And ");
+#line 162
+    await testRunner.AndAsync("the analytical charts report should compare these hourly chart points", ((string)(null)), table23, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

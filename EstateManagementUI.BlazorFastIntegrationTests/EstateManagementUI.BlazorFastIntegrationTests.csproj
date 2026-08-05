@@ -38,9 +38,6 @@
 
   <ItemGroup>
     <Compile Include="..\EstateManagementUI.IntegrationTests\Hooks\BrowserHooks.cs" Link="Hooks\BrowserHooks.cs" />
-    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\DashboardSteps.cs" Link="Steps\DashboardSteps.cs" />
-    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\EstateEntrySteps.cs" Link="Steps\EstateEntrySteps.cs" />
-    <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\EstateManagementSteps.cs" Link="Steps\EstateManagementSteps.cs" />
     <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\FileProcessingSteps.cs" Link="Steps\FileProcessingSteps.cs" />
     <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\MerchantManagementSteps.cs" Link="Steps\MerchantManagementSteps.cs" />
     <Compile Include="..\EstateManagementUI.IntegrationTests\Steps\OperatorManagementSteps.cs" Link="Steps\OperatorManagementSteps.cs" />

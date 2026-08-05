@@ -68,22 +68,97 @@ Feature: Reporting
     Then I should see the reporting dashboard heading
     And I should see the reporting dashboard links
 
+  Scenario: Settlement summary report still renders the placeholder state
+    When I open the settlement summary report
+    Then I should see the settlement summary report heading
+    And I should see the settlement summary placeholder
+
+  Scenario: Merchant settlement history report still renders the placeholder state
+    When I open the merchant settlement history report
+    Then I should see the merchant settlement history report heading
+    And I should see the merchant settlement history placeholder
+
+  Scenario: Settlement reconciliation report still renders the placeholder state
+    When I open the settlement reconciliation report
+    Then I should see the settlement reconciliation report heading
+    And I should see the settlement reconciliation placeholder
+
+  Scenario: Transaction detail report shows the seeded sales
+    When I open the transaction detail report
+    Then I should see the transaction detail report heading
+    And the transaction detail report should show these summary values
+      | Label              | Value |
+      | Total Transactions | 5     |
+      | Gross Amount       | 50.00 |
+      | Total Fees         | 6.25  |
+      | Net Amount         | 43.75 |
+    And the transaction detail report should list these transactions
+      | Transaction Number | Merchant              | Product              | Type | Status     |
+      | 1001               | Reporting Merchant A  | Reporting Product A  | sale | Successful |
+      | 1002               | Reporting Merchant A  | Reporting Product A  | sale | Successful |
+      | 1003               | Reporting Merchant B  | Reporting Product B  | sale | Successful |
+      | 1004               | Reporting Merchant A  | Reporting Product A  | sale | Successful |
+      | 1005               | Reporting Merchant B  | Reporting Product B  | sale | Successful |
+
+  Scenario: Transaction summary by merchant aggregates seeded sales
+    When I open the transaction summary by merchant report
+    Then I should see the transaction summary by merchant report heading
+    And the merchant summary report should show these summary values
+      | Label               | Value |
+      | Total Merchants     | 2     |
+      | Total Transactions  | 5     |
+      | Total Value         | 50.00 |
+      | Average Transaction | 10.00 |
+    And the merchant summary report should list these merchant rows
+      | Merchant             | Total Count | Total Value | Average Value | Successful | Failed | Success Rate |
+      | Reporting Merchant A | 3           | 30.00       | 10.00         | 3          | 0      | 10000.0      |
+      | Reporting Merchant B | 2           | 20.00       | 10.00         | 2          | 0      | 10000.0      |
+
+  Scenario: Transaction summary by operator aggregates seeded sales
+    When I open the transaction summary by operator report
+    Then I should see the transaction summary by operator report heading
+    And the operator summary report should show these summary values
+      | Label               | Value |
+      | Total Operators     | 2     |
+      | Total Transactions  | 5     |
+      | Total Value         | 50.00 |
+      | Average Transaction | 10.00 |
+    And the operator summary report should list these operator rows
+      | Operator  | Transaction Count | Transaction Value | Average Value | Successful | Failed | Success Rate |
+      | Safaricom | 3                 | 30.00             | 10.00         | 3          | 0      | 10000.0      |
+      | Voucher   | 2                 | 20.00             | 10.00         | 2          | 0      | 10000.0      |
+
+  Scenario: Product performance report shows the seeded product split
+    When I open the product performance report
+    Then I should see the product performance report heading
+    And the product performance report should show these summary values
+      | Label                | Value |
+      | Total Products       | 2     |
+      | Total Transactions   | 5     |
+      | Total Value          | 50.00 |
+      | Average per Product  | 25.00 |
+    And the product performance report should list these product rows
+      | Product              | Transaction Count | Transaction Value | Percentage |
+      | Reporting Product A  | 3                 | 30.00             | 60.00      |
+      | Reporting Product B  | 2                 | 20.00             | 40.00      |
+    And the product performance report should validate the percentage split
+
   Scenario: Analytical charts report shows seeded count and value data
     When I open the analytical charts report
     Then I should see the analytical charts report heading
     And the analytical charts report should show these summary values
-      | Label         | Value |
-      | Total Count   | 523   |
-      | Total Value   | 145000.00 |
-      | Average Value | 277.25 |
+      | Label          | Value |
+      | Total Count    | 523   |
+      | Total Value    | 145000.00 |
+      | Average Value  | 277.25 |
       | Net Settlement | 30.00 |
     And the analytical charts report should use this comparison date
       | Comparison Date |
-      | Yesterday      |
+      | Yesterday       |
     And the analytical charts report should compare these chart totals
-      | Chart   | Today | Comparison |
-      | Volume  | 3     | 2          |
-      | Value   | 30.00 | 20.00      |
+      | Chart  | Today | Comparison |
+      | Volume | 3     | 2          |
+      | Value  | 30.00 | 20.00      |
     And the analytical charts report should compare these hourly chart points
       | Chart  | Hour  | Today | Comparison |
       | Volume | 09:00 | 1     | 0          |
