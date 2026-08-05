@@ -30,7 +30,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
             It.IsAny<String>(),
-            It.IsAny<Int32>(),
+            It.IsAny<Int32?>(),
             It.IsAny<String>(),
             It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -49,7 +49,7 @@ public class MerchantsIndexPageTests : BaseTest
         var merchants = new List<MerchantModels.MerchantListModel>();
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -84,7 +84,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -121,7 +121,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -142,7 +142,7 @@ public class MerchantsIndexPageTests : BaseTest
         // Arrange
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(new List<MerchantModels.MerchantListModel>()));
@@ -171,7 +171,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -202,7 +202,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -235,7 +235,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -257,7 +257,7 @@ public class MerchantsIndexPageTests : BaseTest
         var merchants = new List<MerchantModels.MerchantListModel>();
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -289,7 +289,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -305,7 +305,7 @@ public class MerchantsIndexPageTests : BaseTest
         // Assert - Verify GetMerchants was called at least twice (once on load, once on filter)
         this.MerchantUIService.Verify(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()), Times.AtLeast(2));
     }
@@ -325,7 +325,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -341,7 +341,7 @@ public class MerchantsIndexPageTests : BaseTest
         // Assert - Verify GetMerchants was called at least twice (once on load, once on clear)
         this.MerchantUIService.Verify(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()), Times.AtLeast(2));
     }
@@ -363,7 +363,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -396,7 +396,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -429,7 +429,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -472,7 +472,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -514,7 +514,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -558,7 +558,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -612,7 +612,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -644,7 +644,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -678,7 +678,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -712,7 +712,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -741,7 +741,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));
@@ -764,7 +764,7 @@ public class MerchantsIndexPageTests : BaseTest
         // Arrange
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Failure());
@@ -793,7 +793,7 @@ public class MerchantsIndexPageTests : BaseTest
 
         this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
                 It.IsAny<String>(),
-                It.IsAny<Int32>(),
+                It.IsAny<Int32?>(),
                 It.IsAny<String>(),
                 It.IsAny<String>()))
             .ReturnsAsync(Result.Success(merchants));

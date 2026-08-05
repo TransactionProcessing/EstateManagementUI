@@ -55,8 +55,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                         ? summaryData.Merchants.OrderBy(m => m.TotalValue)
                         : summaryData.Merchants.OrderByDescending(m => m.TotalValue),
                     "AverageValue" => _sortAscending
-                        ? summaryData.Merchants.OrderBy(m => m.AverageValue)
-                        : summaryData.Merchants.OrderByDescending(m => m.AverageValue),
+                        ? summaryData.Merchants.OrderBy(GetAverageValue)
+                        : summaryData.Merchants.OrderByDescending(GetAverageValue),
                     "AuthorisedCount" => _sortAscending
                         ? summaryData.Merchants.OrderBy(m => m.AuthorisedCount)
                         : summaryData.Merchants.OrderByDescending(m => m.AuthorisedCount),
@@ -212,6 +212,9 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             var endDate = _endDate.ToString("yyyy-MM-dd");
             Navigation.NavigateTo($"/reporting/transaction-detail?merchantId={merchantReportingId}&startDate={startDate}&endDate={endDate}&returnUrl=/reporting/transaction-summary-merchant");
         }
+
+        private static decimal GetAverageValue(TransactionModels.MerchantDetail merchant) =>
+            merchant.TotalCount == 0 ? 0 : merchant.TotalValue / merchant.TotalCount;
     }
 }
 

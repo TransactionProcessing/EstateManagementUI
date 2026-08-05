@@ -3,6 +3,7 @@ using Microsoft.Playwright;
 using Reqnroll;
 using Shared.IntegrationTesting;
 using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace EstateManagementUI.IntegrationTests.Steps;
 
@@ -209,8 +210,8 @@ public sealed class MerchantManagementSteps
 
         await GetHelper().SubmitMerchantDepositAsync(
             decimal.Parse(ReqnrollTableHelper.GetStringRowValue(row, "Amount"), CultureInfo.InvariantCulture),
-            DateOnly.ParseExact(ReqnrollTableHelper.GetStringRowValue(row, "Date"), "yyyy-MM-dd", CultureInfo.InvariantCulture),
-            _depositReference);
+            ReqnrollTableHelper.GetDateForDateString(ReqnrollTableHelper.GetStringRowValue(row, "Date"), DateTime.Now),
+        _depositReference);
     }
 
     [Then("I should be back on the merchant list")]

@@ -115,7 +115,7 @@ public static class ModelFactory {
             DisplayText = model.DisplayText,
             Value = model.Value,
             NumberOfFees = model.NumberOfFees,
-            ProductType = Enum.Parse<ProductType>(model.ProductType),
+            ProductType = ParseProductType(model.ProductType),
             TransactionFees = new List<ContractProductTransactionFeeModel>()
         };
         if (model.TransactionFees != null && model.TransactionFees.Any()) {
@@ -312,6 +312,27 @@ public static class ModelFactory {
         
     private static RecentContractModel ConvertFrom(BusinessLogic.Models.ContractModels.RecentContractModel model) {
         return new RecentContractModel { OperatorName = model.OperatorName, Description = model.Description, ContractId = model.ContractId };
+    }
+
+    private static ProductType ParseProductType(string? productType)
+    {
+        if (string.IsNullOrWhiteSpace(productType))
+        {
+            return ProductType.NotSet;
+        }
+
+        if (Enum.TryParse<ProductType>(productType, true, out var parsed))
+        {
+            return parsed;
+        }
+
+        string normalized = System.Text.RegularExpressions.Regex.Replace(productType, @"[\s\-_]+", string.Empty);
+        if (Enum.TryParse<ProductType>(normalized, true, out parsed))
+        {
+            return parsed;
+        }
+
+        return ProductType.NotSet;
     }
 
     public static List<MerchantListModel>? ConvertFrom(List<BusinessLogic.Models.MerchantModels.MerchantListModel> resultData) {

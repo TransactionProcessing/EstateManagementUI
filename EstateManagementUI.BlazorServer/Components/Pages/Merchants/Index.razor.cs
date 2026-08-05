@@ -98,7 +98,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private async Task<Result> LoadMerchants() {
             CorrelationId correlationId = new(Guid.NewGuid());
             Guid estateId = await this.GetEstateId();
-            var result = await this.MerchantUiService.GetMerchants(correlationId, estateId, this._filterName, this._filterReference, Int32.Parse(_filterSettlementSchedule), this._filterRegion, this._filterPostcode);
+            int? settlementScheduleFilter = Int32.Parse(_filterSettlementSchedule);
+            if (settlementScheduleFilter == -1)
+            {
+                settlementScheduleFilter = null;
+            }
+
+            var result = await this.MerchantUiService.GetMerchants(correlationId, estateId, this._filterName, this._filterReference, settlementScheduleFilter, this._filterRegion, this._filterPostcode);
             if (result.IsFailed) {
                 return ResultHelpers.CreateFailure(result);
             }

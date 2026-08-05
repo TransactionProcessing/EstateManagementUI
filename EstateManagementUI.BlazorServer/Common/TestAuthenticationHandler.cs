@@ -32,11 +32,27 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
     {
         // Check for role switch in query parameter
         string? roleName = null;
+        if (_httpContextAccessor.HttpContext?.Request.Cookies.TryGetValue("TestUserRole", out var cookieRole) == true)
+        {
+            roleName = cookieRole;
+        }
+
         if (_httpContextAccessor.HttpContext?.Request.Query.TryGetValue("switchRole", out var roleQuery) == true)
         {
             roleName = roleQuery.ToString();
             // Store in session for persistence
             _httpContextAccessor.HttpContext.Session.SetString("TestUserRole", roleName);
+            _httpContextAccessor.HttpContext.Response.Cookies.Append(
+                "TestUserRole",
+                roleName,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    Path = "/",
+                    SameSite = SameSiteMode.Lax,
+                    IsEssential = true
+                });
         }
         
         // Try to get from session first

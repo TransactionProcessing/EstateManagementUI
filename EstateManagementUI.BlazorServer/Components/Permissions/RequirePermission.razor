@@ -56,7 +56,6 @@ else if (_hasPermission)
         _hasPermission = await PermissionService.HasPermissionAsync(Section, Function);
         _isChecking = false;
         Console.WriteLine($"RequirePermission: Section={Section}, Function={Function}, HasPermission={_hasPermission}");
-        StateHasChanged();
     }
 
     public void Dispose()

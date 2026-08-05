@@ -259,12 +259,20 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            var signInButton = _page.Locator("#loginButton");
+            var entrySignInButton = _page.Locator("#loginButton");
+            var dashboardLoginLink = _page.Locator("a[href='/login']");
 
-            (await signInButton.IsVisibleAsync()).ShouldBeTrue();
             Console.WriteLine($"Sign in before click: {_page.Url}");
 
-            await signInButton.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            if (await entrySignInButton.IsVisibleAsync())
+            {
+                await entrySignInButton.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
+            else
+            {
+                (await dashboardLoginLink.IsVisibleAsync()).ShouldBeTrue();
+                await dashboardLoginLink.ClickAsync(new LocatorClickOptions { NoWaitAfter = true });
+            }
             await WaitForAuthenticationNavigationAsync();
             Console.WriteLine($"Sign in after click: {_page.Url}");
             Console.WriteLine($"Sign in title after click: {await _page.TitleAsync()}");
@@ -277,6 +285,60 @@ public sealed class DashboardPageHelper
         await RunWithFailureArtifactsAsync(async () =>
         {
             await WaitForAuthenticationNavigationAsync();
+
+            for (var attempt = 1; attempt <= 30; attempt++)
+            {
+                if (_page.Url.Contains("/entry", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (await _page.GetByText("Sign in to access all features").IsVisibleAsync())
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    var bodyText = await _page.Locator("body").InnerTextAsync();
+                    if (bodyText.Contains("Sign in to access all features", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return;
+                    }
+
+                    var entrySignInButton = _page.Locator("#loginButton");
+                    if (await entrySignInButton.IsVisibleAsync())
+                    {
+                        return;
+                    }
+
+                    if (await WaitForAnyVisibleAsync(
+                        "#Input_Username",
+                        "input[name='Input.Username']",
+                        "#Input_UserName",
+                        "input[name='Input.UserName']",
+                        "#Username",
+                        "input[name='Username']",
+                        "input[name='username']",
+                        "input[name='UserName']",
+                        "input[name='Email']",
+                        "input[type='email']",
+                        "input[type='text']",
+                        "input[autocomplete='username']") &&
+                        await WaitForAnyVisibleAsync(
+                            "#Input_Password",
+                            "input[name='Input.Password']",
+                            "#Input_PasswordInput",
+                            "#Password",
+                            "input[name='Password']",
+                            "input[name='password']",
+                            "input[name='current-password']",
+                            "input[type='password']",
+                            "input[autocomplete='current-password']"))
+                    {
+                        return;
+                    }
+                }
+
+                await Task.Delay(1000);
+            }
 
             (await WaitForAnyVisibleAsync(
                 "#Input_Username",
@@ -309,8 +371,8 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await FillFirstVisibleAsync(
-                username,
+            var usernameSelectors = new[]
+            {
                 "#Input_Username",
                 "input[name='Input.Username']",
                 "#Username",
@@ -318,7 +380,17 @@ public sealed class DashboardPageHelper
                 "input[name='username']",
                 "input[type='email']",
                 "input[type='text']",
-                "input[autocomplete='username']");
+                "input[autocomplete='username']"
+            };
+
+            if (_page.Url.Contains("/entry", StringComparison.OrdinalIgnoreCase) || !await IsAnyVisibleAsync(usernameSelectors))
+            {
+                await ClickSignInButtonAsync();
+            }
+
+            await FillFirstVisibleAsync(
+                username,
+                usernameSelectors);
 
             await FillFirstVisibleAsync(
                 password,
@@ -1416,19 +1488,74 @@ public sealed class DashboardPageHelper
         }, nameof(OpenMerchantDepositAsync));
     }
 
+    public async Task OpenMerchantDepositAsync(string merchantName)
+    {
+        await RunWithFailureArtifactsAsync(async () =>
+        {
+            await _page.GotoAsync(ResolveBaseUrl() + "/merchants");
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+            var row = GetMerchantRow(merchantName);
+            await row.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await row.GetByRole(AriaRole.Button, new() { Name = "Make Deposit" }).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        }, nameof(OpenMerchantDepositAsync));
+    }
+
     public async Task AssertMerchantDepositVisibleAsync(string merchantName)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Make Merchant Deposit" }).IsVisibleAsync()).ShouldBeTrue();
-            (await _page.GetByText($"For merchant: {merchantName}").IsVisibleAsync()).ShouldBeTrue();
-            (await _page.Locator("#depositAmount").IsVisibleAsync()).ShouldBeTrue();
-            (await _page.Locator("#depositDate").IsVisibleAsync()).ShouldBeTrue();
-            (await _page.Locator("#depositReference").IsVisibleAsync()).ShouldBeTrue();
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Make Merchant Deposit" });
+            var merchantText = _page.GetByText($"For merchant: {merchantName}");
+            var depositAmount = _page.Locator("#depositAmount");
+            var depositDate = _page.Locator("#depositDate");
+            var depositReference = _page.Locator("#depositReference");
+
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await merchantText.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await depositAmount.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await depositDate.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            await depositReference.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
+            (await merchantText.IsVisibleAsync()).ShouldBeTrue();
+            (await depositAmount.IsVisibleAsync()).ShouldBeTrue();
+            (await depositDate.IsVisibleAsync()).ShouldBeTrue();
+            (await depositReference.IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertMerchantDepositVisibleAsync));
     }
 
-    public async Task SubmitMerchantDepositAsync(decimal amount, DateOnly date, string reference)
+    public async Task SubmitMerchantDepositAsync(decimal amount, DateTime date, string reference)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
@@ -1722,18 +1849,25 @@ public sealed class DashboardPageHelper
 
     private async Task FillFirstVisibleAsync(string value, params string[] selectors)
     {
-        foreach (var selector in selectors)
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+
+        while (DateTime.UtcNow < deadline)
         {
-            var locator = _page.Locator(selector);
-            if (await locator.CountAsync() > 0)
+            foreach (var selector in selectors)
             {
-                var first = locator.First;
-                if (await first.IsVisibleAsync())
+                var locator = _page.Locator(selector);
+                if (await locator.CountAsync() > 0)
                 {
-                    await first.FillAsync(value);
-                    return;
+                    var first = locator.First;
+                    if (await first.IsVisibleAsync())
+                    {
+                        await first.FillAsync(value);
+                        return;
+                    }
                 }
             }
+
+            await _page.WaitForTimeoutAsync(250);
         }
 
         throw new InvalidOperationException($"Could not find a visible input for selectors: {string.Join(", ", selectors)}");

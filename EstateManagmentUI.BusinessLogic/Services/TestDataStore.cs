@@ -275,19 +275,19 @@ public class TestDataStore : ITestDataStore
             CreatedDateTime = DateTime.Now.AddDays(-5)
         });
 
-        // Default test operators
+        // Default test operators used by the fast UI feature files
         this.AddOperator(estateId, new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-            Name = "Safaricom",
+            Name = "Test Operator",
             RequireCustomMerchantNumber = true,
-            RequireCustomTerminalNumber = false
+            RequireCustomTerminalNumber = true
         });
 
         this.AddOperator(estateId, new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
-            Name = "Voucher",
+            Name = "Spare Operator",
             RequireCustomMerchantNumber = false,
             RequireCustomTerminalNumber = false
         });
@@ -297,7 +297,7 @@ public class TestDataStore : ITestDataStore
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
             Description = "Standard Transaction Contract",
-            OperatorName = "Safaricom",
+            OperatorName = "Test Operator",
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
             Products = new List<ContractModels.ContractProductModel>
             {
@@ -336,7 +336,7 @@ public class TestDataStore : ITestDataStore
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444445"),
             Description = "Voucher Sales Contract",
-            OperatorName = "Voucher",
+            OperatorName = "Spare Operator",
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
             Products = new List<ContractModels.ContractProductModel>
             {

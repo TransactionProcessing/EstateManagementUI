@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EventStoreProjections" />
     <PackageReference Include="MessagingService.IntegrationTesting.Helpers" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
@@ -46,6 +47,12 @@
 
   <ItemGroup>
     <Folder Include="Features\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="StoredProcedures\spBuildTodaysTransactions.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
