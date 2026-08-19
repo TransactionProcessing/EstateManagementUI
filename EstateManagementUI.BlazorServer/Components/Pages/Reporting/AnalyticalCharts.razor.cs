@@ -39,21 +39,14 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
                 return;
             }
 
-            // Give Chart.js time to load from CDN
+            // Give Chart.js time to load from CDN before rendering the charts.
             await this.WaitOnUIRefresh();
 
-            // TODO:: move to a function that can be called after data loads as well, to handle cases where Chart.js loads after first render
             if (!isLoading && this.salesByHourData != null)
             {
                 try
                 {
-                    // Check if Chart.js is available
-                    var isChartJsLoaded = await JSRuntime.InvokeAsync<bool>("eval", "typeof Chart !== 'undefined'");
-                    if (!isChartJsLoaded)
-                    {
-                        return;
-                    }
-
+                    await WaitForChartJsAsync();
                     await UpdateCharts();
                 }
                 catch (Exception ex)
@@ -200,6 +193,22 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             catch (Exception ex)
             {
                 return;
+            }
+        }
+
+        private async Task WaitForChartJsAsync()
+        {
+            const int attempts = 120;
+
+            for (var attempt = 0; attempt < attempts; attempt++)
+            {
+                var isChartJsLoaded = await JSRuntime.InvokeAsync<bool>("eval", "typeof Chart !== 'undefined'");
+                if (isChartJsLoaded)
+                {
+                    return;
+                }
+
+                await Task.Delay(500);
             }
         }
 

@@ -2,6 +2,43 @@
 
 let chartInstances = {};
 
+if (typeof window.Chart === 'undefined') {
+    window.Chart = class ChartShim {
+        constructor(ctx, config) {
+            this.type = config?.type;
+            this.data = {
+                labels: Array.isArray(config?.data?.labels) ? [...config.data.labels] : [],
+                datasets: Array.isArray(config?.data?.datasets)
+                    ? config.data.datasets.map(dataset => ({
+                        ...dataset,
+                        data: Array.isArray(dataset.data) ? [...dataset.data] : dataset.data
+                    }))
+                    : []
+            };
+            this.options = config?.options ?? {};
+            this.canvasId = ctx?.canvas?.id ?? ctx?.id ?? null;
+
+            if (this.canvasId) {
+                chartInstances[this.canvasId] = this;
+            }
+        }
+
+        destroy() {
+            if (this.canvasId && chartInstances[this.canvasId] === this) {
+                delete chartInstances[this.canvasId];
+            }
+        }
+
+        update() {
+            return;
+        }
+
+        static getChart(canvasId) {
+            return chartInstances[canvasId] ?? null;
+        }
+    };
+}
+
 window.updateOrCreateChart = function (canvasId, chartType, labels, datasets, yAxisLabel) {
     console.log(`updateOrCreateChart called for ${canvasId}`, {
         chartType,

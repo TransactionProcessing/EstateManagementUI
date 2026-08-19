@@ -379,6 +379,8 @@ public sealed class ReportingPageHelper
             });
         }
 
+        await _page.WaitForFunctionAsync(@"() => typeof Chart !== 'undefined'", new FrameWaitForFunctionOptions { Timeout = 120000 });
+
         await _page.WaitForFunctionAsync(@"() => {
             const volumeChart = Chart.getChart('volumeChart');
             const valueChart = Chart.getChart('valueChart');
