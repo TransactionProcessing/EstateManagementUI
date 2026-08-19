@@ -31,7 +31,7 @@ jobs:
 
     - name: Normalize coverage filename
       run: |
-        coverage_file=$(find TestResults -name 'coverage.cobertura.*.xml' -print -quit)
+        coverage_file=$(find EstateManagementUI.BlazorServer.Tests/bin/Release/net10.0/TestResults -name 'coverage.cobertura.*.xml' -print -quit)
         if [ -z "$coverage_file" ]; then
           echo "Coverage report not found"
           exit 1
