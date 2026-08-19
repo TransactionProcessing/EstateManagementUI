@@ -30,7 +30,7 @@ jobs:
 
     - name: Run Unit Tests
       run: |        
-        dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --settings .runsettings /p:CollectCoverage=true /p:Exclude="[xunit*]*" /p:ExcludeByAttribute="Obsolete" /p:ExcludeByAttribute="GeneratedCodeAttribute" /p:ExcludeByAttribute="ExcludeFromCodeCoverageAttribute" /p:CoverletOutput="../lcov1.info" /maxcpucount:1 /p:CoverletOutputFormat="lcov"
+        dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --configuration Release --no-build --coverlet --coverlet-output-format cobertura --maxcpucount:1
 
     - name: Notify on nightly failure
       if: ${{ failure() }}
