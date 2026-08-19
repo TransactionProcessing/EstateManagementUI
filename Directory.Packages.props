@@ -6,22 +6,22 @@
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.Uris" Version="9.0.0" />
     <PackageVersion Include="bunit.web" Version="1.40.0" />
-    <PackageVersion Include="ClientProxyBase" Version="2026.6.1" />
+    <PackageVersion Include="ClientProxyBase" Version="2026.8.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="coverlet.msbuild" Version="10.0.1" />
     <PackageVersion Include="EventStoreProjections" Version="2023.12.3" />
-    <PackageVersion Include="FileProcessor.Client" Version="2026.6.2-build137" />
+    <PackageVersion Include="FileProcessor.Client" Version="2026.7.2" />
     <PackageVersion Include="IdentityModel" Version="6.2.0" />
     <PackageVersion Include="Lamar" Version="16.0.0" />
     <PackageVersion Include="Lamar.Microsoft.DependencyInjection" Version="16.0.0" />
-    <PackageVersion Include="MediatR" Version="14.1.0" />
-    <PackageVersion Include="MessagingService.IntegrationTesting.Helpers" Version="2026.5.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.301" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.9" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
-    <PackageVersion Include="Microsoft.Playwright" Version="1.60.0" />
+    <PackageVersion Include="MediatR" Version="14.2.0" />
+    <PackageVersion Include="MessagingService.IntegrationTesting.Helpers" Version="2026.7.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.400" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.WindowsServices" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.62.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="NUnit" Version="4.6.1" />
@@ -29,18 +29,18 @@
     <PackageVersion Include="Reqnroll" Version="3.3.4" />
     <PackageVersion Include="Reqnroll.NUnit" Version="3.3.4" />
     <PackageVersion Include="Reqnroll.Tools.MsBuild.Generation" Version="3.3.4" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.15.0" />
-    <PackageVersion Include="SecurityService.Client" Version="2026.5.1" />
-    <PackageVersion Include="SecurityService.IntegrationTesting.Helpers" Version="2026.5.1" />
-    <PackageVersion Include="Sentry.AspNetCore" Version="6.6.0" />
-    <PackageVersion Include="Shared" Version="2026.6.1" />
-    <PackageVersion Include="Shared.IntegrationTesting" Version="2026.6.1" />
-    <PackageVersion Include="Shared.Results" Version="2026.6.1" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.16.1" />
+    <PackageVersion Include="SecurityService.Client" Version="2026.7.2" />
+    <PackageVersion Include="SecurityService.IntegrationTesting.Helpers" Version="2026.7.2" />
+    <PackageVersion Include="Sentry.AspNetCore" Version="6.9.0" />
+    <PackageVersion Include="Shared" Version="2026.8.2" />
+    <PackageVersion Include="Shared.IntegrationTesting" Version="2026.8.2" />
+    <PackageVersion Include="Shared.Results" Version="2026.8.2" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SimpleResults" Version="4.0.0" />
-    <PackageVersion Include="TransactionProcessor.Client" Version="2026.5.2" />
-    <PackageVersion Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2026.5.2" />
-    <PackageVersion Include="xunit.v3" Version="3.2.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="TransactionProcessor.Client" Version="2026.7.2" />
+    <PackageVersion Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2026.7.2" />
+    <PackageVersion Include="xunit.v3" Version="4.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
   </ItemGroup>
 </Project>
