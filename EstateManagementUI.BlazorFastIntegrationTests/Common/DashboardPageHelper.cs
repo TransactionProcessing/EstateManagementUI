@@ -427,7 +427,14 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            (await _page.GetByRole(AriaRole.Heading, new() { Name = "Assigned Operators" }).IsVisibleAsync()).ShouldBeTrue();
+            var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Assigned Operators" });
+            await heading.WaitForAsync(new LocatorWaitForOptions
+            {
+                State = WaitForSelectorState.Visible,
+                Timeout = 10000
+            });
+
+            (await heading.IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertAssignedOperatorsSectionVisibleAsync));
     }
 

@@ -116,85 +116,85 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
         {
 #line 7
   #line hidden
-            global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table80 = new global::Reqnroll.Table(new string[] {
                         "Role Name"});
-            table1.AddRow(new string[] {
+            table80.AddRow(new string[] {
                         "Administrator"});
-            table1.AddRow(new string[] {
+            table80.AddRow(new string[] {
                         "Estate"});
 #line 8
-    await testRunner.GivenAsync("I create the following roles", ((string)(null)), table1, "Given ");
+    await testRunner.GivenAsync("I create the following roles", ((string)(null)), table80, "Given ");
 #line hidden
-            global::Reqnroll.Table table2 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table81 = new global::Reqnroll.Table(new string[] {
                         "Name",
                         "DisplayName",
                         "Description"});
-            table2.AddRow(new string[] {
+            table81.AddRow(new string[] {
                         "transactionProcessor",
                         "Transaction Processor REST Scope",
                         "Scope for Transaction Processor REST"});
-            table2.AddRow(new string[] {
+            table81.AddRow(new string[] {
                         "fileProcessor",
                         "File Processor REST Scope",
                         "Scope for File Processor REST"});
-            table2.AddRow(new string[] {
+            table81.AddRow(new string[] {
                         "estateReporting",
                         "Estate Reporting REST Scope",
                         "Scope for Estate Reporting REST"});
 #line 13
-    await testRunner.AndAsync("I create the following api scopes", ((string)(null)), table2, "And ");
+    await testRunner.AndAsync("I create the following api scopes", ((string)(null)), table81, "And ");
 #line hidden
-            global::Reqnroll.Table table3 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table82 = new global::Reqnroll.Table(new string[] {
                         "Name",
                         "DisplayName",
                         "Secret",
                         "Scopes",
                         "UserClaims"});
-            table3.AddRow(new string[] {
+            table82.AddRow(new string[] {
                         "transactionProcessor",
                         "Transaction Processor REST",
                         "Secret1",
                         "transactionProcessor",
                         "merchantId,estateId,role"});
-            table3.AddRow(new string[] {
+            table82.AddRow(new string[] {
                         "fileProcessor",
                         "File Processor REST",
                         "Secret1",
                         "fileProcessor",
                         "merchantId,estateId,role"});
-            table3.AddRow(new string[] {
+            table82.AddRow(new string[] {
                         "estateReporting",
                         "Estate Reporting REST",
                         "Secret1",
                         "estateReporting",
                         "merchantId,estateId,role"});
 #line 19
-    await testRunner.AndAsync("I create the following api resources", ((string)(null)), table3, "And ");
+    await testRunner.AndAsync("I create the following api resources", ((string)(null)), table82, "And ");
 #line hidden
-            global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table83 = new global::Reqnroll.Table(new string[] {
                         "Name",
                         "DisplayName",
                         "Description",
                         "UserClaims"});
-            table4.AddRow(new string[] {
+            table83.AddRow(new string[] {
                         "openid",
                         "Your user identifier",
                         "",
                         "sub"});
-            table4.AddRow(new string[] {
+            table83.AddRow(new string[] {
                         "profile",
                         "User profile",
                         "Your user profile information (first name, last name, etc.)",
                         "name,role,email,given_name,middle_name,family_name,estateId,merchantId"});
-            table4.AddRow(new string[] {
+            table83.AddRow(new string[] {
                         "email",
                         "Email",
                         "Email and Email Verified Flags",
                         "email_verified,email"});
 #line 25
-    await testRunner.AndAsync("I create the following identity resources", ((string)(null)), table4, "And ");
+    await testRunner.AndAsync("I create the following identity resources", ((string)(null)), table83, "And ");
 #line hidden
-            global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table84 = new global::Reqnroll.Table(new string[] {
                         "ClientId",
                         "Name",
                         "Secret",
@@ -205,7 +205,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                         "RequireConsent",
                         "AllowOfflineAccess",
                         "ClientUri"});
-            table5.AddRow(new string[] {
+            table84.AddRow(new string[] {
                         "serviceClient",
                         "Service Client",
                         "Secret1",
@@ -216,7 +216,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                         "",
                         "",
                         ""});
-            table5.AddRow(new string[] {
+            table84.AddRow(new string[] {
                         "estateUIClient",
                         "Merchant Client",
                         "Secret1",
@@ -228,9 +228,9 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                         "true",
                         "https://127.0.0.1:[port]"});
 #line 31
-    await testRunner.AndAsync("I create the following clients", ((string)(null)), table5, "And ");
+    await testRunner.AndAsync("I create the following clients", ((string)(null)), table84, "And ");
 #line hidden
-            global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table85 = new global::Reqnroll.Table(new string[] {
                         "Email Address",
                         "Phone Number",
                         "Given Name",
@@ -239,7 +239,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                         "Claims",
                         "Roles",
                         "Password"});
-            table6.AddRow(new string[] {
+            table85.AddRow(new string[] {
                         "administrator@admin.co.uk",
                         "123456789",
                         "Test",
@@ -249,58 +249,58 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                         "Administrator",
                         "123456"});
 #line 36
-    await testRunner.AndAsync("I create the following users", ((string)(null)), table6, "And ");
+    await testRunner.AndAsync("I create the following users", ((string)(null)), table85, "And ");
 #line hidden
-            global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table86 = new global::Reqnroll.Table(new string[] {
                         "ClientId"});
-            table7.AddRow(new string[] {
+            table86.AddRow(new string[] {
                         "serviceClient"});
 #line 40
-    await testRunner.AndAsync("I have a token to access the transaction Processor resource", ((string)(null)), table7, "And ");
+    await testRunner.AndAsync("I have a token to access the transaction Processor resource", ((string)(null)), table86, "And ");
 #line hidden
-            global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table87 = new global::Reqnroll.Table(new string[] {
                         "EstateName"});
-            table8.AddRow(new string[] {
+            table87.AddRow(new string[] {
                         "Test Estate"});
 #line 44
-    await testRunner.AndAsync("I have created the following estates", ((string)(null)), table8, "And ");
+    await testRunner.AndAsync("I have created the following estates", ((string)(null)), table87, "And ");
 #line hidden
-            global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table88 = new global::Reqnroll.Table(new string[] {
                         "EstateName",
                         "OperatorName",
                         "RequireCustomMerchantNumber",
                         "RequireCustomTerminalNumber"});
-            table9.AddRow(new string[] {
+            table88.AddRow(new string[] {
                         "Test Estate",
                         "Test Operator",
                         "True",
                         "True"});
 #line 48
-    await testRunner.AndAsync("I have created the following operators", ((string)(null)), table9, "And ");
+    await testRunner.AndAsync("I have created the following operators", ((string)(null)), table88, "And ");
 #line hidden
-            global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table89 = new global::Reqnroll.Table(new string[] {
                         "EstateName",
                         "OperatorName"});
-            table10.AddRow(new string[] {
+            table89.AddRow(new string[] {
                         "Test Estate",
                         "Test Operator"});
 #line 52
-    await testRunner.AndAsync("I have assigned the following operators to the estates", ((string)(null)), table10, "And ");
+    await testRunner.AndAsync("I have assigned the following operators to the estates", ((string)(null)), table89, "And ");
 #line hidden
-            global::Reqnroll.Table table11 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table90 = new global::Reqnroll.Table(new string[] {
                         "EmailAddress",
                         "Password",
                         "GivenName",
                         "FamilyName",
                         "EstateName"});
-            table11.AddRow(new string[] {
+            table90.AddRow(new string[] {
                         "estateuser@testestate1.co.uk",
                         "123456",
                         "TestEstate",
                         "User1",
                         "Test Estate"});
 #line 56
-    await testRunner.AndAsync("I have created the following security users", ((string)(null)), table11, "And ");
+    await testRunner.AndAsync("I have created the following security users", ((string)(null)), table90, "And ");
 #line hidden
 #line 60
     await testRunner.AndAsync("the user navigates to the app address", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -497,62 +497,62 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
 #line 88
     await testRunner.ThenAsync("I should see the transaction detail report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table91 = new global::Reqnroll.Table(new string[] {
                             "Label",
                             "Value"});
-                table12.AddRow(new string[] {
+                table91.AddRow(new string[] {
                             "Total Transactions",
                             "5"});
-                table12.AddRow(new string[] {
+                table91.AddRow(new string[] {
                             "Gross Amount",
                             "50.00"});
-                table12.AddRow(new string[] {
+                table91.AddRow(new string[] {
                             "Total Fees",
                             "6.25"});
-                table12.AddRow(new string[] {
+                table91.AddRow(new string[] {
                             "Net Amount",
                             "43.75"});
 #line 89
-    await testRunner.AndAsync("the transaction detail report should show these summary values", ((string)(null)), table12, "And ");
+    await testRunner.AndAsync("the transaction detail report should show these summary values", ((string)(null)), table91, "And ");
 #line hidden
-                global::Reqnroll.Table table13 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table92 = new global::Reqnroll.Table(new string[] {
                             "Transaction Number",
                             "Merchant",
                             "Product",
                             "Type",
                             "Status"});
-                table13.AddRow(new string[] {
+                table92.AddRow(new string[] {
                             "1001",
                             "Reporting Merchant A",
                             "Reporting Product A",
                             "sale",
                             "Successful"});
-                table13.AddRow(new string[] {
+                table92.AddRow(new string[] {
                             "1002",
                             "Reporting Merchant A",
                             "Reporting Product A",
                             "sale",
                             "Successful"});
-                table13.AddRow(new string[] {
+                table92.AddRow(new string[] {
                             "1003",
                             "Reporting Merchant B",
                             "Reporting Product B",
                             "sale",
                             "Successful"});
-                table13.AddRow(new string[] {
+                table92.AddRow(new string[] {
                             "1004",
                             "Reporting Merchant A",
                             "Reporting Product A",
                             "sale",
                             "Successful"});
-                table13.AddRow(new string[] {
+                table92.AddRow(new string[] {
                             "1005",
                             "Reporting Merchant B",
                             "Reporting Product B",
                             "sale",
                             "Successful"});
 #line 95
-    await testRunner.AndAsync("the transaction detail report should list these transactions", ((string)(null)), table13, "And ");
+    await testRunner.AndAsync("the transaction detail report should list these transactions", ((string)(null)), table92, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -587,25 +587,25 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
 #line 105
     await testRunner.ThenAsync("I should see the transaction summary by merchant report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table14 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table93 = new global::Reqnroll.Table(new string[] {
                             "Label",
                             "Value"});
-                table14.AddRow(new string[] {
+                table93.AddRow(new string[] {
                             "Total Merchants",
                             "2"});
-                table14.AddRow(new string[] {
+                table93.AddRow(new string[] {
                             "Total Transactions",
                             "5"});
-                table14.AddRow(new string[] {
+                table93.AddRow(new string[] {
                             "Total Value",
                             "50.00"});
-                table14.AddRow(new string[] {
+                table93.AddRow(new string[] {
                             "Average Transaction",
                             "10.00"});
 #line 106
-    await testRunner.AndAsync("the merchant summary report should show these summary values", ((string)(null)), table14, "And ");
+    await testRunner.AndAsync("the merchant summary report should show these summary values", ((string)(null)), table93, "And ");
 #line hidden
-                global::Reqnroll.Table table15 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table94 = new global::Reqnroll.Table(new string[] {
                             "Merchant",
                             "Total Count",
                             "Total Value",
@@ -613,7 +613,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                             "Successful",
                             "Failed",
                             "Success Rate"});
-                table15.AddRow(new string[] {
+                table94.AddRow(new string[] {
                             "Reporting Merchant A",
                             "3",
                             "30.00",
@@ -621,7 +621,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                             "3",
                             "0",
                             "10000.0"});
-                table15.AddRow(new string[] {
+                table94.AddRow(new string[] {
                             "Reporting Merchant B",
                             "2",
                             "20.00",
@@ -630,7 +630,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                             "0",
                             "10000.0"});
 #line 112
-    await testRunner.AndAsync("the merchant summary report should list these merchant rows", ((string)(null)), table15, "And ");
+    await testRunner.AndAsync("the merchant summary report should list these merchant rows", ((string)(null)), table94, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -665,25 +665,25 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
 #line 119
     await testRunner.ThenAsync("I should see the transaction summary by operator report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table16 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table95 = new global::Reqnroll.Table(new string[] {
                             "Label",
                             "Value"});
-                table16.AddRow(new string[] {
+                table95.AddRow(new string[] {
                             "Total Operators",
                             "2"});
-                table16.AddRow(new string[] {
+                table95.AddRow(new string[] {
                             "Total Transactions",
                             "5"});
-                table16.AddRow(new string[] {
+                table95.AddRow(new string[] {
                             "Total Value",
                             "50.00"});
-                table16.AddRow(new string[] {
+                table95.AddRow(new string[] {
                             "Average Transaction",
                             "10.00"});
 #line 120
-    await testRunner.AndAsync("the operator summary report should show these summary values", ((string)(null)), table16, "And ");
+    await testRunner.AndAsync("the operator summary report should show these summary values", ((string)(null)), table95, "And ");
 #line hidden
-                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table96 = new global::Reqnroll.Table(new string[] {
                             "Operator",
                             "Transaction Count",
                             "Transaction Value",
@@ -691,7 +691,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                             "Successful",
                             "Failed",
                             "Success Rate"});
-                table17.AddRow(new string[] {
+                table96.AddRow(new string[] {
                             "Safaricom",
                             "3",
                             "30.00",
@@ -699,7 +699,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                             "3",
                             "0",
                             "10000.0"});
-                table17.AddRow(new string[] {
+                table96.AddRow(new string[] {
                             "Voucher",
                             "2",
                             "20.00",
@@ -708,7 +708,7 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
                             "0",
                             "10000.0"});
 #line 126
-    await testRunner.AndAsync("the operator summary report should list these operator rows", ((string)(null)), table17, "And ");
+    await testRunner.AndAsync("the operator summary report should list these operator rows", ((string)(null)), table96, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -743,41 +743,41 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
 #line 133
     await testRunner.ThenAsync("I should see the product performance report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table18 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table97 = new global::Reqnroll.Table(new string[] {
                             "Label",
                             "Value"});
-                table18.AddRow(new string[] {
+                table97.AddRow(new string[] {
                             "Total Products",
                             "2"});
-                table18.AddRow(new string[] {
+                table97.AddRow(new string[] {
                             "Total Transactions",
                             "5"});
-                table18.AddRow(new string[] {
+                table97.AddRow(new string[] {
                             "Total Value",
                             "50.00"});
-                table18.AddRow(new string[] {
+                table97.AddRow(new string[] {
                             "Average per Product",
                             "25.00"});
 #line 134
-    await testRunner.AndAsync("the product performance report should show these summary values", ((string)(null)), table18, "And ");
+    await testRunner.AndAsync("the product performance report should show these summary values", ((string)(null)), table97, "And ");
 #line hidden
-                global::Reqnroll.Table table19 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table98 = new global::Reqnroll.Table(new string[] {
                             "Product",
                             "Transaction Count",
                             "Transaction Value",
                             "Percentage"});
-                table19.AddRow(new string[] {
+                table98.AddRow(new string[] {
                             "Reporting Product A",
                             "3",
                             "30.00",
                             "60.00"});
-                table19.AddRow(new string[] {
+                table98.AddRow(new string[] {
                             "Reporting Product B",
                             "2",
                             "20.00",
                             "40.00"});
 #line 140
-    await testRunner.AndAsync("the product performance report should list these product rows", ((string)(null)), table19, "And ");
+    await testRunner.AndAsync("the product performance report should list these product rows", ((string)(null)), table98, "And ");
 #line hidden
 #line 144
     await testRunner.AndAsync("the product performance report should validate the percentage split", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -815,103 +815,103 @@ namespace EstateManagementUI.BlazorFastIntegrationTests.Features
 #line 148
     await testRunner.ThenAsync("I should see the analytical charts report heading", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table20 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table99 = new global::Reqnroll.Table(new string[] {
                             "Label",
                             "Value"});
-                table20.AddRow(new string[] {
+                table99.AddRow(new string[] {
                             "Total Count",
                             "523"});
-                table20.AddRow(new string[] {
+                table99.AddRow(new string[] {
                             "Total Value",
                             "145000.00"});
-                table20.AddRow(new string[] {
+                table99.AddRow(new string[] {
                             "Average Value",
                             "277.25"});
-                table20.AddRow(new string[] {
+                table99.AddRow(new string[] {
                             "Net Settlement",
                             "30.00"});
 #line 149
-    await testRunner.AndAsync("the analytical charts report should show these summary values", ((string)(null)), table20, "And ");
+    await testRunner.AndAsync("the analytical charts report should show these summary values", ((string)(null)), table99, "And ");
 #line hidden
-                global::Reqnroll.Table table21 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table100 = new global::Reqnroll.Table(new string[] {
                             "Comparison Date"});
-                table21.AddRow(new string[] {
+                table100.AddRow(new string[] {
                             "Yesterday"});
 #line 155
-    await testRunner.AndAsync("the analytical charts report should use this comparison date", ((string)(null)), table21, "And ");
+    await testRunner.AndAsync("the analytical charts report should use this comparison date", ((string)(null)), table100, "And ");
 #line hidden
-                global::Reqnroll.Table table22 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table101 = new global::Reqnroll.Table(new string[] {
                             "Chart",
                             "Today",
                             "Comparison"});
-                table22.AddRow(new string[] {
+                table101.AddRow(new string[] {
                             "Volume",
                             "3",
                             "2"});
-                table22.AddRow(new string[] {
+                table101.AddRow(new string[] {
                             "Value",
                             "30.00",
                             "20.00"});
 #line 158
-    await testRunner.AndAsync("the analytical charts report should compare these chart totals", ((string)(null)), table22, "And ");
+    await testRunner.AndAsync("the analytical charts report should compare these chart totals", ((string)(null)), table101, "And ");
 #line hidden
-                global::Reqnroll.Table table23 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table102 = new global::Reqnroll.Table(new string[] {
                             "Chart",
                             "Hour",
                             "Today",
                             "Comparison"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Volume",
                             "09:00",
                             "1",
                             "0"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Volume",
                             "10:00",
                             "0",
                             "1"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Volume",
                             "13:00",
                             "1",
                             "0"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Volume",
                             "14:00",
                             "0",
                             "1"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Volume",
                             "15:00",
                             "1",
                             "0"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Value",
                             "09:00",
                             "10.00",
                             "0.00"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Value",
                             "10:00",
                             "0.00",
                             "10.00"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Value",
                             "13:00",
                             "10.00",
                             "0.00"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Value",
                             "14:00",
                             "0.00",
                             "10.00"});
-                table23.AddRow(new string[] {
+                table102.AddRow(new string[] {
                             "Value",
                             "15:00",
                             "10.00",
                             "0.00"});
 #line 162
-    await testRunner.AndAsync("the analytical charts report should compare these hourly chart points", ((string)(null)), table23, "And ");
+    await testRunner.AndAsync("the analytical charts report should compare these hourly chart points", ((string)(null)), table102, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
