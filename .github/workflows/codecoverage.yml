@@ -27,7 +27,7 @@ jobs:
     - name: Run Unit Tests
       run: |
         echo "ASPNETCORE_ENVIRONMENT are > ${ASPNETCORE_ENVIRONMENT}"
-        dotnet test EstateManagementUI.BlazorServer.Tests/EstateManagementUI.BlazorServer.Tests.csproj --configuration Release --no-build --coverlet --coverlet-output-format cobertura --maxcpucount:1
+        dotnet exec EstateManagementUI.BlazorServer.Tests/bin/Release/net10.0/EstateManagementUI.BlazorServer.Tests.dll --coverlet --coverlet-output-format cobertura
 
     - name: Normalize coverage filename
       run: |
