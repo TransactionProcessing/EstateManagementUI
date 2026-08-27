@@ -36,7 +36,7 @@ public sealed class MerchantManagementSteps
         DataTableRow row = table.Rows.First();
         _merchantName = ReqnrollTableHelper.GetStringRowValue(row, "MerchantName");
 
-        await GetHelper().CreateMerchantAsync(
+        await GetHelper().CreateMerchantAsync(new DashboardPageHelper.MerchantCreationInput(
             _merchantName,
             ReqnrollTableHelper.GetStringRowValue(row, "SettlementSchedule"),
             ReqnrollTableHelper.GetStringRowValue(row, "AddressLine1"),
@@ -47,7 +47,7 @@ public sealed class MerchantManagementSteps
             ReqnrollTableHelper.GetStringRowValue(row, "Country"),
             ReqnrollTableHelper.GetStringRowValue(row, "ContactName"),
             ReqnrollTableHelper.GetStringRowValue(row, "EmailAddress"),
-            ReqnrollTableHelper.GetStringRowValue(row, "PhoneNumber"));
+            ReqnrollTableHelper.GetStringRowValue(row, "PhoneNumber")));
     }
 
     [Then("I should see the merchant in the list")]
@@ -120,7 +120,7 @@ public sealed class MerchantManagementSteps
     public async Task WhenISaveMerchantOpeningHours(DataTable table)
     {
         DataTableRow row = table.Rows.First();
-        await GetHelper().SaveMerchantOpeningHoursAsync(
+        await GetHelper().SaveMerchantOpeningHoursAsync(new DashboardPageHelper.MerchantOpeningHoursInput(
             ReqnrollTableHelper.GetStringRowValue(row, "MondayOpening"),
             ReqnrollTableHelper.GetStringRowValue(row, "MondayClosing"),
             ReqnrollTableHelper.GetStringRowValue(row, "TuesdayOpening"),
@@ -134,7 +134,7 @@ public sealed class MerchantManagementSteps
             ReqnrollTableHelper.GetStringRowValue(row, "SaturdayOpening"),
             ReqnrollTableHelper.GetStringRowValue(row, "SaturdayClosing"),
             ReqnrollTableHelper.GetStringRowValue(row, "SundayOpening"),
-            ReqnrollTableHelper.GetStringRowValue(row, "SundayClosing"));
+            ReqnrollTableHelper.GetStringRowValue(row, "SundayClosing")));
     }
 
     [Then("I should see merchant opening hours updated successfully")]

@@ -380,7 +380,7 @@ public  static class FactoryExtensions{
                 CreatedDateTime = merchant.CreatedDateTime,
                 MerchantId = merchant.MerchantId,
                 Balance = merchant.Balance,
-                AvailableBalance = 0, // TODO: remove this
+                AvailableBalance = 0,
                 MerchantName = merchant.Name,
                 PostalCode = merchant.PostCode,
                 MerchantReference = merchant.Reference,

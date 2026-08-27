@@ -68,7 +68,7 @@ public partial class Edit
         return Result.Success();
     }
 
-    private async Task HandleSubmit()
+    private Task HandleSubmit()
     {
         isSaving = true;
         
@@ -76,6 +76,7 @@ public partial class Edit
         // This form is present for future implementation
         errorMessage = "Contract description update is not yet supported by the backend API";
         isSaving = false;
+        return Task.CompletedTask;
     }
 
     private void ShowAddProductModal()
@@ -157,9 +158,10 @@ public partial class Edit
         isAddingFee = false;
     }
 
-    private async Task RemoveProduct(Guid productId)
+    private Task RemoveProduct()
     {
         errorMessage = "Product removal is not yet supported by the backend API. This feature will be available once the backend endpoint is implemented.";
+        return Task.CompletedTask;
     }
 
     private async Task RemoveFee(Guid productId, Guid feeId)

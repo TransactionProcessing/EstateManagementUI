@@ -9,6 +9,11 @@ namespace EstateManagementUI.IntegrationTests.Common;
 
 public sealed class ReportingPageHelper
 {
+    private const string TableRowsSelector = "table tbody tr";
+    private const string ValueText = "Value";
+    private const string ValueColumnName = ValueText;
+    private const string DateFormat = "yyyy-MM-dd";
+
     private readonly IPage _page;
 
     public ReportingPageHelper(IPage page)
@@ -89,7 +94,7 @@ public sealed class ReportingPageHelper
 
     public async Task AssertTransactionDetailRowsAsync(DataTable table)
     {
-        var rows = _page.Locator("table tbody tr");
+        var rows = _page.Locator(TableRowsSelector);
         (await rows.CountAsync()).ShouldBe(table.Rows.Count);
 
         for (var index = 0; index < table.Rows.Count; index++)
@@ -116,7 +121,7 @@ public sealed class ReportingPageHelper
 
     public async Task AssertMerchantSummaryRowsAsync(DataTable table)
     {
-        var rows = _page.Locator("table tbody tr");
+        var rows = _page.Locator(TableRowsSelector);
         (await rows.CountAsync()).ShouldBe(table.Rows.Count);
 
         for (var index = 0; index < table.Rows.Count; index++)
@@ -145,7 +150,7 @@ public sealed class ReportingPageHelper
 
     public async Task AssertOperatorSummaryRowsAsync(DataTable table)
     {
-        var rows = _page.Locator("table tbody tr");
+        var rows = _page.Locator(TableRowsSelector);
         (await rows.CountAsync()).ShouldBe(table.Rows.Count);
 
         for (var index = 0; index < table.Rows.Count; index++)
@@ -174,7 +179,7 @@ public sealed class ReportingPageHelper
 
     public async Task AssertProductPerformanceRowsAsync(DataTable table)
     {
-        var rows = _page.Locator("table tbody tr");
+        var rows = _page.Locator(TableRowsSelector);
         (await rows.CountAsync()).ShouldBe(table.Rows.Count);
 
         for (var index = 0; index < table.Rows.Count; index++)
@@ -245,7 +250,7 @@ public sealed class ReportingPageHelper
         foreach (var row in table.Rows)
         {
             var label = ReqnrollTableHelper.GetStringRowValue(row, "Label");
-            var value = ReqnrollTableHelper.GetStringRowValue(row, "Value");
+            var value = ReqnrollTableHelper.GetStringRowValue(row, ValueColumnName);
 
             if (IsMoneyLabel(label))
             {
@@ -261,7 +266,7 @@ public sealed class ReportingPageHelper
     public async Task AssertAnalyticalChartsComparisonDateAsync(string comparisonDate)
     {
         var dateToSelect = ResolveComparisonDateValue(comparisonDate);
-        var expectedLabel = DateTime.ParseExact(dateToSelect, "yyyy-MM-dd", CultureInfo.InvariantCulture).ToString("MMM dd", CultureInfo.InvariantCulture);
+        var expectedLabel = DateTime.ParseExact(dateToSelect, DateFormat, CultureInfo.InvariantCulture).ToString("MMM dd", CultureInfo.InvariantCulture);
 
         await _page.Locator("#comparisonDateSelector").SelectOptionAsync(new SelectOptionValue { Value = dateToSelect });
         await WaitForAnalyticalChartsReadyAsync();
@@ -289,7 +294,7 @@ public sealed class ReportingPageHelper
                 volumeChart.TotalTodayCount.ShouldBe((int)today);
                 volumeChart.TotalComparisonCount.ShouldBe((int)comparison);
             }
-            else if (chart.Equals("Value", StringComparison.OrdinalIgnoreCase))
+            else if (chart.Equals(ValueText, StringComparison.OrdinalIgnoreCase))
             {
                 var valueChart = await ReadChartAsync("valueChart");
                 valueChart.TotalTodayValue.ShouldBe(today);
@@ -318,7 +323,7 @@ public sealed class ReportingPageHelper
             {
                 AssertChartSeriesPoint(volumeChart, hour, today, comparison);
             }
-            else if (chart.Equals("Value", StringComparison.OrdinalIgnoreCase))
+            else if (chart.Equals(ValueText, StringComparison.OrdinalIgnoreCase))
             {
                 AssertChartSeriesPoint(valueChart, hour, today, comparison);
             }
@@ -360,7 +365,7 @@ public sealed class ReportingPageHelper
 
     private static bool IsMoneyLabel(string label)
     {
-        return label.Contains("Value", StringComparison.OrdinalIgnoreCase) ||
+        return label.Contains(ValueText, StringComparison.OrdinalIgnoreCase) ||
                label.Contains("Amount", StringComparison.OrdinalIgnoreCase) ||
                label.Contains("Fee", StringComparison.OrdinalIgnoreCase) ||
                label.Contains("Settlement", StringComparison.OrdinalIgnoreCase) ||
@@ -461,7 +466,7 @@ public sealed class ReportingPageHelper
         foreach (var row in table.Rows)
         {
             var label = ReqnrollTableHelper.GetStringRowValue(row, "Label");
-            var value = ReqnrollTableHelper.GetStringRowValue(row, "Value");
+            var value = ReqnrollTableHelper.GetStringRowValue(row, ValueColumnName);
 
             if (IsMoneyLabel(label))
             {
@@ -500,13 +505,13 @@ public sealed class ReportingPageHelper
 
     private static string ResolveComparisonDateValue(string comparisonDate)
     {
-        if (DateOnly.TryParseExact(comparisonDate, "yyyy-MM-dd", out var date))
+        if (DateOnly.TryParseExact(comparisonDate, DateFormat, out var date))
         {
-            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+            return date.ToString(DateFormat, CultureInfo.InvariantCulture);
         }
 
         var resolved = ReqnrollTableHelper.GetDateForDateString(comparisonDate, DateTime.Now);
-        return resolved.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        return resolved.ToString(DateFormat, CultureInfo.InvariantCulture);
     }
 
     private static void AssertChartSeriesPoint(ChartSeriesSnapshot chart, string hour, decimal expectedToday, decimal expectedComparison)
