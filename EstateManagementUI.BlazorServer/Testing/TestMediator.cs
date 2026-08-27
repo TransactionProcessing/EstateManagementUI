@@ -11,6 +11,7 @@ public sealed class TestMediator : IMediator
 {
     private const string ReportingMerchantA = "Reporting Merchant A";
     private const string Safaricom = "Safaricom";
+    private const string ReportingProductA = "Reporting Product A";
     private readonly ITestDataStore _dataStore;
     private readonly TestSupportState _supportState;
     private readonly object _gate = new();
@@ -603,10 +604,10 @@ public sealed class TestMediator : IMediator
             },
             Transactions = new List<TransactionModels.TransactionDetail>
             {
-                CreateTransaction(1001, ReportingMerchantA, "Reporting Product A", Safaricom, 10m, 1.25m, "Successful"),
-                CreateTransaction(1002, ReportingMerchantA, "Reporting Product A", Safaricom, 10m, 1.25m, "Successful"),
+                CreateTransaction(1001, ReportingMerchantA, ReportingProductA, Safaricom, 10m, 1.25m, "Successful"),
+                CreateTransaction(1002, ReportingMerchantA, ReportingProductA, Safaricom, 10m, 1.25m, "Successful"),
                 CreateTransaction(1003, "Reporting Merchant B", "Reporting Product B", "Voucher", 10m, 1.25m, "Successful"),
-                CreateTransaction(1004, ReportingMerchantA, "Reporting Product A", Safaricom, 10m, 1.25m, "Successful"),
+                CreateTransaction(1004, ReportingMerchantA, ReportingProductA, Safaricom, 10m, 1.25m, "Successful"),
                 CreateTransaction(1005, "Reporting Merchant B", "Reporting Product B", "Voucher", 10m, 1.25m, "Successful")
             }
         };
@@ -657,7 +658,7 @@ public sealed class TestMediator : IMediator
             },
             ProductDetails = new List<TransactionModels.ProductPerformanceDetail>
             {
-                new() { ProductName = "Reporting Product A", TransactionCount = 3, TransactionValue = 30m, PercentageOfTotal = 60m },
+                new() { ProductName = ReportingProductA, TransactionCount = 3, TransactionValue = 30m, PercentageOfTotal = 60m },
                 new() { ProductName = "Reporting Product B", TransactionCount = 2, TransactionValue = 20m, PercentageOfTotal = 40m }
             }
         };
