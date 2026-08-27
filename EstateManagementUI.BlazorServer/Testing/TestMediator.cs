@@ -10,6 +10,7 @@ namespace EstateManagementUI.BlazorServer.Testing;
 public sealed class TestMediator : IMediator
 {
     private const string ReportingMerchantA = "Reporting Merchant A";
+    private const string Safaricom = "Safaricom";
     private readonly ITestDataStore _dataStore;
     private readonly TestSupportState _supportState;
     private readonly object _gate = new();
@@ -602,10 +603,10 @@ public sealed class TestMediator : IMediator
             },
             Transactions = new List<TransactionModels.TransactionDetail>
             {
-                CreateTransaction(1001, ReportingMerchantA, "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
-                CreateTransaction(1002, ReportingMerchantA, "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
+                CreateTransaction(1001, ReportingMerchantA, "Reporting Product A", Safaricom, 10m, 1.25m, "Successful"),
+                CreateTransaction(1002, ReportingMerchantA, "Reporting Product A", Safaricom, 10m, 1.25m, "Successful"),
                 CreateTransaction(1003, "Reporting Merchant B", "Reporting Product B", "Voucher", 10m, 1.25m, "Successful"),
-                CreateTransaction(1004, ReportingMerchantA, "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
+                CreateTransaction(1004, ReportingMerchantA, "Reporting Product A", Safaricom, 10m, 1.25m, "Successful"),
                 CreateTransaction(1005, "Reporting Merchant B", "Reporting Product B", "Voucher", 10m, 1.25m, "Successful")
             }
         };
@@ -639,7 +640,7 @@ public sealed class TestMediator : IMediator
             },
             Operators = new List<TransactionModels.OperatorDetail>
             {
-                new() { OperatorName = "Safaricom", TotalCount = 3, TotalValue = 30m, AverageValue = 30m, AuthorisedCount = 3, DeclinedCount = 0, AuthorisedPercentage = 100m },
+                new() { OperatorName = Safaricom, TotalCount = 3, TotalValue = 30m, AverageValue = 30m, AuthorisedCount = 3, DeclinedCount = 0, AuthorisedPercentage = 100m },
                 new() { OperatorName = "Voucher", TotalCount = 2, TotalValue = 20m, AverageValue = 20m, AuthorisedCount = 2, DeclinedCount = 0, AuthorisedPercentage = 100m }
             }
         };
