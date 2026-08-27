@@ -223,17 +223,27 @@ public class TestDataStore : ITestDataStore
 
     private void InitializeDefaultData()
     {
-        // Default test estate
-        var estateId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var estate = new EstateModels.EstateModel
+        var estate = InitializeDefaultEstate();
+        this.SetEstate(estate);
+
+        var estateId = estate.EstateId;
+        InitializeDefaultMerchants(estateId);
+        InitializeDefaultOperators(estateId);
+        InitializeDefaultContracts(estateId);
+    }
+
+    private static EstateModels.EstateModel InitializeDefaultEstate()
+    {
+        return new EstateModels.EstateModel
         {
-            EstateId = estateId,
+            EstateId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
             EstateName = "Test Estate",
             Reference = "Test Estate",
         };
-        this.SetEstate(estate);
+    }
 
-        // Default test merchants
+    private void InitializeDefaultMerchants(Guid estateId)
+    {
         this.AddMerchant(estateId, new MerchantModels.MerchantModel
         {
             MerchantId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
@@ -274,8 +284,10 @@ public class TestDataStore : ITestDataStore
             SettlementSchedule = "Monthly",
             CreatedDateTime = DateTime.Now.AddDays(-5)
         });
+    }
 
-        // Default test operators used by the fast UI feature files
+    private void InitializeDefaultOperators(Guid estateId)
+    {
         this.AddOperator(estateId, new OperatorModels.OperatorModel
         {
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
@@ -291,9 +303,16 @@ public class TestDataStore : ITestDataStore
             RequireCustomMerchantNumber = false,
             RequireCustomTerminalNumber = false
         });
+    }
 
-        // Default test contracts
-        this.AddContract(estateId, new ContractModels.ContractModel
+    private void InitializeDefaultContracts(Guid estateId)
+    {
+        this.AddContract(estateId, CreateStandardTransactionContract());
+        this.AddContract(estateId, CreateVoucherSalesContract());
+    }
+
+    private static ContractModels.ContractModel CreateStandardTransactionContract()
+        => new()
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
             Description = "Standard Transaction Contract",
@@ -301,7 +320,7 @@ public class TestDataStore : ITestDataStore
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
             Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractModels.ContractProductModel
+                new()
                 {
                     ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
                     ProductName = "Mobile Topup",
@@ -311,7 +330,7 @@ public class TestDataStore : ITestDataStore
                     NumberOfFees = 2,
                     TransactionFees = new List<ContractModels.ContractProductTransactionFeeModel>
                     {
-                        new ContractModels.ContractProductTransactionFeeModel
+                        new()
                         {
                             TransactionFeeId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
                             Description = "Merchant Commission",
@@ -319,7 +338,7 @@ public class TestDataStore : ITestDataStore
                             FeeType = 0,
                             Value = 0.50m
                         },
-                        new ContractModels.ContractProductTransactionFeeModel
+                        new()
                         {
                             TransactionFeeId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
                             Description = "Service Provider Fee",
@@ -330,9 +349,10 @@ public class TestDataStore : ITestDataStore
                     }
                 }
             }
-        });
+        };
 
-        this.AddContract(estateId, new ContractModels.ContractModel
+    private static ContractModels.ContractModel CreateVoucherSalesContract()
+        => new()
         {
             ContractId = Guid.Parse("44444444-4444-4444-4444-444444444445"),
             Description = "Voucher Sales Contract",
@@ -340,13 +360,12 @@ public class TestDataStore : ITestDataStore
             OperatorId = Guid.Parse("33333333-3333-3333-3333-333333333334"),
             Products = new List<ContractModels.ContractProductModel>
             {
-                new ContractModels.ContractProductModel
+                new()
                 {
                     ContractProductId = Guid.Parse("55555555-5555-5555-5555-555555555556"),
                     ProductName = "Voucher",
                     DisplayText = "Voucher Purchase"
                 }
             }
-        });
-    }
+        };
 }
