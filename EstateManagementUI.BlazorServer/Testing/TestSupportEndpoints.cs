@@ -9,6 +9,8 @@ namespace EstateManagementUI.BlazorServer.Testing;
 
 public static class TestSupportEndpoints
 {
+    private const string TestUserRoleKey = "TestUserRole";
+
     public static IEndpointRouteBuilder MapTestSupportEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("/test-support");
@@ -21,9 +23,9 @@ public static class TestSupportEndpoints
         {
             var role = ResolveRole(username);
 
-            context.Session.SetString("TestUserRole", role);
+            context.Session.SetString(TestUserRoleKey, role);
             context.Response.Cookies.Append(
-                "TestUserRole",
+                TestUserRoleKey,
                 role,
                 new CookieOptions
                 {
@@ -38,9 +40,9 @@ public static class TestSupportEndpoints
         }).DisableAntiforgery();
         group.MapGet("/login/{role}", (HttpContext context, string role) =>
         {
-            context.Session.SetString("TestUserRole", role);
+            context.Session.SetString(TestUserRoleKey, role);
             context.Response.Cookies.Append(
-                "TestUserRole",
+                TestUserRoleKey,
                 role,
                 new CookieOptions
                 {

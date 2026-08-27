@@ -108,7 +108,7 @@ public sealed class TestMediator : IMediator
             SettlementQueries.GetTodaysSettlementQuery _ => Result.Success(GetTodaysSettlement()),
             DateQueries.GetComparisonDatesQuery query => GetComparisonDates(query.EstateId),
 
-            FileProcessingQueries.GetFileImportLogsListQuery query => Result.Success(GetFileImportLogs()),
+            FileProcessingQueries.GetFileImportLogsListQuery _ => Result.Success(GetFileImportLogs()),
             FileProcessingQueries.GetFileImportLogQuery query => HandleGetFileImportLog(query),
 
             _ => throw new NotSupportedException($"Test mediator does not support {request.GetType().FullName}.")
@@ -195,10 +195,10 @@ public sealed class TestMediator : IMediator
         return Result.Success(merchants);
     }
 
-    private Result<List<MerchantModels.RecentMerchantsModel>> HandleGetRecentMerchants(MerchantQueries.GetRecentMerchantsQuery query)
+    private Result<List<MerchantModels.RecentMerchantsModel>> HandleGetRecentMerchants(MerchantQueries.GetRecentMerchantsQuery _)
         => Result.Success(new List<MerchantModels.RecentMerchantsModel>());
 
-    private Result<MerchantModels.MerchantKpiModel> HandleGetMerchantKpi(MerchantQueries.GetMerchantKpiQuery query)
+    private Result<MerchantModels.MerchantKpiModel> HandleGetMerchantKpi(MerchantQueries.GetMerchantKpiQuery _)
         => Result.Success(new MerchantModels.MerchantKpiModel { MerchantsWithNoSaleInLast7Days = 5, MerchantsWithNoSaleToday = 12, MerchantsWithSaleInLastHour = 45 });
 
     private Result<MerchantModels.MerchantModel> HandleGetMerchant(MerchantQueries.GetMerchantQuery query)
@@ -558,7 +558,7 @@ public sealed class TestMediator : IMediator
         return Result.Success();
     }
 
-    private Result<List<ComparisonDateModel>> GetComparisonDates(Guid estateId)
+    private Result<List<ComparisonDateModel>> GetComparisonDates(Guid _)
         => Result.Success(new List<ComparisonDateModel>
         {
             new() { Date = DateTime.Today, Description = "Today", OrderValue = 1 },

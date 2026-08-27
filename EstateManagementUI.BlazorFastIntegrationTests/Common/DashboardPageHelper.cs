@@ -27,6 +27,7 @@ public sealed class DashboardPageHelper
     private const string MerchantsPath = "/merchants";
     private const string DateFormat = "yyyy-MM-dd";
     private const string SettlementScheduleSelector = "select[name='SettlementSchedule']";
+    private const string OperatorNameInputSelector = "input[placeholder='Enter operator name']";
 
     private readonly IPage _page;
     private readonly TestingContext TestingContext;
@@ -222,7 +223,7 @@ public sealed class DashboardPageHelper
             });
 
             (await heading.IsVisibleAsync()).ShouldBeTrue();
-            (await _page.Locator("input[placeholder='Enter operator name']").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator(OperatorNameInputSelector).IsVisibleAsync()).ShouldBeTrue();
             (await _page.GetByRole(AriaRole.Button, new() { Name = "Update Operator" }).IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertOperatorEditVisibleAsync));
     }
@@ -255,12 +256,12 @@ public sealed class DashboardPageHelper
         {
             (await WaitForAnyVisibleAsync(
                 "h1:has-text('Create New Operator')",
-                "input[placeholder='Enter operator name']",
+                OperatorNameInputSelector,
                 "#createOperatorButton")).ShouldBeTrue();
 
             var heading = _page.GetByRole(AriaRole.Heading, new() { Name = "Create New Operator" });
             (await heading.IsVisibleAsync()).ShouldBeTrue();
-            (await _page.Locator("input[placeholder='Enter operator name']").IsVisibleAsync()).ShouldBeTrue();
+            (await _page.Locator(OperatorNameInputSelector).IsVisibleAsync()).ShouldBeTrue();
             (await _page.Locator("#createOperatorButton").IsVisibleAsync()).ShouldBeTrue();
         }, nameof(AssertNewOperatorScreenVisibleAsync));
     }
@@ -269,7 +270,7 @@ public sealed class DashboardPageHelper
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await _page.Locator("input[placeholder='Enter operator name']").FillAsync(operatorName);
+            await _page.Locator(OperatorNameInputSelector).FillAsync(operatorName);
             await _page.Locator("input[type='checkbox']").Nth(0).SetCheckedAsync(requireCustomMerchantNumber);
             await _page.Locator("input[type='checkbox']").Nth(1).SetCheckedAsync(requireCustomTerminalNumber);
             await _page.Locator("#createOperatorButton").ClickAsync();
