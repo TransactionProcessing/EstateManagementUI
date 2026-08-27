@@ -949,7 +949,7 @@ public sealed class DashboardPageHelper
 
     public async Task CreateMerchantAsync(string merchantName)
     {
-        await CreateMerchantAsync(
+        await CreateMerchantAsync(new MerchantCreationInput(
             merchantName,
             "Immediate",
             "1 Integration Road",
@@ -960,21 +960,10 @@ public sealed class DashboardPageHelper
             "United Kingdom",
             "Test Contact",
             "test.contact@example.com",
-            "01234567890");
+            "01234567890"));
     }
 
-    public async Task CreateMerchantAsync(
-        string merchantName,
-        string settlementSchedule,
-        string addressLine1,
-        string? addressLine2,
-        string town,
-        string region,
-        string postCode,
-        string country,
-        string contactName,
-        string emailAddress,
-        string phoneNumber)
+    public async Task CreateMerchantAsync(MerchantCreationInput merchant)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
@@ -990,20 +979,20 @@ public sealed class DashboardPageHelper
 
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-            await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchantName);
-            await _page.Locator("select[name='SettlementSchedule']").SelectOptionAsync(settlementSchedule);
-            await _page.Locator("input[placeholder='Enter address line 1']").FillAsync(addressLine1);
-            await _page.Locator("input[placeholder='Enter address line 2 (optional)']").FillAsync(addressLine2 ?? string.Empty);
-            await _page.Locator("input[placeholder='Enter town']").FillAsync(town);
-            await _page.Locator("input[placeholder='Enter region']").FillAsync(region);
-            await _page.Locator("input[placeholder='Enter postcode']").FillAsync(postCode);
+            await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchant.MerchantName);
+            await _page.Locator("select[name='SettlementSchedule']").SelectOptionAsync(merchant.SettlementSchedule);
+            await _page.Locator("input[placeholder='Enter address line 1']").FillAsync(merchant.AddressLine1);
+            await _page.Locator("input[placeholder='Enter address line 2 (optional)']").FillAsync(merchant.AddressLine2 ?? string.Empty);
+            await _page.Locator("input[placeholder='Enter town']").FillAsync(merchant.Town);
+            await _page.Locator("input[placeholder='Enter region']").FillAsync(merchant.Region);
+            await _page.Locator("input[placeholder='Enter postcode']").FillAsync(merchant.PostCode);
 
             await _page.GetByRole(AriaRole.Button, new() { Name = "Select country" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Button, new() { Name = country }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = merchant.Country }).ClickAsync();
 
-            await _page.Locator("input[placeholder='Enter contact name']").FillAsync(contactName);
-            await _page.Locator("input[placeholder='Enter email address']").FillAsync(emailAddress);
-            await _page.Locator("input[placeholder='Enter phone number']").FillAsync(phoneNumber);
+            await _page.Locator("input[placeholder='Enter contact name']").FillAsync(merchant.ContactName);
+            await _page.Locator("input[placeholder='Enter email address']").FillAsync(merchant.EmailAddress);
+            await _page.Locator("input[placeholder='Enter phone number']").FillAsync(merchant.PhoneNumber);
 
             await _page.Locator("#createMerchantButton").ClickAsync();
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
@@ -1183,38 +1172,24 @@ public sealed class DashboardPageHelper
         }, nameof(AssertMerchantEditOpeningHoursVisibleAsync));
     }
 
-    public async Task SaveMerchantOpeningHoursAsync(
-        string mondayOpening,
-        string mondayClosing,
-        string tuesdayOpening,
-        string tuesdayClosing,
-        string wednesdayOpening,
-        string wednesdayClosing,
-        string thursdayOpening,
-        string thursdayClosing,
-        string fridayOpening,
-        string fridayClosing,
-        string saturdayOpening,
-        string saturdayClosing,
-        string sundayOpening,
-        string sundayClosing)
+    public async Task SaveMerchantOpeningHoursAsync(MerchantOpeningHoursInput openingHours)
     {
         await RunWithFailureArtifactsAsync(async () =>
         {
-            await _page.Locator("#mondayOpening").FillAsync(mondayOpening);
-            await _page.Locator("#mondayClosing").FillAsync(mondayClosing);
-            await _page.Locator("#tuesdayOpening").FillAsync(tuesdayOpening);
-            await _page.Locator("#tuesdayClosing").FillAsync(tuesdayClosing);
-            await _page.Locator("#wednesdayOpening").FillAsync(wednesdayOpening);
-            await _page.Locator("#wednesdayClosing").FillAsync(wednesdayClosing);
-            await _page.Locator("#thursdayOpening").FillAsync(thursdayOpening);
-            await _page.Locator("#thursdayClosing").FillAsync(thursdayClosing);
-            await _page.Locator("#fridayOpening").FillAsync(fridayOpening);
-            await _page.Locator("#fridayClosing").FillAsync(fridayClosing);
-            await _page.Locator("#saturdayOpening").FillAsync(saturdayOpening);
-            await _page.Locator("#saturdayClosing").FillAsync(saturdayClosing);
-            await _page.Locator("#sundayOpening").FillAsync(sundayOpening);
-            await _page.Locator("#sundayClosing").FillAsync(sundayClosing);
+            await _page.Locator("#mondayOpening").FillAsync(openingHours.MondayOpening);
+            await _page.Locator("#mondayClosing").FillAsync(openingHours.MondayClosing);
+            await _page.Locator("#tuesdayOpening").FillAsync(openingHours.TuesdayOpening);
+            await _page.Locator("#tuesdayClosing").FillAsync(openingHours.TuesdayClosing);
+            await _page.Locator("#wednesdayOpening").FillAsync(openingHours.WednesdayOpening);
+            await _page.Locator("#wednesdayClosing").FillAsync(openingHours.WednesdayClosing);
+            await _page.Locator("#thursdayOpening").FillAsync(openingHours.ThursdayOpening);
+            await _page.Locator("#thursdayClosing").FillAsync(openingHours.ThursdayClosing);
+            await _page.Locator("#fridayOpening").FillAsync(openingHours.FridayOpening);
+            await _page.Locator("#fridayClosing").FillAsync(openingHours.FridayClosing);
+            await _page.Locator("#saturdayOpening").FillAsync(openingHours.SaturdayOpening);
+            await _page.Locator("#saturdayClosing").FillAsync(openingHours.SaturdayClosing);
+            await _page.Locator("#sundayOpening").FillAsync(openingHours.SundayOpening);
+            await _page.Locator("#sundayClosing").FillAsync(openingHours.SundayClosing);
 
             await _page.Locator("#saveOpeningHoursButton").ClickAsync();
             await _page.GetByText("Merchant opening hours updated successfully").WaitForAsync(new LocatorWaitForOptions
@@ -2019,4 +1994,33 @@ public sealed class DashboardPageHelper
             Console.WriteLine($"Failed to capture debug artifacts: {captureException.Message}");
         }
     }
+
+    public sealed record MerchantOpeningHoursInput(
+        string MondayOpening,
+        string MondayClosing,
+        string TuesdayOpening,
+        string TuesdayClosing,
+        string WednesdayOpening,
+        string WednesdayClosing,
+        string ThursdayOpening,
+        string ThursdayClosing,
+        string FridayOpening,
+        string FridayClosing,
+        string SaturdayOpening,
+        string SaturdayClosing,
+        string SundayOpening,
+        string SundayClosing);
+
+    public sealed record MerchantCreationInput(
+        string MerchantName,
+        string SettlementSchedule,
+        string AddressLine1,
+        string? AddressLine2,
+        string Town,
+        string Region,
+        string PostCode,
+        string Country,
+        string ContactName,
+        string EmailAddress,
+        string PhoneNumber);
 }

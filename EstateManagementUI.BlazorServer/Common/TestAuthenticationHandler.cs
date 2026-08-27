@@ -12,6 +12,7 @@ namespace EstateManagementUI.BlazorServer.Common;
 /// </summary>
 public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
+    private const string TestUserRoleKey = "TestUserRole";
     public static readonly string SchemeName = "TestAuthentication";
     private readonly IConfiguration _configuration;
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -32,7 +33,7 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
     {
         // Check for role switch in query parameter
         string? roleName = null;
-        if (_httpContextAccessor.HttpContext?.Request.Cookies.TryGetValue("TestUserRole", out var cookieRole) == true)
+        if (_httpContextAccessor.HttpContext?.Request.Cookies.TryGetValue(TestUserRoleKey, out var cookieRole) == true)
         {
             roleName = cookieRole;
         }
@@ -41,9 +42,9 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
         {
             roleName = roleQuery.ToString();
             // Store in session for persistence
-            _httpContextAccessor.HttpContext.Session.SetString("TestUserRole", roleName);
+            _httpContextAccessor.HttpContext.Session.SetString(TestUserRoleKey, roleName);
             _httpContextAccessor.HttpContext.Response.Cookies.Append(
-                "TestUserRole",
+                TestUserRoleKey,
                 roleName,
                 new CookieOptions
                 {

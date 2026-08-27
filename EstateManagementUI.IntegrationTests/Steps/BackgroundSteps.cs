@@ -162,7 +162,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
                 string emailAddress = ReqnrollTableHelper.GetStringRowValue(tableRow, "EmailAddress");
                 string phoneNumber = ReqnrollTableHelper.GetStringRowValue(tableRow, "PhoneNumber");
 
-                await helper.CreateMerchantAsync(merchantName, settlementSchedule, addressLine1, addressLine2, town, region, postCode, country, contactName, emailAddress, phoneNumber);
+                await helper.CreateMerchantAsync(new DashboardPageHelper.MerchantCreationInput(merchantName, settlementSchedule, addressLine1, addressLine2, town, region, postCode, country, contactName, emailAddress, phoneNumber));
                 await helper.AssertMerchantListContainsAsync(merchantName);
             }
         }

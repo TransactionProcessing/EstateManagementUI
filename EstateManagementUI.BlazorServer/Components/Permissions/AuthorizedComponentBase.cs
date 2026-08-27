@@ -16,10 +16,6 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
     protected ClaimsPrincipal User { get; private set; } = default!;
     protected AuthenticationState AuthState { get; private set; } = default!;
     
-    protected override async Task OnInitializedAsync() {
-
-    }
-
     [Inject] protected IPermissionService PermissionService { get; set; } = default!;
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
 

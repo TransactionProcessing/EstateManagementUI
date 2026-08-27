@@ -211,7 +211,7 @@ public class MerchantModels
 
     private class DateNotInFutureAttribute : ValidationAttribute
     {
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(object? value, ValidationContext _)
         {
             if (value is DateTime date)
             {

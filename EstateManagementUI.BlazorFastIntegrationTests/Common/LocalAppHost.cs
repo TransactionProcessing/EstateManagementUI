@@ -29,13 +29,17 @@ public sealed class LocalAppHost : IAsyncDisposable
         var startInfo = new ProcessStartInfo
         {
             FileName = "dotnet",
-            Arguments = $"run --no-build --project \"{_projectPath}\"",
             WorkingDirectory = Path.GetDirectoryName(_projectPath)!,
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             CreateNoWindow = true
         };
+
+        startInfo.ArgumentList.Add("run");
+        startInfo.ArgumentList.Add("--no-build");
+        startInfo.ArgumentList.Add("--project");
+        startInfo.ArgumentList.Add(_projectPath);
 
         startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Test";
         startInfo.Environment["AppSettings__TestMode"] = "BackedByTestDataStore";

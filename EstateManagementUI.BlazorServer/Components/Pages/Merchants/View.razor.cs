@@ -26,7 +26,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private MerchantModels.MerchantOpeningHoursModel merchantOpeningHoursModel = new();
 
         // Settlement transaction history data
-        private List<TransactionDetailModel>? settlementTransactions;
+        private List<TransactionDetailModel> settlementTransactions = [];
         private bool loadingSettlementTransactions = false;
 
         // Pagination for settlement transactions
@@ -118,9 +118,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             }
         }
 
-        private async Task LoadSettlementTransactions()
+        private Task LoadSettlementTransactions()
         {
-            
+            settlementTransactions = [];
+            settlementCurrentPage = 1;
+            settlementTotalPages = 0;
+            return Task.CompletedTask;
         }
 
         private string GetResultBadgeClass(string? status)
@@ -160,7 +163,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
         private async Task OnSettlementsTabClick()
         {
             activeTab = "settlements";
-            if (settlementTransactions == null)
+            if (settlementTransactions.Count == 0)
             {
                 await LoadSettlementTransactions();
             }
@@ -168,7 +171,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
         private List<TransactionDetailModel> GetPagedSettlementTransactions()
         {
-            if (settlementTransactions == null || !settlementTransactions.Any())
+            if (!settlementTransactions.Any())
                 return new List<TransactionDetailModel>();
 
             settlementTotalPages = (int)Math.Ceiling(settlementTransactions.Count / (double)settlementPageSize);

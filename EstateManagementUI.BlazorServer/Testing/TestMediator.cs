@@ -9,6 +9,7 @@ namespace EstateManagementUI.BlazorServer.Testing;
 
 public sealed class TestMediator : IMediator
 {
+    private const string ReportingMerchantA = "Reporting Merchant A";
     private readonly ITestDataStore _dataStore;
     private readonly TestSupportState _supportState;
     private readonly object _gate = new();
@@ -91,14 +92,14 @@ public sealed class TestMediator : IMediator
             ContractCommands.AddTransactionFeeToProductCommand command => HandleAddTransactionFeeToProduct(command),
             ContractCommands.RemoveTransactionFeeFromProductCommand command => HandleRemoveTransactionFeeFromProduct(command),
 
-            TransactionQueries.GetTodaysSalesQuery query => Result.Success(GetTodaysSales(query.ComparisonDate)),
-            TransactionQueries.GetTodaysFailedSalesQuery query => Result.Success(GetTodaysFailedSales(query.ComparisonDate)),
-            TransactionQueries.GetTodaysSalesByHourQuery query => Result.Success(GetTodaysSalesByHour(query.ComparisonDate)),
-            TransactionQueries.GetTransactionDetailQuery query => Result.Success(GetTransactionDetail()),
-            TransactionQueries.GetMerchantTransactionSummaryQuery query => Result.Success(GetMerchantSummary()),
-            TransactionQueries.GetOperatorTransactionSummaryQuery query => Result.Success(GetOperatorSummary()),
-            TransactionQueries.GetProductPerformanceQuery query => Result.Success(GetProductPerformance()),
-            SettlementQueries.GetTodaysSettlementQuery query => Result.Success(GetTodaysSettlement(query.ComparisonDate)),
+            TransactionQueries.GetTodaysSalesQuery _ => Result.Success(GetTodaysSales()),
+            TransactionQueries.GetTodaysFailedSalesQuery _ => Result.Success(GetTodaysFailedSales()),
+            TransactionQueries.GetTodaysSalesByHourQuery _ => Result.Success(GetTodaysSalesByHour()),
+            TransactionQueries.GetTransactionDetailQuery _ => Result.Success(GetTransactionDetail()),
+            TransactionQueries.GetMerchantTransactionSummaryQuery _ => Result.Success(GetMerchantSummary()),
+            TransactionQueries.GetOperatorTransactionSummaryQuery _ => Result.Success(GetOperatorSummary()),
+            TransactionQueries.GetProductPerformanceQuery _ => Result.Success(GetProductPerformance()),
+            SettlementQueries.GetTodaysSettlementQuery _ => Result.Success(GetTodaysSettlement()),
             DateQueries.GetComparisonDatesQuery query => GetComparisonDates(query.EstateId),
 
             FileProcessingQueries.GetFileImportLogsListQuery query => Result.Success(GetFileImportLogs()),
@@ -558,7 +559,7 @@ public sealed class TestMediator : IMediator
             new() { Date = DateTime.Today.AddDays(-1), Description = "Yesterday", OrderValue = 2 }
         });
 
-    private TodaysSalesModel GetTodaysSales(DateTime comparisonDate)
+    private TodaysSalesModel GetTodaysSales()
         => new()
         {
             TodaysSalesCount = 523,
@@ -569,7 +570,7 @@ public sealed class TestMediator : IMediator
             ComparisonAverageValue = 270.27m
         };
 
-    private TodaysSalesModel GetTodaysFailedSales(DateTime comparisonDate)
+    private TodaysSalesModel GetTodaysFailedSales()
         => new()
         {
             TodaysSalesCount = 15,
@@ -580,7 +581,7 @@ public sealed class TestMediator : IMediator
             ComparisonAverageValue = 58.33m
         };
 
-    private List<TransactionModels.TodaysSalesByHourModel> GetTodaysSalesByHour(DateTime comparisonDate)
+    private List<TransactionModels.TodaysSalesByHourModel> GetTodaysSalesByHour()
         => new()
         {
             new() { Hour = 9, TodaysSalesCount = 1, ComparisonSalesCount = 0, TodaysSalesValue = 10m, ComparisonSalesValue = 0m },
@@ -601,10 +602,10 @@ public sealed class TestMediator : IMediator
             },
             Transactions = new List<TransactionModels.TransactionDetail>
             {
-                CreateTransaction(1001, "Reporting Merchant A", "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
-                CreateTransaction(1002, "Reporting Merchant A", "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
+                CreateTransaction(1001, ReportingMerchantA, "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
+                CreateTransaction(1002, ReportingMerchantA, "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
                 CreateTransaction(1003, "Reporting Merchant B", "Reporting Product B", "Voucher", 10m, 1.25m, "Successful"),
-                CreateTransaction(1004, "Reporting Merchant A", "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
+                CreateTransaction(1004, ReportingMerchantA, "Reporting Product A", "Safaricom", 10m, 1.25m, "Successful"),
                 CreateTransaction(1005, "Reporting Merchant B", "Reporting Product B", "Voucher", 10m, 1.25m, "Successful")
             }
         };
@@ -621,7 +622,7 @@ public sealed class TestMediator : IMediator
             },
             Merchants = new List<TransactionModels.MerchantDetail>
             {
-                new() { MerchantName = "Reporting Merchant A", TotalCount = 3, TotalValue = 30m, AverageValue = 30m, AuthorisedCount = 3, DeclinedCount = 0, AuthorisedPercentage = 100m },
+                new() { MerchantName = ReportingMerchantA, TotalCount = 3, TotalValue = 30m, AverageValue = 30m, AuthorisedCount = 3, DeclinedCount = 0, AuthorisedPercentage = 100m },
                 new() { MerchantName = "Reporting Merchant B", TotalCount = 2, TotalValue = 20m, AverageValue = 20m, AuthorisedCount = 2, DeclinedCount = 0, AuthorisedPercentage = 100m }
             }
         };
@@ -660,7 +661,7 @@ public sealed class TestMediator : IMediator
             }
         };
 
-    private TodaysSettlementModel GetTodaysSettlement(DateTime comparisonDate)
+    private TodaysSettlementModel GetTodaysSettlement()
         => new()
         {
             ComparisonSettlementCount = 2,

@@ -54,8 +54,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         }
 
         private async Task<Result<String>> GetToken(CancellationToken cancellationToken) {
-            // Get a token here 
-            // TODO: Add caching
+            // Get a token here.
             var clientId = ConfigurationReader.GetValueOrDefault("AppSettings", "ClientId", "");
             var clientSecret = ConfigurationReader.GetValueOrDefault("AppSettings", "ClientSecret", "");
             Result<TokenResponse>? token = await this.SecurityServiceClient.GetToken(clientId, clientSecret, cancellationToken);
