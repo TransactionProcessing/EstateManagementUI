@@ -1,6 +1,7 @@
 exclude_paths:
   # Ignore the test projects entirely
   - EstateManagementUI.BlazorServer.Tests/**
+  - EstateManagementUI.BlazorFastIntegrationTests/**
   - EstateManagementUI.IntegrationTests/**
 
   # Common build / IDE artifacts
