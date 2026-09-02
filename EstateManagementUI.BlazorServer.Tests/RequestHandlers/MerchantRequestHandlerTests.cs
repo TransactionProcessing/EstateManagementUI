@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -10,13 +10,13 @@ namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 
 public class MerchantRequestHandlerTests
 {
-    private readonly Mock<IApiClient> _mockApiClient;
+    private readonly IApiClientImposter _mockApiClient;
     private readonly MerchantRequestHandler _handler;
 
     public MerchantRequestHandlerTests()
     {
-        _mockApiClient = new Mock<IApiClient>();
-        _handler = new MerchantRequestHandler(_mockApiClient.Object);
+        _mockApiClient = new IApiClientImposter();
+        _handler = new MerchantRequestHandler(_mockApiClient.Instance());
     }
 
     #region GetMerchantsQuery
@@ -31,7 +31,7 @@ public class MerchantRequestHandlerTests
             new() { MerchantId = Guid.NewGuid(), MerchantName = "Merchant1" }
         };
 
-        _mockApiClient.Setup(c => c.GetMerchants(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -39,7 +39,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
-        _mockApiClient.Verify(c => c.GetMerchants(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -47,13 +47,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantsQuery(CorrelationIdHelper.New(), Guid.NewGuid(), null, null, null, null, null);
 
-        _mockApiClient.Setup(c => c.GetMerchants(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchants(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -68,7 +68,7 @@ public class MerchantRequestHandlerTests
         var query = new MerchantQueries.GetMerchantQuery(CorrelationIdHelper.New(), estateId, merchantId);
         var merchant = new MerchantModels.MerchantModel { MerchantId = merchantId, MerchantName = "Merchant1" };
 
-        _mockApiClient.Setup(c => c.GetMerchant(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchant(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(merchant));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -76,7 +76,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.MerchantId.ShouldBe(merchantId);
-        _mockApiClient.Verify(c => c.GetMerchant(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchant(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -84,13 +84,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetMerchant(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchant(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchant(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchant(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -107,7 +107,7 @@ public class MerchantRequestHandlerTests
             new() { MerchantId = Guid.NewGuid(), Name = "Merchant1", Reference = "REF1" }
         };
 
-        _mockApiClient.Setup(c => c.GetRecentMerchants(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetRecentMerchants(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(recentMerchants));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -115,7 +115,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
-        _mockApiClient.Verify(c => c.GetRecentMerchants(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetRecentMerchants(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -123,13 +123,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetRecentMerchantsQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetRecentMerchants(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetRecentMerchants(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetRecentMerchants(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetRecentMerchants(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -148,7 +148,7 @@ public class MerchantRequestHandlerTests
             MerchantsWithSaleInLastHour = 10
         };
 
-        _mockApiClient.Setup(c => c.GetMerchantKpi(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantKpi(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(kpi));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -156,7 +156,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.MerchantsWithSaleInLastHour.ShouldBe(10);
-        _mockApiClient.Verify(c => c.GetMerchantKpi(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantKpi(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -164,13 +164,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantKpiQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetMerchantKpi(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantKpi(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchantKpi(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantKpi(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -187,7 +187,7 @@ public class MerchantRequestHandlerTests
             new() { MerchantId = Guid.NewGuid(), MerchantName = "Merchant1" }
         };
 
-        _mockApiClient.Setup(c => c.GetMerchants(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -195,7 +195,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
-        _mockApiClient.Verify(c => c.GetMerchants(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -203,13 +203,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantsForDropDownQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetMerchants(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchants(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchants(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -227,7 +227,7 @@ public class MerchantRequestHandlerTests
             new() { MerchantId = merchantId, ContractId = Guid.NewGuid(), ContractName = "Contract1" }
         };
 
-        _mockApiClient.Setup(c => c.GetMerchantContracts(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(contracts));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -235,7 +235,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
-        _mockApiClient.Verify(c => c.GetMerchantContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -243,13 +243,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantContractsQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetMerchantContracts(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchantContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -267,7 +267,7 @@ public class MerchantRequestHandlerTests
             new() { MerchantId = merchantId, OperatorId = Guid.NewGuid(), OperatorName = "Operator1" }
         };
 
-        _mockApiClient.Setup(c => c.GetMerchantOperators(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -275,7 +275,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
-        _mockApiClient.Verify(c => c.GetMerchantOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -283,13 +283,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantOperatorsQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetMerchantOperators(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchantOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -307,7 +307,7 @@ public class MerchantRequestHandlerTests
             new() { MerchantId = merchantId, DeviceId = Guid.NewGuid(), DeviceIdentifier = "DEVICE001" }
         };
 
-        _mockApiClient.Setup(c => c.GetMerchantDevices(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantDevices(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(devices));
 
         var result = await _handler.Handle(query, CancellationToken.None);
@@ -315,7 +315,7 @@ public class MerchantRequestHandlerTests
         result.IsSuccess.ShouldBeTrue();
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
-        _mockApiClient.Verify(c => c.GetMerchantDevices(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantDevices(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -323,13 +323,13 @@ public class MerchantRequestHandlerTests
     {
         var query = new MerchantQueries.GetMerchantDevicesQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.GetMerchantDevices(query, It.IsAny<CancellationToken>()))
+        _mockApiClient.GetMerchantDevices(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(query, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.GetMerchantDevices(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantDevices(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -341,13 +341,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.AddMerchantDeviceCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "DEVICE001");
 
-        _mockApiClient.Setup(c => c.AddDeviceToMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.AddDeviceToMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.AddDeviceToMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddDeviceToMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -355,13 +355,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.AddMerchantDeviceCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "DEVICE001");
 
-        _mockApiClient.Setup(c => c.AddDeviceToMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.AddDeviceToMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.AddDeviceToMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddDeviceToMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -373,13 +373,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.AddOperatorToMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "M001", "T001");
 
-        _mockApiClient.Setup(c => c.AddOperatorToMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.AddOperatorToMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.AddOperatorToMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddOperatorToMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -387,13 +387,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.AddOperatorToMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "M001", "T001");
 
-        _mockApiClient.Setup(c => c.AddOperatorToMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.AddOperatorToMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.AddOperatorToMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddOperatorToMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -407,13 +407,13 @@ public class MerchantRequestHandlerTests
         var contact = new MerchantCommands.MerchantContact(Guid.NewGuid(), "John Doe", "john@example.com", "01234567890");
         var command = new MerchantCommands.CreateMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Merchant1", "Immediate", address, contact);
 
-        _mockApiClient.Setup(c => c.CreateMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.CreateMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.CreateMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.CreateMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -423,13 +423,13 @@ public class MerchantRequestHandlerTests
         var contact = new MerchantCommands.MerchantContact(Guid.NewGuid(), "John Doe", "john@example.com", "01234567890");
         var command = new MerchantCommands.CreateMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Merchant1", "Immediate", address, contact);
 
-        _mockApiClient.Setup(c => c.CreateMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.CreateMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.CreateMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.CreateMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -441,13 +441,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.MakeMerchantDepositCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), 100.00m, DateTime.UtcNow, "REF001");
 
-        _mockApiClient.Setup(c => c.MakeMerchantDeposit(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.MakeMerchantDeposit(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.MakeMerchantDeposit(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.MakeMerchantDeposit(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -455,13 +455,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.MakeMerchantDepositCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), 100.00m, DateTime.UtcNow, "REF001");
 
-        _mockApiClient.Setup(c => c.MakeMerchantDeposit(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.MakeMerchantDeposit(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.MakeMerchantDeposit(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.MakeMerchantDeposit(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -475,18 +475,18 @@ public class MerchantRequestHandlerTests
             CorrelationIdHelper.New(),
             Guid.NewGuid(),
             Guid.NewGuid(),
-            new(new MerchantCommands.OpeningHours("0800","1700"), new MerchantCommands.OpeningHours("0800", "1700"), 
+            new(new MerchantCommands.OpeningHours("0800","1700"), new MerchantCommands.OpeningHours("0800", "1700"),
                 new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
                 new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
                 new MerchantCommands.OpeningHours("0800", "1700")));
 
-        _mockApiClient.Setup(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantOpeningHours(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.UpdateMerchantOpeningHours(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -501,13 +501,13 @@ public class MerchantRequestHandlerTests
                 new MerchantCommands.OpeningHours("0800", "1700"), new MerchantCommands.OpeningHours("0800", "1700"),
                 new MerchantCommands.OpeningHours("0800", "1700")));
 
-        _mockApiClient.Setup(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantOpeningHours(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.UpdateMerchantOpeningHours(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.UpdateMerchantOpeningHours(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -519,13 +519,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.RemoveContractFromMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.RemoveContractFromMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.RemoveContractFromMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.RemoveContractFromMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveContractFromMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -533,13 +533,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.RemoveContractFromMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.RemoveContractFromMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.RemoveContractFromMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.RemoveContractFromMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveContractFromMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -551,13 +551,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.RemoveOperatorFromMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.RemoveOperatorFromMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.RemoveOperatorFromMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.RemoveOperatorFromMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveOperatorFromMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -565,13 +565,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.RemoveOperatorFromMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.RemoveOperatorFromMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.RemoveOperatorFromMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.RemoveOperatorFromMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveOperatorFromMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -583,13 +583,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.SwapMerchantDeviceCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "OLD001", "NEW001");
 
-        _mockApiClient.Setup(c => c.SwapMerchantDevice(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.SwapMerchantDevice(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.SwapMerchantDevice(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.SwapMerchantDevice(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -597,13 +597,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.SwapMerchantDeviceCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "OLD001", "NEW001");
 
-        _mockApiClient.Setup(c => c.SwapMerchantDevice(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.SwapMerchantDevice(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.SwapMerchantDevice(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.SwapMerchantDevice(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -615,13 +615,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.AssignContractToMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.AddContractToMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.AddContractToMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.AddContractToMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddContractToMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -629,13 +629,13 @@ public class MerchantRequestHandlerTests
     {
         var command = new MerchantCommands.AssignContractToMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
-        _mockApiClient.Setup(c => c.AddContractToMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.AddContractToMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.AddContractToMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddContractToMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion
@@ -649,19 +649,19 @@ public class MerchantRequestHandlerTests
         var contact = new MerchantCommands.MerchantContact(Guid.NewGuid(), "John Doe", "john@example.com", "01234567890");
         var command = new MerchantCommands.UpdateMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Merchant1", "Immediate", address, contact);
 
-        _mockApiClient.Setup(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
-        _mockApiClient.Setup(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
-        _mockApiClient.Setup(c => c.UpdateMerchantContact(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantContact(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantContact(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantContact(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -671,15 +671,15 @@ public class MerchantRequestHandlerTests
         var contact = new MerchantCommands.MerchantContact(Guid.NewGuid(), "John Doe", "john@example.com", "01234567890");
         var command = new MerchantCommands.UpdateMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Merchant1", "Immediate", address, contact);
 
-        _mockApiClient.Setup(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("update merchant failed"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()), Times.Never);
-        _mockApiClient.Verify(c => c.UpdateMerchantContact(command, It.IsAny<CancellationToken>()), Times.Never);
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any()).Called(Count.Never());
+        _mockApiClient.UpdateMerchantContact(command, Arg<CancellationToken>.Any()).Called(Count.Never());
     }
 
     [Fact]
@@ -689,17 +689,17 @@ public class MerchantRequestHandlerTests
         var contact = new MerchantCommands.MerchantContact(Guid.NewGuid(), "John Doe", "john@example.com", "01234567890");
         var command = new MerchantCommands.UpdateMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Merchant1", "Immediate", address, contact);
 
-        _mockApiClient.Setup(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
-        _mockApiClient.Setup(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("update address failed"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantContact(command, It.IsAny<CancellationToken>()), Times.Never);
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantContact(command, Arg<CancellationToken>.Any()).Called(Count.Never());
     }
 
     [Fact]
@@ -709,19 +709,19 @@ public class MerchantRequestHandlerTests
         var contact = new MerchantCommands.MerchantContact(Guid.NewGuid(), "John Doe", "john@example.com", "01234567890");
         var command = new MerchantCommands.UpdateMerchantCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Merchant1", "Immediate", address, contact);
 
-        _mockApiClient.Setup(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
-        _mockApiClient.Setup(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
-        _mockApiClient.Setup(c => c.UpdateMerchantContact(command, It.IsAny<CancellationToken>()))
+        _mockApiClient.UpdateMerchantContact(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("update contact failed"));
 
         var result = await _handler.Handle(command, CancellationToken.None);
 
         result.IsFailed.ShouldBeTrue();
-        _mockApiClient.Verify(c => c.UpdateMerchant(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantAddress(command, It.IsAny<CancellationToken>()), Times.Once);
-        _mockApiClient.Verify(c => c.UpdateMerchantContact(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.UpdateMerchant(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantAddress(command, Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockApiClient.UpdateMerchantContact(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     #endregion

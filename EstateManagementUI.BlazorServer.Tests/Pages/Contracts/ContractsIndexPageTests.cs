@@ -9,7 +9,7 @@ using EstateManagementUI.BlazorServer.Models;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
@@ -35,13 +35,13 @@ public class ContractsIndexPageTests : BaseTest
                 Products = new List<ContractModels.ContractProductModel>()
             }
         };
-        
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contracts));
-        
+
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Contract Management");
     }
@@ -51,12 +51,12 @@ public class ContractsIndexPageTests : BaseTest
     {
         // Arrange
         List<ContractModels.ContractModel> emptyList = new();
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(emptyList));
 
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No contracts found"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -85,12 +85,12 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contracts));
 
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Contract 1"), timeout: TimeSpan.FromSeconds(5));
         cut.Markup.ShouldContain("Contract 2");
@@ -117,12 +117,12 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contracts));
 
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Product(s)"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -131,12 +131,12 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(new List<ContractModels.ContractModel>()));
 
         // Act
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
-        
+
         // Assert
         IRenderedComponent<Microsoft.AspNetCore.Components.Web.PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -146,7 +146,7 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_LoadContractFails_NavigatesToError()
     {
         // Arrange
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act
@@ -160,16 +160,16 @@ public class ContractsIndexPageTests : BaseTest
     public void ContractsIndex_AddNewContractButton_NavigatesToNewContractPage()
     {
         // Arrange
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(new List<ContractModels.ContractModel>()));
 
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Contract Management"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click the "Add New Contract" button
         IElement addButton = cut.Find("#newContractButton");
         addButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/contracts/new");
     }
@@ -191,18 +191,18 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contracts));
 
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click the "View" button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? viewButton = buttons.FirstOrDefault(b => b.TextContent.Contains("View"));
         viewButton.ShouldNotBeNull();
         viewButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain($"/contracts/{contractId}");
     }
@@ -224,18 +224,18 @@ public class ContractsIndexPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contracts));
 
         IRenderedComponent<ContractsIndex> cut = RenderComponent<ContractsIndex>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Contract"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click the "Edit" button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? editButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Edit"));
         editButton.ShouldNotBeNull();
         editButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain($"/contracts/{contractId}/edit");
     }

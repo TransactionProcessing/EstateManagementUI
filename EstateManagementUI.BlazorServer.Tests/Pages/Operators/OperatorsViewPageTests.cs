@@ -7,7 +7,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -26,13 +26,13 @@ public class OperatorsViewPageTests : BaseTest
             Name = "Test Operator"
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         // Assert
         cut.Markup.ShouldContain("View Operator");
     }
@@ -48,14 +48,14 @@ public class OperatorsViewPageTests : BaseTest
             Name = "Test Operator"
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Operator");
     }
@@ -65,13 +65,13 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(new OperatorModels.OperatorModel { OperatorId = operatorId }));
-        
+
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -88,7 +88,7 @@ public class OperatorsViewPageTests : BaseTest
             Name = "Test Operator"
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         var cut = RenderComponent<View>(parameters => parameters
@@ -117,7 +117,7 @@ public class OperatorsViewPageTests : BaseTest
             RequireCustomTerminalNumber = false
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
@@ -143,7 +143,7 @@ public class OperatorsViewPageTests : BaseTest
             RequireCustomTerminalNumber = false
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
@@ -169,7 +169,7 @@ public class OperatorsViewPageTests : BaseTest
             RequireCustomTerminalNumber = true
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
@@ -195,7 +195,7 @@ public class OperatorsViewPageTests : BaseTest
             RequireCustomTerminalNumber = false
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
@@ -213,7 +213,7 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act
@@ -229,7 +229,7 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
 
         // Act
@@ -246,7 +246,7 @@ public class OperatorsViewPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
 
         var cut = RenderComponent<View>(parameters => parameters

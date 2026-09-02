@@ -3,7 +3,7 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Contracts;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
@@ -23,14 +23,14 @@ public class ContractsViewPageTests : BaseTest
             Description = "Test Contract",
             OperatorName = "Test Operator"
         };
-        
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
-        
+
         // Assert
         cut.Markup.ShouldContain("View Contract");
     }
@@ -47,14 +47,14 @@ public class ContractsViewPageTests : BaseTest
             OperatorName = "Test Operator"
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Contract");
     }
@@ -70,13 +70,13 @@ public class ContractsViewPageTests : BaseTest
             Description = "Test Contract",
             OperatorName = "Test Operator"
         };
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -94,14 +94,14 @@ public class ContractsViewPageTests : BaseTest
             OperatorName = "Test Operator"
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Back to List");
     }
@@ -118,20 +118,20 @@ public class ContractsViewPageTests : BaseTest
             OperatorName = "Test Operator"
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find and click the Back to List button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton.ShouldNotBeNull();
         backButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/contracts");
     }
@@ -160,14 +160,14 @@ public class ContractsViewPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Product");
         cut.Markup.ShouldContain("Test Display");
@@ -187,14 +187,14 @@ public class ContractsViewPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("No products added to this contract yet");
     }
@@ -234,14 +234,14 @@ public class ContractsViewPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Transaction Fees");
         cut.Markup.ShouldContain("Service Fee");
@@ -253,7 +253,7 @@ public class ContractsViewPageTests : BaseTest
     {
         // Arrange
         var contractId = Guid.NewGuid();
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act

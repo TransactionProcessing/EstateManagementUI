@@ -7,7 +7,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -27,17 +27,17 @@ public class MerchantsViewPageTests : BaseTest
             MerchantReference = "REF001"
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(merchant));
-        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
+        this.MerchantUIService.GetMerchantOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.GetMerchantContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.GetMerchantDevices(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
-        
+
         // Assert
         cut.Markup.ShouldContain("View Merchant");
     }
@@ -54,18 +54,18 @@ public class MerchantsViewPageTests : BaseTest
             MerchantReference = "REF001"
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(merchant));
-        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
+        this.MerchantUIService.GetMerchantOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.GetMerchantContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.GetMerchantDevices(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Merchant");
         cut.Markup.ShouldContain("REF001");
@@ -83,17 +83,17 @@ public class MerchantsViewPageTests : BaseTest
             MerchantReference = "REF001"
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(merchant));
-        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
+        this.MerchantUIService.GetMerchantOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.GetMerchantContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.GetMerchantDevices(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -111,18 +111,18 @@ public class MerchantsViewPageTests : BaseTest
             MerchantReference = "REF001"
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(merchant));
-        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
+        this.MerchantUIService.GetMerchantOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantOperatorModel>()));
+        this.MerchantUIService.GetMerchantContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantContractModel>()));
+        this.MerchantUIService.GetMerchantDevices(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<MerchantModels.MerchantDeviceModel>()));
+        this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Back to List");
     }
@@ -135,12 +135,12 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find address button and click it
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addressButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Address Details"));
         addressButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Address Line 1"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -153,12 +153,12 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find contact button and click it
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? contactButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Contact Details"));
         contactButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Contact Name"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -171,12 +171,12 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find operators button and click it
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators assigned"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -189,12 +189,12 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find contracts button and click it
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? contractsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Contracts"));
         contractsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No contracts assigned"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -207,12 +207,12 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find devices button and click it
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
         devicesButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No devices assigned"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -225,16 +225,16 @@ public class MerchantsViewPageTests : BaseTest
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators first
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
-        
+
         // Act - switch back to details
         IElement? detailsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Merchant Details"));
         detailsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant Name"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -252,18 +252,18 @@ public class MerchantsViewPageTests : BaseTest
                 TerminalNumber = "TERM001"
             }
         };
-        
+
         SetupSuccessfulDataLoadWithOperators(operators);
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => {
             cut.Markup.ShouldContain("Test Operator");
@@ -276,16 +276,16 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators assigned"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -311,18 +311,18 @@ public class MerchantsViewPageTests : BaseTest
                 }
             }
         };
-        
+
         SetupSuccessfulDataLoadWithContracts(contracts);
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to contracts tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? contractsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Contracts"));
         contractsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => {
             cut.Markup.ShouldContain("Test Contract");
@@ -335,16 +335,16 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to contracts tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? contractsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Contracts"));
         contractsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No contracts assigned"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -360,18 +360,18 @@ public class MerchantsViewPageTests : BaseTest
                 DeviceIdentifier = "DEVICE12345"
             }
         };
-        
+
         SetupSuccessfulDataLoadWithDevices(devices);
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to devices tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
         devicesButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("DEVICE12345"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -381,16 +381,16 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to devices tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
         devicesButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No devices assigned"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -399,13 +399,13 @@ public class MerchantsViewPageTests : BaseTest
     public void MerchantsView_LoadMerchantData_LoadFails_NavigatesToError()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
     }
@@ -425,11 +425,11 @@ public class MerchantsViewPageTests : BaseTest
         };
 
         SetupSuccessfulDataLoadWithMerchant(merchant);
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchant.MerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Merchant");
         cut.Markup.ShouldContain("REF001");
@@ -454,16 +454,16 @@ public class MerchantsViewPageTests : BaseTest
         };
 
         SetupSuccessfulDataLoadWithMerchant(merchant);
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchant.MerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to address tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addressButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Address Details"));
         addressButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => {
             cut.Markup.ShouldContain("123 Main Street");
@@ -487,16 +487,16 @@ public class MerchantsViewPageTests : BaseTest
         };
 
         SetupSuccessfulDataLoadWithMerchant(merchant);
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, merchant.MerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to contact tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? contactButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Contact Details"));
         contactButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => {
             cut.Markup.ShouldContain("John Doe");
@@ -533,16 +533,16 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         var cut = RenderComponent<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Click back button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton?.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
     }
@@ -591,15 +591,15 @@ public class MerchantsViewPageTests : BaseTest
             Sunday = new MerchantModels.DayOpeningHoursModel { Opening = "1000", Closing = "1500" }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(merchant));
-        this.MerchantUIService.Setup(m => m.GetMerchantOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchantOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators ?? new List<MerchantModels.MerchantOperatorModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantContracts(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchantContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contracts ?? new List<MerchantModels.MerchantContractModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantDevices(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchantDevices(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(devices ?? new List<MerchantModels.MerchantDeviceModel>()));
-        this.MerchantUIService.Setup(m => m.GetMerchantOpeningHours(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(openingHours ?? new MerchantModels.MerchantOpeningHoursModel()));
     }
 

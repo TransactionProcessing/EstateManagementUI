@@ -2,7 +2,7 @@ using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using OperatorsNew = EstateManagementUI.BlazorServer.Components.Pages.Operators.New;
@@ -65,7 +65,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_SuccessfulCreation_NavigatesToOperatorsIndex()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.CreateOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<OperatorModels.CreateOperatorModel>()))
+        this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
             .ReturnsAsync(Result.Success());
 
         IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
@@ -89,8 +89,8 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_FailedCreation_ShowsErrorMessage()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.CreateOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<OperatorModels.CreateOperatorModel>()))
-            .ReturnsAsync(Result.Failure);
+        this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
+            .ReturnsAsync(Result.Failure());
 
         IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
@@ -141,7 +141,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_SuccessfulCreation_ShowsSuccessMessage()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.CreateOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<OperatorModels.CreateOperatorModel>()))
+        this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
             .ReturnsAsync(Result.Success());
 
         IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();

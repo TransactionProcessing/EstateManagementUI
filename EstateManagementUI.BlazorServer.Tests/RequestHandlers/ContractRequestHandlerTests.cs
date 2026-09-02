@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -10,13 +10,13 @@ namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 
 public class ContractRequestHandlerTests
 {
-    private readonly Mock<IApiClient> _mockApiClient;
+    private readonly IApiClientImposter _mockApiClient;
     private readonly ContractRequestHandler _handler;
 
     public ContractRequestHandlerTests()
     {
-        _mockApiClient = new Mock<IApiClient>();
-        _handler = new ContractRequestHandler(_mockApiClient.Object);
+        _mockApiClient = new IApiClientImposter();
+        _handler = new ContractRequestHandler(_mockApiClient.Instance());
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class ContractRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetContracts(query, It.IsAny<CancellationToken>()))
+            .GetContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(contracts));
 
         // Act
@@ -43,7 +43,7 @@ public class ContractRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(2);
 
-        _mockApiClient.Verify(c => c.GetContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class ContractRequestHandlerTests
         var query = new ContractQueries.GetContractsQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetContracts(query, It.IsAny<CancellationToken>()))
+            .GetContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -62,7 +62,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class ContractRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetContract(query, It.IsAny<CancellationToken>()))
+            .GetContract(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
@@ -91,7 +91,7 @@ public class ContractRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.ContractId.ShouldBe(contractId);
 
-        _mockApiClient.Verify(c => c.GetContract(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetContract(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public class ContractRequestHandlerTests
         var query = new ContractQueries.GetContractQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetContract(query, It.IsAny<CancellationToken>()))
+            .GetContract(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -110,7 +110,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetContract(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetContract(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.CreateContractCommand(CorrelationIdHelper.New(), Guid.NewGuid(), "Test Contract", Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.CreateContract(command, It.IsAny<CancellationToken>()))
+            .CreateContract(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -129,7 +129,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.CreateContract(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.CreateContract(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.CreateContractCommand(CorrelationIdHelper.New(), Guid.NewGuid(), "Test Contract", Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.CreateContract(command, It.IsAny<CancellationToken>()))
+            .CreateContract(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -148,7 +148,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.CreateContract(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.CreateContract(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -158,7 +158,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.AddProductToContractCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Product 1", "Product Display", 9.99m);
 
         _mockApiClient
-            .Setup(c => c.AddProductToContract(command, It.IsAny<CancellationToken>()))
+            .AddProductToContract(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -167,7 +167,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.AddProductToContract(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddProductToContract(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.AddProductToContractCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "Product 1", "Product Display", 9.99m);
 
         _mockApiClient
-            .Setup(c => c.AddProductToContract(command, It.IsAny<CancellationToken>()))
+            .AddProductToContract(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -186,7 +186,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.AddProductToContract(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddProductToContract(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.AddTransactionFeeToProductCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Fee Description", 1.50m, "Fixed", "Merchant");
 
         _mockApiClient
-            .Setup(c => c.AddTransactionFeeToProduct(command, It.IsAny<CancellationToken>()))
+            .AddTransactionFeeToProduct(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -205,7 +205,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.AddTransactionFeeToProduct(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddTransactionFeeToProduct(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -215,7 +215,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.AddTransactionFeeToProductCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Fee Description", 1.50m, "Fixed", "Merchant");
 
         _mockApiClient
-            .Setup(c => c.AddTransactionFeeToProduct(command, It.IsAny<CancellationToken>()))
+            .AddTransactionFeeToProduct(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -224,7 +224,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.AddTransactionFeeToProduct(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddTransactionFeeToProduct(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -234,7 +234,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.RemoveTransactionFeeFromProductCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.RemoveTransactionFeeFromProduct(command, It.IsAny<CancellationToken>()))
+            .RemoveTransactionFeeFromProduct(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -243,7 +243,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.RemoveTransactionFeeFromProduct(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveTransactionFeeFromProduct(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -253,7 +253,7 @@ public class ContractRequestHandlerTests
         var command = new ContractCommands.RemoveTransactionFeeFromProductCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.RemoveTransactionFeeFromProduct(command, It.IsAny<CancellationToken>()))
+            .RemoveTransactionFeeFromProduct(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -262,7 +262,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.RemoveTransactionFeeFromProduct(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveTransactionFeeFromProduct(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -277,7 +277,7 @@ public class ContractRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetRecentContracts(query, It.IsAny<CancellationToken>()))
+            .GetRecentContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(recentContracts));
 
         // Act
@@ -288,7 +288,7 @@ public class ContractRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(1);
 
-        _mockApiClient.Verify(c => c.GetRecentContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetRecentContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -298,7 +298,7 @@ public class ContractRequestHandlerTests
         var query = new ContractQueries.GetRecentContractsQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetRecentContracts(query, It.IsAny<CancellationToken>()))
+            .GetRecentContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -307,7 +307,7 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetRecentContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetRecentContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -323,7 +323,7 @@ public class ContractRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetContracts(query, It.IsAny<CancellationToken>()))
+            .GetContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(dropDownContracts));
 
         // Act
@@ -334,7 +334,7 @@ public class ContractRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Count.ShouldBe(2);
 
-        _mockApiClient.Verify(c => c.GetContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -344,7 +344,7 @@ public class ContractRequestHandlerTests
         var query = new ContractQueries.GetContractsForDropDownQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetContracts(query, It.IsAny<CancellationToken>()))
+            .GetContracts(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -353,6 +353,6 @@ public class ContractRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetContracts(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetContracts(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 }

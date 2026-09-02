@@ -6,7 +6,7 @@ using EstateManagementUI.BlazorServer.UIServices;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using Xunit;
@@ -15,13 +15,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
 {
     public class CalendarUIServiceTests
     {
-        private readonly Mock<IMediator> _mockMediator;
+        private readonly IMediatorImposter _mockMediator;
         private readonly CalendarUIService _service;
 
         public CalendarUIServiceTests()
         {
-            _mockMediator = new Mock<IMediator>();
-            _service = new CalendarUIService(_mockMediator.Object);
+            _mockMediator = new IMediatorImposter();
+            _service = new CalendarUIService(_mockMediator.Instance());
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             // Act
@@ -49,7 +49,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             result.Data[0].Description.ShouldBe("Last Week");
             result.Data[1].Description.ShouldBe("Last Month");
 
-            _mockMediator.Verify(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("backend error"));
 
             // Act
@@ -65,7 +65,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
 
             // Assert
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.IsAny<DateQueries.GetComparisonDatesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ComparisonDateModel>>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
     }
 }
