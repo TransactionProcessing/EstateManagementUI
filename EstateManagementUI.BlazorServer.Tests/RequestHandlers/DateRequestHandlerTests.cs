@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -10,13 +10,13 @@ namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 
 public class DateRequestHandlerTests
 {
-    private readonly Mock<IApiClient> _mockApiClient;
+    private readonly IApiClientImposter _mockApiClient;
     private readonly DateRequestHandler _handler;
 
     public DateRequestHandlerTests()
     {
-        _mockApiClient = new Mock<IApiClient>();
-        _handler = new DateRequestHandler(_mockApiClient.Object);
+        _mockApiClient = new IApiClientImposter();
+        _handler = new DateRequestHandler(_mockApiClient.Instance());
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class DateRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetComparisonDates(query, It.IsAny<CancellationToken>()))
+            .GetComparisonDates(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(dates));
 
         // Act
@@ -45,7 +45,7 @@ public class DateRequestHandlerTests
         result.Data[0].Description.ShouldBe("Yesterday");
         result.Data[1].Description.ShouldBe("Last Week");
 
-        _mockApiClient.Verify(c => c.GetComparisonDates(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetComparisonDates(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class DateRequestHandlerTests
         var query = new DateQueries.GetComparisonDatesQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetComparisonDates(query, It.IsAny<CancellationToken>()))
+            .GetComparisonDates(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -64,6 +64,6 @@ public class DateRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetComparisonDates(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetComparisonDates(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 }

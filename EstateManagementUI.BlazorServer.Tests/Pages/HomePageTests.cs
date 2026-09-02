@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using System.Security.Claims;
@@ -21,24 +21,24 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
 public class HomePageTests : BaseTest
 {
-    private readonly Mock<ICalendarUIService> _mockCalenderUiService;
-    private readonly Mock<IMerchantUIService> _mockMerchantUiService;
-    private readonly Mock<ITransactionUIService> _mockTransactionUiService;
-    private readonly Mock<IJSRuntime> _mockJSRuntime;
-    
+    private readonly ICalendarUIServiceImposter _mockCalenderUiService;
+    private readonly IMerchantUIServiceImposter _mockMerchantUiService;
+    private readonly ITransactionUIServiceImposter _mockTransactionUiService;
+    private readonly IJSRuntimeImposter _mockJSRuntime;
+
     public HomePageTests()
     {
-        _mockCalenderUiService = new Mock<ICalendarUIService>();
-        _mockMerchantUiService = new Mock<IMerchantUIService>();
-        _mockTransactionUiService = new Mock<ITransactionUIService>();
+        _mockCalenderUiService = new ICalendarUIServiceImposter();
+        _mockMerchantUiService = new IMerchantUIServiceImposter();
+        _mockTransactionUiService = new ITransactionUIServiceImposter();
 
-        _mockJSRuntime = new Mock<IJSRuntime>();
-        
-        Services.AddSingleton(_mockCalenderUiService.Object);
-        Services.AddSingleton(_mockMerchantUiService.Object);
-        Services.AddSingleton(_mockTransactionUiService.Object);
-        Services.AddSingleton(_mockJSRuntime.Object);
-        
+        _mockJSRuntime = new IJSRuntimeImposter();
+
+        Services.AddSingleton(_mockCalenderUiService.Instance());
+        Services.AddSingleton(_mockMerchantUiService.Instance());
+        Services.AddSingleton(_mockTransactionUiService.Instance());
+        Services.AddSingleton(_mockJSRuntime.Instance());
+
         // Add required permission components
         ComponentFactories.AddStub<RequirePermission>();
         ComponentFactories.AddStub<RequireSectionAccess>();
@@ -107,16 +107,16 @@ public class HomePageTests : BaseTest
             }
         };
 
-        _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync()).Returns(authState);
-        this._mockCalenderUiService.Setup(m => m.GetComparisonDates(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(comparisonDates));
-        this._mockMerchantUiService.Setup(m => m.GetMerchantKpis(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(merchantKpi));
-        this._mockMerchantUiService.Setup(m => m.GetRecentMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(recentMerchants));
-        this._mockTransactionUiService.Setup(m => m.GetTodaysSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
-        this._mockTransactionUiService.Setup(m => m.GetTodaysFailedSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
+        _mockAuthStateProvider.GetAuthenticationStateAsync().Returns(authState);
+        this._mockCalenderUiService.GetComparisonDates(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(comparisonDates));
+        this._mockMerchantUiService.GetMerchantKpis(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(merchantKpi));
+        this._mockMerchantUiService.GetRecentMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(recentMerchants));
+        this._mockTransactionUiService.GetTodaysSales(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<DateTime>.Any()).ReturnsAsync(Result.Success(todaysSales));
+        this._mockTransactionUiService.GetTodaysFailedSales(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(), Arg<DateTime>.Any()).ReturnsAsync(Result.Success(todaysSales));
 
         // Act
         var cut = RenderComponent<Home>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Dashboard");
         cut.Markup.ShouldContain("Welcome to Estate Management System");
@@ -126,7 +126,7 @@ public class HomePageTests : BaseTest
     public void Home_HasCorrectPageTitle()
     {
         // Arrange
-        var claims = new[] { new Claim(ClaimTypes.Role, "Estate"), 
+        var claims = new[] { new Claim(ClaimTypes.Role, "Estate"),
             new Claim("estateId", Guid.NewGuid().ToString()),
             new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "EstateUser")
         };
@@ -185,18 +185,18 @@ public class HomePageTests : BaseTest
             }
         };
 
-        _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync()).Returns(authState);
+        _mockAuthStateProvider.GetAuthenticationStateAsync().Returns(authState);
 
-        this._mockCalenderUiService.Setup(m => m.GetComparisonDates(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(comparisonDates));
-        this._mockMerchantUiService.Setup(m => m.GetMerchantKpis(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(merchantKpi));
-        this._mockMerchantUiService.Setup(m => m.GetRecentMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(recentMerchants));
-        this._mockTransactionUiService.Setup(m => m.GetTodaysSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
-        this._mockTransactionUiService.Setup(m => m.GetTodaysFailedSales(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(), It.IsAny<DateTime>())).ReturnsAsync(Result.Success(todaysSales));
+        this._mockCalenderUiService.GetComparisonDates(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(comparisonDates));
+        this._mockMerchantUiService.GetMerchantKpis(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(merchantKpi));
+        this._mockMerchantUiService.GetRecentMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(recentMerchants));
+        this._mockTransactionUiService.GetTodaysSales(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<DateTime>.Any()).ReturnsAsync(Result.Success(todaysSales));
+        this._mockTransactionUiService.GetTodaysFailedSales(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(), Arg<DateTime>.Any()).ReturnsAsync(Result.Success(todaysSales));
 
 
         // Act
         var cut = RenderComponent<Home>();
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();

@@ -3,7 +3,7 @@ using EstateManagementUI.BlazorServer.Components.Pages;
 using EstateManagementUI.BlazorServer.Permissions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using System.Security.Claims;
 using TestContext = Bunit.TestContext;
@@ -12,16 +12,16 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
 public class PermissionsDebugPageTests : TestContext
 {
-    private readonly Mock<IPermissionService> _mockPermissionService;
-    private readonly Mock<AuthenticationStateProvider> _mockAuthStateProvider;
-    private readonly Mock<IPermissionStore> _mockPermissionStore;
+    private readonly IPermissionServiceImposter _mockPermissionService;
+    private readonly AuthenticationStateProviderImposter _mockAuthStateProvider;
+    private readonly IPermissionStoreImposter _mockPermissionStore;
 
     public PermissionsDebugPageTests()
     {
-        _mockPermissionService = new Mock<IPermissionService>();
-        _mockAuthStateProvider = new Mock<AuthenticationStateProvider>();
-        _mockPermissionStore = new Mock<IPermissionStore>();
-        
+        _mockPermissionService = new IPermissionServiceImposter();
+        _mockAuthStateProvider = new AuthenticationStateProviderImposter();
+        _mockPermissionStore = new IPermissionStoreImposter();
+
         // Setup default mock behaviors
         var identity = new ClaimsIdentity(new[]
         {
@@ -30,25 +30,25 @@ public class PermissionsDebugPageTests : TestContext
         }, "TestAuth");
         var principal = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(principal);
-        
-        _mockAuthStateProvider.Setup(x => x.GetAuthenticationStateAsync())
+
+        _mockAuthStateProvider.GetAuthenticationStateAsync()
             .ReturnsAsync(authState);
-        
-        _mockPermissionService.Setup(x => x.GetUserRoleAsync())
+
+        _mockPermissionService.GetUserRoleAsync()
             .ReturnsAsync("TestRole");
-        
-        _mockPermissionService.Setup(x => x.GetUserPermissionsAsync())
+
+        _mockPermissionService.GetUserPermissionsAsync()
             .ReturnsAsync(new List<Permission>());
-        
-        _mockPermissionService.Setup(x => x.HasPermissionAsync(It.IsAny<PermissionSection>(), It.IsAny<PermissionFunction>()))
+
+        _mockPermissionService.HasPermissionAsync(Arg<PermissionSection>.Any(), Arg<PermissionFunction>.Any())
             .ReturnsAsync(false);
-        
-        _mockPermissionStore.Setup(x => x.GetAllRolesAsync())
+
+        _mockPermissionStore.GetAllRolesAsync()
             .ReturnsAsync(new List<Role>());
-        
-        Services.AddSingleton(_mockPermissionService.Object);
-        Services.AddSingleton(_mockAuthStateProvider.Object);
-        Services.AddSingleton(_mockPermissionStore.Object);
+
+        Services.AddSingleton(_mockPermissionService.Instance());
+        Services.AddSingleton(_mockAuthStateProvider.Instance());
+        Services.AddSingleton(_mockPermissionStore.Instance());
     }
 
     [Fact]
@@ -56,17 +56,17 @@ public class PermissionsDebugPageTests : TestContext
     {
         // Act
         var cut = RenderComponent<PermissionsDebug>();
-        
+
         // Assert
         cut.Markup.ShouldNotBeNullOrEmpty();
     }
-    
+
     [Fact]
     public void PermissionsDebug_HasCorrectPageTitle()
     {
         // Act
         var cut = RenderComponent<PermissionsDebug>();
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();

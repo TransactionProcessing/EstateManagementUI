@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -10,15 +10,15 @@ namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 
 public class TransactionRequestHandlerTests
 {
-    private readonly Mock<IApiClient> _mockApiClient;
+    private readonly IApiClientImposter _mockApiClient;
     private readonly TransactionRequestHandler _handler;
     private readonly SettlementRequestHandler _settlementHandler;
 
     public TransactionRequestHandlerTests()
     {
-        _mockApiClient = new Mock<IApiClient>();
-        _handler = new TransactionRequestHandler(_mockApiClient.Object);
-        _settlementHandler = new SettlementRequestHandler(_mockApiClient.Object);
+        _mockApiClient = new IApiClientImposter();
+        _handler = new TransactionRequestHandler(_mockApiClient.Instance());
+        _settlementHandler = new SettlementRequestHandler(_mockApiClient.Instance());
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class TransactionRequestHandlerTests
         var model = new TodaysSalesModel { TodaysSalesCount = 5, TodaysSalesValue = 100m };
 
         _mockApiClient
-            .Setup(c => c.GetTodaysSales(query, It.IsAny<CancellationToken>()))
+            .GetTodaysSales(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -43,7 +43,7 @@ public class TransactionRequestHandlerTests
         result.Data!.TodaysSalesCount.ShouldBe(5);
         result.Data.TodaysSalesValue.ShouldBe(100m);
 
-        _mockApiClient.Verify(c => c.GetTodaysSales(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysSales(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetTodaysSalesQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.Date);
 
         _mockApiClient
-            .Setup(c => c.GetTodaysSales(query, It.IsAny<CancellationToken>()))
+            .GetTodaysSales(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -62,7 +62,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetTodaysSales(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysSales(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class TransactionRequestHandlerTests
         var model = new TodaysSalesModel { TodaysSalesCount = 3, TodaysSalesValue = 30m };
 
         _mockApiClient
-            .Setup(c => c.GetTodaysFailedSales(query, It.IsAny<CancellationToken>()))
+            .GetTodaysFailedSales(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -86,7 +86,7 @@ public class TransactionRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.TodaysSalesCount.ShouldBe(3);
 
-        _mockApiClient.Verify(c => c.GetTodaysFailedSales(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysFailedSales(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetTodaysFailedSalesQuery(CorrelationIdHelper.New(), Guid.NewGuid(), "RC1", DateTime.UtcNow.Date);
 
         _mockApiClient
-            .Setup(c => c.GetTodaysFailedSales(query, It.IsAny<CancellationToken>()))
+            .GetTodaysFailedSales(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -105,7 +105,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetTodaysFailedSales(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysFailedSales(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class TransactionRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetTransactionDetailReport(query, It.IsAny<CancellationToken>()))
+            .GetTransactionDetailReport(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -134,7 +134,7 @@ public class TransactionRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Summary.TransactionCount.ShouldBe(10);
 
-        _mockApiClient.Verify(c => c.GetTransactionDetailReport(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTransactionDetailReport(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetTransactionDetailQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
 
         _mockApiClient
-            .Setup(c => c.GetTransactionDetailReport(query, It.IsAny<CancellationToken>()))
+            .GetTransactionDetailReport(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -153,7 +153,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetTransactionDetailReport(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTransactionDetailReport(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public class TransactionRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetMerchantTransactionSummary(query, It.IsAny<CancellationToken>()))
+            .GetMerchantTransactionSummary(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -182,7 +182,7 @@ public class TransactionRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Summary.TotalMerchants.ShouldBe(2);
 
-        _mockApiClient.Verify(c => c.GetMerchantTransactionSummary(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantTransactionSummary(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetMerchantTransactionSummaryQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
 
         _mockApiClient
-            .Setup(c => c.GetMerchantTransactionSummary(query, It.IsAny<CancellationToken>()))
+            .GetMerchantTransactionSummary(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -201,7 +201,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetMerchantTransactionSummary(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetMerchantTransactionSummary(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public class TransactionRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetOperatorTransactionSummary(query, It.IsAny<CancellationToken>()))
+            .GetOperatorTransactionSummary(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -230,7 +230,7 @@ public class TransactionRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Summary.TotalOperators.ShouldBe(3);
 
-        _mockApiClient.Verify(c => c.GetOperatorTransactionSummary(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperatorTransactionSummary(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetOperatorTransactionSummaryQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
 
         _mockApiClient
-            .Setup(c => c.GetOperatorTransactionSummary(query, It.IsAny<CancellationToken>()))
+            .GetOperatorTransactionSummary(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -249,7 +249,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetOperatorTransactionSummary(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperatorTransactionSummary(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -267,7 +267,7 @@ public class TransactionRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetProductPerformance(query, It.IsAny<CancellationToken>()))
+            .GetProductPerformance(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -278,7 +278,7 @@ public class TransactionRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.Summary.TotalProducts.ShouldBe(4);
 
-        _mockApiClient.Verify(c => c.GetProductPerformance(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetProductPerformance(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -288,7 +288,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetProductPerformanceQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
 
         _mockApiClient
-            .Setup(c => c.GetProductPerformance(query, It.IsAny<CancellationToken>()))
+            .GetProductPerformance(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -297,7 +297,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetProductPerformance(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetProductPerformance(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -313,7 +313,7 @@ public class TransactionRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetTodaysSalesByHour(query, It.IsAny<CancellationToken>()))
+            .GetTodaysSalesByHour(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -325,7 +325,7 @@ public class TransactionRequestHandlerTests
         result.Data!.Count.ShouldBe(1);
         result.Data[0].Hour.ShouldBe(9);
 
-        _mockApiClient.Verify(c => c.GetTodaysSalesByHour(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysSalesByHour(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -335,7 +335,7 @@ public class TransactionRequestHandlerTests
         var query = new TransactionQueries.GetTodaysSalesByHourQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.Date);
 
         _mockApiClient
-            .Setup(c => c.GetTodaysSalesByHour(query, It.IsAny<CancellationToken>()))
+            .GetTodaysSalesByHour(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -344,7 +344,7 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetTodaysSalesByHour(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysSalesByHour(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -357,7 +357,7 @@ public class TransactionRequestHandlerTests
         var model = new TodaysSettlementModel { TodaysSettlementValue = 500m };
 
         _mockApiClient
-            .Setup(c => c.GetTodaysSettlement(query, It.IsAny<CancellationToken>()))
+            .GetTodaysSettlement(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(model));
 
         // Act
@@ -368,7 +368,7 @@ public class TransactionRequestHandlerTests
         result.Data.ShouldNotBeNull();
         result.Data!.TodaysSettlementValue.ShouldBe(500m);
 
-        _mockApiClient.Verify(c => c.GetTodaysSettlement(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysSettlement(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -378,7 +378,7 @@ public class TransactionRequestHandlerTests
         var query = new SettlementQueries.GetTodaysSettlementQuery(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.Date);
 
         _mockApiClient
-            .Setup(c => c.GetTodaysSettlement(query, It.IsAny<CancellationToken>()))
+            .GetTodaysSettlement(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -387,6 +387,6 @@ public class TransactionRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetTodaysSettlement(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetTodaysSettlement(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 }

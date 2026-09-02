@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
@@ -14,22 +14,22 @@ namespace EstateManagementUI.BlazorServer.Tests.Common;
 
 public class TestAuthenticationHandlerTests
 {
-    private readonly Mock<IOptionsMonitor<AuthenticationSchemeOptions>> _options;
-    private readonly Mock<ILoggerFactory> _loggerFactory;
+    private readonly IOptionsMonitorImposter<AuthenticationSchemeOptions> _options;
+    private readonly ILoggerFactoryImposter _loggerFactory;
     private readonly IConfiguration _configuration;
-    private readonly Mock<IHttpContextAccessor> _httpContextAccessor;
+    private readonly IHttpContextAccessorImposter _httpContextAccessor;
     private readonly UrlEncoder _encoder;
 
     public TestAuthenticationHandlerTests()
     {
-        _options = new Mock<IOptionsMonitor<AuthenticationSchemeOptions>>();
-        _loggerFactory = new Mock<ILoggerFactory>();
-        _httpContextAccessor = new Mock<IHttpContextAccessor>();
+        _options = new IOptionsMonitorImposter<AuthenticationSchemeOptions>();
+        _loggerFactory = new ILoggerFactoryImposter();
+        _httpContextAccessor = new IHttpContextAccessorImposter();
         _encoder = UrlEncoder.Default;
-        
-        _options.Setup(x => x.Get(It.IsAny<string>())).Returns(new AuthenticationSchemeOptions());
-        _loggerFactory.Setup(x => x.CreateLogger(It.IsAny<string>())).Returns(Mock.Of<ILogger>());
-        
+
+        _options.Get(Arg<string>.Any()).Returns(new AuthenticationSchemeOptions());
+        _loggerFactory.CreateLogger(Arg<string>.Any()).Returns((new ILoggerImposter<AuthenticationSchemeOptions>()).Instance());
+
         // Create a real configuration
         var configBuilder = new ConfigurationBuilder();
         configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
@@ -52,29 +52,29 @@ public class TestAuthenticationHandlerTests
         // Arrange
         var httpContext = new DefaultHttpContext();
         httpContext.Request.QueryString = new QueryString("");
-        
+
         // Configure session
-        var sessionFeature = new Mock<ISessionFeature>();
-        var session = new Mock<ISession>();
-        sessionFeature.Setup(s => s.Session).Returns(session.Object);
-        httpContext.Features.Set(sessionFeature.Object);
-        
-        _httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-        
+        var sessionFeature = new ISessionFeatureImposter();
+        var session = new ISessionImposter();
+        sessionFeature.Session.Getter().Returns(session.Instance());
+        httpContext.Features.Set(sessionFeature.Instance());
+
+        _httpContextAccessor.HttpContext.Getter().Returns(httpContext);
+
         var handler = new TestAuthenticationHandler(
-            _options.Object, 
-            _loggerFactory.Object, 
-            _encoder, 
-            _configuration, 
-            _httpContextAccessor.Object);
-        
+            _options.Instance(),
+            _loggerFactory.Instance(),
+            _encoder,
+            _configuration,
+            _httpContextAccessor.Instance());
+
         await handler.InitializeAsync(
-            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)), 
+            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)),
             httpContext);
-        
+
         // Act
         var result = await handler.AuthenticateAsync();
-        
+
         // Assert
         result.Succeeded.ShouldBeTrue();
         result.Principal.ShouldNotBeNull();
@@ -89,42 +89,42 @@ public class TestAuthenticationHandlerTests
         // Arrange
         var httpContext = new DefaultHttpContext();
         httpContext.Request.QueryString = new QueryString("");
-        
+
         // Configure session
-        var sessionFeature = new Mock<ISessionFeature>();
-        var session = new Mock<ISession>();
-        sessionFeature.Setup(s => s.Session).Returns(session.Object);
-        httpContext.Features.Set(sessionFeature.Object);
-        
-        _httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-        
+        var sessionFeature = new ISessionFeatureImposter();
+        var session = new ISessionImposter();
+        sessionFeature.Session.Getter().Returns(session.Instance());
+        httpContext.Features.Set(sessionFeature.Instance());
+
+        _httpContextAccessor.HttpContext.Getter().Returns(httpContext);
+
         var handler = new TestAuthenticationHandler(
-            _options.Object, 
-            _loggerFactory.Object, 
-            _encoder, 
-            _configuration, 
-            _httpContextAccessor.Object);
-        
+            _options.Instance(),
+            _loggerFactory.Instance(),
+            _encoder,
+            _configuration,
+            _httpContextAccessor.Instance());
+
         await handler.InitializeAsync(
-            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)), 
+            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)),
             httpContext);
-        
+
         // Act
         var result = await handler.AuthenticateAsync();
-        
+
         // Assert
         result.Succeeded.ShouldBeTrue();
         result.Principal.ShouldNotBeNull();
-        
+
         var roleClaim = result.Principal.FindFirst(ClaimTypes.Role);
         roleClaim?.Value.ShouldBe("Administrator");
-        
+
         var nameClaim = result.Principal.FindFirst(ClaimTypes.Name);
         nameClaim?.Value.ShouldBe("Admin User");
-        
+
         var emailClaim = result.Principal.FindFirst(ClaimTypes.Email);
         emailClaim?.Value.ShouldBe("administrator@test.com");
-        
+
         var estateIdClaim = result.Principal.FindFirst("estateId");
         estateIdClaim?.Value.ShouldBe("11111111-1111-1111-1111-111111111111");
     }
@@ -135,33 +135,33 @@ public class TestAuthenticationHandlerTests
         // Arrange
         var httpContext = new DefaultHttpContext();
         httpContext.Request.QueryString = new QueryString("");
-        
+
         // Configure session
-        var sessionFeature = new Mock<ISessionFeature>();
-        var session = new Mock<ISession>();
-        sessionFeature.Setup(s => s.Session).Returns(session.Object);
-        httpContext.Features.Set(sessionFeature.Object);
-        
-        _httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-        
+        var sessionFeature = new ISessionFeatureImposter();
+        var session = new ISessionImposter();
+        sessionFeature.Session.Getter().Returns(session.Instance());
+        httpContext.Features.Set(sessionFeature.Instance());
+
+        _httpContextAccessor.HttpContext.Getter().Returns(httpContext);
+
         var handler = new TestAuthenticationHandler(
-            _options.Object, 
-            _loggerFactory.Object, 
-            _encoder, 
-            _configuration, 
-            _httpContextAccessor.Object);
-        
+            _options.Instance(),
+            _loggerFactory.Instance(),
+            _encoder,
+            _configuration,
+            _httpContextAccessor.Instance());
+
         await handler.InitializeAsync(
-            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)), 
+            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)),
             httpContext);
-        
+
         // Act
         var result = await handler.AuthenticateAsync();
-        
+
         // Assert
         result.Succeeded.ShouldBeTrue();
         result.Principal.ShouldNotBeNull();
-        
+
         result.Principal.FindFirst(ClaimTypes.NameIdentifier).ShouldNotBeNull();
         result.Principal.FindFirst(ClaimTypes.Name).ShouldNotBeNull();
         result.Principal.FindFirst(ClaimTypes.Email).ShouldNotBeNull();
@@ -176,29 +176,29 @@ public class TestAuthenticationHandlerTests
         // Arrange
         var httpContext = new DefaultHttpContext();
         httpContext.Request.QueryString = new QueryString("");
-        
+
         // Configure session
-        var sessionFeature = new Mock<ISessionFeature>();
-        var session = new Mock<ISession>();
-        sessionFeature.Setup(s => s.Session).Returns(session.Object);
-        httpContext.Features.Set(sessionFeature.Object);
-        
-        _httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-        
+        var sessionFeature = new ISessionFeatureImposter();
+        var session = new ISessionImposter();
+        sessionFeature.Session.Getter().Returns(session.Instance());
+        httpContext.Features.Set(sessionFeature.Instance());
+
+        _httpContextAccessor.HttpContext.Getter().Returns(httpContext);
+
         var handler = new TestAuthenticationHandler(
-            _options.Object, 
-            _loggerFactory.Object, 
-            _encoder, 
-            _configuration, 
-            _httpContextAccessor.Object);
-        
+            _options.Instance(),
+            _loggerFactory.Instance(),
+            _encoder,
+            _configuration,
+            _httpContextAccessor.Instance());
+
         await handler.InitializeAsync(
-            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)), 
+            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)),
             httpContext);
-        
+
         // Act
         var result = await handler.AuthenticateAsync();
-        
+
         // Assert
         result.Succeeded.ShouldBeTrue();
         result.Failure.ShouldBeNull();
@@ -210,29 +210,29 @@ public class TestAuthenticationHandlerTests
         // Arrange
         var httpContext = new DefaultHttpContext();
         httpContext.Request.QueryString = new QueryString("");
-        
+
         // Configure session
-        var sessionFeature = new Mock<ISessionFeature>();
-        var session = new Mock<ISession>();
-        sessionFeature.Setup(s => s.Session).Returns(session.Object);
-        httpContext.Features.Set(sessionFeature.Object);
-        
-        _httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-        
+        var sessionFeature = new ISessionFeatureImposter();
+        var session = new ISessionImposter();
+        sessionFeature.Session.Getter().Returns(session.Instance());
+        httpContext.Features.Set(sessionFeature.Instance());
+
+        _httpContextAccessor.HttpContext.Getter().Returns(httpContext);
+
         var handler = new TestAuthenticationHandler(
-            _options.Object, 
-            _loggerFactory.Object, 
-            _encoder, 
-            _configuration, 
-            _httpContextAccessor.Object);
-        
+            _options.Instance(),
+            _loggerFactory.Instance(),
+            _encoder,
+            _configuration,
+            _httpContextAccessor.Instance());
+
         await handler.InitializeAsync(
-            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)), 
+            new AuthenticationScheme(TestAuthenticationHandler.SchemeName, null, typeof(TestAuthenticationHandler)),
             httpContext);
-        
+
         // Act
         var result = await handler.AuthenticateAsync();
-        
+
         // Assert
         result.Succeeded.ShouldBeTrue();
         result.Ticket.ShouldNotBeNull();

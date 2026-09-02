@@ -1,7 +1,7 @@
 using EstateManagementUI.BlazorServer.Permissions;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using System.Security.Claims;
 
@@ -9,17 +9,17 @@ namespace EstateManagementUI.BlazorServer.Tests.Permissions;
 
 public class PermissionServiceTests
 {
-    private readonly Mock<AuthenticationStateProvider> _authStateProvider;
-    private readonly Mock<IPermissionStore> _permissionStore;
-    private readonly Mock<ILogger<PermissionService>> _logger;
+    private readonly AuthenticationStateProviderImposter _authStateProvider;
+    private readonly IPermissionStoreImposter _permissionStore;
+    private readonly ILoggerImposter<PermissionService> _logger;
     private readonly PermissionService _permissionService;
 
     public PermissionServiceTests()
     {
-        _authStateProvider = new Mock<AuthenticationStateProvider>();
-        _permissionStore = new Mock<IPermissionStore>();
-        _logger = new Mock<ILogger<PermissionService>>();
-        _permissionService = new PermissionService(_authStateProvider.Object, _permissionStore.Object, _logger.Object);
+        _authStateProvider = new AuthenticationStateProviderImposter();
+        _permissionStore = new IPermissionStoreImposter();
+        _logger = new ILoggerImposter<PermissionService>();
+        _permissionService = new PermissionService(_authStateProvider.Instance(), _permissionStore.Instance(), _logger.Instance());
     }
 
     [Fact]
@@ -32,18 +32,18 @@ public class PermissionServiceTests
             new Permission(PermissionSection.Merchant, PermissionFunction.Create)
         };
         var role = new Role("Estate", permissions);
-        
+
         var claims = new List<Claim> { new Claim(ClaimTypes.Role, "Estate") };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        _permissionStore.Setup(x => x.GetRoleAsync("Estate")).ReturnsAsync(role);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+        _permissionStore.GetRoleAsync("Estate").ReturnsAsync(role);
+
         // Act
         var result = await _permissionService.HasPermissionAsync(PermissionSection.Merchant, PermissionFunction.View);
-        
+
         // Assert
         result.ShouldBeTrue();
     }
@@ -57,18 +57,18 @@ public class PermissionServiceTests
             new Permission(PermissionSection.Merchant, PermissionFunction.View)
         };
         var role = new Role("Viewer", permissions);
-        
+
         var claims = new List<Claim> { new Claim(ClaimTypes.Role, "Viewer") };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        _permissionStore.Setup(x => x.GetRoleAsync("Viewer")).ReturnsAsync(role);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+        _permissionStore.GetRoleAsync("Viewer").ReturnsAsync(role);
+
         // Act
         var result = await _permissionService.HasPermissionAsync(PermissionSection.Merchant, PermissionFunction.Create);
-        
+
         // Assert
         result.ShouldBeFalse();
     }
@@ -80,12 +80,12 @@ public class PermissionServiceTests
         var identity = new ClaimsIdentity();
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+
         // Act
         var result = await _permissionService.HasPermissionAsync(PermissionSection.Merchant, PermissionFunction.View);
-        
+
         // Assert
         result.ShouldBeFalse();
     }
@@ -100,18 +100,18 @@ public class PermissionServiceTests
             new Permission(PermissionSection.Merchant, PermissionFunction.Create)
         };
         var role = new Role("Estate", permissions);
-        
+
         var claims = new List<Claim> { new Claim(ClaimTypes.Role, "Estate") };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        _permissionStore.Setup(x => x.GetRoleAsync("Estate")).ReturnsAsync(role);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+        _permissionStore.GetRoleAsync("Estate").ReturnsAsync(role);
+
         // Act
         var result = await _permissionService.HasSectionAccessAsync(PermissionSection.Merchant);
-        
+
         // Assert
         result.ShouldBeTrue();
     }
@@ -125,18 +125,18 @@ public class PermissionServiceTests
             new Permission(PermissionSection.Merchant, PermissionFunction.View)
         };
         var role = new Role("Viewer", permissions);
-        
+
         var claims = new List<Claim> { new Claim(ClaimTypes.Role, "Viewer") };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        _permissionStore.Setup(x => x.GetRoleAsync("Viewer")).ReturnsAsync(role);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+        _permissionStore.GetRoleAsync("Viewer").ReturnsAsync(role);
+
         // Act
         var result = await _permissionService.HasSectionAccessAsync(PermissionSection.Operator);
-        
+
         // Assert
         result.ShouldBeFalse();
     }
@@ -151,18 +151,18 @@ public class PermissionServiceTests
             new Permission(PermissionSection.Operator, PermissionFunction.View)
         };
         var role = new Role("Viewer", permissions);
-        
+
         var claims = new List<Claim> { new Claim(ClaimTypes.Role, "Viewer") };
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        _permissionStore.Setup(x => x.GetRoleAsync("Viewer")).ReturnsAsync(role);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+        _permissionStore.GetRoleAsync("Viewer").ReturnsAsync(role);
+
         // Act
         var result = await _permissionService.GetUserPermissionsAsync();
-        
+
         // Assert
         result.ShouldNotBeNull();
         result.Count.ShouldBe(2);
@@ -176,12 +176,12 @@ public class PermissionServiceTests
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+
         // Act
         var result = await _permissionService.GetUserPermissionsAsync();
-        
+
         // Assert
         result.ShouldNotBeNull();
         result.ShouldBeEmpty();
@@ -195,12 +195,12 @@ public class PermissionServiceTests
         var identity = new ClaimsIdentity(claims, "TestAuth");
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+
         // Act
         var result = await _permissionService.GetUserRoleAsync();
-        
+
         // Assert
         result.ShouldBe("Estate");
     }
@@ -212,12 +212,12 @@ public class PermissionServiceTests
         var identity = new ClaimsIdentity();
         var user = new ClaimsPrincipal(identity);
         var authState = new AuthenticationState(user);
-        
-        _authStateProvider.Setup(x => x.GetAuthenticationStateAsync()).ReturnsAsync(authState);
-        
+
+        _authStateProvider.GetAuthenticationStateAsync().ReturnsAsync(authState);
+
         // Act
         var result = await _permissionService.GetUserRoleAsync();
-        
+
         // Assert
         result.ShouldBeNull();
     }

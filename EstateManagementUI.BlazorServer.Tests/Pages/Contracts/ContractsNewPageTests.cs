@@ -2,7 +2,7 @@ using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using ContractsNew = EstateManagementUI.BlazorServer.Components.Pages.Contracts.New;
@@ -15,7 +15,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_RendersCorrectly()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
@@ -28,7 +28,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_HasCorrectPageTitle()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
@@ -42,7 +42,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_CancelButton_NavigatesToContractsIndex()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Contract"), timeout: TimeSpan.FromSeconds(5));
@@ -61,7 +61,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_CreateContractButton_IsPresent()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Contract"), timeout: TimeSpan.FromSeconds(5));
@@ -88,7 +88,7 @@ public class ContractsNewPageTests : BaseTest
                 OperatorName = "Test Operator 2"
             }
         };
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(operators));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
 
         // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
@@ -102,7 +102,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_LoadsOperatorsFailed_NavigateToError()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Failure());
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure());
 
         // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
@@ -114,7 +114,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_WithNoOperators_ShowsNoOperatorsMessage()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         // Act
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
@@ -137,8 +137,8 @@ public class ContractsNewPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(operators));
-        this.ContractUIService.Setup(c => c.CreateContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<ContractModels.CreateContractFormModel>()))
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
+        this.ContractUIService.CreateContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<ContractModels.CreateContractFormModel>.Any())
             .ReturnsAsync(Result.Success());
 
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
@@ -175,9 +175,9 @@ public class ContractsNewPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(operators));
-        this.ContractUIService.Setup(c => c.CreateContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<ContractModels.CreateContractFormModel>()))
-            .ReturnsAsync(Result.Failure);
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
+        this.ContractUIService.CreateContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<ContractModels.CreateContractFormModel>.Any())
+            .ReturnsAsync(Result.Failure());
 
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));
@@ -213,7 +213,7 @@ public class ContractsNewPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(operators));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
 
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));
@@ -245,7 +245,7 @@ public class ContractsNewPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperatorsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(operators));
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
 
         IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));

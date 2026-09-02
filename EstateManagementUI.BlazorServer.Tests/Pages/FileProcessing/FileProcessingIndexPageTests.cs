@@ -4,7 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using FileProcessingIndex = EstateManagementUI.BlazorServer.Components.Pages.FileProcessing.Index;
@@ -24,8 +24,8 @@ public class FileProcessingIndexPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLogList(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        this.FileProcessingUIService.GetImportLogList(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
         var cut = RenderComponent<FileProcessingIndex>();
@@ -52,10 +52,10 @@ public class FileProcessingIndexPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLogList(It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        this.FileProcessingUIService.GetImportLogList(Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
-        
+
         var cut = RenderComponent<FileProcessingIndex>();
 
         var targetDate = FileProcessingSeedData.ImportLogs[1].ImportLogDateTime.Date;
@@ -86,8 +86,8 @@ public class FileProcessingIndexPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLogList(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        this.FileProcessingUIService.GetImportLogList(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
         var cut = RenderComponent<FileProcessingIndex>();
@@ -109,8 +109,8 @@ public class FileProcessingIndexPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLogList(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+        this.FileProcessingUIService.GetImportLogList(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
         var cut = RenderComponent<FileProcessingIndex>();

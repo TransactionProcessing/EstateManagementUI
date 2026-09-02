@@ -2,7 +2,7 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using Xunit;
@@ -98,8 +98,8 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(futureYear, new MerchantModels.MerchantScheduleModel { Year = futureYear, Months = [] });
-        this.MerchantUIService.Setup(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
-                It.IsAny<MerchantModels.MerchantScheduleModel>()))
+        this.MerchantUIService.SaveMerchantSchedule(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId,
+                Arg<MerchantModels.MerchantScheduleModel>.Any())
             .ReturnsAsync(Result.Success());
 
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
@@ -111,14 +111,14 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#month-1-closed-days").Change("1, 2, 15");
         cut.Find("#saveScheduleButton").Click();
 
-        this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
+        this.MerchantUIService.SaveMerchantSchedule(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
             merchantId,
-            It.Is<MerchantModels.MerchantScheduleModel>(schedule =>
+            Arg<MerchantModels.MerchantScheduleModel>.Is(schedule =>
                 schedule.Year == futureYear &&
                 schedule.Months.Any(month => month.Month == 1 && month.ClosedDays.SequenceEqual(new[] { 1, 2, 15 }))
-             )), Times.Once);
+             )).Called(Count.Once());
     }
 
     [Fact(Skip = "Temporarily skipped due to CI-only failure; investigate merchant schedule invalid November validation test.")]
@@ -130,7 +130,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(futureYear, new MerchantModels.MerchantScheduleModel { Year = futureYear, Months = [] });
-        
+
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -140,8 +140,8 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#month-11-closed-days").Change("31");
 
         cut.Markup.ShouldContain($"Invalid closed days for November.");
-        this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
-            It.IsAny<MerchantModels.MerchantScheduleModel>()), Times.Never);
+        this.MerchantUIService.SaveMerchantSchedule(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId,
+            Arg<MerchantModels.MerchantScheduleModel>.Any()).Called(Count.Never());
     }
 
     [Fact]
@@ -153,8 +153,8 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(leapYear, new MerchantModels.MerchantScheduleModel { Year = leapYear, Months = [] });
-        this.MerchantUIService.Setup(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
-                It.IsAny<MerchantModels.MerchantScheduleModel>()))
+        this.MerchantUIService.SaveMerchantSchedule(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId,
+                Arg<MerchantModels.MerchantScheduleModel>.Any())
             .ReturnsAsync(Result.Success());
 
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
@@ -166,14 +166,14 @@ public class MerchantSchedulePageTests : BaseTest
         cut.Find("#month-2-closed-days").Change("29");
         cut.Find("#saveScheduleButton").Click();
 
-        this.MerchantUIService.Verify(m => m.SaveMerchantSchedule(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
+        this.MerchantUIService.SaveMerchantSchedule(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
             merchantId,
-            It.Is<MerchantModels.MerchantScheduleModel>(schedule =>
+            Arg<MerchantModels.MerchantScheduleModel>.Is(schedule =>
                 schedule.Year == leapYear &&
                 schedule.Months.Any(month => month.Month == 2 && month.ClosedDays.SequenceEqual(new[] { 29 }))
-            )), Times.Once);
+            )).Called(Count.Once());
     }
 
     [Fact(Skip = "Temporarily skipped due to CI-only failure; investigate merchant schedule non-leap February validation test.")]
@@ -185,8 +185,8 @@ public class MerchantSchedulePageTests : BaseTest
 
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(nonLeapYear, new MerchantModels.MerchantScheduleModel { Year = nonLeapYear, Months = [] });
-        this.MerchantUIService.Setup(m => m.SaveMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId,
-            It.IsAny<MerchantModels.MerchantScheduleModel>())).ReturnsAsync(Result.Failure($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."));
+        this.MerchantUIService.SaveMerchantSchedule(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId,
+            Arg<MerchantModels.MerchantScheduleModel>.Any()).ReturnsAsync(Result.Failure($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."));
         var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -282,7 +282,7 @@ public class MerchantSchedulePageTests : BaseTest
                                Int32 scheduleYear,
                                MerchantModels.MerchantScheduleModel schedule)
     {
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
             {
                 MerchantId = merchantId,
@@ -296,7 +296,7 @@ public class MerchantSchedulePageTests : BaseTest
     private void SetupSchedule(Int32 year,
                                MerchantModels.MerchantScheduleModel schedule)
     {
-        this.MerchantUIService.Setup(m => m.GetMerchantSchedule(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), year))
+        this.MerchantUIService.GetMerchantSchedule(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), year)
             .ReturnsAsync(Result.Success(schedule));
     }
 

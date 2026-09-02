@@ -1,12 +1,11 @@
 using AngleSharp.Dom;
 using Bunit;
-using Castle.Components.DictionaryAdapter;
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Web;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using EstateIndex = EstateManagementUI.BlazorServer.Components.Pages.Estate.Index;
@@ -29,13 +28,13 @@ public class EstateIndexPageTests : BaseTest
                 MerchantCount = 0,
                 RecentMerchants = new List<MerchantModels.RecentMerchantsModel>(),
                 UserCount = 0
-            };    
-            
-        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
+            };
+
+        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Estate Management");
     }
@@ -56,11 +55,11 @@ public class EstateIndexPageTests : BaseTest
             RecentMerchants = new List<MerchantModels.RecentMerchantsModel>(),
             UserCount = 0
         };
-        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
+        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Estate"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -81,11 +80,11 @@ public class EstateIndexPageTests : BaseTest
             RecentMerchants = new List<MerchantModels.RecentMerchantsModel>(),
             UserCount = 0
         };
-        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
+        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        
+
         // Assert
         IRenderedComponent<PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -98,12 +97,12 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoad();
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find operators button and click it
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Assigned Operators"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -115,16 +114,16 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoad();
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators first
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Act - switch back to overview
         IElement? overviewButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
         overviewButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Estate Name"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -138,9 +137,9 @@ public class EstateIndexPageTests : BaseTest
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
-        
+
         SetupSuccessfulDataLoadWithOperators(new List<OperatorModels.OperatorDropDownModel> { operatorToAdd });
-        
+
         OperatorModels.OperatorModel operatorDetails = new() {
             OperatorId = operatorId,
             Name = "Test Operator",
@@ -148,23 +147,23 @@ public class EstateIndexPageTests : BaseTest
             RequireCustomTerminalNumber = false
         };
 
-        this.EstateUIService.Setup(e => e.AddOperatorToEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>())).ReturnsAsync(Result.Success);
+        this.EstateUIService.AddOperatorToEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any()).ReturnsAsync(Result.Success());
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Click Add Operator button
         IElement addOperatorButton = cut.Find("#addOperatorButton");
         addOperatorButton.Click();
-        
+
         // Act - Select operator and add
         IElement selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
@@ -174,7 +173,7 @@ public class EstateIndexPageTests : BaseTest
 
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator added successfully"), timeout: TimeSpan.FromSeconds(10));
-        
+
     }
 
     [Fact]
@@ -186,23 +185,23 @@ public class EstateIndexPageTests : BaseTest
             OperatorId = operatorId,
             OperatorName = "Test Operator"
         };
-        
+
         SetupSuccessfulDataLoadWithOperators(new List<OperatorModels.OperatorDropDownModel> { operatorToAdd });
 
-        this.EstateUIService.Setup(e => e.AddOperatorToEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>())).ReturnsAsync(Result.Failure);
+        this.EstateUIService.AddOperatorToEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any()).ReturnsAsync(Result.Failure());
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Click Add Operator button
         IElement addOperatorButton = cut.Find("#addOperatorButton");
         addOperatorButton.Click();
-        
+
         // Act - Select operator and add
         IElement selectElement = cut.Find("select");
         selectElement.Change(operatorId.ToString());
@@ -225,26 +224,26 @@ public class EstateIndexPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
+
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
-        this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
+        this.EstateUIService.RemoveOperatorFromEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success());
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Act - Remove operator
         IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
         IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -260,24 +259,24 @@ public class EstateIndexPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
+
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
-        this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Failure(String.Empty));
+        this.EstateUIService.RemoveOperatorFromEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure(String.Empty));
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Act - Remove operator
         IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
         IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to remove operator"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -295,13 +294,13 @@ public class EstateIndexPageTests : BaseTest
                 CreatedDateTime = new DateTime(2024, 1, 1, 12, 0, 0)
             }
         };
-        
+
         SetupSuccessfulDataLoadWithMerchants(merchants);
-        
+
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Merchant");
         cut.Markup.ShouldContain("MERCH001");
@@ -312,11 +311,11 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("No merchants found");
     }
@@ -333,13 +332,13 @@ public class EstateIndexPageTests : BaseTest
                 OperatorName = "Test Operator"
             }
         };
-        
+
         SetupSuccessfulDataLoadWithContracts(contracts);
-        
+
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Contract");
     }
@@ -349,24 +348,24 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("No contracts found");
     }
-    
+
     [Fact]
     public void EstateIndex_LoadEstateData_LoadFails_NavigatesToError()
     {
         // Arrange
-        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Failure());
+        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure());
 
         // Act
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
     }
@@ -382,17 +381,17 @@ public class EstateIndexPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = true
         };
-        
+
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
-        
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => {
             cut.Markup.ShouldContain("Requires Merchant Number");
@@ -405,19 +404,19 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        
+
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators assigned"), timeout: TimeSpan.FromSeconds(5));
     }
-    
+
     [Fact]
     public void EstateIndex_SuccessMessage_ClearsWhenSwitchingTabs()
     {
@@ -429,31 +428,31 @@ public class EstateIndexPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
+
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
-        this.EstateUIService.Setup(e => e.RemoveOperatorFromEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success);
+        this.EstateUIService.RemoveOperatorFromEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success());
 
         IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Switch to operators tab
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
-        
+
         // Remove operator to trigger success message
         IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
         IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Act - Switch to overview tab
         IRefreshableElementCollection<IElement> overviewButtons = cut.FindAll("button");
         IElement? overviewButton = overviewButtons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
         overviewButton?.Click();
-        
+
         // Assert - Success message should be cleared
         cut.WaitForAssertion(() => cut.Markup.ShouldNotContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -476,7 +475,7 @@ public class EstateIndexPageTests : BaseTest
             RecentMerchants = merchants ?? new List<MerchantModels.RecentMerchantsModel>(),
             UserCount = 2
         };
-        this.EstateUIService.Setup(e => e.LoadEstate(It.IsAny<CorrelationId>(), It.IsAny<Guid>())).ReturnsAsync(Result.Success(estate));
+        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
     }
 
     private void SetupSuccessfulDataLoadWithOperators(List<OperatorModels.OperatorDropDownModel> operators)

@@ -2,7 +2,7 @@ using AngleSharp.Dom;
 using Bunit;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using OperatorsEdit = EstateManagementUI.BlazorServer.Components.Pages.Operators.Edit;
@@ -23,16 +23,16 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         // Act
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Edit Operator");
     }
@@ -49,14 +49,14 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         // Act
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         // Assert
         IRenderedComponent<Microsoft.AspNetCore.Components.Web.PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -74,16 +74,16 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         // Act
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Edit Operator: Test Operator");
         cut.Markup.ShouldContain("Operator Name");
@@ -103,21 +103,21 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click "Back to List" button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton.ShouldNotBeNull();
         backButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/operators");
     }
@@ -134,21 +134,21 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click "Cancel" button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
         cancelButton.ShouldNotBeNull();
         cancelButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/operators");
     }
@@ -165,27 +165,27 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
-        this.OperatorUIService.Setup(o => o.UpdateOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<OperatorModels.EditOperatorModel>()))
+
+        this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
             .ReturnsAsync(Result.Success());
-        
+
         var cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click "Update Operator" button
         var buttons = cut.FindAll("button");
         var updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Operator"));
         updateButton.ShouldNotBeNull();
         updateButton.Click();
-        
+
         // Assert - Check for success message
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator updated successfully"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check navigation
         cut.WaitForAssertion(() => _fakeNavigationManager.Uri.ShouldContain("/operators"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -202,24 +202,24 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
-        this.OperatorUIService.Setup(o => o.UpdateOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<OperatorModels.EditOperatorModel>()))
+
+        this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
             .ReturnsAsync(Result.Failure());
-        
+
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click "Update Operator" button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Operator"));
         updateButton.ShouldNotBeNull();
         updateButton.Click();
-        
+
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to update operator"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -229,14 +229,14 @@ public class OperatorsEditPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
-        
+
         // Act
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
     }
@@ -246,16 +246,16 @@ public class OperatorsEditPageTests : BaseTest
     {
         // Arrange
         var operatorId = Guid.NewGuid();
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
-        
+
         // Act
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Operator not found");
     }
@@ -272,29 +272,29 @@ public class OperatorsEditPageTests : BaseTest
             RequireCustomMerchantNumber = true,
             RequireCustomTerminalNumber = false
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
-        
+
         // Setup a delayed response to capture the saving state
         TaskCompletionSource<Result> tcs = new TaskCompletionSource<Result>();
-        this.OperatorUIService.Setup(o => o.UpdateOperator(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<OperatorModels.EditOperatorModel>()))
+        this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
             .Returns(tcs.Task);
-        
+
         IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
-        
+
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Act - Find and click "Update Operator" button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Operator"));
         updateButton.ShouldNotBeNull();
         updateButton.Click();
-        
+
         // Assert - Check for "Saving..." text while operation is in progress
         cut.Markup.ShouldContain("Saving...");
-        
+
         // Complete the operation
         tcs.SetResult(Result.Success());
     }

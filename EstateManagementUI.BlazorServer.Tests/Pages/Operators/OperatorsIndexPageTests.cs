@@ -7,7 +7,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using OperatorsIndex = EstateManagementUI.BlazorServer.Components.Pages.Operators.Index;
@@ -30,13 +30,13 @@ public class OperatorsIndexPageTests : BaseTest
                 RequireCustomTerminalNumber = false
             }
         };
-        
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
-        
+
         // Act
         var cut = RenderComponent<OperatorsIndex>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Operator Management");
     }
@@ -46,13 +46,13 @@ public class OperatorsIndexPageTests : BaseTest
     {
         // Arrange
         var emptyList = new List<OperatorModels.OperatorModel>();
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(emptyList));
 
         // Act
         var cut = RenderComponent<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
-        
+
         // Assert
         cut.Markup.ShouldContain("No operators found");
     }
@@ -79,13 +79,13 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         // Act
         var cut = RenderComponent<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Operator 1");
         cut.Markup.ShouldContain("Operator 2");
@@ -106,13 +106,13 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         // Act
         var cut = RenderComponent<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Custom Merchant Number");
         cut.Markup.ShouldContain("Custom Terminal Number");
@@ -122,12 +122,12 @@ public class OperatorsIndexPageTests : BaseTest
     public void OperatorsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(new List<OperatorModels.OperatorModel>()));
 
         // Act
         var cut = RenderComponent<OperatorsIndex>();
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -148,7 +148,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         var cut = RenderComponent<OperatorsIndex>();
@@ -180,7 +180,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         var cut = RenderComponent<OperatorsIndex>();
@@ -212,7 +212,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         var cut = RenderComponent<OperatorsIndex>();
@@ -244,7 +244,7 @@ public class OperatorsIndexPageTests : BaseTest
             }
         };
 
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         var cut = RenderComponent<OperatorsIndex>();
@@ -264,7 +264,7 @@ public class OperatorsIndexPageTests : BaseTest
     public void OperatorsIndex_LoadOperators_LoadFails_NavigatesToError()
     {
         // Arrange
-        this.OperatorUIService.Setup(o => o.GetOperators(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act

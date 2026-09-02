@@ -3,7 +3,7 @@ using Bunit;
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using MerchantsDeposit = EstateManagementUI.BlazorServer.Components.Pages.Merchants.Deposit;
@@ -21,9 +21,9 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
-        
+
         // Assert
         cut.Markup.ShouldContain("Make Merchant Deposit");
     }
@@ -35,11 +35,11 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
-        
+
         // Assert
-        IRenderedComponent<Microsoft.AspNetCore.Components.Web.PageTitle> pageTitle = 
+        IRenderedComponent<Microsoft.AspNetCore.Components.Web.PageTitle> pageTitle =
             cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
@@ -51,10 +51,10 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad("Test Merchant Name");
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("For merchant: Test Merchant Name");
     }
@@ -66,21 +66,21 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Deposit Amount");
         cut.Markup.ShouldContain("Date of Deposit");
         cut.Markup.ShouldContain("Reference");
-        
+
         IElement depositAmountInput = cut.Find("#depositAmount");
         depositAmountInput.ShouldNotBeNull();
-        
+
         IElement depositDateInput = cut.Find("#depositDate");
         depositDateInput.ShouldNotBeNull();
-        
+
         IElement depositReferenceInput = cut.Find("#depositReference");
         depositReferenceInput.ShouldNotBeNull();
     }
@@ -90,14 +90,14 @@ public class MerchantsDepositPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulMerchantLoad();
-        this.MerchantUIService.Setup(m => m.MakeMerchantDeposit(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.DepositModel>()))
-            .ReturnsAsync(Result.Success);
+        this.MerchantUIService.MakeMerchantDeposit(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.DepositModel>.Any())
+            .ReturnsAsync(Result.Success());
 
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
@@ -106,25 +106,25 @@ public class MerchantsDepositPageTests : BaseTest
         // Act - Fill form fields
         IElement depositAmountInput = cut.Find("#depositAmount");
         depositAmountInput.Change(100);
-        
+
         IElement depositDateInput = cut.Find("#depositDate");
         depositDateInput.Change(DateTime.Today.ToString("yyyy-MM-dd"));
-        
+
         IElement depositReferenceInput = cut.Find("#depositReference");
         depositReferenceInput.Change("TEST-REF-001");
 
         // Find and click the Make Deposit button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? makeDepositButton = buttons.FirstOrDefault(b => 
-            b.TextContent.Contains("Make Deposit") && 
+        IElement? makeDepositButton = buttons.FirstOrDefault(b =>
+            b.TextContent.Contains("Make Deposit") &&
             (b.GetAttribute("id") ?? "") == "makeDepositButton");
         makeDepositButton?.Click();
-        
+
         // Assert
-        cut.WaitForAssertion(() => 
-            cut.Markup.ShouldContain("Deposit recorded successfully"), 
+        cut.WaitForAssertion(() =>
+            cut.Markup.ShouldContain("Deposit recorded successfully"),
             timeout: TimeSpan.FromSeconds(5));
-        
+
         // Verify navigation to merchants index
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
     }
@@ -134,14 +134,14 @@ public class MerchantsDepositPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulMerchantLoad();
-        this.MerchantUIService.Setup(m => m.MakeMerchantDeposit(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.DepositModel>()))
+        this.MerchantUIService.MakeMerchantDeposit(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.DepositModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
@@ -150,23 +150,23 @@ public class MerchantsDepositPageTests : BaseTest
         // Act - Fill form fields
         IElement depositAmountInput = cut.Find("#depositAmount");
         depositAmountInput.Change(100);
-        
+
         IElement depositDateInput = cut.Find("#depositDate");
         depositDateInput.Change(DateTime.Today.ToString("yyyy-MM-dd"));
-        
+
         IElement depositReferenceInput = cut.Find("#depositReference");
         depositReferenceInput.Change("TEST-REF-001");
 
         // Find and click the Make Deposit button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        IElement? makeDepositButton = buttons.FirstOrDefault(b => 
-            b.TextContent.Contains("Make Deposit") && 
+        IElement? makeDepositButton = buttons.FirstOrDefault(b =>
+            b.TextContent.Contains("Make Deposit") &&
             (b.GetAttribute("id") ?? "") == "makeDepositButton");
         makeDepositButton?.Click();
-        
+
         // Assert
-        cut.WaitForAssertion(() => 
-            cut.Markup.ShouldContain("Failed to make deposit"), 
+        cut.WaitForAssertion(() =>
+            cut.Markup.ShouldContain("Failed to make deposit"),
             timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -177,7 +177,7 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -193,7 +193,7 @@ public class MerchantsDepositPageTests : BaseTest
         // Arrange
         SetupSuccessfulMerchantLoad();
 
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -210,16 +210,16 @@ public class MerchantsDepositPageTests : BaseTest
     public void Deposit_LoadMerchant_LoadFails_NavigatesToError()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.GetMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters => 
+        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
     }
@@ -234,10 +234,10 @@ public class MerchantsDepositPageTests : BaseTest
             MerchantReference = "TEST-REF"
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(merchant));
     }
 }
