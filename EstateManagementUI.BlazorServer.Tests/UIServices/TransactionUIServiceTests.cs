@@ -32,7 +32,10 @@ public class TransactionUIServiceTests
         };
 
         this._mockMediator
-            .Send<Result<BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<Result<BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<Result<BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<Result<BusinessLogic.Models.TodaysSalesModel>>>.Is(query =>
+                query is TransactionQueries.GetTodaysSalesQuery todaysSalesQuery &&
+                todaysSalesQuery.EstateId == estateId && todaysSalesQuery.ComparisonDate.Date == comparisonDate.Date
+            ), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(biz));
 
         var result = await this._service.GetTodaysSales(CorrelationIdHelper.New(), estateId, comparisonDate);
@@ -40,7 +43,10 @@ public class TransactionUIServiceTests
         result.IsSuccess.ShouldBeTrue();
         result.Data!.TodaysSalesCount.ShouldBe(10);
 
-        this._mockMediator.Send<Result<BusinessLogic.Models.TodaysSalesModel>>(Arg<IRequest<Result<BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        this._mockMediator.Send<Result<BusinessLogic.Models.TodaysSalesModel>>(Arg<IRequest<Result<BusinessLogic.Models.TodaysSalesModel>>>.Is(query =>
+            query is TransactionQueries.GetTodaysSalesQuery todaysSalesQuery &&
+            todaysSalesQuery.EstateId == estateId && todaysSalesQuery.ComparisonDate.Date == comparisonDate.Date
+        ), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
