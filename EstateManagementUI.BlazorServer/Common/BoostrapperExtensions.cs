@@ -118,6 +118,7 @@ public static class BoostrapperExtensions {
             .AddJsonFile($"/home/txnproc/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"/home/txnproc/config/appsettings.local.json", optional: true)
             .AddEnvironmentVariables();
 
         ConfigurationReader.Initialise(builder.Configuration);
