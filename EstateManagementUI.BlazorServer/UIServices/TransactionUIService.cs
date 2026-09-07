@@ -22,14 +22,14 @@ public interface ITransactionUIService {
                                                                                                        DateTime startDate,
                                                                                                        DateTime endDate,
                                                                                                        Int32? merchant,
-                                                                                                       Int32? @operator);
+                                                                                                       Int32? operatorId);
 
     Task<Result<TransactionModels.TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(CorrelationId correlationId,
                                                                                                        Guid estateId,
                                                                                                        DateTime startDate,
                                                                                                        DateTime endDate,
                                                                                                        Int32? merchant,
-                                                                                                       Int32? @operator);
+                                                                                                       Int32? operatorId);
 }
 
 public class TransactionUIService : ITransactionUIService
@@ -113,8 +113,8 @@ public class TransactionUIService : ITransactionUIService
                                                                                                                     DateTime startDate,
                                                                                                                     DateTime endDate,
                                                                                                                     Int32? merchant,
-                                                                                                                    Int32? @operator) {
-        var query = new TransactionQueries.GetMerchantTransactionSummaryQuery(correlationId, estateId, startDate, endDate, merchant, @operator);
+                                                                                                                    Int32? operatorId) {
+        var query = new TransactionQueries.GetMerchantTransactionSummaryQuery(correlationId, estateId, startDate, endDate, merchant, operatorId);
         var result = await this.Mediator.Send(query);
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);
@@ -127,8 +127,8 @@ public class TransactionUIService : ITransactionUIService
                                                                                                                     DateTime startDate,
                                                                                                                     DateTime endDate,
                                                                                                                     Int32? merchant,
-                                                                                                                    Int32? @operator) {
-        var query = new TransactionQueries.GetOperatorTransactionSummaryQuery(correlationId, estateId, startDate, endDate, merchant, @operator);
+                                                                                                                    Int32? operatorId) {
+        var query = new TransactionQueries.GetOperatorTransactionSummaryQuery(correlationId, estateId, startDate, endDate, merchant, operatorId);
         var result = await this.Mediator.Send(query);
         if (result.IsFailed)
             return ResultHelpers.CreateFailure(result);

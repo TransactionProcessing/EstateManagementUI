@@ -31,3 +31,72 @@ jobs:
         docker build . --file EstateManagementUI.BlazorServer/Dockerfile --tag stuartferguson/estatemanagementui:master
         docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }}
         docker push stuartferguson/estatemanagementui:master
+
+    - name: 'Get Previous tag'
+      id: get-latest-tag
+      uses: actions-ecosystem/action-get-latest-tag@v1
+      with:
+          semver_only: true
+
+    - name: 'Bump Version'
+      id: bump-semver
+      uses: actions-ecosystem/action-bump-semver@v1
+      with:
+        current_version: ${{ steps.get-latest-tag.outputs.tag }}
+        level: patch
+    
+    - name: Print Version
+      id: next_version
+      run: echo ::set-output name=VERSION::${{ steps.bump-semver.outputs.new_version }}.$GITHUB_RUN_NUMBER
+
+    - name: Publish UI
+      run: |
+        dotnet publish "EstateManagementUI.BlazorServer\EstateManagementUI.BlazorServer.csproj" --configuration Release --output publishOutput -r win-x64 --self-contained --no-restore \
+              -p:Version=${{ steps.next_version.outputs.VERSION }} \
+              -p:AssemblyVersion=${{ steps.next_version.outputs.VERSION }} \
+              -p:FileVersion=${{ steps.next_version.outputs.VERSION }} \
+              -p:InformationalVersion=${{ steps.next_version.outputs.VERSION }}             
+
+    - name: Build Release Package
+      run: |
+         cd /home/runner/work/EstateManagementUI/EstateManagementUI/publishOutput
+         zip -r ../estatemanagementui.zip ./*
+
+    - name: Upload the artifact
+      uses: actions/upload-artifact@v4.4.0
+      with:
+        name: estatemanagementui
+        path: estatemanagementui.zip    
+        
+  deploydevelopment:
+    runs-on: [developmentserver,windows]
+    needs: build
+    environment: development
+    name: "Deploy to Development"
+    
+    steps:
+      - name: Download the artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: estatemanagementui
+  
+      - name: Remove existing  Windows service
+        run: |
+          $serviceName = "Transaction Processing - Estate Management UI"
+          # Check if the service exists
+          if (Get-Service -Name $serviceName -ErrorAction SilentlyContinue) {
+            Stop-Service -Name $serviceName
+            sc.exe delete $serviceName
+          }
+
+      - name: Unzip the files
+        run: |
+          Expand-Archive -Path estatemanagementui.zip -DestinationPath "C:\txnproc\transactionprocessing\estatemanagementui" -Force
+      
+      - name: Install as a Windows service
+        run: |
+          $serviceName = "Transaction Processing - Estate Management UI"
+          $servicePath = "C:\txnproc\transactionprocessing\estatemanagementui\EstateManagementUI.BlazorServer.exe"
+                   
+          New-Service -Name $serviceName -BinaryPathName $servicePath -Description $serviceName -DisplayName $serviceName -StartupType Automatic
+          Start-Service -Name $serviceName        

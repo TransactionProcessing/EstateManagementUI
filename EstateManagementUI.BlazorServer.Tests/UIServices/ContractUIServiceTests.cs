@@ -1,8 +1,8 @@
-﻿using EstateManagementUI.BlazorServer.Models;
+using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.UIServices;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using System;
@@ -16,13 +16,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
 {
     public class ContractUIServiceTests
     {
-        private readonly Mock<IMediator> _mockMediator;
+        private readonly IMediatorImposter _mockMediator;
         private readonly ContractUIService _service;
 
         public ContractUIServiceTests()
         {
-            _mockMediator = new Mock<IMediator>();
-            _service = new ContractUIService(_mockMediator.Object);
+            _mockMediator = new IMediatorImposter();
+            _service = new ContractUIService(_mockMediator.Instance());
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractsQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizContracts));
 
             // Act
@@ -81,7 +81,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractsQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             // Act
@@ -107,7 +107,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizContract));
 
             // Act
@@ -126,7 +126,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("nf"));
 
             // Act
@@ -152,21 +152,21 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.AddProductToContractCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
 
             // Act
             var result = await _service.AddProductToContract(CorrelationIdHelper.New(), estateId, contractId, productModel);
 
             // Assert
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<ContractCommands.AddProductToContractCommand>(c =>
-                c.EstateId == estateId &&
-                c.ContractId == contractId &&
-                c.ProductName == productModel.ProductName &&
-                c.DisplayText == productModel.DisplayText &&
-                c.Value.HasValue && c.Value.Value == productModel.Value
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+                ((dynamic)c).EstateId == estateId &&
+                ((dynamic)c).ContractId == contractId &&
+                ((dynamic)c).ProductName == productModel.ProductName &&
+                ((dynamic)c).DisplayText == productModel.DisplayText &&
+                ((dynamic)c).Value == productModel.Value
+            ), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -185,21 +185,21 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.AddProductToContractCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
 
             // Act
             var result = await _service.AddProductToContract(CorrelationIdHelper.New(), estateId, contractId, productModel);
 
             // Assert
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<ContractCommands.AddProductToContractCommand>(c =>
-                c.EstateId == estateId &&
-                c.ContractId == contractId &&
-                c.ProductName == productModel.ProductName &&
-                c.DisplayText == productModel.DisplayText &&
-                c.Value == null
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+                ((dynamic)c).EstateId == estateId &&
+                ((dynamic)c).ContractId == contractId &&
+                ((dynamic)c).ProductName == productModel.ProductName &&
+                ((dynamic)c).DisplayText == productModel.DisplayText &&
+                ((dynamic)c).Value == null
+            ), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -207,8 +207,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.AddProductToContractCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure());
 
             // Act
             var result = await _service.AddProductToContract(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new ContractModels.AddProductModel { ProductName = "x", DisplayText = "y", IsVariableValue = false, Value = 1m });
@@ -234,23 +234,23 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.AddTransactionFeeToProductCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
 
             // Act
             var result = await _service.AddTransactionFeeToProduct(CorrelationIdHelper.New(), estateId, contractId, contractProductId, feeModel);
 
             // Assert
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<ContractCommands.AddTransactionFeeToProductCommand>(c =>
-                c.EstateId == estateId &&
-                c.ContractId == contractId &&
-                c.ProductId == contractProductId &&
-                c.Description == feeModel.Description &&
-                c.Value == feeModel.FeeValue.Value &&
-                c.CalculationType == feeModel.CalculationType &&
-                c.FeeType == feeModel.FeeType
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+                ((dynamic)c).EstateId == estateId &&
+                ((dynamic)c).ContractId == contractId &&
+                ((dynamic)c).ProductId == contractProductId &&
+                ((dynamic)c).Description == feeModel.Description &&
+                ((dynamic)c).Value == feeModel.FeeValue.Value &&
+                ((dynamic)c).CalculationType == feeModel.CalculationType &&
+                ((dynamic)c).FeeType == feeModel.FeeType
+            ), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -258,8 +258,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.AddTransactionFeeToProductCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure());
 
             // Act
             var result = await _service.AddTransactionFeeToProduct(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), new ContractModels.AddTransactionFeeModel { Description = "d", FeeValue = 1m, CalculationType = "c", FeeType = "f" });
@@ -278,8 +278,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var transactionFeeId = Guid.NewGuid();
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.RemoveTransactionFeeFromProductCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
 
             // Act
             var result = await _service.RemoveTransactionFeeFromProduct(CorrelationIdHelper.New(), estateId, contractId, contractProductId, transactionFeeId);
@@ -293,8 +293,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.RemoveTransactionFeeFromProductCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure());
 
             // Act
             var result = await _service.RemoveTransactionFeeFromProduct(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
@@ -316,19 +316,19 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.CreateContractCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
-            
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
+
             // Act
             var result = await _service.CreateContract(CorrelationIdHelper.New(), estateId, createModel);
 
             // Assert
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<ContractCommands.CreateContractCommand>(c =>
-                c.EstateId == estateId &&
-                c.Description == createModel.Description &&
-                c.OperatorId == operatorId
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+                ((dynamic)c).EstateId == estateId &&
+                ((dynamic)c).Description == createModel.Description &&
+                ((dynamic)c).OperatorId == operatorId
+            ), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -336,8 +336,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractCommands.CreateContractCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure());
 
             // Act
             var result = await _service.CreateContract(CorrelationIdHelper.New(), Guid.NewGuid(), new ContractModels.CreateContractFormModel { Description = "x", OperatorId = Guid.NewGuid().ToString() });
@@ -360,7 +360,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             // Act
@@ -374,9 +374,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             result.Data[0].Description.ShouldBe("Contract A");
             result.Data[0].OperatorName.ShouldBe("Op A");
 
-            _mockMediator.Verify(m =>
-                m.Send(It.Is<ContractQueries.GetContractsForDropDownQuery>(q => q.EstateId == estateId), It.IsAny<CancellationToken>()),
-                Times.Once);
+            _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>>.Is(q => ((dynamic)q).EstateId == estateId), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -384,7 +382,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<ContractQueries.GetContractsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("backend error"));
 
             // Act
@@ -392,7 +390,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
 
             // Assert
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.IsAny<ContractQueries.GetContractsForDropDownQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.ContractDropDownModel>>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
     }
 }

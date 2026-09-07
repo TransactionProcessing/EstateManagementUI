@@ -8,7 +8,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
@@ -29,14 +29,14 @@ public class ContractsEditPageTests : BaseTest
             OperatorName = "Test Operator",
             Products = new List<ContractModels.ContractProductModel>()
         };
-        
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
-        
+
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
-        
+
         // Assert
         cut.Markup.ShouldContain("Edit Contract");
     }
@@ -54,14 +54,14 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Contract");
         cut.Markup.ShouldContain("Test Operator");
@@ -80,18 +80,18 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void ContractsEdit_UpdateContractButton_CanBeFound()
     {
@@ -105,18 +105,18 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find Update Contract button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Contract"));
-        
+
         // Assert
         updateButton.ShouldNotBeNull();
     }
@@ -134,18 +134,18 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find Add Product button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
-        
+
         // Assert
         addProductButton.ShouldNotBeNull();
     }
@@ -163,20 +163,20 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find and click Add Product button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
-        
+
         // Assert - Modal should be visible
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -206,14 +206,14 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Product 1");
         cut.Markup.ShouldContain("Display 1");
@@ -245,19 +245,19 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find remove button (it has a trash icon svg)
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        var removeButton = buttons.FirstOrDefault(b => 
+        var removeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Product");
-        
+
         // Assert
         removeButton.ShouldNotBeNull();
     }
@@ -298,18 +298,18 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find Add Fee button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
-        
+
         // Assert
         addFeeButton.ShouldNotBeNull();
         cut.Markup.ShouldContain("Fee 1");
@@ -341,20 +341,20 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find and click Add Fee button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton.ShouldNotBeNull();
         addFeeButton.Click();
-        
+
         // Assert - Modal should be visible
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
     }
@@ -372,18 +372,18 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("No products added yet");
     }
-    
+
     [Fact]
     public void ContractsEdit_BackToListButton_NavigatesToContractsIndex() {
         // Arrange
@@ -396,20 +396,20 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find and click Back to List button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton.ShouldNotBeNull();
         backButton.Click();
-        
+
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("/contracts");
     }
@@ -427,27 +427,27 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open the modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
         addProductButton?.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Find cancel button in modal (type="button" excludes submit buttons)
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
-            b.TextContent.Contains("Cancel") && 
+        IElement? cancelButton = modalButtons.FirstOrDefault(b =>
+            b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
-        
+
         // Assert
         cancelButton.ShouldNotBeNull();
     }
@@ -478,27 +478,27 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open the modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton?.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Find cancel button in modal (type="button" excludes submit buttons)
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
-            b.TextContent.Contains("Cancel") && 
+        IElement? cancelButton = modalButtons.FirstOrDefault(b =>
+            b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
-        
+
         // Assert
         cancelButton.ShouldNotBeNull();
     }
@@ -540,19 +540,19 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Find remove fee button (it has a trash icon svg and title)
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        var removeFeeButton = buttons.FirstOrDefault(b => 
+        var removeFeeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Fee");
-        
+
         // Assert
         removeFeeButton.ShouldNotBeNull();
     }
@@ -570,14 +570,14 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Operator");
         cut.Markup.ShouldContain("Operator cannot be changed after contract creation");
@@ -596,14 +596,14 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert - Find Update Contract button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Contract"));
@@ -623,31 +623,31 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check form has required fields
         cut.Markup.ShouldContain("Product Name");
         cut.Markup.ShouldContain("Display Text");
         cut.Markup.ShouldContain("Variable Value");
         cut.Markup.ShouldContain("Value");
-        
+
         // Check submit button exists
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+        IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
     }
@@ -665,25 +665,25 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check submit button exists
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+        IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
     }
@@ -701,22 +701,22 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check variable value checkbox exists
         cut.Markup.ShouldContain("Variable Value");
         var checkbox = cut.Find("input[type='checkbox']");
@@ -749,31 +749,31 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton.ShouldNotBeNull();
         addFeeButton.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check form has required fields
         cut.Markup.ShouldContain("Description");
         cut.Markup.ShouldContain("Calculation Type");
         cut.Markup.ShouldContain("Fee Type");
         cut.Markup.ShouldContain("Fee Value");
-        
+
         // Check submit button exists
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+        IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
     }
@@ -804,25 +804,25 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton.ShouldNotBeNull();
         addFeeButton.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check submit button exists
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? submitButton = modalButtons.FirstOrDefault(b => 
+        IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
     }
@@ -853,17 +853,17 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert - Find remove product button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        var removeButton = buttons.FirstOrDefault(b => 
+        var removeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Product");
         removeButton.ShouldNotBeNull();
     }
@@ -905,17 +905,17 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert - Find remove fee button
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
-        var removeFeeButton = buttons.FirstOrDefault(b => 
+        var removeFeeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Fee");
         removeFeeButton.ShouldNotBeNull();
     }
@@ -933,25 +933,25 @@ public class ContractsEditPageTests : BaseTest
             Products = new List<ContractModels.ContractProductModel>()
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open the modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
         addProductButton?.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check cancel button exists with correct type
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
-            b.TextContent.Contains("Cancel") && 
+        IElement? cancelButton = modalButtons.FirstOrDefault(b =>
+            b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
         cancelButton.ShouldNotBeNull();
     }
@@ -982,25 +982,25 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Open the modal
         IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton?.Click();
-        
+
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
-        
+
         // Assert - Check cancel button exists with correct type
         IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
-        IElement? cancelButton = modalButtons.FirstOrDefault(b => 
-            b.TextContent.Contains("Cancel") && 
+        IElement? cancelButton = modalButtons.FirstOrDefault(b =>
+            b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
         cancelButton.ShouldNotBeNull();
     }
@@ -1040,14 +1040,14 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Product 1");
         cut.Markup.ShouldContain("Product 2");
@@ -1099,14 +1099,14 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
         var cut = RenderComponent<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Fee 1");
         cut.Markup.ShouldContain("Fee 2");
@@ -1146,20 +1146,21 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
-        this.ContractUIService.Setup(c => c.AddProductToContract(
-                It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(),
-                It.IsAny<Guid>(),
-                It.IsAny<ContractModels.AddProductModel>()))
+        this.ContractUIService.AddProductToContract(
+                Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(),
+                Arg<Guid>.Any(),
+                Arg<ContractModels.AddProductModel>.Any())
             .ReturnsAsync(Result.Success())
-            .Callback(() =>
+            .Callback((_, _, _, _) =>
             {
                 // After successful add, GetContract should return updated contract
-                this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
                     .ReturnsAsync(Result.Success(contractWithProduct));
+                return Task.CompletedTask;
             });
 
         // Act
@@ -1189,7 +1190,7 @@ public class ContractsEditPageTests : BaseTest
 
         // Submit form
         var modalButtons = cut.FindAll("button");
-        var submitButton = modalButtons.FirstOrDefault(b => 
+        var submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
 
@@ -1199,19 +1200,19 @@ public class ContractsEditPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Product added successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert
-        this.ContractUIService.Verify(c => c.AddProductToContract(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
+        this.ContractUIService.AddProductToContract(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
             contractId,
-            It.Is<ContractModels.AddProductModel>(p => 
-                p.ProductName == "New Product" && 
-                p.DisplayText == "New Display")), Times.Once);
+            Arg<ContractModels.AddProductModel>.Is(p =>
+                p.ProductName == "New Product" &&
+                p.DisplayText == "New Display")).Called(Count.Once());
 
         // Verify contract was reloaded (called at least twice - once on init, once after add)
-        this.ContractUIService.Verify(c => c.GetContract(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
-            contractId), Times.AtLeast(2));
+        this.ContractUIService.GetContract(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            contractId).Called(Count.AtLeast(2));
     }
 
     [Fact]
@@ -1270,21 +1271,22 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
-        this.ContractUIService.Setup(c => c.AddTransactionFeeToProduct(
-                It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(),
-                It.IsAny<Guid>(),
-                It.IsAny<Guid>(),
-                It.IsAny<ContractModels.AddTransactionFeeModel>()))
+        this.ContractUIService.AddTransactionFeeToProduct(
+                Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(),
+                Arg<Guid>.Any(),
+                Arg<Guid>.Any(),
+                Arg<ContractModels.AddTransactionFeeModel>.Any())
             .ReturnsAsync(Result.Success())
-            .Callback(() =>
+            .Callback((_, _, _, _, _) =>
             {
                 // After successful add, GetContract should return updated contract
-                this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
                     .ReturnsAsync(Result.Success(contractWithFee));
+                return Task.CompletedTask;
             });
 
         // Act
@@ -1306,12 +1308,12 @@ public class ContractsEditPageTests : BaseTest
         var descriptionInput = cut.Find("input[placeholder='Enter fee description']");
         descriptionInput.Change("New Fee");
 
-        var calculationTypeSelect = cut.FindAll("select").FirstOrDefault(s => 
+        var calculationTypeSelect = cut.FindAll("select").FirstOrDefault(s =>
             s.OuterHtml.Contains("Select Calculation Type"));
         calculationTypeSelect.ShouldNotBeNull();
         calculationTypeSelect.Change("0"); // Fixed
 
-        var feeTypeSelect = cut.FindAll("select").FirstOrDefault(s => 
+        var feeTypeSelect = cut.FindAll("select").FirstOrDefault(s =>
             s.OuterHtml.Contains("Select Fee Type"));
         feeTypeSelect.ShouldNotBeNull();
         feeTypeSelect.Change("0"); // Merchant
@@ -1321,7 +1323,7 @@ public class ContractsEditPageTests : BaseTest
 
         // Submit form
         var modalButtons = cut.FindAll("button");
-        var submitButton = modalButtons.FirstOrDefault(b => 
+        var submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
 
@@ -1331,20 +1333,20 @@ public class ContractsEditPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Transaction fee added successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert
-        this.ContractUIService.Verify(c => c.AddTransactionFeeToProduct(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
+        this.ContractUIService.AddTransactionFeeToProduct(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
             contractId,
             productId,
-            It.Is<ContractModels.AddTransactionFeeModel>(f => 
-                f.Description == "New Fee" && 
-                f.FeeValue == 1.5m)), Times.Once);
+            Arg<ContractModels.AddTransactionFeeModel>.Is(f =>
+                f.Description == "New Fee" &&
+                f.FeeValue == 1.5m)).Called(Count.Once());
 
         // Verify contract was reloaded
-        this.ContractUIService.Verify(c => c.GetContract(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
-            contractId), Times.AtLeast(2));
+        this.ContractUIService.GetContract(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            contractId).Called(Count.AtLeast(2));
     }
 
     [Fact]
@@ -1373,7 +1375,7 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
         // Act
@@ -1389,8 +1391,8 @@ public class ContractsEditPageTests : BaseTest
         await cut.InvokeAsync(() => removeButton.Click());
 
         // Assert - Should show error message about unsupported feature
-        cut.WaitForAssertion(() => 
-            cut.Markup.ShouldContain("Product removal is not yet supported by the backend API"), 
+        cut.WaitForAssertion(() =>
+            cut.Markup.ShouldContain("Product removal is not yet supported by the backend API"),
             timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -1451,21 +1453,22 @@ public class ContractsEditPageTests : BaseTest
             }
         };
 
-        this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+        this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(contract));
 
-        this.ContractUIService.Setup(c => c.RemoveTransactionFeeFromProduct(
-                It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(),
-                It.IsAny<Guid>(),
-                It.IsAny<Guid>(),
-                It.IsAny<Guid>()))
+        this.ContractUIService.RemoveTransactionFeeFromProduct(
+                Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(),
+                Arg<Guid>.Any(),
+                Arg<Guid>.Any(),
+                Arg<Guid>.Any())
             .ReturnsAsync(Result.Success())
-            .Callback(() =>
+            .Callback((_, _, _, _, _) =>
             {
                 // After successful removal, GetContract should return updated contract
-                this.ContractUIService.Setup(c => c.GetContract(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                this.ContractUIService.GetContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
                     .ReturnsAsync(Result.Success(contractWithoutFee));
+                return Task.CompletedTask;
             });
 
         // Act
@@ -1486,17 +1489,17 @@ public class ContractsEditPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Transaction fee removed successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert
-        this.ContractUIService.Verify(c => c.RemoveTransactionFeeFromProduct(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
+        this.ContractUIService.RemoveTransactionFeeFromProduct(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
             contractId,
             productId,
-            feeId), Times.Once);
+            feeId).Called(Count.Once());
 
         // Verify contract was reloaded
-        this.ContractUIService.Verify(c => c.GetContract(
-            It.IsAny<CorrelationId>(),
-            It.IsAny<Guid>(),
-            contractId), Times.AtLeast(2));
+        this.ContractUIService.GetContract(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            contractId).Called(Count.AtLeast(2));
     }
 }

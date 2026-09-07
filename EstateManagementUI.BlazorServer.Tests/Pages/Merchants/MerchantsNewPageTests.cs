@@ -1,7 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using MerchantsNew = EstateManagementUI.BlazorServer.Components.Pages.Merchants.New;
@@ -13,7 +13,7 @@ public class MerchantsNewPageTests : BaseTest
 {
     private System.Reflection.MethodInfo GetHandleSubmitMethod()
     {
-        return typeof(MerchantsNew).GetMethod("HandleSubmit", 
+        return typeof(MerchantsNew).GetMethod("HandleSubmit",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
     }
 
@@ -22,14 +22,14 @@ public class MerchantsNewPageTests : BaseTest
         // Search through the type hierarchy to find the errorMessage field
         Type currentType = instance.GetType();
         System.Reflection.FieldInfo field = null;
-        
+
         while (currentType != null && field == null)
         {
-            field = currentType.GetField("errorMessage", 
+            field = currentType.GetField("errorMessage",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             currentType = currentType.BaseType;
         }
-        
+
         return field;
     }
 
@@ -38,7 +38,7 @@ public class MerchantsNewPageTests : BaseTest
     {
         // Act
         var cut = RenderComponent<MerchantsNew>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Create New Merchant");
     }
@@ -48,7 +48,7 @@ public class MerchantsNewPageTests : BaseTest
     {
         // Act
         var cut = RenderComponent<MerchantsNew>();
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -87,12 +87,12 @@ public class MerchantsNewPageTests : BaseTest
     public async Task HandleSubmit_SuccessfulCreation_SetsSuccessMessage()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .ReturnsAsync(Result.Success);
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any())
+            .ReturnsAsync(Result.Success());
 
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
@@ -100,7 +100,7 @@ public class MerchantsNewPageTests : BaseTest
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
-        
+
         await cut.InvokeAsync(async () =>
         {
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -118,12 +118,12 @@ public class MerchantsNewPageTests : BaseTest
     public async Task HandleSubmit_SuccessfulCreation_NavigatesToMerchantsList()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .ReturnsAsync(Result.Success);
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any())
+            .ReturnsAsync(Result.Success());
 
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
@@ -131,7 +131,7 @@ public class MerchantsNewPageTests : BaseTest
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
-        
+
         await cut.InvokeAsync(async () =>
         {
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -146,19 +146,19 @@ public class MerchantsNewPageTests : BaseTest
     public async Task HandleSubmit_FailedCreation_SetsErrorMessage()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .ReturnsAsync(Result.Failure);
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any())
+            .ReturnsAsync(Result.Failure());
 
         var cut = RenderComponent<MerchantsNew>();
 
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
-        
+
         await cut.InvokeAsync(async () =>
         {
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -176,12 +176,12 @@ public class MerchantsNewPageTests : BaseTest
     public async Task HandleSubmit_FailedCreation_DoesNotNavigate()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .ReturnsAsync(Result.Failure);
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any())
+            .ReturnsAsync(Result.Failure());
 
         var cut = RenderComponent<MerchantsNew>();
         var initialUri = _fakeNavigationManager.Uri;
@@ -189,7 +189,7 @@ public class MerchantsNewPageTests : BaseTest
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
-        
+
         await cut.InvokeAsync(async () =>
         {
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -209,19 +209,20 @@ public class MerchantsNewPageTests : BaseTest
         CorrelationId capturedCorrelationId = default;
         MerchantModels.CreateMerchantModel capturedModel = default;
 
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .Callback<CorrelationId, Guid, Guid, MerchantModels.CreateMerchantModel>(
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any())
+            .ReturnsAsync(Result.Success())
+            .Callback(
                 (correlationId, estateId, merchantId, model) => {
                     capturedCorrelationId = correlationId;
                     capturedEstateId = estateId;
                     capturedMerchantId = merchantId;
                     capturedModel = model;
-                })
-            .ReturnsAsync(Result.Success);
+                    return Task.CompletedTask;
+                });
 
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
@@ -229,7 +230,7 @@ public class MerchantsNewPageTests : BaseTest
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
-        
+
         await cut.InvokeAsync(async () =>
         {
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);
@@ -237,12 +238,12 @@ public class MerchantsNewPageTests : BaseTest
         });
 
         // Assert - Verify CreateMerchant was called with proper parameters
-        this.MerchantUIService.Verify(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()), Times.Once);
-        
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any()).Called(Count.Once());
+
         capturedCorrelationId.ShouldNotBeNull();
         capturedEstateId.ShouldNotBe(Guid.Empty);
         capturedMerchantId.ShouldNotBe(Guid.Empty);
@@ -253,12 +254,12 @@ public class MerchantsNewPageTests : BaseTest
     public async Task HandleSubmit_ClearsErrorMessageBeforeSubmit()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.CreateMerchant(
-            It.IsAny<CorrelationId>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<Guid>(), 
-            It.IsAny<MerchantModels.CreateMerchantModel>()))
-            .ReturnsAsync(Result.Success);
+        this.MerchantUIService.CreateMerchant(
+            Arg<CorrelationId>.Any(),
+            Arg<Guid>.Any(),
+            Arg<Guid>.Any(),
+            Arg<MerchantModels.CreateMerchantModel>.Any())
+            .ReturnsAsync(Result.Success());
 
         var cut = RenderComponent<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
@@ -275,7 +276,7 @@ public class MerchantsNewPageTests : BaseTest
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
         handleSubmitMethod.ShouldNotBeNull();
-        
+
         await cut.InvokeAsync(async () =>
         {
             var task = (Task)handleSubmitMethod.Invoke(cut.Instance, null);

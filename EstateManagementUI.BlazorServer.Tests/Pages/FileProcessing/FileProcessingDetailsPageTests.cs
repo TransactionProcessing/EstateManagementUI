@@ -1,7 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using FileProcessingDetails = EstateManagementUI.BlazorServer.Components.Pages.FileProcessing.Details;
@@ -35,8 +35,8 @@ public class FileProcessingDetailsPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLog(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<Guid>()))
+        this.FileProcessingUIService.GetImportLog(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(filteredLogs[0]));
 
         var log = FileProcessingSeedData.ImportLogs[0];
@@ -83,8 +83,8 @@ public class FileProcessingDetailsPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLog(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<Guid>()))
+        this.FileProcessingUIService.GetImportLog(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(filteredLogs[0]));
 
         var log = FileProcessingSeedData.ImportLogs[0];
@@ -127,8 +127,8 @@ public class FileProcessingDetailsPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLog(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<Guid>()))
+        this.FileProcessingUIService.GetImportLog(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(filteredLogs[0]));
 
         var log = FileProcessingSeedData.ImportLogs[0];
@@ -156,8 +156,8 @@ public class FileProcessingDetailsPageTests : BaseTest
             }
         };
 
-        this.FileProcessingUIService.Setup(f => f.GetImportLog(It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(), It.IsAny<Guid?>(), It.IsAny<Guid>()))
+        this.FileProcessingUIService.GetImportLog(Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(filteredLogs[0]));
 
         var log = FileProcessingSeedData.ImportLogs[0];

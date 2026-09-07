@@ -10,7 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using SimpleResults;
 using TestContext = Bunit.TestContext;
 
@@ -18,25 +18,25 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
 public abstract class BaseTest :TestContext {
     protected BaseTest() {
-        this._mockMediator = new Mock<IMediator>();
-        this._mockNavigationManager = new Mock<NavigationManager>();
-        this._mockPermissionKeyProvider = new Mock<IPermissionKeyProvider>();
-        this._mockAuthStateProvider = new Mock<AuthenticationStateProvider>();
-        this._mockPermissionService = new Mock<IPermissionService>();
-        this._mockPermissionStore = new Mock<IPermissionStore>();
+        this._mockMediator = new IMediatorImposter();
+        this._mockNavigationManager = new NavigationManagerImposter();
+        this._mockPermissionKeyProvider = new IPermissionKeyProviderImposter();
+        this._mockAuthStateProvider = new AuthenticationStateProviderImposter();
+        this._mockPermissionService = new IPermissionServiceImposter();
+        this._mockPermissionStore = new IPermissionStoreImposter();
         this._fakeNavigationManager = new FakeNavigationManager();
-        
-        this._mockPermissionKeyProvider.Setup(x => x.GetKey()).Returns("test-key");
-        this._mockPermissionService.Setup(x => x.HasPermissionAsync(It.IsAny<PermissionSection>(), It.IsAny<PermissionFunction>())).ReturnsAsync(true);
-        this.MerchantUIService.Setup(x => x.GetMerchants(It.IsAny<CorrelationId>(),
-                                                         It.IsAny<Guid>(),
-                                                         It.IsAny<string>(),
-                                                         It.IsAny<string>(),
-                                                         It.IsAny<int?>(),
-                                                         It.IsAny<string>(),
-                                                         It.IsAny<string>()))
+
+        this._mockPermissionKeyProvider.GetKey().Returns("test-key");
+        this._mockPermissionService.HasPermissionAsync(Arg<PermissionSection>.Any(), Arg<PermissionFunction>.Any()).ReturnsAsync(true);
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(),
+                                                         Arg<Guid>.Any(),
+                                                         Arg<string>.Any(),
+                                                         Arg<string>.Any(),
+                                                         Arg<int?>.Any(),
+                                                         Arg<string>.Any(),
+                                                         Arg<string>.Any())
             .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantListModel>()));
-        this.MerchantUIService.Setup(x => x.GetMerchantsForDropDown(It.IsAny<CorrelationId>(), It.IsAny<Guid>()))
+        this.MerchantUIService.GetMerchantsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantDropDownModel>
             {
                 new()
@@ -46,7 +46,7 @@ public abstract class BaseTest :TestContext {
                     MerchantName = "Test Merchant"
                 }
             }));
-        this.FileProcessingUIService.Setup(x => x.GetFileProfiles(It.IsAny<CancellationToken>()))
+        this.FileProcessingUIService.GetFileProfiles(Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(new List<EstateManagementUI.BlazorServer.Models.FileProfileDropDownModel>
             {
                 new()
@@ -66,18 +66,18 @@ public abstract class BaseTest :TestContext {
                 }
             }));
 
-        this.Services.AddSingleton(this._mockMediator.Object);
-        //this.Services.AddSingleton(this._mockNavigationManager.Object);
+        this.Services.AddSingleton(this._mockMediator.Instance());
+        //this.Services.AddSingleton(this._mockNavigationManager.Instance());
         Services.AddSingleton<NavigationManager>(_fakeNavigationManager); // register FakeNavigationManager
-        this.Services.AddSingleton(this._mockPermissionKeyProvider.Object);
-        this.Services.AddSingleton(this._mockPermissionService.Object);
-        this.Services.AddSingleton(this._mockAuthStateProvider.Object);
-        this.Services.AddSingleton(this._mockPermissionStore.Object);
-        this.Services.AddSingleton(this.EstateUIService.Object);
-        this.Services.AddSingleton(this.OperatorUIService.Object);
-        this.Services.AddSingleton(this.ContractUIService.Object);
-        this.Services.AddSingleton(this.MerchantUIService.Object);
-        this.Services.AddSingleton(this.FileProcessingUIService.Object);
+        this.Services.AddSingleton(this._mockPermissionKeyProvider.Instance());
+        this.Services.AddSingleton(this._mockPermissionService.Instance());
+        this.Services.AddSingleton(this._mockAuthStateProvider.Instance());
+        this.Services.AddSingleton(this._mockPermissionStore.Instance());
+        this.Services.AddSingleton(this.EstateUIService.Instance());
+        this.Services.AddSingleton(this.OperatorUIService.Instance());
+        this.Services.AddSingleton(this.ContractUIService.Instance());
+        this.Services.AddSingleton(this.MerchantUIService.Instance());
+        this.Services.AddSingleton(this.FileProcessingUIService.Instance());
 
 
         // Add required permission components that render their children
@@ -90,18 +90,18 @@ public abstract class BaseTest :TestContext {
         this.AddTestAuthorization().SetClaims(claims);
     }
 
-    protected readonly Mock<IMediator> _mockMediator;
-    protected readonly Mock<NavigationManager> _mockNavigationManager;
-    protected readonly Mock<IPermissionKeyProvider> _mockPermissionKeyProvider;
-    protected readonly Mock<IPermissionService> _mockPermissionService;
-    protected readonly Mock<AuthenticationStateProvider> _mockAuthStateProvider;
-    protected readonly Mock<IPermissionStore> _mockPermissionStore;
+    protected readonly IMediatorImposter _mockMediator;
+    protected readonly NavigationManagerImposter _mockNavigationManager;
+    protected readonly IPermissionKeyProviderImposter _mockPermissionKeyProvider;
+    protected readonly IPermissionServiceImposter _mockPermissionService;
+    protected readonly AuthenticationStateProviderImposter _mockAuthStateProvider;
+    protected readonly IPermissionStoreImposter _mockPermissionStore;
     protected readonly FakeNavigationManager _fakeNavigationManager;
-    protected readonly Mock<IEstateUIService> EstateUIService = new Mock<IEstateUIService>();
-    protected readonly Mock<IOperatorUIService> OperatorUIService = new Mock<IOperatorUIService>();
-    protected readonly Mock<IContractUIService> ContractUIService = new Mock<IContractUIService>();
-    protected readonly Mock<IMerchantUIService> MerchantUIService = new Mock<IMerchantUIService>();
-    protected readonly Mock<IFileProcessingUIService> FileProcessingUIService = new Mock<IFileProcessingUIService>();
+    protected readonly IEstateUIServiceImposter EstateUIService = new IEstateUIServiceImposter();
+    protected readonly IOperatorUIServiceImposter OperatorUIService = new IOperatorUIServiceImposter();
+    protected readonly IContractUIServiceImposter ContractUIService = new IContractUIServiceImposter();
+    protected readonly IMerchantUIServiceImposter MerchantUIService = new IMerchantUIServiceImposter();
+    protected readonly IFileProcessingUIServiceImposter FileProcessingUIService = new IFileProcessingUIServiceImposter();
     /// <summary>
     /// Minimal test double for NavigationManager.
     /// Register in DI as NavigationManager so components receive it in tests.

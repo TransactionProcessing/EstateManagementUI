@@ -1,21 +1,21 @@
-﻿    using EstateManagementUI.BlazorServer.UIServices;
+    using EstateManagementUI.BlazorServer.UIServices;
     using EstateManagementUI.BusinessLogic.Requests;
     using MediatR;
-    using Moq;
+    using Imposter.Abstractions;
     using Shouldly;
     using SimpleResults;
-    
+
     namespace EstateManagementUI.BlazorServer.Tests.UIServices;
 
     public class OperatorUIServiceTests
     {
-        private readonly Mock<IMediator> _mockMediator;
+        private readonly IMediatorImposter _mockMediator;
         private readonly OperatorUIService _service;
 
         public OperatorUIServiceTests()
         {
-            _mockMediator = new Mock<IMediator>();
-            _service = new OperatorUIService(_mockMediator.Object);
+            _mockMediator = new IMediatorImposter();
+            _service = new OperatorUIService(_mockMediator.Instance());
         }
 
         [Fact]
@@ -31,7 +31,7 @@
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizOperators));
 
             // Act
@@ -53,7 +53,7 @@
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("failure"));
 
             // Act
@@ -80,7 +80,7 @@
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizOperator));
 
             // Act
@@ -100,7 +100,7 @@
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("not found"));
 
             // Act
@@ -126,21 +126,21 @@
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorCommands.UpdateOperatorCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
 
             // Act
             var result = await _service.UpdateOperator(correlationId, estateId, operatorId, editModel);
 
             // Assert
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<OperatorCommands.UpdateOperatorCommand>(c =>
-                c.EstateId == estateId &&
-                c.OperatorId == operatorId &&
-                c.Name == editModel.OperatorName &&
-                c.RequireCustomMerchantNumber == editModel.RequireCustomMerchantNumber &&
-                c.RequireCustomTerminalNumber == editModel.RequireCustomTerminalNumber
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+                ((dynamic)c).EstateId == estateId &&
+                ((dynamic)c).OperatorId == operatorId &&
+                ((dynamic)c).Name == editModel.OperatorName &&
+                ((dynamic)c).RequireCustomMerchantNumber == editModel.RequireCustomMerchantNumber &&
+                ((dynamic)c).RequireCustomTerminalNumber == editModel.RequireCustomTerminalNumber
+            ), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -158,20 +158,20 @@
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorCommands.CreateOperatorCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Success);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Success());
 
             // Act
             var result = await _service.CreateOperator(correlationId, estateId, createModel);
 
             // Assert
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.Is<OperatorCommands.CreateOperatorCommand>(c =>
-                c.EstateId == estateId &&
-                c.Name == createModel.OperatorName &&
-                c.RequireCustomMerchantNumber == createModel.RequireCustomMerchantNumber &&
-                c.RequireCustomTerminalNumber == createModel.RequireCustomTerminalNumber
-            ), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+                ((dynamic)c).EstateId == estateId &&
+                ((dynamic)c).Name == createModel.OperatorName &&
+                ((dynamic)c).RequireCustomMerchantNumber == createModel.RequireCustomMerchantNumber &&
+                ((dynamic)c).RequireCustomTerminalNumber == createModel.RequireCustomTerminalNumber
+            ), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -179,8 +179,8 @@
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorCommands.CreateOperatorCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Result.Failure);
+                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure());
 
             // Act
             var result = await _service.CreateOperator(CorrelationIdHelper.New(), Guid.NewGuid(), new EstateManagementUI.BlazorServer.Models.OperatorModels.CreateOperatorModel { OperatorName = "x" });
@@ -200,7 +200,7 @@
             };
 
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             // Act
@@ -212,9 +212,8 @@
             result.Data!.Count.ShouldBe(1);
             result.Data[0].OperatorName.ShouldBe("Op1");
 
-            _mockMediator.Verify(m =>
-                m.Send(It.Is<OperatorQueries.GetOperatorsForDropDownQuery>(q => q.EstateId == estateId),
-                    It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>>.Is(q => ((dynamic)q).EstateId == estateId),
+                    Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -222,7 +221,7 @@
         {
             // Arrange
             _mockMediator
-                .Setup(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), It.IsAny<CancellationToken>()))
+                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("backend error"));
 
             // Act
@@ -230,6 +229,6 @@
 
             // Assert
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Verify(m => m.Send(It.IsAny<OperatorQueries.GetOperatorsForDropDownQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.OperatorModels.OperatorDropDownModel>>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 }

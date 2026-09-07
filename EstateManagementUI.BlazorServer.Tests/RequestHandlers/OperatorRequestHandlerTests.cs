@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -10,13 +10,13 @@ namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 
 public class OperatorRequestHandlerTests
 {
-    private readonly Mock<IApiClient> _mockApiClient;
+    private readonly IApiClientImposter _mockApiClient;
     private readonly OperatorRequestHandler _handler;
 
     public OperatorRequestHandlerTests()
     {
-        _mockApiClient = new Mock<IApiClient>();
-        _handler = new OperatorRequestHandler(_mockApiClient.Object);
+        _mockApiClient = new IApiClientImposter();
+        _handler = new OperatorRequestHandler(_mockApiClient.Instance());
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class OperatorRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetOperators(query, It.IsAny<CancellationToken>()))
+            .GetOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         // Act
@@ -44,7 +44,7 @@ public class OperatorRequestHandlerTests
         result.Data[0].Name.ShouldBe("Operator1");
         result.Data[1].Name.ShouldBe("Operator2");
 
-        _mockApiClient.Verify(c => c.GetOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class OperatorRequestHandlerTests
         var query = new OperatorQueries.GetOperatorsQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetOperators(query, It.IsAny<CancellationToken>()))
+            .GetOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -63,7 +63,7 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class OperatorRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetOperator(query, It.IsAny<CancellationToken>()))
+            .GetOperator(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
@@ -93,7 +93,7 @@ public class OperatorRequestHandlerTests
         result.Data!.OperatorId.ShouldBe(operatorId);
         result.Data.Name.ShouldBe("Operator1");
 
-        _mockApiClient.Verify(c => c.GetOperator(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperator(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class OperatorRequestHandlerTests
         var query = new OperatorQueries.GetOperatorQuery(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetOperator(query, It.IsAny<CancellationToken>()))
+            .GetOperator(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -112,7 +112,7 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetOperator(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperator(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class OperatorRequestHandlerTests
         var command = new OperatorCommands.CreateOperatorCommand(CorrelationIdHelper.New(), Guid.NewGuid(), "NewOperator", true, false);
 
         _mockApiClient
-            .Setup(c => c.CreateOperator(command, It.IsAny<CancellationToken>()))
+            .CreateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -131,7 +131,7 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.CreateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.CreateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class OperatorRequestHandlerTests
         var command = new OperatorCommands.CreateOperatorCommand(CorrelationIdHelper.New(), Guid.NewGuid(), "NewOperator", true, false);
 
         _mockApiClient
-            .Setup(c => c.CreateOperator(command, It.IsAny<CancellationToken>()))
+            .CreateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -150,7 +150,7 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.CreateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.CreateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public class OperatorRequestHandlerTests
         var command = new OperatorCommands.UpdateOperatorCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "UpdatedOperator", false, true);
 
         _mockApiClient
-            .Setup(c => c.UpdateOperator(command, It.IsAny<CancellationToken>()))
+            .UpdateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -169,7 +169,7 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.UpdateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.UpdateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -179,7 +179,7 @@ public class OperatorRequestHandlerTests
         var command = new OperatorCommands.UpdateOperatorCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), "UpdatedOperator", false, true);
 
         _mockApiClient
-            .Setup(c => c.UpdateOperator(command, It.IsAny<CancellationToken>()))
+            .UpdateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -188,7 +188,7 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.UpdateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.UpdateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -203,7 +203,7 @@ public class OperatorRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetOperators(query, It.IsAny<CancellationToken>()))
+            .GetOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(dropDownModels));
 
         // Act
@@ -216,7 +216,7 @@ public class OperatorRequestHandlerTests
         result.Data[0].OperatorName.ShouldBe("Operator1");
         result.Data[1].OperatorName.ShouldBe("Operator2");
 
-        _mockApiClient.Verify(c => c.GetOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -226,7 +226,7 @@ public class OperatorRequestHandlerTests
         var query = new OperatorQueries.GetOperatorsForDropDownQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetOperators(query, It.IsAny<CancellationToken>()))
+            .GetOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -235,6 +235,6 @@ public class OperatorRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 }

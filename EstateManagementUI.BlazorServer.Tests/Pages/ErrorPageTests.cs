@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
@@ -13,10 +13,10 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages;
 public class ErrorPageTests : BaseTest
 {
     public ErrorPageTests() :base() {
-        Mock<IWebHostEnvironment> _mockWebHostEnvironment = new();
-        _mockWebHostEnvironment.Setup(x => x.EnvironmentName).Returns(Environments.Development);
-        
-        Services.AddSingleton(_mockWebHostEnvironment.Object);
+        IWebHostEnvironmentImposter _mockWebHostEnvironment = new();
+        _mockWebHostEnvironment.EnvironmentName.Getter().Returns(Environments.Development);
+
+        Services.AddSingleton(_mockWebHostEnvironment.Instance());
 
         // Use a real IConfiguration with an in-memory value so GetSection/GetValue work as expected
         var inMemorySettings = new Dictionary<string, string?>
@@ -36,72 +36,72 @@ public class ErrorPageTests : BaseTest
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         cut.Find("h1").TextContent.ShouldContain("Oops! Something went wrong");
         cut.Markup.ShouldContain("We encountered an unexpected error");
     }
-    
+
     [Fact]
     public void Error_WithoutRequestId_DoesNotShowRequestId()
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         cut.Markup.ShouldNotContain("Reference ID for support:");
     }
-    
+
     [Fact]
     public void Error_ShowsDevelopmentModeInformation()
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Development Mode Information");
         cut.Markup.ShouldContain("ASPNETCORE_ENVIRONMENT");
     }
-    
+
     [Fact]
     public void Error_HasCorrectPageTitle()
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
-    
+
     [Fact]
     public void Error_HasHomePageLink()
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         var homeLink = cut.Find("a[href='/']");
         homeLink.TextContent.ShouldContain("Go to Home");
     }
-    
+
     [Fact]
     public void Error_HasBackButton()
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         var backButton = cut.Find("button[onclick='window.history.back()']");
         backButton.TextContent.ShouldContain("Go Back");
     }
-    
+
     [Fact]
     public void Error_HasSupportEmail()
     {
         // Act
         var cut = RenderComponent<Error>();
-        
+
         // Assert
         cut.Markup.ShouldContain("support@example.com");
     }

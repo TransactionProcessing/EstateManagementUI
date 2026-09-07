@@ -7,7 +7,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using MerchantsIndex = EstateManagementUI.BlazorServer.Components.Pages.Merchants.Index;
@@ -28,16 +28,16 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-            It.IsAny<String>(),
-            It.IsAny<Int32?>(),
-            It.IsAny<String>(),
-            It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+            Arg<String>.Any(),
+            Arg<Int32?>.Any(),
+            Arg<String>.Any(),
+            Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
-        
+
         // Assert
         cut.Markup.ShouldContain("Merchant Management");
     }
@@ -47,17 +47,17 @@ public class MerchantsIndexPageTests : BaseTest
     {
         // Arrange
         var merchants = new List<MerchantModels.MerchantListModel>();
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
-        
+
         // Assert
         cut.Markup.ShouldContain("No merchants found");
     }
@@ -82,18 +82,18 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Test Merchant 1");
         cut.Markup.ShouldContain("Test Merchant 2");
@@ -119,18 +119,18 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Total Merchants");
         cut.Markup.ShouldContain("Total Balance");
@@ -140,17 +140,17 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_HasCorrectPageTitle()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(new List<MerchantModels.MerchantListModel>()));
 
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
-        
+
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
@@ -169,18 +169,18 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Filters");
         cut.Markup.ShouldContain("Name");
@@ -200,18 +200,18 @@ public class MerchantsIndexPageTests : BaseTest
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("Page");
         cut.Markup.ShouldContain("Showing");
@@ -233,18 +233,18 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
 
         // Act
         var cut = RenderComponent<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-        
+
         // Assert
         cut.Markup.ShouldContain("North Region");
         cut.Markup.ShouldContain("12345");
@@ -255,11 +255,11 @@ public class MerchantsIndexPageTests : BaseTest
     {
         // Arrange
         var merchants = new List<MerchantModels.MerchantListModel>();
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -287,11 +287,11 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -303,11 +303,11 @@ public class MerchantsIndexPageTests : BaseTest
         applyFiltersButton?.Click();
 
         // Assert - Verify GetMerchants was called at least twice (once on load, once on filter)
-        this.MerchantUIService.Verify(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()), Times.AtLeast(2));
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any()).Called(Count.AtLeast(2));
     }
 
     [Fact]
@@ -323,11 +323,11 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -339,11 +339,11 @@ public class MerchantsIndexPageTests : BaseTest
         clearFiltersButton?.Click();
 
         // Assert - Verify GetMerchants was called at least twice (once on load, once on clear)
-        this.MerchantUIService.Verify(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()), Times.AtLeast(2));
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any()).Called(Count.AtLeast(2));
     }
 
     [Fact]
@@ -361,11 +361,11 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -394,11 +394,11 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -427,14 +427,14 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
             {
                 MerchantId = merchantId,
@@ -470,14 +470,14 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
             {
                 MerchantId = merchantId,
@@ -512,14 +512,14 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
             {
                 MerchantId = merchantId,
@@ -556,26 +556,26 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Success(new MerchantModels.MerchantModel
             {
                 MerchantId = merchantId,
                 MerchantName = "Test Merchant"
             }));
 
-        this.MerchantUIService.Setup(m => m.MakeMerchantDeposit(
-                It.IsAny<CorrelationId>(),
-                It.IsAny<Guid>(),
+        this.MerchantUIService.MakeMerchantDeposit(
+                Arg<CorrelationId>.Any(),
+                Arg<Guid>.Any(),
                 merchantId,
-                It.IsAny<MerchantModels.DepositModel>()))
-            .ReturnsAsync(Result.Success);
+                Arg<MerchantModels.DepositModel>.Any())
+            .ReturnsAsync(Result.Success());
 
         var cut = RenderComponent<MerchantsIndex>();
         cut.Instance.SetDelayOverride(500);
@@ -610,14 +610,14 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        this.MerchantUIService.Setup(m => m.GetMerchant(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), merchantId))
+        this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Failure());
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -642,11 +642,11 @@ public class MerchantsIndexPageTests : BaseTest
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -676,11 +676,11 @@ public class MerchantsIndexPageTests : BaseTest
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -710,11 +710,11 @@ public class MerchantsIndexPageTests : BaseTest
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -739,11 +739,11 @@ public class MerchantsIndexPageTests : BaseTest
             MerchantName = $"Merchant {i}"
         }).ToList();
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();
@@ -762,11 +762,11 @@ public class MerchantsIndexPageTests : BaseTest
     public void MerchantsIndex_LoadMerchants_LoadFails_NavigatesToError()
     {
         // Arrange
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Failure());
 
         // Act
@@ -791,11 +791,11 @@ public class MerchantsIndexPageTests : BaseTest
             }
         };
 
-        this.MerchantUIService.Setup(m => m.GetMerchants(It.IsAny<CorrelationId>(), It.IsAny<Guid>(), It.IsAny<String>(),
-                It.IsAny<String>(),
-                It.IsAny<Int32?>(),
-                It.IsAny<String>(),
-                It.IsAny<String>()))
+        this.MerchantUIService.GetMerchants(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(),
+                Arg<String>.Any(),
+                Arg<Int32?>.Any(),
+                Arg<String>.Any(),
+                Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
         var cut = RenderComponent<MerchantsIndex>();

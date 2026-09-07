@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
-using Moq;
+using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 
@@ -10,13 +10,13 @@ namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 
 public class EstateRequestHandlerTests
 {
-    private readonly Mock<IApiClient> _mockApiClient;
+    private readonly IApiClientImposter _mockApiClient;
     private readonly EstateRequestHandler _handler;
 
     public EstateRequestHandlerTests()
     {
-        _mockApiClient = new Mock<IApiClient>();
-        _handler = new EstateRequestHandler(_mockApiClient.Object);
+        _mockApiClient = new IApiClientImposter();
+        _handler = new EstateRequestHandler(_mockApiClient.Instance());
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class EstateRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetEstate(query, It.IsAny<CancellationToken>()))
+            .GetEstate(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(estateModel));
 
         // Act
@@ -44,7 +44,7 @@ public class EstateRequestHandlerTests
         result.Data!.EstateId.ShouldBe(estateId);
         result.Data.EstateName.ShouldBe("Test Estate");
 
-        _mockApiClient.Verify(c => c.GetEstate(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetEstate(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class EstateRequestHandlerTests
         var query = new EstateQueries.GetEstateQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetEstate(query, It.IsAny<CancellationToken>()))
+            .GetEstate(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -63,7 +63,7 @@ public class EstateRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetEstate(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetEstate(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class EstateRequestHandlerTests
         var command = new EstateCommands.AddOperatorToEstateCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.AddEstateOperator(command, It.IsAny<CancellationToken>()))
+            .AddEstateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -82,7 +82,7 @@ public class EstateRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.AddEstateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddEstateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class EstateRequestHandlerTests
         var command = new EstateCommands.AddOperatorToEstateCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.AddEstateOperator(command, It.IsAny<CancellationToken>()))
+            .AddEstateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -101,7 +101,7 @@ public class EstateRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.AddEstateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.AddEstateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class EstateRequestHandlerTests
         var command = new EstateCommands.RemoveOperatorFromEstateCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.RemoveEstateOperator(command, It.IsAny<CancellationToken>()))
+            .RemoveEstateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success());
 
         // Act
@@ -120,7 +120,7 @@ public class EstateRequestHandlerTests
         // Assert
         result.IsSuccess.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.RemoveEstateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveEstateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public class EstateRequestHandlerTests
         var command = new EstateCommands.RemoveOperatorFromEstateCommand(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.RemoveEstateOperator(command, It.IsAny<CancellationToken>()))
+            .RemoveEstateOperator(command, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -139,7 +139,7 @@ public class EstateRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.RemoveEstateOperator(command, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.RemoveEstateOperator(command, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public class EstateRequestHandlerTests
         };
 
         _mockApiClient
-            .Setup(c => c.GetEstateAssignedOperators(query, It.IsAny<CancellationToken>()))
+            .GetEstateAssignedOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(operators));
 
         // Act
@@ -168,7 +168,7 @@ public class EstateRequestHandlerTests
         result.Data[0].Name.ShouldBe("Operator 1");
         result.Data[1].Name.ShouldBe("Operator 2");
 
-        _mockApiClient.Verify(c => c.GetEstateAssignedOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetEstateAssignedOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class EstateRequestHandlerTests
         var query = new EstateQueries.GetAssignedOperatorsQuery(CorrelationIdHelper.New(), Guid.NewGuid());
 
         _mockApiClient
-            .Setup(c => c.GetEstateAssignedOperators(query, It.IsAny<CancellationToken>()))
+            .GetEstateAssignedOperators(query, Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("api error"));
 
         // Act
@@ -187,6 +187,6 @@ public class EstateRequestHandlerTests
         // Assert
         result.IsFailed.ShouldBeTrue();
 
-        _mockApiClient.Verify(c => c.GetEstateAssignedOperators(query, It.IsAny<CancellationToken>()), Times.Once);
+        _mockApiClient.GetEstateAssignedOperators(query, Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 }
