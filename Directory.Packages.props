@@ -6,7 +6,7 @@
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="AspNetCore.HealthChecks.Uris" Version="9.0.0" />
     <PackageVersion Include="bunit.web" Version="1.40.0" />
-    <PackageVersion Include="ClientProxyBase" Version="2026.9.3" />
+    <PackageVersion Include="ClientProxyBase" Version="2026.9.4" />
     <PackageVersion Include="coverlet.collector" Version="10.0.1" />
     <PackageVersion Include="coverlet.MTP" Version="10.0.1" />
     <PackageVersion Include="EventStoreProjections" Version="2023.12.3" />
@@ -34,13 +34,13 @@
     <PackageVersion Include="SecurityService.Client" Version="2026.9.2.178" />
     <PackageVersion Include="SecurityService.IntegrationTesting.Helpers" Version="2026.9.2.178" />
     <PackageVersion Include="Sentry.AspNetCore" Version="6.11.0" />
-    <PackageVersion Include="Shared" Version="2026.9.3" />
-    <PackageVersion Include="Shared.IntegrationTesting" Version="2026.9.3" />
-    <PackageVersion Include="Shared.Results" Version="2026.9.3" />
+    <PackageVersion Include="Shared" Version="2026.9.4" />
+    <PackageVersion Include="Shared.IntegrationTesting" Version="2026.9.4" />
+    <PackageVersion Include="Shared.Results" Version="2026.9.4" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
     <PackageVersion Include="SimpleResults" Version="4.0.0" />
-    <PackageVersion Include="TransactionProcessor.Client" Version="2026.9.2.395" />
-    <PackageVersion Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2026.9.2.395" />
+    <PackageVersion Include="TransactionProcessor.Client" Version="2026.9.2.396" />
+    <PackageVersion Include="TransactionProcessor.IntegrationTesting.Helpers" Version="2026.9.2.396" />
     <PackageVersion Include="xunit.v3.mtp-v2" Version="4.0.0" />
   </ItemGroup>
 </Project>
