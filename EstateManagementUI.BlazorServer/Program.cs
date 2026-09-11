@@ -119,10 +119,12 @@ var estateReportingUri = ValidateAndCreateUri($"{estateReportingApiUrl}/health",
 var healthChecks = builder.Services.AddHealthChecks();
 if (testMode == TestMode.Disabled)
 {
-    healthChecks.AddSecurityService();
+    healthChecks.AddSecurityService(Helpers.ApiEndpointHttpHandler);
 }
 
-healthChecks.AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" });
+healthChecks.AddUrlGroup(estateReportingUri, name: "Estate Reporting API", tags: new[] { "estateapi" })
+    .AddTransactionProcessorService()
+    .AddFileProcessorService();
 
 if (testMode == TestMode.Disabled)
 {
@@ -203,4 +205,20 @@ enum TestMode {
     AuthenticationOnly,
     BackedByTestDataStore,
     Full
+}
+
+static class Helpers {
+    public static HttpClientHandler ApiEndpointHttpHandler(IServiceProvider serviceProvider)
+    {
+        return new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message,
+                                                         cert,
+                                                         chain,
+                                                         errors) =>
+            {
+                return true;
+            }
+        };
+    }
 }
