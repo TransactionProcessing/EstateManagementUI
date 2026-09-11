@@ -12,6 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Components.Server;
+using Shared.Monitoring;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
 
@@ -94,6 +95,8 @@ else
 }
 
 builder.RegisterUIServices().RegisterSerialiser();
+
+builder.Services.AddUptimeKuma();
 
 // Add Health Checks - read URLs from configuration
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
@@ -183,6 +186,13 @@ app.MapHealthChecks("/healthui", new HealthCheckOptions
 {
     Predicate = _ => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.Lifetime.ApplicationStarted.Register(() =>
+{
+    app.RegisterWithUptimeKumaAsync()
+        .GetAwaiter()
+        .GetResult();
 });
 
 app.Run();
