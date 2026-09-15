@@ -25,7 +25,7 @@ namespace EstateManagementUI.BlazorServer.Common;
 
 public static class BoostrapperExtensions {
     public static WebApplication ConfigureLiveLogin(this WebApplication app) {
-        app.MapGet("/login", (HttpContext context) =>
+        app.MapGet("/authentication/login", (HttpContext context) =>
         {
             return Results.Challenge(
                 properties: new Microsoft.AspNetCore.Authentication.AuthenticationProperties
