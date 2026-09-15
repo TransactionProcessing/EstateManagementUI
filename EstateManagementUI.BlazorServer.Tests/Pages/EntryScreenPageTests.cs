@@ -1,5 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using TestContext = Bunit.TestContext;
 
@@ -7,6 +9,16 @@ namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
 public class EntryScreenPageTests : TestContext
 {
+    public EntryScreenPageTests()
+    {
+        Services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["AppSettings:TestMode"] = "Disabled"
+            })
+            .Build());
+    }
+
     [Fact]
     public void EntryScreen_RendersCorrectly()
     {
@@ -74,5 +86,28 @@ public class EntryScreenPageTests : TestContext
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void EntryScreen_live_mode_sign_in_link_goes_directly_to_authentication()
+    {
+        var cut = RenderComponent<EntryScreen>();
+
+        cut.Find("#loginButton").GetAttribute("href").ShouldBe("/authentication/login");
+    }
+
+    [Fact]
+    public void EntryScreen_test_mode_sign_in_link_goes_to_login_page()
+    {
+        Services.AddSingleton<IConfiguration>(new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["AppSettings:TestMode"] = "BackedByTestDataStore"
+            })
+            .Build());
+
+        var cut = RenderComponent<EntryScreen>();
+
+        cut.Find("#loginButton").GetAttribute("href").ShouldBe("/login");
     }
 }
