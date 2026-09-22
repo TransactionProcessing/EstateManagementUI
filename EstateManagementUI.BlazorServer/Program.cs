@@ -1,18 +1,19 @@
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Components;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using EstateManagementUI.BlazorServer.Testing;
+using HealthChecks.UI.Client;
+using HealthMonitoring.Client;
+using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Sentry.Extensibility;
 using Shared.Extensions;
 using Shared.General;
+using Shared.Monitoring;
 using Shared.Serialisation;
 using Spectre.Console;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Components.Server;
-using Shared.Monitoring;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args).LoadConfiguration().ConfigureKestrel();
 
@@ -96,7 +97,7 @@ else
 
 builder.RegisterUIServices().RegisterSerialiser();
 
-builder.Services.AddUptimeKuma();
+builder.Services.AddHealthMonitoringRegistration(builder.Configuration);
 
 // Add Health Checks - read URLs from configuration
 var estateReportingApiUrl = builder.Configuration.GetValue<string>("AppSettings:EstateReportingApi") ?? "http://localhost:5011";
@@ -188,13 +189,6 @@ app.MapHealthChecks("/healthui", new HealthCheckOptions
 {
     Predicate = _ => true,
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-});
-
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    app.RegisterWithUptimeKumaAsync()
-        .GetAwaiter()
-        .GetResult();
 });
 
 app.Run();

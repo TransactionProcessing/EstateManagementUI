@@ -11,6 +11,7 @@
     <PackageVersion Include="coverlet.MTP" Version="10.0.1" />
     <PackageVersion Include="EventStoreProjections" Version="2023.12.3" />
     <PackageVersion Include="FileProcessor.Client" Version="2026.9.2.152" />
+    <PackageVersion Include="HealthMonitoring.Client" Version="2026.9.2.30" />
     <PackageVersion Include="IdentityModel" Version="6.2.0" />
     <PackageVersion Include="Lamar" Version="16.0.0" />
     <PackageVersion Include="Lamar.Microsoft.DependencyInjection" Version="16.0.0" />
