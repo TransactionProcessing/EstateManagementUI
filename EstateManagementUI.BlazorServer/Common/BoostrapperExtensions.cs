@@ -1,11 +1,13 @@
 using ClientProxyBase;
 using EstateManagementUI.BlazorServer.Permissions;
+using EstateManagementUI.BlazorServer.Testing;
 using EstateManagementUI.BlazorServer.TokenManagement;
 using EstateManagementUI.BlazorServer.UIServices;
 using EstateManagementUI.BusinessLogic.BackendAPI;
 using EstateManagementUI.BusinessLogic.Client;
 using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Services;
+using FileProcessor.Client;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -16,10 +18,9 @@ using Shared.General;
 using Shared.Serialisation;
 using System.Data.SqlTypes;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
-using FileProcessor.Client;
 using TransactionProcessor.Client;
-using EstateManagementUI.BlazorServer.Testing;
 
 namespace EstateManagementUI.BlazorServer.Common;
 
@@ -119,7 +120,10 @@ public static class BoostrapperExtensions {
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"/home/txnproc/config/appsettings.local.json", optional: true)
-            .AddEnvironmentVariables();
+            .AddEnvironmentVariables().AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["HealthMonitoring:Service:Version"] = Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "0.0.0.0"
+            });
 
         ConfigurationReader.Initialise(builder.Configuration);
         return builder;
