@@ -9,9 +9,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Sentry.Extensibility;
 using Shared.Extensions;
 using Shared.General;
-using Shared.Monitoring;
 using Shared.Serialisation;
-using Spectre.Console;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 
