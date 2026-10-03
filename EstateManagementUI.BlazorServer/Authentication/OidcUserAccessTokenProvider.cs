@@ -6,7 +6,7 @@ namespace EstateManagementUI.BlazorServer.Authentication;
 
 public sealed class OidcUserAccessTokenProvider : IUserAccessTokenProvider
 {
-    public const string AccessTokenClaimType = "estate_management_access_token";
+    public static string AccessTokenClaimType => "estate_management_access_token";
 
     private readonly AuthenticationStateProvider AuthenticationStateProvider;
 
