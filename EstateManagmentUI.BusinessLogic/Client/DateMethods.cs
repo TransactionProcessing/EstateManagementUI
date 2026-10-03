@@ -24,23 +24,25 @@ namespace EstateManagementUI.BusinessLogic.Client
     public partial class ApiClient : IApiClient {
         private readonly IEstateReportingApiClient EstateReportingApiClient;
         private readonly ISecurityServiceClient SecurityServiceClient;
+        private readonly IUserAccessTokenProvider UserAccessTokenProvider;
         private readonly ITransactionProcessorClient TransactionProcessorClient;
         private readonly IFileProcessorClient FileProcessorClient;
 
         public ApiClient(IEstateReportingApiClient estateReportingApiClient, 
                          ISecurityServiceClient securityServiceClient,
+                         IUserAccessTokenProvider userAccessTokenProvider,
                          ITransactionProcessorClient transactionProcessorClient,
                          IFileProcessorClient fileProcessorClient) {
             this.EstateReportingApiClient = estateReportingApiClient;
             this.SecurityServiceClient = securityServiceClient;
+            this.UserAccessTokenProvider = userAccessTokenProvider;
             this.TransactionProcessorClient = transactionProcessorClient;
             this.FileProcessorClient = fileProcessorClient;
         }
         public async Task<Result<List<ComparisonDateModel>>> GetComparisonDates(DateQueries.GetComparisonDatesQuery request,
                                                                                 CancellationToken cancellationToken) {
 
-            // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
             Result<List<ComparisonDate>> apiResult = await this.EstateReportingApiClient.GetComparisonDates(token.Data, request.EstateId, cancellationToken);
@@ -53,14 +55,8 @@ namespace EstateManagementUI.BusinessLogic.Client
             return Result.Success(comparisonDates);
         }
 
-        private async Task<Result<String>> GetToken(CancellationToken cancellationToken) {
-            // Get a token here.
-            var clientId = ConfigurationReader.GetValueOrDefault("AppSettings", "ClientId", "");
-            var clientSecret = ConfigurationReader.GetValueOrDefault("AppSettings", "ClientSecret", "");
-            Result<TokenResponse>? token = await this.SecurityServiceClient.GetToken(clientId, clientSecret, cancellationToken);
-            if (token.IsFailed)
-                return ResultHelpers.CreateFailure(token);
-            return Result.Success<String>(token.Data.AccessToken);
+        private async Task<Result<String>> GetUserToken(CancellationToken cancellationToken) {
+            return await this.UserAccessTokenProvider.GetAccessTokenAsync(cancellationToken);
         }
     }
 }

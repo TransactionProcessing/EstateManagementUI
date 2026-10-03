@@ -14,7 +14,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result<TodaysSettlementModel>> GetTodaysSettlement(SettlementQueries.GetTodaysSettlementQuery request,
                                                                              CancellationToken cancellationToken) {
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 

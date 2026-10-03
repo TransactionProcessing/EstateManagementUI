@@ -14,7 +14,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
     public partial class ApiClient : IApiClient {
         public async Task<Result<List<FileProcessingModels.FileImportLogDetailsModel>>> GetFileImportLogsList(FileProcessingQueries.GetFileImportLogsListQuery query,
                                                                                                         CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -31,7 +31,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
         public async Task<Result<FileProcessingModels.FileImportLogDetailsModel>> GetFileImportLog(FileProcessingQueries.GetFileImportLogQuery query,
                                                                                                    CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 

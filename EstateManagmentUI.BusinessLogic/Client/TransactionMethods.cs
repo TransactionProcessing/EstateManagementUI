@@ -24,7 +24,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result<TodaysSalesModel>> GetTodaysSales(TransactionQueries.GetTodaysSalesQuery request,
                                                                    CancellationToken cancellationToken) {
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -42,7 +42,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                                                                          CancellationToken cancellationToken)
         {
             // Get a token here 
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -58,7 +58,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<TransactionModels.TransactionDetailReportResponse>> GetTransactionDetailReport(TransactionQueries.GetTransactionDetailQuery request,
                                                                                                                 CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -82,7 +82,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<TransactionModels.TransactionSummaryByMerchantResponse>> GetMerchantTransactionSummary(TransactionQueries.GetMerchantTransactionSummaryQuery request,
                                                                                                                    CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -113,7 +113,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<TransactionModels.TransactionSummaryByOperatorResponse>> GetOperatorTransactionSummary(TransactionQueries.GetOperatorTransactionSummaryQuery request,
                                                                                                                         CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -145,7 +145,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<TransactionModels.ProductPerformanceResponse>> GetProductPerformance(TransactionQueries.GetProductPerformanceQuery request,
                                                                                                       CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -162,7 +162,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result<List<TransactionModels.TodaysSalesByHourModel>>> GetTodaysSalesByHour(TransactionQueries.GetTodaysSalesByHourQuery request,
                                                                                                         CancellationToken cancellationToken) {
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 

@@ -1,4 +1,5 @@
 using System.Globalization;
+using EstateManagementUI.BlazorServer.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -78,6 +79,7 @@ public class TestAuthenticationHandler : AuthenticationHandler<AuthenticationSch
             new Claim(ClaimTypes.Name, userName),
             new Claim(ClaimTypes.Email, $"{roleName.ToLower(CultureInfo.CurrentCulture)}@test.com"),
             new Claim("estateId", "11111111-1111-1111-1111-111111111111"),
+            new Claim(OidcUserAccessTokenProvider.AccessTokenClaimType, "test-user-access-token"),
             new Claim(ClaimTypes.Role, roleName),
             new Claim("role", roleName)
         };

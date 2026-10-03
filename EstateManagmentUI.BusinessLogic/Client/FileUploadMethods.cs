@@ -24,7 +24,7 @@ namespace EstateManagementUI.BusinessLogic.Client
     {
         public async Task<Result<List<FileProcessor.Models.FileProfile>>> GetFileProfiles(CancellationToken cancellationToken = default)
         {
-            Result<string> token = await this.GetToken(cancellationToken);
+            Result<string> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
             {
                 return ResultHelpers.CreateFailure(token);
@@ -57,7 +57,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                 return Result.Failure("A file name is required.");
             }
 
-            Result<string> token = await this.GetToken(cancellationToken);
+            Result<string> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
             {
                 return ResultHelpers.CreateFailure(token);
