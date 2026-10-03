@@ -1,5 +1,6 @@
 namespace EstateManagementUI.BlazorServer.TokenManagement
 {
+    using EstateManagementUI.BlazorServer.Authentication;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
@@ -89,6 +90,17 @@ namespace EstateManagementUI.BlazorServer.TokenManagement
 
                         context.Properties.UpdateTokenValue("access_token", response.AccessToken);
                         context.Properties.UpdateTokenValue("refresh_token", response.RefreshToken);
+
+                        if (context.Principal?.Identity is System.Security.Claims.ClaimsIdentity identity)
+                        {
+                            var existingAccessTokenClaim = identity.FindFirst(OidcUserAccessTokenProvider.AccessTokenClaimType);
+                            if (existingAccessTokenClaim is not null)
+                            {
+                                identity.RemoveClaim(existingAccessTokenClaim);
+                            }
+
+                            identity.AddClaim(new System.Security.Claims.Claim(OidcUserAccessTokenProvider.AccessTokenClaimType, response.AccessToken));
+                        }
 
                         DateTime newExpiresAt = DateTime.UtcNow + TimeSpan.FromSeconds(response.ExpiresIn);
                         context.Properties.UpdateTokenValue("expires_at", newExpiresAt.ToString("o", CultureInfo.InvariantCulture));

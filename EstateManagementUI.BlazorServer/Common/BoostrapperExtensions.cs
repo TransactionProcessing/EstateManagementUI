@@ -20,6 +20,7 @@ using Shared.Serialisation;
 using System.Data.SqlTypes;
 using System.Net;
 using System.Reflection;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using TransactionProcessor.Client;
 
@@ -176,7 +177,7 @@ public static class BoostrapperExtensions {
                 options.Authority = authorityAddress;
                 options.ClientId = builder.Configuration["Authentication:ClientId"];
                 options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
-                options.ResponseType = "code";
+                options.ResponseType = "code id_token";
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
@@ -211,6 +212,16 @@ public static class BoostrapperExtensions {
                 // Handle prompt parameter for forcing re-authentication
                 options.Events = new OpenIdConnectEvents
                 {
+                    OnTicketReceived = context =>
+                    {
+                        var accessToken = context.Properties.GetTokenValue("access_token");
+                        if (!String.IsNullOrWhiteSpace(accessToken) && context.Principal?.Identity is ClaimsIdentity identity)
+                        {
+                            identity.AddClaim(new Claim(OidcUserAccessTokenProvider.AccessTokenClaimType, accessToken));
+                        }
+
+                        return Task.CompletedTask;
+                    },
                     OnRedirectToIdentityProvider = context =>
                     {
                         context.ProtocolMessage.IssuerAddress = $"{issuerAddress}/connect/authorize";
@@ -248,24 +259,24 @@ public static class BoostrapperExtensions {
 
     public static WebApplicationBuilder RegisterProductionMeriator(this WebApplicationBuilder builder) {
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EstateRequestHandler).Assembly));
-        builder.Services.AddSingleton<IApiClient, ApiClient>();
+        builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddSingleton<Func<String, String>>(container => (serviceName) => ConfigurationReader.GetBaseServerUri(serviceName).OriginalString);
         return builder;
     }
 
     public static WebApplicationBuilder RegisterUIServices(this WebApplicationBuilder builder) {
-        builder.Services.AddSingleton<IEstateUIService, EstateUIService>();
-        builder.Services.AddSingleton<IOperatorUIService, OperatorUIService>();
-        builder.Services.AddSingleton<IContractUIService, ContractUIService>();
-        builder.Services.AddSingleton<IMerchantUIService, MerchantUIService>();
-        builder.Services.AddSingleton<ICalendarUIService, CalendarUIService>();
-        builder.Services.AddSingleton<ITransactionUIService, TransactionUIService>();
-        builder.Services.AddSingleton<IFileProcessingUIService, FileProcessingUIService>();
+        builder.Services.AddScoped<IEstateUIService, EstateUIService>();
+        builder.Services.AddScoped<IOperatorUIService, OperatorUIService>();
+        builder.Services.AddScoped<IContractUIService, ContractUIService>();
+        builder.Services.AddScoped<IMerchantUIService, MerchantUIService>();
+        builder.Services.AddScoped<ICalendarUIService, CalendarUIService>();
+        builder.Services.AddScoped<ITransactionUIService, TransactionUIService>();
+        builder.Services.AddScoped<IFileProcessingUIService, FileProcessingUIService>();
 
         return builder;
     }
     public static WebApplicationBuilder RegisterClients(this WebApplicationBuilder builder) {
-        builder.Services.AddSingleton<IUserAccessTokenProvider, OidcUserAccessTokenProvider>();
+        builder.Services.AddScoped<IUserAccessTokenProvider, OidcUserAccessTokenProvider>();
         builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
         builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
         builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();
