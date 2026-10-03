@@ -44,7 +44,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result> AddOperatorToMerchant(MerchantCommands.AddOperatorToMerchantCommand request,
                                                              CancellationToken cancellationToken)
         {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -59,7 +59,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> RemoveContractFromMerchant(MerchantCommands.RemoveContractFromMerchantCommand request,
                                                              CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -72,7 +72,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> AddContractToMerchant(MerchantCommands.AssignContractToMerchantCommand request,
                                                           CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -87,7 +87,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> AddDeviceToMerchant(MerchantCommands.AddMerchantDeviceCommand request,
                                                       CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -102,7 +102,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> SwapMerchantDevice(MerchantCommands.SwapMerchantDeviceCommand request,
                                                      CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -117,7 +117,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> MakeMerchantDeposit(MerchantCommands.MakeMerchantDepositCommand request,
                                                       CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -132,7 +132,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> CreateMerchant(MerchantCommands.CreateMerchantCommand request,
                                                  CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -160,7 +160,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<MerchantModels.MerchantOpeningHoursModel>> GetMerchantOpeningHours(MerchantQueries.GetMerchantOpeningHoursQuery request,
                                                                                                     CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -176,7 +176,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> UpdateMerchantSchedule(MerchantCommands.UpdateMerchantScheduleCommand request,
                                                          CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -200,7 +200,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> CreateMerchantSchedule(MerchantCommands.CreateMerchantScheduleCommand request,
                                                          CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -223,7 +223,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> RemoveOperatorFromMerchant(MerchantCommands.RemoveOperatorFromMerchantCommand request,
                                                              CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -238,7 +238,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                                                                                   CancellationToken cancellationToken) {
 
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -254,7 +254,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<List<MerchantModels.RecentMerchantsModel>>> GetRecentMerchants(MerchantQueries.GetRecentMerchantsQuery request,
                                                                                                 CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -271,7 +271,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result<List<MerchantModels.MerchantListModel>>> GetMerchants(MerchantQueries.GetMerchantsQuery request,
                                                                                        CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -289,7 +289,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result<MerchantModels.MerchantModel>> GetMerchant(MerchantQueries.GetMerchantQuery request,
                                                                             CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -305,7 +305,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<MerchantModels.MerchantScheduleModel>> GetMerchantSchedule(MerchantQueries.GetMerchantScheduleQuery request,
                                                                                             CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -321,7 +321,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<List<MerchantModels.MerchantOperatorModel>>> GetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery request,
                                                                                                    CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -337,7 +337,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<List<MerchantModels.MerchantContractModel>>> GetMerchantContracts(MerchantQueries.GetMerchantContractsQuery request,
                                                                                                    CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -353,7 +353,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<List<MerchantModels.MerchantDeviceModel>>> GetMerchantDevices(MerchantQueries.GetMerchantDevicesQuery request,
                                                                                                CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -370,7 +370,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result> UpdateMerchant(MerchantCommands.UpdateMerchantCommand request,
                                                  CancellationToken cancellationToken) {
 
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -389,7 +389,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result> UpdateMerchantOpeningHours(MerchantCommands.UpdateMerchantOpeningHoursCommand request,
                                                              CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -414,7 +414,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result> UpdateMerchantAddress(MerchantCommands.UpdateMerchantCommand request,
                                                   CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -436,7 +436,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result> UpdateMerchantContact(MerchantCommands.UpdateMerchantCommand request,
                                                         CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -458,7 +458,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result<List<MerchantModels.MerchantDropDownModel>>> GetMerchants(MerchantQueries.GetMerchantsForDropDownQuery request,
                                                                                            CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 

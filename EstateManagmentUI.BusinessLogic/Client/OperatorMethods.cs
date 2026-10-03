@@ -31,7 +31,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result<List<OperatorModels.OperatorModel>>> GetOperators(OperatorQueries.GetOperatorsQuery request,
                                                                                    CancellationToken cancellationToken) {
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -49,7 +49,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                                                                                            CancellationToken cancellationToken)
         {
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -67,7 +67,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                                                                             CancellationToken cancellationToken)
         {
             // Get a token here 
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -83,7 +83,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
         public async Task<Result> UpdateOperator(OperatorCommands.UpdateOperatorCommand request,
                                                  CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -99,7 +99,7 @@ namespace EstateManagementUI.BusinessLogic.Client
         public async Task<Result> CreateOperator(OperatorCommands.CreateOperatorCommand request,
                                                  CancellationToken cancellationToken)
         {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 

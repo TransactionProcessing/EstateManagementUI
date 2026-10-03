@@ -1,4 +1,5 @@
 using ClientProxyBase;
+using EstateManagementUI.BlazorServer.Authentication;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Testing;
 using EstateManagementUI.BlazorServer.TokenManagement;
@@ -175,7 +176,7 @@ public static class BoostrapperExtensions {
                 options.Authority = authorityAddress;
                 options.ClientId = builder.Configuration["Authentication:ClientId"];
                 options.ClientSecret = builder.Configuration["Authentication:ClientSecret"];
-                options.ResponseType = "code id_token";
+                options.ResponseType = "code";
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
 
@@ -191,6 +192,7 @@ public static class BoostrapperExtensions {
                 // Add additional scopes from old app
                 options.Scope.Add("fileProcessor");
                 options.Scope.Add("transactionProcessor");
+                options.Scope.Add("estateReporting");
 
                 options.RequireHttpsMetadata = false; // For development - set to true in production
 
@@ -263,6 +265,7 @@ public static class BoostrapperExtensions {
         return builder;
     }
     public static WebApplicationBuilder RegisterClients(this WebApplicationBuilder builder) {
+        builder.Services.AddSingleton<IUserAccessTokenProvider, OidcUserAccessTokenProvider>();
         builder.Services.RegisterHttpClient<IEstateReportingApiClient, EstateReportingApiClient>();
         builder.Services.RegisterHttpClient<ISecurityServiceClient, SecurityServiceClient>();
         builder.Services.RegisterHttpClient<ITransactionProcessorClient, TransactionProcessorClient>();

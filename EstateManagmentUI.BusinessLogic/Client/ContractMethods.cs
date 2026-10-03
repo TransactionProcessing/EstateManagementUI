@@ -35,7 +35,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
     public partial class ApiClient : IApiClient {
         public async Task<Result<List<ContractModels.RecentContractModel>>> GetRecentContracts(ContractQueries.GetRecentContractsQuery request,
                                                                                                CancellationToken cancellationToken) {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -52,7 +52,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
         public async Task<Result<List<ContractModels.ContractDropDownModel>>> GetContracts(ContractQueries.GetContractsForDropDownQuery request,
                                                                                            CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -69,7 +69,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
         public async Task<Result<List<ContractModels.ContractModel>>> GetContracts(ContractQueries.GetContractsQuery request,
                                                                                    CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -86,7 +86,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
         public async Task<Result<ContractModels.ContractModel>> GetContract(ContractQueries.GetContractQuery request,
                                                                             CancellationToken cancellationToken)
         {
-            Result<String> token = await this.GetToken(cancellationToken);
+            Result<String> token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -102,7 +102,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
 
         public async Task<Result> CreateContract(ContractCommands.CreateContractCommand request,
                                                  CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -117,7 +117,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
 
         public async Task<Result> AddProductToContract(ContractCommands.AddProductToContractCommand request,
                                                        CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -132,7 +132,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
 
         public async Task<Result> AddTransactionFeeToProduct(ContractCommands.AddTransactionFeeToProductCommand request,
                                                              CancellationToken cancellationToken) {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
@@ -149,7 +149,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
         public async Task<Result> RemoveTransactionFeeFromProduct(ContractCommands.RemoveTransactionFeeFromProductCommand request,
                                                                   CancellationToken cancellationToken)
         {
-            var token = await this.GetToken(cancellationToken);
+            var token = await this.GetUserToken(cancellationToken);
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
