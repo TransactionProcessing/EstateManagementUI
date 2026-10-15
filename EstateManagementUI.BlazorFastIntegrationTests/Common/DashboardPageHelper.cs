@@ -962,6 +962,11 @@ public sealed class DashboardPageHelper
             }
 
             await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await _page.WaitForFunctionAsync(@"() => {
+                const merchantNameInput = document.querySelector(""input[placeholder='Enter merchant name']"");
+                return merchantNameInput && Array.from(merchantNameInput.attributes)
+                    .some(attribute => attribute.name.startsWith('_bl_'));
+            }");
 
             await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchant.MerchantName);
             await _page.Locator(SettlementScheduleSelector).SelectOptionAsync(merchant.SettlementSchedule);
