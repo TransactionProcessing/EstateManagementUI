@@ -1747,9 +1747,14 @@ public sealed class DashboardPageHelper
 
     private async Task WaitForEstateOverviewAsync()
     {
-        await _page.Locator(".animate-spin").WaitForAsync(new LocatorWaitForOptions
+        await _page.GetByRole(AriaRole.Heading, new() { Name = EstateManagementHeading }).WaitForAsync(new LocatorWaitForOptions
         {
-            State = WaitForSelectorState.Hidden,
+            State = WaitForSelectorState.Visible,
+            Timeout = 30000
+        });
+        await _page.GetByText("Total Merchants").WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
             Timeout = 30000
         });
     }
