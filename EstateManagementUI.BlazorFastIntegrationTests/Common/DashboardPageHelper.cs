@@ -1761,7 +1761,16 @@ public sealed class DashboardPageHelper
 
     private async Task WaitForDashboardContentAsync()
     {
-        await WaitForEstateOverviewAsync();
+        await _page.GetByRole(AriaRole.Heading, new() { Name = "Dashboard" }).WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
+            Timeout = 30000
+        });
+        await _page.GetByText("Welcome to Estate Management System").WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
+            Timeout = 30000
+        });
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
