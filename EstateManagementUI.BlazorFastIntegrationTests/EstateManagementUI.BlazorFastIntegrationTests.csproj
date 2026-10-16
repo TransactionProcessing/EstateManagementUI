@@ -22,6 +22,7 @@
     <PackageReference Include="SecurityService.Client" />
     <PackageReference Include="SecurityService.IntegrationTesting.Helpers" />
     <PackageReference Include="Shared.IntegrationTesting" />
+    <PackageReference Include="SharpCompress" />
     <PackageReference Include="TransactionProcessor.Client" />
     <PackageReference Include="TransactionProcessor.IntegrationTesting.Helpers" />
     <PackageReference Include="Reqnroll" />

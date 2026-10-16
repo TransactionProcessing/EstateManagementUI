@@ -962,6 +962,11 @@ public sealed class DashboardPageHelper
             }
 
             await _page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+            await _page.WaitForFunctionAsync(@"() => {
+                const merchantNameInput = document.querySelector(""input[placeholder='Enter merchant name']"");
+                return merchantNameInput && Array.from(merchantNameInput.attributes)
+                    .some(attribute => attribute.name.startsWith('_bl_'));
+            }");
 
             await _page.Locator("input[placeholder='Enter merchant name']").FillAsync(merchant.MerchantName);
             await _page.Locator(SettlementScheduleSelector).SelectOptionAsync(merchant.SettlementSchedule);
@@ -1742,16 +1747,30 @@ public sealed class DashboardPageHelper
 
     private async Task WaitForEstateOverviewAsync()
     {
-        await _page.Locator(".animate-spin").WaitForAsync(new LocatorWaitForOptions
+        await _page.GetByRole(AriaRole.Heading, new() { Name = EstateManagementHeading }).WaitForAsync(new LocatorWaitForOptions
         {
-            State = WaitForSelectorState.Hidden,
+            State = WaitForSelectorState.Visible,
+            Timeout = 30000
+        });
+        await _page.GetByText("Total Merchants").WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
             Timeout = 30000
         });
     }
 
     private async Task WaitForDashboardContentAsync()
     {
-        await WaitForEstateOverviewAsync();
+        await _page.GetByRole(AriaRole.Heading, new() { Name = "Dashboard" }).WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
+            Timeout = 30000
+        });
+        await _page.GetByText("Welcome to Estate Management System").WaitForAsync(new LocatorWaitForOptions
+        {
+            State = WaitForSelectorState.Visible,
+            Timeout = 30000
+        });
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
     }
 
