@@ -24,7 +24,7 @@ namespace EstateManagementUI.BlazorServer.TokenManagement
         private readonly TokenEndpointService TokenEndpointService;
         private readonly AutomaticTokenManagementOptions AutomaticTokenManagementOptions;
         private readonly ILogger Logger;
-        private readonly ISystemClock SystemClock;
+        private readonly TimeProvider SystemClock;
 
         private static readonly ConcurrentDictionary<String, Boolean> PendingRefreshTokenRequests =
             new ConcurrentDictionary<String, Boolean>();
@@ -36,7 +36,7 @@ namespace EstateManagementUI.BlazorServer.TokenManagement
             TokenEndpointService service,
             IOptions<AutomaticTokenManagementOptions> options,
             ILogger<AutomaticTokenManagementCookieEvents> logger,
-            ISystemClock clock)
+            TimeProvider clock)
         {
             this.TokenEndpointService = service;
             this.AutomaticTokenManagementOptions = options.Value;
@@ -73,7 +73,7 @@ namespace EstateManagementUI.BlazorServer.TokenManagement
             DateTimeOffset dtExpires = DateTimeOffset.Parse(expiresAt.Value, CultureInfo.InvariantCulture);
             DateTimeOffset dtRefresh = dtExpires.Subtract(this.AutomaticTokenManagementOptions.RefreshBeforeExpiration);
 
-            if (dtRefresh < this.SystemClock.UtcNow)
+            if (dtRefresh < this.SystemClock.GetUtcNow())
             {
                 Boolean shouldRefresh = AutomaticTokenManagementCookieEvents.PendingRefreshTokenRequests.TryAdd(refreshToken.Value, true);
                 if (shouldRefresh)
