@@ -35,7 +35,7 @@ public class MerchantSchedulePageTests : BaseTest
         var currentYear = DateTime.Today.Year;
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Markup.ShouldContain("Merchant Schedule: Test Merchant");
@@ -50,7 +50,7 @@ public class MerchantSchedulePageTests : BaseTest
         var currentYear = DateTime.Today.Year;
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         var options = cut.FindAll("#selectedYear option");
@@ -78,7 +78,7 @@ public class MerchantSchedulePageTests : BaseTest
             }
         });
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#selectedYear").Change(futureYear.ToString());
@@ -102,7 +102,7 @@ public class MerchantSchedulePageTests : BaseTest
                 Arg<MerchantModels.MerchantScheduleModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#selectedYear").Change(futureYear.ToString());
@@ -131,7 +131,7 @@ public class MerchantSchedulePageTests : BaseTest
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(futureYear, new MerchantModels.MerchantScheduleModel { Year = futureYear, Months = [] });
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#selectedYear").Change(futureYear.ToString());
@@ -157,7 +157,7 @@ public class MerchantSchedulePageTests : BaseTest
                 Arg<MerchantModels.MerchantScheduleModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#selectedYear").Change(leapYear.ToString());
@@ -187,7 +187,7 @@ public class MerchantSchedulePageTests : BaseTest
         SetupSchedule(nonLeapYear, new MerchantModels.MerchantScheduleModel { Year = nonLeapYear, Months = [] });
         this.MerchantUIService.SaveMerchantSchedule(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId,
             Arg<MerchantModels.MerchantScheduleModel>.Any()).ReturnsAsync(Result.Failure($"Only days between 1 and 28 can be supplied for February {nonLeapYear}."));
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#selectedYear").Change(nonLeapYear.ToString());
@@ -219,7 +219,7 @@ public class MerchantSchedulePageTests : BaseTest
         SetupPageData(merchantId, currentYear, new MerchantModels.MerchantScheduleModel { Year = currentYear, Months = [] });
         SetupSchedule(previousYear, new MerchantModels.MerchantScheduleModel { Year = previousYear, Months = [] });
 
-        var cut = RenderComponent<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<Schedule>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#selectedYear").Change(previousYear.ToString());
@@ -268,7 +268,7 @@ public class MerchantSchedulePageTests : BaseTest
 
         _fakeNavigationManager.NavigateTo($"/merchants/{merchantId}/schedule?readOnly=true");
 
-        var cut = RenderComponent<Schedule>(parameters => parameters
+        var cut = Render<Schedule>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 

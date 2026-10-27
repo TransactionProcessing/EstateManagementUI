@@ -18,7 +18,7 @@ public class ContractsNewPageTests : BaseTest
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         // Act
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
 
         // Assert
         cut.Markup.ShouldContain("Create New Contract");
@@ -31,7 +31,7 @@ public class ContractsNewPageTests : BaseTest
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         // Act
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
 
         // Assert
         IRenderedComponent<Microsoft.AspNetCore.Components.Web.PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -44,11 +44,11 @@ public class ContractsNewPageTests : BaseTest
         // Arrange
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Contract"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Cancel button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
         cancelButton.ShouldNotBeNull();
         cancelButton.Click();
@@ -63,7 +63,7 @@ public class ContractsNewPageTests : BaseTest
         // Arrange
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Contract"), timeout: TimeSpan.FromSeconds(5));
 
         // Act & Assert
@@ -91,7 +91,7 @@ public class ContractsNewPageTests : BaseTest
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
 
         // Act
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
 
         // Assert - Verify both operators are loaded and displayed in the dropdown
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator 1"), timeout: TimeSpan.FromSeconds(5));
@@ -105,7 +105,7 @@ public class ContractsNewPageTests : BaseTest
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure());
 
         // Act
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
 
         _fakeNavigationManager.Uri.ShouldContain("error");
     }
@@ -117,7 +117,7 @@ public class ContractsNewPageTests : BaseTest
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new List<OperatorModels.OperatorDropDownModel>()));
 
         // Act
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
 
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("No operators available"), timeout: TimeSpan.FromSeconds(5));
@@ -141,7 +141,7 @@ public class ContractsNewPageTests : BaseTest
         this.ContractUIService.CreateContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<ContractModels.CreateContractFormModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in the form
@@ -179,7 +179,7 @@ public class ContractsNewPageTests : BaseTest
         this.ContractUIService.CreateContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<ContractModels.CreateContractFormModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in the form
@@ -215,7 +215,7 @@ public class ContractsNewPageTests : BaseTest
 
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
 
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Submit form without description
@@ -247,7 +247,7 @@ public class ContractsNewPageTests : BaseTest
 
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
 
-        IRenderedComponent<ContractsNew> cut = RenderComponent<ContractsNew>();
+        IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Submit form without selecting operator

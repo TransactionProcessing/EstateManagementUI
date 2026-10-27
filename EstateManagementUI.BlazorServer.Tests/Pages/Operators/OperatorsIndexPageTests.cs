@@ -35,7 +35,7 @@ public class OperatorsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(operators));
 
         // Act
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
 
         // Assert
         cut.Markup.ShouldContain("Operator Management");
@@ -50,7 +50,7 @@ public class OperatorsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(emptyList));
 
         // Act
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
 
         // Assert
@@ -83,7 +83,7 @@ public class OperatorsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(operators));
 
         // Act
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -110,7 +110,7 @@ public class OperatorsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(operators));
 
         // Act
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -126,7 +126,7 @@ public class OperatorsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(new List<OperatorModels.OperatorModel>()));
 
         // Act
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -151,7 +151,7 @@ public class OperatorsIndexPageTests : BaseTest
         this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Add New Operator" button
@@ -183,7 +183,7 @@ public class OperatorsIndexPageTests : BaseTest
         this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click View button (button with eye icon/title="View")
@@ -215,7 +215,7 @@ public class OperatorsIndexPageTests : BaseTest
         this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click Edit button (button with title="Edit")
@@ -247,7 +247,7 @@ public class OperatorsIndexPageTests : BaseTest
         this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operators));
 
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click table row
@@ -268,7 +268,7 @@ public class OperatorsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        var cut = RenderComponent<OperatorsIndex>();
+        var cut = Render<OperatorsIndex>();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");

@@ -35,7 +35,7 @@ public class ErrorPageTests : BaseTest
     public void Error_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         cut.Find("h1").TextContent.ShouldContain("Oops! Something went wrong");
@@ -46,7 +46,7 @@ public class ErrorPageTests : BaseTest
     public void Error_WithoutRequestId_DoesNotShowRequestId()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         cut.Markup.ShouldNotContain("Reference ID for support:");
@@ -56,7 +56,7 @@ public class ErrorPageTests : BaseTest
     public void Error_ShowsDevelopmentModeInformation()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         cut.Markup.ShouldContain("Development Mode Information");
@@ -67,7 +67,7 @@ public class ErrorPageTests : BaseTest
     public void Error_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -78,7 +78,7 @@ public class ErrorPageTests : BaseTest
     public void Error_HasHomePageLink()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         var homeLink = cut.Find("a[href='/']");
@@ -89,7 +89,7 @@ public class ErrorPageTests : BaseTest
     public void Error_HasBackButton()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         var backButton = cut.Find("button[onclick='window.history.back()']");
@@ -100,7 +100,7 @@ public class ErrorPageTests : BaseTest
     public void Error_HasSupportEmail()
     {
         // Act
-        var cut = RenderComponent<Error>();
+        var cut = Render<Error>();
 
         // Assert
         cut.Markup.ShouldContain("support@example.com");

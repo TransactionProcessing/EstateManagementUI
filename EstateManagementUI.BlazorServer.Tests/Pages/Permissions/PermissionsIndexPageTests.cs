@@ -21,7 +21,7 @@ public class PermissionsIndexPageTests : BaseTest
             .ReturnsAsync(new List<Role>());
 
         // Act
-        var cut = RenderComponent<PermissionsIndex>();
+        var cut = Render<PermissionsIndex>();
 
         // Assert
         cut.Markup.ShouldContain("Permission Management");
@@ -35,7 +35,7 @@ public class PermissionsIndexPageTests : BaseTest
             .ReturnsAsync(new List<Role>());
 
         // Act
-        var cut = RenderComponent<PermissionsIndex>();
+        var cut = Render<PermissionsIndex>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

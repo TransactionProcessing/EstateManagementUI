@@ -115,7 +115,7 @@ public class HomePageTests : BaseTest
         this._mockTransactionUiService.GetTodaysFailedSales(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any(), Arg<DateTime>.Any()).ReturnsAsync(Result.Success(todaysSales));
 
         // Act
-        var cut = RenderComponent<Home>();
+        var cut = Render<Home>();
 
         // Assert
         cut.Markup.ShouldContain("Dashboard");
@@ -195,7 +195,7 @@ public class HomePageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<Home>();
+        var cut = Render<Home>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

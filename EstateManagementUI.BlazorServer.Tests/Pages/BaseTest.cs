@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using SimpleResults;
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
@@ -87,7 +87,7 @@ public abstract class BaseTest :TestContext {
             parameters => parameters.Get(p => p.ChildContent));
 
         var claims = new[] { new Claim(ClaimTypes.Role, "Estate"), new Claim("estateId", Guid.NewGuid().ToString()), new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", "EstateUser") };
-        this.AddTestAuthorization().SetClaims(claims);
+        this.AddAuthorization().SetClaims(claims);
     }
 
     protected readonly IMediatorImposter _mockMediator;

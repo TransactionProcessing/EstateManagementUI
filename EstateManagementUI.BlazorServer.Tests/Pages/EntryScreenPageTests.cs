@@ -3,7 +3,7 @@ using EstateManagementUI.BlazorServer.Components.Pages;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
@@ -23,7 +23,7 @@ public class EntryScreenPageTests : TestContext
     public void EntryScreen_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         // Assert
         cut.Markup.ShouldContain("Estate Management");
@@ -35,7 +35,7 @@ public class EntryScreenPageTests : TestContext
     public void EntryScreen_HasEstateManagementCard()
     {
         // Act
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         // Assert
         cut.Markup.ShouldContain("Manage estate details");
@@ -47,7 +47,7 @@ public class EntryScreenPageTests : TestContext
     public void EntryScreen_HasMerchantManagementCard()
     {
         // Act
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         // Assert
         cut.Markup.ShouldContain("Manage Merchant Details");
@@ -58,7 +58,7 @@ public class EntryScreenPageTests : TestContext
     public void EntryScreen_HasFileProcessingCard()
     {
         // Act
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         // Assert
         cut.Markup.ShouldContain("Transaction Files");
@@ -69,7 +69,7 @@ public class EntryScreenPageTests : TestContext
     public void EntryScreen_HasViewMoreLinks()
     {
         // Act
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         // Assert
         cut.FindAll("a[href='/estate-info']").Count.ShouldBeGreaterThan(0);
@@ -81,7 +81,7 @@ public class EntryScreenPageTests : TestContext
     public void EntryScreen_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -91,7 +91,7 @@ public class EntryScreenPageTests : TestContext
     [Fact]
     public void EntryScreen_live_mode_sign_in_link_goes_directly_to_authentication()
     {
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         cut.Find("#loginButton").GetAttribute("href").ShouldBe("/authentication/login");
     }
@@ -106,7 +106,7 @@ public class EntryScreenPageTests : TestContext
             })
             .Build());
 
-        var cut = RenderComponent<EntryScreen>();
+        var cut = Render<EntryScreen>();
 
         cut.Find("#loginButton").GetAttribute("href").ShouldBe("/login");
     }

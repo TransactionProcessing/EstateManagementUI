@@ -35,7 +35,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
 
         // Assert
@@ -62,7 +62,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -91,7 +91,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
 
         // Assert
@@ -119,7 +119,7 @@ public class MerchantsViewPageTests : BaseTest
         this.MerchantUIService.GetMerchantOpeningHours(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(new MerchantModels.MerchantOpeningHoursModel()));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -132,12 +132,12 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find address button and click it
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addressButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Address Details"));
         addressButton?.Click();
 
@@ -150,12 +150,12 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find contact button and click it
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? contactButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Contact Details"));
         contactButton?.Click();
 
@@ -168,12 +168,12 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find operators button and click it
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
 
@@ -186,12 +186,12 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find contracts button and click it
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? contractsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Contracts"));
         contractsButton?.Click();
 
@@ -204,12 +204,12 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find devices button and click it
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
         devicesButton?.Click();
 
@@ -222,12 +222,12 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators first
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
 
@@ -255,12 +255,12 @@ public class MerchantsViewPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithOperators(operators);
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
 
@@ -277,12 +277,12 @@ public class MerchantsViewPageTests : BaseTest
         // Arrange
         SetupSuccessfulDataLoad();
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Operators"));
         operatorsButton?.Click();
 
@@ -314,12 +314,12 @@ public class MerchantsViewPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithContracts(contracts);
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to contracts tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? contractsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Contracts"));
         contractsButton?.Click();
 
@@ -336,12 +336,12 @@ public class MerchantsViewPageTests : BaseTest
         // Arrange
         SetupSuccessfulDataLoad();
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to contracts tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? contractsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Contracts"));
         contractsButton?.Click();
 
@@ -363,12 +363,12 @@ public class MerchantsViewPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithDevices(devices);
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to devices tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
         devicesButton?.Click();
 
@@ -382,12 +382,12 @@ public class MerchantsViewPageTests : BaseTest
         // Arrange
         SetupSuccessfulDataLoad();
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to devices tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? devicesButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Assigned Devices"));
         devicesButton?.Click();
 
@@ -403,7 +403,7 @@ public class MerchantsViewPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
 
         // Assert
@@ -426,7 +426,7 @@ public class MerchantsViewPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithMerchant(merchant);
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchant.MerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -455,12 +455,12 @@ public class MerchantsViewPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithMerchant(merchant);
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchant.MerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to address tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addressButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Address Details"));
         addressButton?.Click();
 
@@ -488,12 +488,12 @@ public class MerchantsViewPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithMerchant(merchant);
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, merchant.MerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to contact tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? contactButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Contact Details"));
         contactButton?.Click();
 
@@ -510,11 +510,11 @@ public class MerchantsViewPageTests : BaseTest
     {
         SetupSuccessfulDataLoad();
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? openingHoursButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Opening Hours"));
         openingHoursButton?.Click();
 
@@ -534,12 +534,12 @@ public class MerchantsViewPageTests : BaseTest
         // Arrange
         SetupSuccessfulDataLoad();
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.MerchantId, Guid.NewGuid()));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Click back button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton?.Click();
 
@@ -558,7 +558,7 @@ public class MerchantsViewPageTests : BaseTest
             MerchantReference = "REF001"
         });
 
-        var cut = RenderComponent<View>(parameters => parameters.Add(p => p.MerchantId, merchantId));
+        var cut = Render<View>(parameters => parameters.Add(p => p.MerchantId, merchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#viewScheduleButton").Click();

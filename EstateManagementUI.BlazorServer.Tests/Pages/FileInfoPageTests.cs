@@ -1,7 +1,7 @@
 using Bunit;
 using Shouldly;
 using FileInfoPage = EstateManagementUI.BlazorServer.Components.Pages.FileInfo;
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
@@ -11,7 +11,7 @@ public class FileInfoPageTests : TestContext
     public void FileInfo_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<FileInfoPage>();
+        var cut = Render<FileInfoPage>();
 
         // Assert
         cut.Markup.ShouldContain("File Processing");
@@ -22,7 +22,7 @@ public class FileInfoPageTests : TestContext
     public void FileInfo_HasFeatureSections()
     {
         // Act
-        var cut = RenderComponent<FileInfoPage>();
+        var cut = Render<FileInfoPage>();
 
         // Assert
         cut.Markup.ShouldContain("Transaction Files");
@@ -34,7 +34,7 @@ public class FileInfoPageTests : TestContext
     public void FileInfo_HasSignInButton()
     {
         // Act
-        var cut = RenderComponent<FileInfoPage>();
+        var cut = Render<FileInfoPage>();
 
         // Assert
         var loginButton = cut.Find("a#loginButton");
@@ -46,7 +46,7 @@ public class FileInfoPageTests : TestContext
     public void FileInfo_HasBackButton()
     {
         // Act
-        var cut = RenderComponent<FileInfoPage>();
+        var cut = Render<FileInfoPage>();
 
         // Assert
         cut.FindAll("a[href='/entry']").Count.ShouldBeGreaterThan(0);
@@ -56,7 +56,7 @@ public class FileInfoPageTests : TestContext
     public void FileInfo_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<FileInfoPage>();
+        var cut = Render<FileInfoPage>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

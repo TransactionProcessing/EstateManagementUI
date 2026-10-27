@@ -28,7 +28,7 @@ public class OperatorsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -54,7 +54,7 @@ public class OperatorsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         // Assert
@@ -79,7 +79,7 @@ public class OperatorsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -107,13 +107,13 @@ public class OperatorsEditPageTests : BaseTest
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Back to List" button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton.ShouldNotBeNull();
         backButton.Click();
@@ -138,13 +138,13 @@ public class OperatorsEditPageTests : BaseTest
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Cancel" button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
         cancelButton.ShouldNotBeNull();
         cancelButton.Click();
@@ -172,7 +172,7 @@ public class OperatorsEditPageTests : BaseTest
         this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        var cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -209,13 +209,13 @@ public class OperatorsEditPageTests : BaseTest
         this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Update Operator" button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Operator"));
         updateButton.ShouldNotBeNull();
         updateButton.Click();
@@ -234,7 +234,7 @@ public class OperatorsEditPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         // Assert
@@ -251,7 +251,7 @@ public class OperatorsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
 
         // Act
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -281,13 +281,13 @@ public class OperatorsEditPageTests : BaseTest
         this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
             .Returns(tcs.Task);
 
-        IRenderedComponent<OperatorsEdit> cut = RenderComponent<OperatorsEdit>(parameters => parameters
+        IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Update Operator" button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Operator"));
         updateButton.ShouldNotBeNull();
         updateButton.Click();

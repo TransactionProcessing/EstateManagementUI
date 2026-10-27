@@ -27,7 +27,7 @@ public sealed class DockerHelper
     public HttpClient TestHostHttpClient { get; }
     public LocalTransactionProcessorClient TransactionProcessorClient { get; }
 
-    public int GetHostPort(ContainerType containerType) => 5004;
+    public int GetHostPort(ContainerType containerType) => 8004;
 
     public sealed class LocalTransactionProcessorClient
     {

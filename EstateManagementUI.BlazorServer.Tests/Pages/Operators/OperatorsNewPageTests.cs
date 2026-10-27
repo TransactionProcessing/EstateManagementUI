@@ -15,7 +15,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_RendersCorrectly()
     {
         // Arrange & Act
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
 
         // Assert
         cut.Markup.ShouldContain("Create New Operator");
@@ -25,7 +25,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_HasCorrectPageTitle()
     {
         // Arrange & Act
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
 
         // Assert
         IRenderedComponent<Microsoft.AspNetCore.Components.Web.PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -36,11 +36,11 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_CancelButton_NavigatesToOperatorsIndex()
     {
         // Arrange
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Cancel button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
         cancelButton.ShouldNotBeNull();
         cancelButton.Click();
@@ -53,7 +53,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_CreateOperatorButton_IsPresent()
     {
         // Arrange
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act & Assert
@@ -68,7 +68,7 @@ public class OperatorsNewPageTests : BaseTest
         this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in the form
@@ -92,7 +92,7 @@ public class OperatorsNewPageTests : BaseTest
         this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in the form
@@ -113,7 +113,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_FormValidation_RequiresOperatorName()
     {
         // Arrange
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Submit form without operator name
@@ -130,7 +130,7 @@ public class OperatorsNewPageTests : BaseTest
     public void OperatorsNew_DisplaysCheckboxOptions()
     {
         // Arrange & Act
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
 
         // Assert - Verify checkbox options are displayed
         cut.Markup.ShouldContain("Require Custom Merchant Number");
@@ -144,7 +144,7 @@ public class OperatorsNewPageTests : BaseTest
         this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        IRenderedComponent<OperatorsNew> cut = RenderComponent<OperatorsNew>();
+        IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Fill in the form

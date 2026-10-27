@@ -1,7 +1,7 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages;
 using Shouldly;
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
@@ -11,7 +11,7 @@ public class EstateInfoPageTests : TestContext
     public void EstateInfo_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<EstateInfo>();
+        var cut = Render<EstateInfo>();
 
         // Assert
         cut.Markup.ShouldContain("Estate Management");
@@ -22,7 +22,7 @@ public class EstateInfoPageTests : TestContext
     public void EstateInfo_HasFeatureSections()
     {
         // Act
-        var cut = RenderComponent<EstateInfo>();
+        var cut = Render<EstateInfo>();
 
         // Assert
         cut.Markup.ShouldContain("Manage Estate Details");
@@ -34,7 +34,7 @@ public class EstateInfoPageTests : TestContext
     public void EstateInfo_HasSignInButton()
     {
         // Act
-        var cut = RenderComponent<EstateInfo>();
+        var cut = Render<EstateInfo>();
 
         // Assert
         var loginButton = cut.Find("a#loginButton");
@@ -46,7 +46,7 @@ public class EstateInfoPageTests : TestContext
     public void EstateInfo_HasBackButton()
     {
         // Act
-        var cut = RenderComponent<EstateInfo>();
+        var cut = Render<EstateInfo>();
 
         // Assert
         cut.FindAll("a[href='/entry']").Count.ShouldBeGreaterThan(0);
@@ -56,7 +56,7 @@ public class EstateInfoPageTests : TestContext
     public void EstateInfo_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<EstateInfo>();
+        var cut = Render<EstateInfo>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

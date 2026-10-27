@@ -360,7 +360,7 @@ public sealed class ReportingPageHelper
 
     private string ResolveBaseUrl()
     {
-        return "http://127.0.0.1:5004";
+        return "http://127.0.0.1:8004";
     }
 
     private static bool IsMoneyLabel(string label)

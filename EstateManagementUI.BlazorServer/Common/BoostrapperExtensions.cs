@@ -18,7 +18,6 @@ using SecurityService.Client;
 using Shared.General;
 using Shared.Serialisation;
 using System.Data.SqlTypes;
-using System.Net;
 using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
@@ -63,14 +62,20 @@ public static class BoostrapperExtensions {
     }
 
     public static WebApplicationBuilder ConfigureKestrel(this WebApplicationBuilder builder) {
-        // Configure Kestrel with certificate for HTTPS
+        // Use the configured URLs (hosting.json by default, ASPNETCORE_URLS for test overrides).
+        var urls = builder.Configuration["ASPNETCORE_URLS"] ?? builder.Configuration["urls"];
+        if (!string.IsNullOrWhiteSpace(urls))
+        {
+            builder.WebHost.UseUrls(urls);
+        }
+
+        // Configure Kestrel defaults without binding a fixed endpoint.
         builder.WebHost.UseKestrel(options =>
         {
-            var port = 5004;
             var testModeConfig = builder.Configuration.GetValue<String>("AppSettings:TestMode", "Disabled");
             var isTestMode = !string.Equals(testModeConfig, "Disabled", StringComparison.OrdinalIgnoreCase);
 
-            options.Listen(IPAddress.Any, port, listenOptions =>
+            options.ConfigureEndpointDefaults(listenOptions =>
             {
                 // Enable support for HTTP1 and HTTP2
                 listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
@@ -121,6 +126,7 @@ public static class BoostrapperExtensions {
             .AddJsonFile($"/home/txnproc/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile("hosting.json", optional: true, reloadOnChange: true)
             .AddJsonFile($"/home/txnproc/config/appsettings.local.json", optional: true)
             .AddEnvironmentVariables().AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -257,7 +263,7 @@ public static class BoostrapperExtensions {
         return builder;
     }
 
-    public static WebApplicationBuilder RegisterProductionMeriator(this WebApplicationBuilder builder) {
+    public static WebApplicationBuilder RegisterProductionMediator(this WebApplicationBuilder builder) {
         builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(EstateRequestHandler).Assembly));
         builder.Services.AddScoped<IApiClient, ApiClient>();
         builder.Services.AddSingleton<Func<String, String>>(container => (serviceName) => ConfigurationReader.GetBaseServerUri(serviceName).OriginalString);
