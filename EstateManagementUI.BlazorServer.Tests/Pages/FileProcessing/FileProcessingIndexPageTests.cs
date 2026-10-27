@@ -28,7 +28,7 @@ public class FileProcessingIndexPageTests : BaseTest
                 Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
-        var cut = RenderComponent<FileProcessingIndex>();
+        var cut = Render<FileProcessingIndex>();
 
         cut.WaitForAssertion(() =>
         {
@@ -56,7 +56,7 @@ public class FileProcessingIndexPageTests : BaseTest
             Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
-        var cut = RenderComponent<FileProcessingIndex>();
+        var cut = Render<FileProcessingIndex>();
 
         var targetDate = FileProcessingSeedData.ImportLogs[1].ImportLogDateTime.Date;
         // Use InvokeAsync to ensure DOM updates and event handler registration
@@ -90,7 +90,7 @@ public class FileProcessingIndexPageTests : BaseTest
                 Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
-        var cut = RenderComponent<FileProcessingIndex>();
+        var cut = Render<FileProcessingIndex>();
         var firstLog = FileProcessingSeedData.ImportLogs[0];
 
         cut.FindAll("button").First(button => button.TextContent.Contains("View details")).Click();
@@ -113,7 +113,7 @@ public class FileProcessingIndexPageTests : BaseTest
                 Arg<Guid>.Any(), Arg<Guid?>.Any(), Arg<DateTime>.Any(), Arg<DateTime>.Any())
             .ReturnsAsync(Result.Success(filteredLogs));
 
-        var cut = RenderComponent<FileProcessingIndex>();
+        var cut = Render<FileProcessingIndex>();
 
         cut.FindAll("button").First(button => button.TextContent.Contains("Upload File")).Click();
 

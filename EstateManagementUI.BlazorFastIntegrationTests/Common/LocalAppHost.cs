@@ -17,7 +17,7 @@ public sealed class LocalAppHost : IAsyncDisposable
         _httpClient = new HttpClient();
     }
 
-    public Uri BaseUri { get; } = new("http://127.0.0.1:5004");
+    public Uri BaseUri { get; } = new("http://127.0.0.1:8004");
 
     public async Task StartAsync()
     {
@@ -38,10 +38,11 @@ public sealed class LocalAppHost : IAsyncDisposable
 
         startInfo.ArgumentList.Add("run");
         startInfo.ArgumentList.Add("--no-build");
+        startInfo.ArgumentList.Add("--no-launch-profile");
         startInfo.ArgumentList.Add("--project");
         startInfo.ArgumentList.Add(_projectPath);
 
-        startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Test";
+        startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Development";
         startInfo.Environment["AppSettings__TestMode"] = "BackedByTestDataStore";
         startInfo.Environment["ASPNETCORE_URLS"] = BaseUri.ToString();
 

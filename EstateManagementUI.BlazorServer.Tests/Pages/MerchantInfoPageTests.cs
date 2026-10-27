@@ -1,6 +1,6 @@
 using Bunit;
 using EstateManagementUI.BlazorServer.Components.Pages;
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 using Shouldly;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
@@ -11,7 +11,7 @@ public class MerchantInfoPageTests : TestContext
     public void MerchantInfo_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<MerchantInfo>();
+        var cut = Render<MerchantInfo>();
 
         // Assert
         cut.Markup.ShouldContain("Merchant Management");
@@ -21,7 +21,7 @@ public class MerchantInfoPageTests : TestContext
     public void MerchantInfo_HasFeatureSections()
     {
         // Act
-        var cut = RenderComponent<MerchantInfo>();
+        var cut = Render<MerchantInfo>();
 
         // Assert
         cut.Markup.ShouldContain("Manage Merchant Details");
@@ -32,7 +32,7 @@ public class MerchantInfoPageTests : TestContext
     public void MerchantInfo_HasSignInButton()
     {
         // Act
-        var cut = RenderComponent<MerchantInfo>();
+        var cut = Render<MerchantInfo>();
 
         // Assert
         var loginButtons = cut.FindAll("a#loginButton");
@@ -44,7 +44,7 @@ public class MerchantInfoPageTests : TestContext
     public void MerchantInfo_HasBackButton()
     {
         // Act
-        var cut = RenderComponent<MerchantInfo>();
+        var cut = Render<MerchantInfo>();
 
         // Assert
         cut.FindAll("a[href='/entry']").Count.ShouldBeGreaterThan(0);
@@ -54,7 +54,7 @@ public class MerchantInfoPageTests : TestContext
     public void MerchantInfo_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<MerchantInfo>();
+        var cut = Render<MerchantInfo>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

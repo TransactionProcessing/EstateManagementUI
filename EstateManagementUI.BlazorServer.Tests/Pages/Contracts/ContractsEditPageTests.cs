@@ -34,7 +34,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
 
         // Assert
@@ -58,7 +58,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -84,7 +84,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
 
         // Assert
@@ -109,12 +109,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find Update Contract button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Contract"));
 
         // Assert
@@ -138,12 +138,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find Add Product button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
 
         // Assert
@@ -167,12 +167,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find and click Add Product button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
@@ -210,7 +210,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -249,12 +249,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find remove button (it has a trash icon svg)
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         var removeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Product");
 
@@ -302,12 +302,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find Add Fee button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
 
         // Assert
@@ -345,12 +345,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find and click Add Fee button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton.ShouldNotBeNull();
         addFeeButton.Click();
@@ -376,7 +376,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -400,12 +400,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find and click Back to List button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton.ShouldNotBeNull();
         backButton.Click();
@@ -431,19 +431,19 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open the modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
         addProductButton?.Click();
 
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
 
         // Find cancel button in modal (type="button" excludes submit buttons)
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? cancelButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
@@ -482,19 +482,19 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open the modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton?.Click();
 
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
 
         // Find cancel button in modal (type="button" excludes submit buttons)
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? cancelButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
@@ -544,12 +544,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find remove fee button (it has a trash icon svg and title)
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         var removeFeeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Fee");
 
@@ -574,7 +574,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -600,12 +600,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert - Find Update Contract button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? updateButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Update Contract"));
         updateButton.ShouldNotBeNull();
     }
@@ -627,12 +627,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
@@ -646,7 +646,7 @@ public class ContractsEditPageTests : BaseTest
         cut.Markup.ShouldContain("Value");
 
         // Check submit button exists
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
@@ -669,12 +669,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
@@ -682,7 +682,7 @@ public class ContractsEditPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert - Check submit button exists
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Product") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
@@ -705,12 +705,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product") && b.GetAttribute("type") != "submit");
         addProductButton.ShouldNotBeNull();
         addProductButton.Click();
@@ -753,12 +753,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton.ShouldNotBeNull();
         addFeeButton.Click();
@@ -772,7 +772,7 @@ public class ContractsEditPageTests : BaseTest
         cut.Markup.ShouldContain("Fee Value");
 
         // Check submit button exists
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
@@ -808,12 +808,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton.ShouldNotBeNull();
         addFeeButton.Click();
@@ -821,7 +821,7 @@ public class ContractsEditPageTests : BaseTest
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert - Check submit button exists
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? submitButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Add Fee") && b.GetAttribute("type") == "submit");
         submitButton.ShouldNotBeNull();
@@ -857,12 +857,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert - Find remove product button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         var removeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Product");
         removeButton.ShouldNotBeNull();
@@ -909,12 +909,12 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert - Find remove fee button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         var removeFeeButton = buttons.FirstOrDefault(b =>
             b.GetAttribute("title") == "Remove Fee");
         removeFeeButton.ShouldNotBeNull();
@@ -937,19 +937,19 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open the modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addProductButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Product"));
         addProductButton?.Click();
 
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add New Product"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert - Check cancel button exists with correct type
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? cancelButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
@@ -986,19 +986,19 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open the modal
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? addFeeButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Add Fee"));
         addFeeButton?.Click();
 
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Add Transaction Fee"), timeout: TimeSpan.FromSeconds(5));
 
         // Assert - Check cancel button exists with correct type
-        IRefreshableElementCollection<IElement> modalButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> modalButtons = cut.FindAll("button");
         IElement? cancelButton = modalButtons.FirstOrDefault(b =>
             b.TextContent.Contains("Cancel") &&
             b.GetAttribute("type") == "button");
@@ -1044,7 +1044,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -1103,7 +1103,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -1164,7 +1164,7 @@ public class ContractsEditPageTests : BaseTest
             });
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
@@ -1290,7 +1290,7 @@ public class ContractsEditPageTests : BaseTest
             });
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
@@ -1379,7 +1379,7 @@ public class ContractsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -1472,7 +1472,7 @@ public class ContractsEditPageTests : BaseTest
             });
 
         // Act
-        var cut = RenderComponent<Edit>(parameters => parameters
+        var cut = Render<Edit>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render

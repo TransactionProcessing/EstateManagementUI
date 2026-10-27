@@ -36,7 +36,7 @@ public class MerchantsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
 
         // Assert
         cut.Markup.ShouldContain("Merchant Management");
@@ -55,7 +55,7 @@ public class MerchantsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(merchants));
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
 
         // Assert
@@ -91,7 +91,7 @@ public class MerchantsIndexPageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -128,7 +128,7 @@ public class MerchantsIndexPageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -149,7 +149,7 @@ public class MerchantsIndexPageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -178,7 +178,7 @@ public class MerchantsIndexPageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -209,7 +209,7 @@ public class MerchantsIndexPageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -242,7 +242,7 @@ public class MerchantsIndexPageTests : BaseTest
 
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -262,7 +262,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the "Add New Merchant" button
@@ -294,7 +294,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the "Apply Filters" button
@@ -330,7 +330,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the "Clear Filters" button
@@ -368,7 +368,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the View button
@@ -401,7 +401,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Edit button
@@ -441,7 +441,7 @@ public class MerchantsIndexPageTests : BaseTest
                 MerchantName = "Test Merchant"
             }));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Make Deposit button
@@ -484,7 +484,7 @@ public class MerchantsIndexPageTests : BaseTest
                 MerchantName = "Test Merchant"
             }));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Open modal
@@ -526,7 +526,7 @@ public class MerchantsIndexPageTests : BaseTest
                 MerchantName = "Test Merchant"
             }));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         cut.Find("#makeDepositLink").Click();
@@ -577,7 +577,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<MerchantModels.DepositModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.Instance.SetDelayOverride(500);
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -620,7 +620,7 @@ public class MerchantsIndexPageTests : BaseTest
         this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
             .ReturnsAsync(Result.Failure());
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - click Make Deposit when GetMerchant fails
@@ -649,7 +649,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Navigate to second page first
@@ -683,7 +683,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Navigate to second page first
@@ -717,7 +717,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Next Page button
@@ -746,7 +746,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Last Page button
@@ -770,7 +770,7 @@ public class MerchantsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
@@ -798,7 +798,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<String>.Any())
             .ReturnsAsync(Result.Success(merchants));
 
-        var cut = RenderComponent<MerchantsIndex>();
+        var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the merchant row

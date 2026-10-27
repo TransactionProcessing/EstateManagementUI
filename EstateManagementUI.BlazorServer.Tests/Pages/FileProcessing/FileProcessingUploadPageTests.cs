@@ -9,7 +9,7 @@ public class FileProcessingUploadPageTests : BaseTest
     [Fact]
     public void FileProcessingUpload_RendersRequiredInputs()
     {
-        var cut = RenderComponent<FileProcessingUpload>();
+        var cut = Render<FileProcessingUpload>();
 
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Upload File"));
         cut.Find("select[name='FileProfile']").ShouldNotBeNull();
@@ -19,7 +19,7 @@ public class FileProcessingUploadPageTests : BaseTest
     [Fact]
     public void FileProcessingUpload_SubmitWithoutProfileAndFile_ShowsValidationErrors()
     {
-        var cut = RenderComponent<FileProcessingUpload>();
+        var cut = Render<FileProcessingUpload>();
 
         cut.Find("form").Submit();
 
@@ -34,7 +34,7 @@ public class FileProcessingUploadPageTests : BaseTest
     [Fact]
     public void FileProcessingUpload_SubmitWithProfileButWithoutFile_ShowsFileValidationErrorOnly()
     {
-        var cut = RenderComponent<FileProcessingUpload>();
+        var cut = Render<FileProcessingUpload>();
         cut.WaitForAssertion(() => cut.Find("select[name='MerchantId']").Change("33333333-3333-3333-3333-333333333333"));
         cut.WaitForAssertion(() => cut.Find("select[name='FileProfile']").Change("22222222-2222-2222-2222-222222222222"));
 

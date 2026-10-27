@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
 using System.Security.Claims;
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
@@ -55,7 +55,7 @@ public class PermissionsDebugPageTests : TestContext
     public void PermissionsDebug_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<PermissionsDebug>();
+        var cut = Render<PermissionsDebug>();
 
         // Assert
         cut.Markup.ShouldNotBeNullOrEmpty();
@@ -65,7 +65,7 @@ public class PermissionsDebugPageTests : TestContext
     public void PermissionsDebug_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<PermissionsDebug>();
+        var cut = Render<PermissionsDebug>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

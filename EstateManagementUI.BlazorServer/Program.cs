@@ -6,6 +6,7 @@ using HealthMonitoring.Client;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.FileProviders;
 using Sentry.Extensibility;
 using Shared.Extensions;
 using Shared.General;
@@ -90,7 +91,7 @@ if (testMode == TestMode.BackedByTestDataStore)
 }
 else
 {
-    builder.RegisterProductionMeriator().RegisterClients();
+    builder.RegisterProductionMediator().RegisterClients();
 }
 
 builder.RegisterUIServices().RegisterSerialiser();
@@ -153,6 +154,11 @@ if (testMode == TestMode.Disabled)
     app.UseHttpsRedirection();
 }
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.ContentRootPath, "wwwroot"))
+});
+app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();

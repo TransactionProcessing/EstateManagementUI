@@ -30,7 +30,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         // Assert
@@ -52,7 +52,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -69,7 +69,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(new OperatorModels.OperatorModel { OperatorId = operatorId }));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         // Assert
@@ -91,12 +91,12 @@ public class OperatorsViewPageTests : BaseTest
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success(operatorModel));
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Back to List" button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton?.Click();
 
@@ -121,7 +121,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -147,7 +147,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -173,7 +173,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -199,7 +199,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -217,7 +217,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
 
         // Assert
@@ -233,7 +233,7 @@ public class OperatorsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -249,12 +249,12 @@ public class OperatorsViewPageTests : BaseTest
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
             .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
 
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click "Back to List" button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton?.Click();
 

@@ -28,7 +28,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
 
         // Assert
@@ -51,7 +51,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -74,7 +74,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
 
         // Assert
@@ -98,7 +98,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -122,12 +122,12 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Find and click the Back to List button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? backButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Back to List"));
         backButton.ShouldNotBeNull();
         backButton.Click();
@@ -164,7 +164,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -191,7 +191,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -238,7 +238,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Success(contract));
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -257,7 +257,7 @@ public class ContractsViewPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        var cut = RenderComponent<View>(parameters => parameters
+        var cut = Render<View>(parameters => parameters
             .Add(p => p.ContractId, contractId));
         //cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 

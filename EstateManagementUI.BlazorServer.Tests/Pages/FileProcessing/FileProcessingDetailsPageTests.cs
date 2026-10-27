@@ -41,7 +41,7 @@ public class FileProcessingDetailsPageTests : BaseTest
 
         var log = FileProcessingSeedData.ImportLogs[0];
 
-        var cut = RenderComponent<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
+        var cut = Render<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
 
         cut.WaitForAssertion(() =>
         {
@@ -89,7 +89,7 @@ public class FileProcessingDetailsPageTests : BaseTest
 
         var log = FileProcessingSeedData.ImportLogs[0];
 
-        var cut = RenderComponent<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
+        var cut = Render<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
 
         cut.FindAll("button").Single(button => button.TextContent.Contains("Next")).Click();
 
@@ -133,7 +133,7 @@ public class FileProcessingDetailsPageTests : BaseTest
 
         var log = FileProcessingSeedData.ImportLogs[0];
 
-        var cut = RenderComponent<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
+        var cut = Render<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
 
         cut.Find("#file-name-filter").Change(log.FileDetailsList[6].FileName);
 
@@ -162,7 +162,7 @@ public class FileProcessingDetailsPageTests : BaseTest
 
         var log = FileProcessingSeedData.ImportLogs[0];
 
-        var cut = RenderComponent<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
+        var cut = Render<FileProcessingDetails>(parameters => parameters.Add(p => p.ImportLogId, log.FileImportLogId));
 
         cut.FindAll("button").Single(button => button.TextContent.Contains("Back")).Click();
 

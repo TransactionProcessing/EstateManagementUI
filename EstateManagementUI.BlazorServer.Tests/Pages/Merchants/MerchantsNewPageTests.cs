@@ -5,7 +5,6 @@ using Imposter.Abstractions;
 using Shouldly;
 using SimpleResults;
 using MerchantsNew = EstateManagementUI.BlazorServer.Components.Pages.Merchants.New;
-using AngleSharp.Dom;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
@@ -37,9 +36,9 @@ public class MerchantsNewPageTests : BaseTest
     public void MerchantsNew_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
 
-        // Assert
+        // Render
         cut.Markup.ShouldContain("Create New Merchant");
     }
 
@@ -47,9 +46,9 @@ public class MerchantsNewPageTests : BaseTest
     public void MerchantsNew_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
 
-        // Assert
+        // Render
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
         pageTitle.Instance.ChildContent.ShouldNotBeNull();
     }
@@ -58,14 +57,14 @@ public class MerchantsNewPageTests : BaseTest
     public void MerchantsNew_CancelButton_NavigatesToMerchantsList()
     {
         // Arrange
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
 
         // Act - Find and click the Cancel button
         var buttons = cut.FindAll("button");
         var cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
         cancelButton?.Click();
 
-        // Assert
+        // Render
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
     }
 
@@ -73,12 +72,12 @@ public class MerchantsNewPageTests : BaseTest
     public void MerchantsNew_CreateMerchantButton_Exists()
     {
         // Arrange
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
 
         // Act - Find the Create Merchant button by ID
         var createButton = cut.Find("#createMerchantButton");
 
-        // Assert
+        // Render
         createButton.ShouldNotBeNull();
         createButton.TextContent.ShouldContain("Create Merchant");
     }
@@ -94,7 +93,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<MerchantModels.CreateMerchantModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
@@ -110,7 +109,7 @@ public class MerchantsNewPageTests : BaseTest
         // Trigger a render to ensure state changes are reflected
         cut.Render();
 
-        // Assert - Verify success message was set
+        // Render - Verify success message was set
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Merchant created successfully"), timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -125,7 +124,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<MerchantModels.CreateMerchantModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
@@ -138,7 +137,7 @@ public class MerchantsNewPageTests : BaseTest
             await task;
         });
 
-        // Assert - Should navigate to /merchants
+        // Render - Should navigate to /merchants
         _fakeNavigationManager.Uri.ShouldContain("/merchants");
     }
 
@@ -153,7 +152,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<MerchantModels.CreateMerchantModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
 
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
         var handleSubmitMethod = GetHandleSubmitMethod();
@@ -168,7 +167,7 @@ public class MerchantsNewPageTests : BaseTest
         // Trigger a render to ensure state changes are reflected
         cut.Render();
 
-        // Assert - Verify error message was set
+        // Render - Verify error message was set
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Failed to create merchant"), timeout: TimeSpan.FromSeconds(5));
     }
 
@@ -183,7 +182,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<MerchantModels.CreateMerchantModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
         var initialUri = _fakeNavigationManager.Uri;
 
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
@@ -196,7 +195,7 @@ public class MerchantsNewPageTests : BaseTest
             await task;
         });
 
-        // Assert - Should not navigate (should remain on the same page, not go to /merchants list)
+        // Render - Should not navigate (should remain on the same page, not go to /merchants list)
         _fakeNavigationManager.Uri.ShouldBe(initialUri);
     }
 
@@ -224,7 +223,7 @@ public class MerchantsNewPageTests : BaseTest
                     return Task.CompletedTask;
                 });
 
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
         // Act - Use reflection to call the private HandleSubmit method on the Dispatcher
@@ -237,7 +236,7 @@ public class MerchantsNewPageTests : BaseTest
             await task;
         });
 
-        // Assert - Verify CreateMerchant was called with proper parameters
+        // Render - Verify CreateMerchant was called with proper parameters
         this.MerchantUIService.CreateMerchant(
             Arg<CorrelationId>.Any(),
             Arg<Guid>.Any(),
@@ -261,7 +260,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<MerchantModels.CreateMerchantModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        var cut = RenderComponent<MerchantsNew>();
+        var cut = Render<MerchantsNew>();
         cut.Instance.SetDelayOverride(0);
 
         // Set an error message first using reflection
@@ -286,7 +285,7 @@ public class MerchantsNewPageTests : BaseTest
         // Trigger a render to ensure state changes are reflected
         cut.Render();
 
-        // Assert - Error message should be cleared and success message shown
+        // Render - Error message should be cleared and success message shown
         cut.Markup.ShouldNotContain("Previous error");
         cut.Markup.ShouldContain("Merchant created successfully");
     }

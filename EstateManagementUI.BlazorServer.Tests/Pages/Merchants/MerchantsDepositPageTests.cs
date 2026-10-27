@@ -21,7 +21,7 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
 
         // Assert
@@ -35,7 +35,7 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
 
         // Assert
@@ -51,7 +51,7 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad("Test Merchant Name");
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -66,7 +66,7 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
@@ -97,7 +97,7 @@ public class MerchantsDepositPageTests : BaseTest
             Arg<MerchantModels.DepositModel>.Any())
             .ReturnsAsync(Result.Success());
 
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
@@ -114,7 +114,7 @@ public class MerchantsDepositPageTests : BaseTest
         depositReferenceInput.Change("TEST-REF-001");
 
         // Find and click the Make Deposit button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? makeDepositButton = buttons.FirstOrDefault(b =>
             b.TextContent.Contains("Make Deposit") &&
             (b.GetAttribute("id") ?? "") == "makeDepositButton");
@@ -141,7 +141,7 @@ public class MerchantsDepositPageTests : BaseTest
             Arg<MerchantModels.DepositModel>.Any())
             .ReturnsAsync(Result.Failure());
 
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
@@ -158,7 +158,7 @@ public class MerchantsDepositPageTests : BaseTest
         depositReferenceInput.Change("TEST-REF-001");
 
         // Find and click the Make Deposit button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? makeDepositButton = buttons.FirstOrDefault(b =>
             b.TextContent.Contains("Make Deposit") &&
             (b.GetAttribute("id") ?? "") == "makeDepositButton");
@@ -177,12 +177,12 @@ public class MerchantsDepositPageTests : BaseTest
         SetupSuccessfulMerchantLoad();
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert - there should be exactly 2 Cancel buttons
-        IRefreshableElementCollection<IElement> allButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> allButtons = cut.FindAll("button");
         List<IElement> cancelButtonList = allButtons.Where(b => b.TextContent.Trim() == "Cancel").ToList();
         cancelButtonList.Count.ShouldBe(2);
     }
@@ -193,12 +193,12 @@ public class MerchantsDepositPageTests : BaseTest
         // Arrange
         SetupSuccessfulMerchantLoad();
 
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find and click the Cancel button
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? cancelButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Cancel"));
         cancelButton?.Click();
 
@@ -217,7 +217,7 @@ public class MerchantsDepositPageTests : BaseTest
             .ReturnsAsync(Result.Failure());
 
         // Act
-        IRenderedComponent<MerchantsDeposit> cut = RenderComponent<MerchantsDeposit>(parameters =>
+        IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
 
         // Assert

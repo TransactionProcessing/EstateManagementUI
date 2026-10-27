@@ -4,7 +4,7 @@ using Shouldly;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;
 
-using TestContext = Bunit.TestContext;
+using TestContext = Bunit.BunitContext;
 
 public class NotFoundPageTests : TestContext
 {
@@ -12,7 +12,7 @@ public class NotFoundPageTests : TestContext
     public void NotFound_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<NotFound>();
+        var cut = Render<NotFound>();
 
         // Assert
         cut.Find("h3").TextContent.ShouldBe("Not Found");
@@ -23,7 +23,7 @@ public class NotFoundPageTests : TestContext
     public void NotFound_HasCorrectLayout()
     {
         // Act
-        var cut = RenderComponent<NotFound>();
+        var cut = Render<NotFound>();
 
         // Assert
         cut.Markup.ShouldNotBeNullOrEmpty();

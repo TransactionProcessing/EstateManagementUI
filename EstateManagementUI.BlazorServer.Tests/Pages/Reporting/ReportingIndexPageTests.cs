@@ -15,7 +15,7 @@ public class ReportingIndexPageTests : BaseTest
     public void ReportingIndex_RendersCorrectly()
     {
         // Act
-        var cut = RenderComponent<ReportingIndex>();
+        var cut = Render<ReportingIndex>();
 
         // Assert
         cut.Markup.ShouldContain("Reporting");
@@ -25,7 +25,7 @@ public class ReportingIndexPageTests : BaseTest
     public void ReportingIndex_HasCorrectPageTitle()
     {
         // Act
-        var cut = RenderComponent<ReportingIndex>();
+        var cut = Render<ReportingIndex>();
 
         // Assert
         var pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();

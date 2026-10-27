@@ -33,7 +33,7 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
 
         // Assert
         cut.Markup.ShouldContain("Estate Management");
@@ -58,7 +58,7 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
 
         // Assert
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Estate"), timeout: TimeSpan.FromSeconds(5));
@@ -83,7 +83,7 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(estate));
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
 
         // Assert
         IRenderedComponent<PageTitle> pageTitle = cut.FindComponent<Microsoft.AspNetCore.Components.Web.PageTitle>();
@@ -95,11 +95,11 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Find operators button and click it
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
@@ -112,11 +112,11 @@ public class EstateIndexPageTests : BaseTest
     {
         // Arrange
         SetupSuccessfulDataLoad();
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators first
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
@@ -149,14 +149,14 @@ public class EstateIndexPageTests : BaseTest
 
         this.EstateUIService.AddOperatorToEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any()).ReturnsAsync(Result.Success());
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
 
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
@@ -190,11 +190,11 @@ public class EstateIndexPageTests : BaseTest
 
         this.EstateUIService.AddOperatorToEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any()).ReturnsAsync(Result.Failure());
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
@@ -229,18 +229,18 @@ public class EstateIndexPageTests : BaseTest
 
         this.EstateUIService.RemoveOperatorFromEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success());
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.Instance.SetDelayOverride(0);
         cut.Render(); // required to trigger re-render
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
         // Act - Remove operator
-        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> removeButtons = cut.FindAll("button");
         IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
 
@@ -264,16 +264,16 @@ public class EstateIndexPageTests : BaseTest
 
         this.EstateUIService.RemoveOperatorFromEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure(String.Empty));
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
         // Act - Remove operator
-        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> removeButtons = cut.FindAll("button");
         IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
 
@@ -298,7 +298,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoadWithMerchants(merchants);
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -313,7 +313,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoad();
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -336,7 +336,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoadWithContracts(contracts);
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -350,7 +350,7 @@ public class EstateIndexPageTests : BaseTest
         SetupSuccessfulDataLoad();
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Assert
@@ -364,7 +364,7 @@ public class EstateIndexPageTests : BaseTest
         this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure());
 
         // Act
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
 
         // Assert
         _fakeNavigationManager.Uri.ShouldContain("error");
@@ -384,11 +384,11 @@ public class EstateIndexPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithAssignedOperators(new List<OperatorModels.OperatorModel> { assignedOperator });
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
@@ -405,11 +405,11 @@ public class EstateIndexPageTests : BaseTest
         // Arrange
         SetupSuccessfulDataLoad();
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Act - Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
@@ -433,23 +433,23 @@ public class EstateIndexPageTests : BaseTest
 
         this.EstateUIService.RemoveOperatorFromEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success());
 
-        IRenderedComponent<EstateIndex> cut = RenderComponent<EstateIndex>();
+        IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
         // Switch to operators tab
-        IRefreshableElementCollection<IElement> buttons = cut.FindAll("button");
+        IReadOnlyList<IElement> buttons = cut.FindAll("button");
         IElement? operatorsButton = buttons.FirstOrDefault(b => b.TextContent.Contains("Operators"));
         operatorsButton?.Click();
 
         // Remove operator to trigger success message
-        IRefreshableElementCollection<IElement> removeButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> removeButtons = cut.FindAll("button");
         IElement? removeButton = removeButtons.FirstOrDefault(b => b.TextContent.Contains("Remove"));
         removeButton?.Click();
 
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Operator removed successfully"), timeout: TimeSpan.FromSeconds(5));
 
         // Act - Switch to overview tab
-        IRefreshableElementCollection<IElement> overviewButtons = cut.FindAll("button");
+        IReadOnlyList<IElement> overviewButtons = cut.FindAll("button");
         IElement? overviewButton = overviewButtons.FirstOrDefault(b => b.TextContent.Contains("Overview"));
         overviewButton?.Click();
 
