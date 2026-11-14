@@ -248,7 +248,7 @@ public class OperatorsEditPageTests : BaseTest
         var operatorId = Guid.NewGuid();
 
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
+            .ReturnsAsync(Result.NotFound("The requested resource was not found."));
 
         // Act
         IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters

@@ -35,8 +35,12 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
 
             var result = await this.OperatorUiService.GetOperator(correlationId, estateId, this.OperatorId);
 
-            if (result.IsFailed) {
+            if (result.IsFailed && result.Errors.Any(error => error.ErrorType != ErrorType.NotFound)) {
                 return ResultHelpers.CreateFailure(result);
+            }
+
+            if (result.IsFailed) {
+                return Result.Success();
             }
 
             operatorModel = result.Data;

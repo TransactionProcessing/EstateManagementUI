@@ -439,11 +439,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
             String trimmedValue = value.Trim();
 
-            if (DateTime.TryParseExact(trimmedValue,
+            if (TimeOnly.TryParseExact(trimmedValue,
                                        OpeningHoursFormats,
                                        CultureInfo.InvariantCulture,
                                        DateTimeStyles.None,
-                                       out DateTime parsed) == false) {
+                                       out TimeOnly parsed) == false) {
                 return trimmedValue;
             }
 
