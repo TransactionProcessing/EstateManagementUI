@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.Playwright;
 using Reqnroll;
 using Shouldly;
-using Shared.IntegrationTesting;
+using TransactionProcessing.Shared.IntegrationTesting;
 
 namespace EstateManagementUI.IntegrationTests.Common;
 

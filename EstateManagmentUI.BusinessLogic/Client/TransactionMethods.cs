@@ -1,6 +1,5 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using System;
 using System.Collections.Generic;
 using System.Text;

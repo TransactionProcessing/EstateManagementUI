@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;

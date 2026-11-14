@@ -1,6 +1,6 @@
 using EstateManagementUI.BusinessLogic.Client;
 using Microsoft.AspNetCore.Components.Authorization;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Authentication;
 

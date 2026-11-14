@@ -6,7 +6,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using FileProcessingIndex = EstateManagementUI.BlazorServer.Components.Pages.FileProcessing.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;

@@ -4,7 +4,7 @@ using EstateManagementUI.BusinessLogic.RequestHandlers;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.RequestHandlers;
 

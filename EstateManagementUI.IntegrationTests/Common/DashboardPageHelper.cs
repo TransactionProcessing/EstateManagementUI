@@ -6,8 +6,8 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Text;
-using Shared.IntegrationTesting;
-using SimpleResults;
+using TransactionProcessing.Shared.IntegrationTesting;
+using TransactionProcessing.UnionResults;
 using TransactionProcessor.DataTransferObjects.Requests.MerchantSchedule;
 
 namespace EstateManagementUI.IntegrationTests.Common;
@@ -1409,15 +1409,15 @@ public sealed class DashboardPageHelper
                 return;
             }
 
-            if (existing.Status != ResultStatus.NotFound)
+            if (!existing.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
             {
-                throw new InvalidOperationException(existing.Errors.FirstOrDefault() ?? existing.Message ?? "Failed to check merchant schedule state.");
+                throw new InvalidOperationException(String.IsNullOrEmpty(existing.Message) ? "Failed to check merchant schedule state." : existing.Message);
             }
 
             var createResult = await client.CreateMerchantSchedule(accessToken, estateId, merchantId, scheduleRequest, CancellationToken.None);
-            if (createResult.IsFailed && createResult.Status != ResultStatus.Conflict)
+            if (createResult.IsFailed && !createResult.Errors.Any(error => error.ErrorType == ErrorType.Conflict))
             {
-                throw new InvalidOperationException(createResult.Errors.FirstOrDefault() ?? createResult.Message ?? "Failed to create merchant schedule.");
+                throw new InvalidOperationException(String.IsNullOrEmpty(createResult.Message) ? "Failed to create merchant schedule." : createResult.Message);
             }
 
             await _page.WaitForTimeoutAsync(1000);

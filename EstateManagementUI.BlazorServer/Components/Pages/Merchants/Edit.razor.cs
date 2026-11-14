@@ -6,13 +6,12 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using static FastExpressionCompiler.ExpressionCompiler;
-using Result = SimpleResults.Result;
+using Result = TransactionProcessing.UnionResults.Result;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
     public partial class Edit {
@@ -115,7 +114,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 if (devicesResultTask.Result.IsFailed)
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
 
-                if (openingHoursResultTask.Result.IsFailed && openingHoursResultTask.Result.Status != ResultStatus.NotFound)
+                if (openingHoursResultTask.Result.IsFailed && !openingHoursResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
 
                 assignedOperators = operatorsResultTask.Result.Data;

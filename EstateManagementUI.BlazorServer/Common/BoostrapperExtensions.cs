@@ -1,4 +1,4 @@
-using ClientProxyBase;
+using TransactionProcessing.ClientProxyBase;
 using EstateManagementUI.BlazorServer.Authentication;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BlazorServer.Testing;
@@ -15,8 +15,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using SecurityService.Client;
-using Shared.General;
-using Shared.Serialisation;
+using TransactionProcessing.Shared.General;
+using TransactionProcessing.Shared.Serialisation;
 using System.Data.SqlTypes;
 using System.Reflection;
 using System.Security.Claims;

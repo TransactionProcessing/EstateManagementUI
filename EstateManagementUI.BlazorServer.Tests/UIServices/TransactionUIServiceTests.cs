@@ -4,7 +4,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.UIServices;
 
@@ -53,7 +53,7 @@ public class TransactionUIServiceTests
     public async Task GetTodaysSales_ReturnsFailure_WhenMediatorFails()
     {
         this._mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await this._service.GetTodaysSales(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow);
@@ -75,13 +75,13 @@ public class TransactionUIServiceTests
         };
 
         this._mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(biz));
 
         var result = await this._service.GetTodaysFailedSales(CorrelationIdHelper.New(), estateId, responseCode, comparisonDate);
 
         result.IsSuccess.ShouldBeTrue();
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Is(q =>
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Is(q =>
                 ((dynamic)q).EstateId == estateId && ((dynamic)q).ResponseCode == responseCode && ((dynamic)q).ComparisonDate.Date == comparisonDate.Date
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
@@ -98,7 +98,7 @@ public class TransactionUIServiceTests
         };
 
         this._mockMediator
-            .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(bizList));
 
         var result = await this._service.GetTodaysSalesByHour(CorrelationIdHelper.New(), estateId, comparisonDate);
@@ -106,7 +106,7 @@ public class TransactionUIServiceTests
         result.IsSuccess.ShouldBeTrue();
         result.Data!.Count.ShouldBe(1);
 
-        this._mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Is(q =>
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Is(q =>
                 ((dynamic)q).EstateId == estateId && ((dynamic)q).ComparisonDate.Date == comparisonDate.Date
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
@@ -123,7 +123,7 @@ public class TransactionUIServiceTests
         };
 
         this._mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(biz));
 
         var result = await this._service.GetTodaysSettlement(CorrelationIdHelper.New(), estateId, comparisonDate);
@@ -146,13 +146,13 @@ public class TransactionUIServiceTests
         };
 
         this._mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(biz));
 
         var result = await this._service.GetProductPerformance(CorrelationIdHelper.New(), estateId, start, end);
 
         result.IsSuccess.ShouldBeTrue();
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Is(q =>
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Is(q =>
                 ((dynamic)q).EstateId == estateId && ((dynamic)q).StartDate == start && ((dynamic)q).EndDate == end
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
@@ -171,7 +171,7 @@ public class TransactionUIServiceTests
         };
 
         this._mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(biz));
 
         // Null filters
@@ -186,7 +186,7 @@ public class TransactionUIServiceTests
         var result = await this._service.GetTransactionDetail(CorrelationIdHelper.New(), estateId, start, end, merchantIds, operatorIds, productIds);
         result.IsSuccess.ShouldBeTrue();
 
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Is(q =>
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Is(q =>
                 ((dynamic)q).EstateId == estateId && ((dynamic)q).MerchantIds == merchantIds && ((dynamic)q).OperatorIds == operatorIds && ((dynamic)q).ProductIds == productIds
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
@@ -210,10 +210,10 @@ public class TransactionUIServiceTests
             Operators = new()
         };
 
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Any(), Arg<CancellationToken>.Any())
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(bizMerchant));
 
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Any(), Arg<CancellationToken>.Any())
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Success(bizOperator));
 
         var merchantResult = await this._service.GetMerchantTransactionSummary(CorrelationIdHelper.New(), estateId, start, end, 5, 6);
@@ -222,11 +222,11 @@ public class TransactionUIServiceTests
         var operatorResult = await this._service.GetOperatorTransactionSummary(CorrelationIdHelper.New(), estateId, start, end, 7, 8);
         operatorResult.IsSuccess.ShouldBeTrue();
 
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Is(q =>
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Is(q =>
             ((dynamic)q).EstateId == estateId && ((dynamic)q).MerchantId == 5 && ((dynamic)q).OperatorId == 6
         ), Arg<CancellationToken>.Any()).Called(Count.Once());
 
-        this._mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Is(q =>
+        this._mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Is(q =>
             ((dynamic)q).EstateId == estateId && ((dynamic)q).MerchantId == 7 && ((dynamic)q).OperatorId == 8
         ), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
@@ -235,90 +235,90 @@ public class TransactionUIServiceTests
     public async Task GetTodaysFailedSales_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetTodaysFailedSales(CorrelationIdHelper.New(), Guid.NewGuid(), "RC", DateTime.UtcNow);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSalesModel>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
     public async Task GetTodaysSalesByHour_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetTodaysSalesByHour(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.TransactionModels.TodaysSalesByHourModel>>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
     public async Task GetTodaysSettlement_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetTodaysSettlement(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TodaysSettlementModel>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
     public async Task GetProductPerformance_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetProductPerformance(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.ProductPerformanceResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
     public async Task GetTransactionDetail_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetTransactionDetail(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null, null);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionDetailReportResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
     public async Task GetMerchantTransactionSummary_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetMerchantTransactionSummary(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByMerchantResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 
     [Fact]
     public async Task GetOperatorTransactionSummary_ReturnsFailure_WhenMediatorFails()
     {
         _mockMediator
-            .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Any(), Arg<CancellationToken>.Any())
+            .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Any(), Arg<CancellationToken>.Any())
             .ReturnsAsync(Result.Failure("err"));
 
         var result = await _service.GetOperatorTransactionSummary(CorrelationIdHelper.New(), Guid.NewGuid(), DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null);
 
         result.IsFailed.ShouldBeTrue();
-        _mockMediator.Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+        _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.TransactionModels.TransactionSummaryByOperatorResponse>>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
     }
 }

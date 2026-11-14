@@ -2,11 +2,10 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using static FastExpressionCompiler.ExpressionCompiler;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using Result = SimpleResults.Result;
+using Result = TransactionProcessing.UnionResults.Result;
 
 namespace EstateManagementUI.BlazorServer.UIServices;
 

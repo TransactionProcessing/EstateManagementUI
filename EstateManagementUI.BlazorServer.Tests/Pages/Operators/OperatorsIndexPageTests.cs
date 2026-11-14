@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using OperatorsIndex = EstateManagementUI.BlazorServer.Components.Pages.Operators.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
@@ -265,7 +265,7 @@ public class OperatorsIndexPageTests : BaseTest
     {
         // Arrange
         this.OperatorUIService.GetOperators(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         var cut = Render<OperatorsIndex>();

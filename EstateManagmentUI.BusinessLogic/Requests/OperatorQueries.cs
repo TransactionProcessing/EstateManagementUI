@@ -1,6 +1,6 @@
 using EstateManagementUI.BusinessLogic.Models;
 using MediatR;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BusinessLogic.Requests;
 

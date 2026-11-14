@@ -1,12 +1,11 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Text;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
-using Shared.Results;
 using TransactionProcessor.DataTransferObjects.Requests.Estate;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 
@@ -33,7 +32,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
-            Result<Estate>? apiResult = await this.EstateReportingApiClient.GetEstate(token.Data, request.EstateId, cancellationToken);
+            Result<Estate> apiResult = await this.EstateReportingApiClient.GetEstate(token.Data, request.EstateId, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
@@ -49,7 +48,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
-            Result<List<EstateOperator>>? apiResult = await this.EstateReportingApiClient.GetEstateAssignedOperators(token.Data, request.EstateId, cancellationToken);
+            Result<List<EstateOperator>> apiResult = await this.EstateReportingApiClient.GetEstateAssignedOperators(token.Data, request.EstateId, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
@@ -65,7 +64,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
             if (token.IsFailed)
                 return ResultHelpers.CreateFailure(token);
 
-            Result? apiResult = await this.TransactionProcessorClient.RemoveOperatorFromEstate(token.Data, request.EstateId, request.OperatorId, cancellationToken);
+            Result apiResult = await this.TransactionProcessorClient.RemoveOperatorFromEstate(token.Data, request.EstateId, request.OperatorId, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 
@@ -85,7 +84,7 @@ namespace EstateManagementUI.BusinessLogic.Client {
                 OperatorId = request.OperatorId
             };
 
-            Result? apiResult = await this.TransactionProcessorClient.AssignOperatorToEstate(token.Data, request.EstateId, assignOperatorRequest, cancellationToken);
+            Result apiResult = await this.TransactionProcessorClient.AssignOperatorToEstate(token.Data, request.EstateId, assignOperatorRequest, cancellationToken);
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
 

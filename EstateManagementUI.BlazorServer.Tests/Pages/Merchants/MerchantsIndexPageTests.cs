@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using MerchantsIndex = EstateManagementUI.BlazorServer.Components.Pages.Merchants.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
@@ -618,7 +618,7 @@ public class MerchantsIndexPageTests : BaseTest
             .ReturnsAsync(Result.Success(merchants));
 
         this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         var cut = Render<MerchantsIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -767,7 +767,7 @@ public class MerchantsIndexPageTests : BaseTest
                 Arg<Int32?>.Any(),
                 Arg<String>.Any(),
                 Arg<String>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         var cut = Render<MerchantsIndex>();

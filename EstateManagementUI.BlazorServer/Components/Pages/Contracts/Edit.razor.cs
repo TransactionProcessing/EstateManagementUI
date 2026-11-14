@@ -4,8 +4,7 @@ using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using System.ComponentModel.DataAnnotations;
 using EstateManagementUI.BlazorServer.Common;
 

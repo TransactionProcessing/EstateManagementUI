@@ -3,8 +3,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using SimpleResults;
-using Shared.Results;
+using TransactionProcessing.UnionResults;
 using Spectre.Console;
 using static EstateManagementUI.BlazorServer.Models.MerchantModels;
 
@@ -347,7 +346,7 @@ public class MerchantUIService : IMerchantUIService {
                                                    Guid merchantId,
                                                    MerchantModels.MerchantScheduleModel scheduleModel) {
         Result<MerchantModels.MerchantScheduleModel> loadResult = await this.GetMerchantSchedule(correlationId, estateId, merchantId, scheduleModel.Year);
-        if (loadResult.IsFailed && loadResult.Status != ResultStatus.NotFound)
+        if (loadResult.IsFailed && !loadResult.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
             return ResultHelpers.CreateFailure(loadResult);
 
         BusinessLogic.Models.MerchantModels.MerchantScheduleModel businessLogicModel = new() {
@@ -362,7 +361,7 @@ public class MerchantUIService : IMerchantUIService {
         };
 
         IRequest<Result> command;
-        if (loadResult.Status == ResultStatus.NotFound) {
+        if (loadResult.Errors.Any(error => error.ErrorType == ErrorType.NotFound)) {
             command = new MerchantCommands.CreateMerchantScheduleCommand(correlationId, estateId, merchantId, businessLogicModel);
         }
         else {

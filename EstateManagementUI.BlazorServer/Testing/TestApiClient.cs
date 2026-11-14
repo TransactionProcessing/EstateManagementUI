@@ -4,8 +4,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using EstateManagementUI.BusinessLogic.Services;
 using FileProcessor.Client;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using FileImportLogDetailsModel = EstateManagementUI.BusinessLogic.Models.FileProcessingModels.FileImportLogDetailsModel;
 
 namespace EstateManagementUI.BlazorServer.Testing;

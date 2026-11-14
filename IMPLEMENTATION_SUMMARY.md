@@ -172,7 +172,7 @@ Copied all feature files from the original integration tests:
 
 2. **Installing Playwright Browsers** (first time only):
    ```bash
-   pwsh bin/Debug/net10.0/playwright.ps1 install
+   pwsh bin/Debug/net11.0/playwright.ps1 install
    # or
    dotnet tool install --global Microsoft.Playwright.CLI
    playwright install
@@ -196,7 +196,7 @@ Add to CI pipeline:
 - name: Install Playwright Browsers
   run: |
     dotnet build EstateManagementUI.BlazorIntegrationTests
-    pwsh EstateManagementUI.BlazorIntegrationTests/bin/Debug/net10.0/playwright.ps1 install --with-deps
+    pwsh EstateManagementUI.BlazorIntegrationTests/bin/Debug/net11.0/playwright.ps1 install --with-deps
 
 - name: Run Integration Tests
   run: dotnet test EstateManagementUI.BlazorIntegrationTests

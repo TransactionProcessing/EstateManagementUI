@@ -1,7 +1,7 @@
 using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll;
-using Shared.IntegrationTesting;
+using TransactionProcessing.Shared.IntegrationTesting;
 using System.Globalization;
 
 namespace EstateManagementUI.IntegrationTests.Steps;

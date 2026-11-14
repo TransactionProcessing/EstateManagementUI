@@ -2,7 +2,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using EstateManagementUI.BusinessLogic.Services;
 using MediatR;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using FileImportLogDetailsModel = EstateManagementUI.BusinessLogic.Models.FileProcessingModels.FileImportLogDetailsModel;
 
 namespace EstateManagementUI.BlazorServer.Testing;
@@ -204,13 +204,13 @@ public sealed class TestMediator : IMediator
     private Result<MerchantModels.MerchantModel> HandleGetMerchant(MerchantQueries.GetMerchantQuery query)
     {
         var merchant = _dataStore.GetMerchant(query.EstateId, query.MerchantId);
-        return merchant is null ? Result.NotFound() : Result.Success(merchant);
+        return merchant is null ? Result.NotFound("The requested resource was not found.") : Result.Success(merchant);
     }
 
     private Result<MerchantModels.MerchantScheduleModel> HandleGetMerchantSchedule(MerchantQueries.GetMerchantScheduleQuery query)
         => _supportState.TryGetMerchantSchedule(query.EstateId, query.MerchantId, query.Year, out var schedule) && schedule is not null
             ? Result.Success(schedule)
-            : Result.NotFound();
+            : Result.NotFound("The requested resource was not found.");
 
     private Result<List<MerchantModels.MerchantOperatorModel>> HandleGetMerchantOperators(MerchantQueries.GetMerchantOperatorsQuery query)
         => Result.Success(_supportState.GetMerchantOperators(query.EstateId, query.MerchantId));
@@ -224,7 +224,7 @@ public sealed class TestMediator : IMediator
     private Result<MerchantModels.MerchantOpeningHoursModel> HandleGetMerchantOpeningHours(MerchantQueries.GetMerchantOpeningHoursQuery query)
         => _supportState.TryGetMerchantOpeningHours(query.EstateId, query.MerchantId, out var openingHours) && openingHours is not null
             ? Result.Success(openingHours)
-            : Result.NotFound();
+            : Result.NotFound("The requested resource was not found.");
 
     private Result HandleCreateMerchant(MerchantCommands.CreateMerchantCommand command)
     {
@@ -297,7 +297,7 @@ public sealed class TestMediator : IMediator
         var operatorModel = GetOperators(command.EstateId).FirstOrDefault(op => op.OperatorId == command.OperatorId);
         if (operatorModel is null)
         {
-            return Result.NotFound();
+            return Result.NotFound("The requested resource was not found.");
         }
 
         var list = _supportState.GetMerchantOperators(command.EstateId, command.MerchantId);
@@ -328,7 +328,7 @@ public sealed class TestMediator : IMediator
         var contract = _dataStore.GetContract(command.EstateId, command.ContractId);
         if (contract is null)
         {
-            return Result.NotFound();
+            return Result.NotFound("The requested resource was not found.");
         }
 
         var list = _supportState.GetMerchantContracts(command.EstateId, command.MerchantId);
@@ -396,7 +396,7 @@ public sealed class TestMediator : IMediator
         var merchant = _dataStore.GetMerchant(command.EstateId, command.MerchantId);
         if (merchant is null)
         {
-            return Result.NotFound();
+            return Result.NotFound("The requested resource was not found.");
         }
 
         merchant.Balance = (merchant.Balance ?? 0) + command.Amount;
@@ -423,7 +423,7 @@ public sealed class TestMediator : IMediator
     private Result<OperatorModels.OperatorModel> HandleGetOperator(OperatorQueries.GetOperatorQuery query)
     {
         var @operator = GetOperators(query.EstateId).FirstOrDefault(item => item.OperatorId == query.OperatorId);
-        return @operator is null ? Result.NotFound() : Result.Success(@operator);
+        return @operator is null ? Result.NotFound("The requested resource was not found.") : Result.Success(@operator);
     }
 
     private Result<List<OperatorModels.OperatorDropDownModel>> HandleGetOperatorsForDropDown(OperatorQueries.GetOperatorsForDropDownQuery query)
@@ -480,7 +480,7 @@ public sealed class TestMediator : IMediator
     private Result<ContractModels.ContractModel> HandleGetContract(ContractQueries.GetContractQuery query)
     {
         var contract = GetContracts(query.EstateId).FirstOrDefault(item => item.ContractId == query.ContractId);
-        return contract is null ? Result.NotFound() : Result.Success(contract);
+        return contract is null ? Result.NotFound("The requested resource was not found.") : Result.Success(contract);
     }
 
     private Result HandleCreateContract(ContractCommands.CreateContractCommand command)
@@ -502,7 +502,7 @@ public sealed class TestMediator : IMediator
         var contract = GetContracts(command.EstateId).FirstOrDefault(item => item.ContractId == command.ContractId);
         if (contract is null)
         {
-            return Result.NotFound();
+            return Result.NotFound("The requested resource was not found.");
         }
 
         contract.Products ??= [];
@@ -526,7 +526,7 @@ public sealed class TestMediator : IMediator
         var product = contract?.Products?.FirstOrDefault(item => item.ContractProductId == command.ProductId);
         if (contract is null || product is null)
         {
-            return Result.NotFound();
+            return Result.NotFound("The requested resource was not found.");
         }
 
         product.TransactionFees ??= [];
@@ -549,7 +549,7 @@ public sealed class TestMediator : IMediator
         var product = contract?.Products?.FirstOrDefault(item => item.ContractProductId == command.ProductId);
         if (contract is null || product is null)
         {
-            return Result.NotFound();
+            return Result.NotFound("The requested resource was not found.");
         }
 
         product.TransactionFees?.RemoveAll(fee => fee.TransactionFeeId == command.FeeId);
@@ -686,7 +686,7 @@ public sealed class TestMediator : IMediator
     private Result<FileImportLogDetailsModel> HandleGetFileImportLog(FileProcessingQueries.GetFileImportLogQuery query)
     {
         var log = _supportState.GetFileImportLog(query.FileImportLogId);
-        return log is null ? Result.NotFound() : Result.Success(log);
+        return log is null ? Result.NotFound("The requested resource was not found.") : Result.Success(log);
     }
 
     private static TransactionModels.TransactionDetail CreateTransaction(int number, string merchant, string product, string @operator, decimal grossAmount, decimal fee, string status)

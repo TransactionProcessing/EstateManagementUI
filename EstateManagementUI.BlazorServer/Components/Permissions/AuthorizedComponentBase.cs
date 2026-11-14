@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using EstateManagementUI.BlazorServer.Components.Common;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 public abstract class AuthorizedComponentBase : CustomComponentBase
 {
@@ -28,7 +28,7 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
         {
             Console.WriteLine($"[AuthorizedComponentBase {DateTime.Now:HH:mm:ss.fff}] Permission denied - navigating to access denied page");
             this.NavigationManager.NavigateToAccessDeniedPage();
-            return Result.Unauthorized();
+            return Result.Unauthorized("You are not authorized to perform this action.");
         }
 
         return Result.Success();
@@ -87,7 +87,7 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
         if (authResult.IsFailed)
         {
             Console.WriteLine($"[AuthorizedComponentBase {DateTime.Now:HH:mm:ss.fff}] OnAfterRender stopped because permission check failed");
-            return Result.Failure();
+            return Result.Failure("Permission check failed.");
         }
 
         if (loadFunc == null)
@@ -101,7 +101,7 @@ public abstract class AuthorizedComponentBase : CustomComponentBase
         {
             Console.WriteLine($"[AuthorizedComponentBase {DateTime.Now:HH:mm:ss.fff}] OnAfterRender loadFunc failed");
             this.NavigationManager.NavigateToErrorPage();
-            return Result.Failure();
+            return Result.Failure("The page failed to load.");
         }
         Console.WriteLine($"[AuthorizedComponentBase {DateTime.Now:HH:mm:ss.fff}] OnAfterRender loadFunc succeeded");
         return Result.Success();

@@ -3,7 +3,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using System.ComponentModel.DataAnnotations;
 using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Models;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Operators
 {

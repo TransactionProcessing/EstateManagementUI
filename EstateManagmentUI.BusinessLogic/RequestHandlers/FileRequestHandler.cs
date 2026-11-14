@@ -3,8 +3,7 @@ using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using FileProcessor.DataTransferObjects.Responses;
 using MediatR;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BusinessLogic.RequestHandlers;
 

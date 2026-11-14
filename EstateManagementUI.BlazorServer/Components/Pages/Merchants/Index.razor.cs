@@ -1,8 +1,7 @@
 ﻿using EstateManagementUI.BlazorServer.Common;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using MerchantListModel = EstateManagementUI.BlazorServer.Models.MerchantModels.MerchantListModel;
 using MerchantModels = EstateManagementUI.BlazorServer.Models.MerchantModels;
 
