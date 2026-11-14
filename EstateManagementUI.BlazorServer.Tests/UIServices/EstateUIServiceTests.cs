@@ -129,7 +129,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var correlationId = CorrelationIdHelper.New();
 
             _mockMediator.Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.EstateModels.EstateModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.EstateModels.EstateModel>>>.Any(), Arg<CancellationToken>.Any())
-                .ReturnsAsync(Result.Success());
+                .ReturnsAsync(Result.Success(new EstateModels.EstateModel()));
             _mockMediator.Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("The operation failed."));
             _mockMediator.Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.RecentContractModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.ContractModels.RecentContractModel>>>>.Any(), Arg<CancellationToken>.Any())
