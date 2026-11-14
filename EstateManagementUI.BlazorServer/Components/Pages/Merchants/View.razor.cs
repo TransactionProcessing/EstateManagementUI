@@ -82,11 +82,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 if (openingHoursResultTask.Result.IsFailed && !openingHoursResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
 
-                assignedOperators = operatorsResultTask.Result.Data ?? [];
-                assignedContracts = contractsResultTask.Result.Data ?? [];
-                this.assignedDevices = devicesResultTask.Result.Data ?? [];
+                assignedOperators = operatorsResultTask.Result.IsFailed ? [] : operatorsResultTask.Result.Data ?? [];
+                assignedContracts = contractsResultTask.Result.IsFailed ? [] : contractsResultTask.Result.Data ?? [];
+                this.assignedDevices = devicesResultTask.Result.IsFailed ? [] : devicesResultTask.Result.Data ?? [];
 
-                if (openingHoursResultTask.Result.Data == null) {
+                if (openingHoursResultTask.Result.IsFailed || openingHoursResultTask.Result.Data == null) {
                     merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel {
                         Friday = new MerchantModels.DayOpeningHoursModel(),
                         Monday = new MerchantModels.DayOpeningHoursModel(),
