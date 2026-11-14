@@ -457,11 +457,11 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 return false;
             }
 
-            if (DateTime.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed) == false) {
+            if (TimeOnly.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly parsed) == false) {
                 return false;
             }
 
-            time = parsed.TimeOfDay;
+            time = parsed.ToTimeSpan();
             return true;
         }
 
