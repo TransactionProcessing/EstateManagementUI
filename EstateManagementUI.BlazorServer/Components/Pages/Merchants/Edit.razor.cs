@@ -439,6 +439,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
             String trimmedValue = value.Trim();
 
+            if (trimmedValue.Length == 4 &&
+                Int32.TryParse(trimmedValue.AsSpan(0, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 hours) &&
+                Int32.TryParse(trimmedValue.AsSpan(2, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 minutes) &&
+                (hours > 23 || minutes > 59)) {
+                return trimmedValue;
+            }
+
             if (TimeOnly.TryParseExact(trimmedValue,
                                        OpeningHoursFormats,
                                        CultureInfo.InvariantCulture,
@@ -454,6 +461,13 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
             time = default;
 
             if (String.IsNullOrWhiteSpace(value)) {
+                return false;
+            }
+
+            if (value.Length == 4 &&
+                Int32.TryParse(value.AsSpan(0, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 hours) &&
+                Int32.TryParse(value.AsSpan(2, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 minutes) &&
+                (hours > 23 || minutes > 59)) {
                 return false;
             }
 
