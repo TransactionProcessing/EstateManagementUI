@@ -2,8 +2,7 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace EstateManagementUI.BlazorServer.UIServices;

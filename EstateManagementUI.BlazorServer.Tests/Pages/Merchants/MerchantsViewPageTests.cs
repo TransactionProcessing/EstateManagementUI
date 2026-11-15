@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
 
@@ -400,7 +400,7 @@ public class MerchantsViewPageTests : BaseTest
     {
         // Arrange
         this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         var cut = Render<View>(parameters => parameters

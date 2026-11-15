@@ -5,8 +5,7 @@ using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.UIServices
 {

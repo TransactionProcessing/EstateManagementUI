@@ -4,7 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using ContractsNew = EstateManagementUI.BlazorServer.Components.Pages.Contracts.New;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Contracts;
@@ -102,7 +102,7 @@ public class ContractsNewPageTests : BaseTest
     public void ContractsNew_LoadsOperatorsFailed_NavigateToError()
     {
         // Arrange
-        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure());
+        this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
@@ -177,7 +177,7 @@ public class ContractsNewPageTests : BaseTest
 
         this.OperatorUIService.GetOperatorsForDropDown(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Success(operators));
         this.ContractUIService.CreateContract(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<ContractModels.CreateContractFormModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<ContractsNew> cut = Render<ContractsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Test Operator"), timeout: TimeSpan.FromSeconds(5));

@@ -6,21 +6,23 @@ using FileProcessor.Client;
 using Reqnroll;
 using SecurityService.Client;
 using SecurityService.DataTransferObjects;
-using Shared.IntegrationTesting;
-using Shared.IntegrationTesting.TestContainers;
-using Shared.Logger;
-using Shared.Serialisation;
+using TransactionProcessing.Shared.IntegrationTesting;
+using TransactionProcessing.Shared.IntegrationTesting.TestContainers;
+using TransactionProcessing.Shared.Logger;
+using TransactionProcessing.Shared.Serialisation;
+using KurrentDB.Client;
+using TestHosts.Clients;
 using Shouldly;
 using System.Diagnostics;
 using TransactionProcessor.Client;
 using TransactionProcessor.IntegrationTesting.Helpers;
 using ContainerBuilder = DotNet.Testcontainers.Builders.ContainerBuilder;
-using ReqnrollTableHelper = Shared.IntegrationTesting.ReqnrollTableHelper;
+using ReqnrollTableHelper = TransactionProcessing.Shared.IntegrationTesting.ReqnrollTableHelper;
 using String = System.String;
 
 namespace EstateManagementUI.IntegrationTests.Common
 {
-    public class DockerHelper : global::Shared.IntegrationTesting.TestContainers.DockerHelper
+    public class DockerHelper : global::TransactionProcessing.Shared.IntegrationTesting.TestContainers.DockerHelper
     {
         #region Fields
 
@@ -32,9 +34,13 @@ namespace EstateManagementUI.IntegrationTests.Common
 
         public IFileProcessorClient FileProcessorClient;
 
-        public EventStoreProjectionManagementClient ProjectionManagementClient;
+        public KurrentDBProjectionManagementClient ProjectionManagementClient;
 
         public HttpClient TestHostHttpClient;
+
+        public IAgencyBankingClient AgencyBankingClient;
+
+        public String AccessToken { get; private set; }
 
         #endregion
 
@@ -59,6 +65,10 @@ namespace EstateManagementUI.IntegrationTests.Common
         {
             return StringSerialiser.DeserializeObject<Object>(arg, type, new SerialiserOptions(SerialiserPropertyFormat.SnakeCase));
         }
+
+        String Serialise_CamelCase(Object arg) => StringSerialiser.Serialise<Object>(arg, new SerialiserOptions(SerialiserPropertyFormat.CamelCase));
+
+        Object Deserialise_CamelCase(String arg, Type type) => StringSerialiser.DeserializeObject<Object>(arg, type, new SerialiserOptions(SerialiserPropertyFormat.CamelCase));
 
         #endregion
 
@@ -119,8 +129,9 @@ namespace EstateManagementUI.IntegrationTests.Common
             proc.WaitForExit();
         }
 
-        public override async Task CreateSubscriptions()
+        public override async Task CreateSubscriptions(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             List<(String streamName, String groupName, Int32 maxRetries)> subscriptions = new();
             subscriptions.AddRange(MessagingService.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
             subscriptions.AddRange(TransactionProcessor.IntegrationTesting.Helpers.SubscriptionsHelper.GetSubscriptions());
@@ -162,9 +173,9 @@ namespace EstateManagementUI.IntegrationTests.Common
         /// Starts the containers for scenario run.
         /// </summary>
         /// <param name="scenarioName">Name of the scenario.</param>
-        public override async Task StartContainersForScenarioRun(String scenarioName, DockerServices dockerServices)
+        public override async Task StartContainersForScenarioRun(String scenarioName, DockerServices dockerServices, CancellationToken cancellationToken)
         {
-            await base.StartContainersForScenarioRun(scenarioName, dockerServices);
+            await base.StartContainersForScenarioRun(scenarioName, dockerServices, cancellationToken);
             Environment.SetEnvironmentVariable("SecurityServiceLocalPort", DockerPorts.SecurityServiceDockerPort.ToString());
             Environment.SetEnvironmentVariable("SecurityServicePort", this.SecurityServicePort.ToString());
 
@@ -192,7 +203,13 @@ namespace EstateManagementUI.IntegrationTests.Common
             this.FileProcessorClient = new FileProcessorClient(fileProcessorBaseAddressResolver, httpClient, this.Serialise, this.Deserialise);
             this.TestHostHttpClient = new HttpClient(clientHandler);
             this.TestHostHttpClient.BaseAddress = new Uri($"http://127.0.0.1:{this.TestHostServicePort}");
-            this.ProjectionManagementClient = new EventStoreProjectionManagementClient(ConfigureEventStoreSettings());
+            this.ProjectionManagementClient = new KurrentDBProjectionManagementClient(this.ConfigureKurrentDbSettings());
+            String TestHostServiceBaseAddressResolver(String api) => $"http://127.0.0.1:{this.TestHostServicePort}";
+            this.AgencyBankingClient = new AgencyBankingClient(TestHostServiceBaseAddressResolver, httpClient, this.Serialise_CamelCase, this.Deserialise_CamelCase);
+            TransactionProcessing.UnionResults.Result<TokenResponse> bootstrapToken = await this.SecurityServiceClient.GetToken("management-bootstrap", "management-bootstrap-secret", CancellationToken.None);
+            if (bootstrapToken.IsFailed || String.IsNullOrWhiteSpace(bootstrapToken.Data?.AccessToken))
+                throw new InvalidOperationException("Unable to obtain the management bootstrap token for integration tests.");
+            this.AccessToken = bootstrapToken.Data.AccessToken;
         }
 
         public string GetTransactionProcessorReadModelConnectionString(Boolean isLocal)
@@ -236,11 +253,10 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             (String imageName, Boolean useLatest) imageDetails = this.GetImageDetails(ContainerType.EstateManagementUI).Data;
 
-            ContainerBuilder containerBuilder = new ContainerBuilder()
+            ContainerBuilder containerBuilder = new ContainerBuilder(imageDetails.imageName)
                 .WithName(this.EstateManagementUiContainerName)
-                .WithImage(imageDetails.imageName)
                 .WithEnvironment(environmentVariables)
-                .MountHostFolder(this.DockerPlatform, this.HostTraceFolder)
+                .MountHostFolder(this.HostTraceFolder)
                 .WithPortBinding(DockerPorts.EstateManagementUIDockerPort, true);
 
             return containerBuilder;
@@ -479,11 +495,10 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             (String imageName, Boolean useLatest) imageDetails = this.GetImageDetails(ContainerType.SecurityService).Data;
 
-            ContainerBuilder? securityServiceContainer = new DotNet.Testcontainers.Builders.ContainerBuilder().WithName(this.SecurityServiceContainerName)
+            ContainerBuilder? securityServiceContainer = new DotNet.Testcontainers.Builders.ContainerBuilder(imageDetails.imageName).WithName(this.SecurityServiceContainerName)
                                                                      .WithEnvironment(environmentVariables)
-                                                                     .WithImage(imageDetails.imageName)
                                                                      .WithPortBinding(DockerPorts.SecurityServiceDockerPort, true)
-                                                                     .MountHostFolder(this.DockerPlatform, this.HostTraceFolder);
+                                                                     .MountHostFolder(this.HostTraceFolder);
 
             // Now build and return the container                
             return securityServiceContainer;
@@ -665,9 +680,9 @@ namespace EstateManagementUI.IntegrationTests.Common
             String scenarioName = this.ScenarioContext.ScenarioInfo.Title.Replace(" ", "");
             NlogLogger logger = new NlogLogger();
             logger.Initialise(LogManager.GetLogger(scenarioName), scenarioName);
-            LogManager.AddHiddenAssembly(typeof(NlogLogger).Assembly);
+            LogManager.Setup().SetupLogFactory(setup => setup.AddCallSiteHiddenAssembly(typeof(NlogLogger).Assembly));
 
-            DockerServices dockerServices = DockerServices.SqlServer | DockerServices.CallbackHandler | DockerServices.EventStore |
+            DockerServices dockerServices = DockerServices.SqlServer | DockerServices.CallbackHandler | DockerServices.KurrentDb |
                                             DockerServices.FileProcessor | DockerServices.MessagingService | DockerServices.SecurityService |
                                             DockerServices.SqlServer | DockerServices.TransactionProcessor |
                                             DockerServices.TransactionProcessorAcl | DockerServices.EstateManagementUI |
@@ -689,7 +704,7 @@ namespace EstateManagementUI.IntegrationTests.Common
 
             this.TestingContext.Logger = logger;
             this.TestingContext.Logger.LogInformation("About to Start Containers for Scenario Run");
-            await this.TestingContext.DockerHelper.StartContainersForScenarioRun(scenarioName, dockerServices).ConfigureAwait(false);
+            await this.TestingContext.DockerHelper.StartContainersForScenarioRun(scenarioName, dockerServices, CancellationToken.None).ConfigureAwait(false);
             this.TestingContext.Logger.LogInformation("Containers for Scenario Run Started");
         }
 

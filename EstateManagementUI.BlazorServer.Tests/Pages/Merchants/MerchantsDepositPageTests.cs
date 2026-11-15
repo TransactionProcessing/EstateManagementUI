@@ -5,7 +5,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using MerchantsDeposit = EstateManagementUI.BlazorServer.Components.Pages.Merchants.Deposit;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
@@ -139,7 +139,7 @@ public class MerchantsDepositPageTests : BaseTest
             Arg<Guid>.Any(),
             Arg<Guid>.Any(),
             Arg<MerchantModels.DepositModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>
             parameters.Add(p => p.MerchantId, _testMerchantId));
@@ -214,7 +214,7 @@ public class MerchantsDepositPageTests : BaseTest
             Arg<CorrelationId>.Any(),
             Arg<Guid>.Any(),
             Arg<Guid>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         IRenderedComponent<MerchantsDeposit> cut = Render<MerchantsDeposit>(parameters =>

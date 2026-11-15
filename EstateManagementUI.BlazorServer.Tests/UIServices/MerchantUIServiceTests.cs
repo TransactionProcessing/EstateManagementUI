@@ -7,7 +7,7 @@ using EstateManagementUI.BlazorServer.UIServices;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using Xunit;
 using MediatR;
 
@@ -50,7 +50,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(biz));
 
             // Act
@@ -73,7 +73,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
             // Arrange
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             // Act
@@ -94,7 +94,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             // Act
@@ -111,7 +111,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchants_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantListModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchants(CorrelationIdHelper.New(), Guid.NewGuid(), "", "", null, "", "");
@@ -130,7 +130,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             var result = await _service.GetMerchantOperators(CorrelationIdHelper.New(), estateId, merchantId);
@@ -144,7 +144,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchantOperators_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantOperatorModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchantOperators(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
@@ -164,7 +164,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             var result = await _service.GetMerchantContracts(CorrelationIdHelper.New(), estateId, merchantId);
@@ -178,7 +178,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchantContracts_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantContractModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchantContracts(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
@@ -197,7 +197,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             var result = await _service.GetMerchantDevices(CorrelationIdHelper.New(), estateId, merchantId);
@@ -211,7 +211,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchantDevices_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDeviceModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchantDevices(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid());
@@ -238,13 +238,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success());
 
             var result = await _service.CreateMerchant(CorrelationIdHelper.New(), estateId, Guid.NewGuid(), createModel);
 
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 ((dynamic)c).EstateId == estateId &&
                 ((dynamic)c).Name == createModel.MerchantName &&
                 ((dynamic)c).SettlementSchedule == createModel.SettlementSchedule &&
@@ -263,8 +263,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task CreateMerchant_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
-                .ReturnsAsync(Result.Failure());
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure("The operation failed."));
 
             var result = await _service.CreateMerchant(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.CreateMerchantModel { MerchantName = "x", SettlementSchedule = "s" });
 
@@ -296,13 +296,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success());
 
             var result = await _service.UpdateMerchant(CorrelationIdHelper.New(), estateId, merchantId, editModel);
 
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 ((dynamic)c).EstateId == estateId &&
                 ((dynamic)c).MerchantId == merchantId &&
                 ((dynamic)c).Name == editModel.MerchantName &&
@@ -318,8 +318,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task UpdateMerchant_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
-                .ReturnsAsync(Result.Failure());
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure("The operation failed."));
 
             var result = await _service.UpdateMerchant(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantEditModel { MerchantName = "x", SettlementSchedule = "s" });
 
@@ -343,13 +343,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success());
 
             var result = await _service.UpdateMerchantOpeningHours(CorrelationIdHelper.New(), estateId, merchantId, openingHours);
 
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 ((dynamic)c).EstateId == estateId &&
                 ((dynamic)c).MerchantId == merchantId &&
                 ((dynamic)c).OpeningHours.Sunday.Opening == "0800" &&
@@ -363,8 +363,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task UpdateMerchantOpeningHours_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
-                .ReturnsAsync(Result.Failure());
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.Failure("The operation failed."));
 
             var result = await _service.UpdateMerchantOpeningHours(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantOpeningHoursModel());
 
@@ -378,8 +378,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var merchantId = Guid.NewGuid();
             var operatorId = Guid.NewGuid();
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
 
             var addResult = await _service.AddOperatorToMerchant(CorrelationIdHelper.New(), estateId, merchantId, operatorId, "MN", "TN");
             var removeResult = await _service.RemoveOperatorFromMerchant(CorrelationIdHelper.New(), estateId, merchantId, operatorId);
@@ -387,7 +387,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             addResult.IsSuccess.ShouldBeTrue();
             removeResult.IsSuccess.ShouldBeTrue();
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.AddOperatorToMerchantCommand addOperatorCommand &&
                 addOperatorCommand.EstateId == estateId &&
                 addOperatorCommand.MerchantId == merchantId &&
@@ -396,7 +396,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                 addOperatorCommand.TerminalNumber == "TN"
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.RemoveOperatorFromMerchantCommand removeOperatorCommand &&
                 removeOperatorCommand.EstateId == estateId &&
                 removeOperatorCommand.MerchantId == merchantId &&
@@ -411,8 +411,8 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var merchantId = Guid.NewGuid();
             var contractId = Guid.NewGuid();
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
 
             var assign = await _service.AssignContractToMerchant(CorrelationIdHelper.New(), estateId, merchantId, contractId);
             var remove = await _service.RemoveContractFromMerchant(CorrelationIdHelper.New(), estateId, merchantId, contractId);
@@ -420,12 +420,12 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             assign.IsSuccess.ShouldBeTrue();
             remove.IsSuccess.ShouldBeTrue();
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.AssignContractToMerchantCommand assignCommand &&
                 assignCommand.EstateId == estateId && assignCommand.MerchantId == merchantId && assignCommand.ContractId == contractId
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.RemoveContractFromMerchantCommand removeCommand &&
                 removeCommand.EstateId == estateId && removeCommand.MerchantId == merchantId && removeCommand.ContractId == contractId
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
@@ -437,9 +437,9 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var estateId = Guid.NewGuid();
             var merchantId = Guid.NewGuid();
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).ReturnsAsync(Result.Success());
 
             var addDevice = await _service.AddMerchantDevice(CorrelationIdHelper.New(), estateId, merchantId, "dev1");
             var swapDevice = await _service.SwapMerchantDevice(CorrelationIdHelper.New(), estateId, merchantId, "old", "new");
@@ -450,17 +450,17 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             swapDevice.IsSuccess.ShouldBeTrue();
             deposit.IsSuccess.ShouldBeTrue();
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.AddMerchantDeviceCommand addDeviceCommand &&
                 addDeviceCommand.EstateId == estateId && addDeviceCommand.MerchantId == merchantId && addDeviceCommand.DeviceIdentifier == "dev1"
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.SwapMerchantDeviceCommand swapDeviceCommand &&
                 swapDeviceCommand.EstateId == estateId && swapDeviceCommand.MerchantId == merchantId && swapDeviceCommand.OldDevice == "old" && swapDeviceCommand.NewDevice == "new"
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
 
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Is(c =>
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Is(c =>
                 c is MerchantCommands.MakeMerchantDepositCommand depositCommand &&
                 depositCommand.EstateId == estateId && depositCommand.MerchantId == merchantId && depositCommand.Amount == depositModel.Amount && depositCommand.Reference == depositModel.Reference
             ), Arg<CancellationToken>.Any()).Called(Count.Once());
@@ -476,7 +476,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             var result = await _service.GetRecentMerchants(CorrelationIdHelper.New(), estateId);
@@ -492,7 +492,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetRecentMerchants_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.RecentMerchantsModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetRecentMerchants(CorrelationIdHelper.New(), Guid.NewGuid());
@@ -512,7 +512,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizKpi));
 
             var result = await _service.GetMerchantKpis(CorrelationIdHelper.New(), estateId);
@@ -527,7 +527,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchantKpis_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantKpiModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchantKpis(CorrelationIdHelper.New(), Guid.NewGuid());
@@ -545,7 +545,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(bizList));
 
             var result = await _service.GetMerchantsForDropDown(CorrelationIdHelper.New(), estateId);
@@ -560,7 +560,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchantsForDropDown_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>(Arg<global::MediatR.IRequest<SimpleResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<List<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantDropDownModel>>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchantsForDropDown(CorrelationIdHelper.New(), Guid.NewGuid());
@@ -584,7 +584,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(businessLogicSchedule));
 
             var result = await _service.GetMerchantSchedule(CorrelationIdHelper.New(), estateId, merchantId, year);
@@ -601,7 +601,7 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         public async Task GetMerchantSchedule_ReturnsFailure_WhenMediatorFails()
         {
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.GetMerchantSchedule(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), DateTime.Today.Year);
@@ -624,16 +624,16 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
                 }
             };
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
-                .ReturnsAsync(Result.NotFound());
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.NotFound("The requested resource was not found."));
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success());
 
             var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), estateId, merchantId, schedule);
 
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -662,16 +662,16 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(businessLogicSchedule));
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success());
 
             var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), estateId, merchantId, schedule);
 
             result.IsSuccess.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -679,10 +679,10 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
         {
 
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
-                .ReturnsAsync(Result.NotFound());
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
+                .ReturnsAsync(Result.NotFound("The requested resource was not found."));
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantScheduleModel
@@ -708,10 +708,10 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             };
 
             _mockMediator
-                .Send<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<SimpleResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result<EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel>>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Success(businessLogicSchedule));
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.SaveMerchantSchedule(CorrelationIdHelper.New(), Guid.NewGuid(), Guid.NewGuid(), new BlazorServer.Models.MerchantModels.MerchantScheduleModel
@@ -731,13 +731,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var operatorId = Guid.NewGuid();
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.AddOperatorToMerchant(CorrelationIdHelper.New(), estateId, merchantId, operatorId, "MN", "TN");
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -748,13 +748,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var operatorId = Guid.NewGuid();
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.RemoveOperatorFromMerchant(CorrelationIdHelper.New(), estateId, merchantId, operatorId);
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -765,13 +765,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var contractId = Guid.NewGuid();
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.AssignContractToMerchant(CorrelationIdHelper.New(), estateId, merchantId, contractId);
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -782,13 +782,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var contractId = Guid.NewGuid();
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.RemoveContractFromMerchant(CorrelationIdHelper.New(), estateId, merchantId, contractId);
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -799,13 +799,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var deviceId = "device-123";
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.AddMerchantDevice(CorrelationIdHelper.New(), estateId, merchantId, deviceId);
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -815,13 +815,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var merchantId = Guid.NewGuid();
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.SwapMerchantDevice(CorrelationIdHelper.New(), estateId, merchantId, "old", "new");
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
 
         [Fact]
@@ -832,13 +832,13 @@ namespace EstateManagementUI.BlazorServer.Tests.UIServices
             var deposit = new BlazorServer.Models.MerchantModels.DepositModel { Amount = 10, Date = DateTime.UtcNow, Reference = "ref" };
 
             _mockMediator
-                .Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any())
+                .Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any())
                 .ReturnsAsync(Result.Failure("err"));
 
             var result = await _service.MakeMerchantDeposit(CorrelationIdHelper.New(), estateId, merchantId, deposit);
 
             result.IsFailed.ShouldBeTrue();
-            _mockMediator.Send<SimpleResults.Result>(Arg<global::MediatR.IRequest<SimpleResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
+            _mockMediator.Send<TransactionProcessing.UnionResults.Result>(Arg<global::MediatR.IRequest<TransactionProcessing.UnionResults.Result>>.Any(), Arg<CancellationToken>.Any()).Called(Count.Once());
         }
     }
 }

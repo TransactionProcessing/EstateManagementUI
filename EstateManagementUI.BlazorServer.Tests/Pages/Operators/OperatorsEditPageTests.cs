@@ -4,7 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using OperatorsEdit = EstateManagementUI.BlazorServer.Components.Pages.Operators.Edit;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
@@ -207,7 +207,7 @@ public class OperatorsEditPageTests : BaseTest
             .ReturnsAsync(Result.Success(operatorModel));
 
         this.OperatorUIService.UpdateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.EditOperatorModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));
@@ -231,7 +231,7 @@ public class OperatorsEditPageTests : BaseTest
         var operatorId = Guid.NewGuid();
 
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters
@@ -248,7 +248,7 @@ public class OperatorsEditPageTests : BaseTest
         var operatorId = Guid.NewGuid();
 
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
+            .ReturnsAsync(Result.NotFound("The requested resource was not found."));
 
         // Act
         IRenderedComponent<OperatorsEdit> cut = Render<OperatorsEdit>(parameters => parameters

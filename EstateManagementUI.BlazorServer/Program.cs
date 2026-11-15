@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.FileProviders;
 using Sentry.Extensibility;
-using Shared.Extensions;
-using Shared.General;
-using Shared.Serialisation;
+using TransactionProcessing.Shared.Extensions;
+using TransactionProcessing.Shared.General;
+using TransactionProcessing.Shared.Serialisation;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 

@@ -2,7 +2,7 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 {

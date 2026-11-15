@@ -1,7 +1,6 @@
 ﻿using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BusinessLogic.Client {
     public partial interface IApiClient {

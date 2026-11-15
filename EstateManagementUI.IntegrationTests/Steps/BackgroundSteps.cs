@@ -4,9 +4,9 @@ using Microsoft.Playwright;
 using Reqnroll;
 using SecurityService.DataTransferObjects;
 using SecurityService.IntegrationTesting.Helpers;
-using Shared.IntegrationTesting;
+using TransactionProcessing.Shared.IntegrationTesting;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +14,7 @@ using TransactionProcessor.DataTransferObjects.Requests.Estate;
 using TransactionProcessor.DataTransferObjects.Requests.Operator;
 using TransactionProcessor.DataTransferObjects.Responses.Estate;
 using TransactionProcessor.IntegrationTesting.Helpers;
-using ReqnrollTableHelper = Shared.IntegrationTesting.ReqnrollTableHelper;
+using ReqnrollTableHelper = TransactionProcessing.Shared.IntegrationTesting.ReqnrollTableHelper;
 
 namespace EstateManagementUI.IntegrationTests.Steps
 {
@@ -31,9 +31,9 @@ namespace EstateManagementUI.IntegrationTests.Steps
         {
             this.TestingContext = testingContext;
             this.Page = page;
-            this.SecurityServiceSteps = new SecurityServiceSteps(testingContext.DockerHelper.SecurityServiceClient);
+            this.SecurityServiceSteps = new SecurityServiceSteps(testingContext.DockerHelper.SecurityServiceClient, testingContext.DockerHelper.AccessToken);
             this.TransactionProcessorSteps = new TransactionProcessorSteps(testingContext.DockerHelper.TransactionProcessorClient,
-                testingContext.DockerHelper.TestHostHttpClient, testingContext.DockerHelper.ProjectionManagementClient);
+                testingContext.DockerHelper.TestHostHttpClient, testingContext.DockerHelper.ProjectionManagementClient, testingContext.DockerHelper.AgencyBankingClient);
         }
 
         private DashboardPageHelper GetHelper() => new(this.Page, this.TestingContext);
@@ -170,7 +170,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
         private async Task CreateIdentityResource(CreateIdentityResourceRequest createIdentityResourceRequest,
                                                   CancellationToken cancellationToken)
         {
-            Result<List<IdentityResourceResponse>>? identityResourceList = await this.TestingContext.DockerHelper.SecurityServiceClient.GetIdentityResources(cancellationToken);
+            Result<List<IdentityResourceResponse>> identityResourceList = await this.TestingContext.DockerHelper.SecurityServiceClient.GetIdentityResources(this.TestingContext.DockerHelper.AccessToken, cancellationToken);
             if (identityResourceList.IsFailed)
             {
                 // TODO: Handle error properly, e.g., show a message to the user
@@ -179,7 +179,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
             {
                 Result result = await this
                     .TestingContext.DockerHelper.SecurityServiceClient
-                    .CreateIdentityResource(createIdentityResourceRequest, cancellationToken)
+                    .CreateIdentityResource(this.TestingContext.DockerHelper.AccessToken, createIdentityResourceRequest, cancellationToken)
                     .ConfigureAwait(false);
                 result.IsSuccess.ShouldBeTrue();
 
@@ -194,7 +194,7 @@ namespace EstateManagementUI.IntegrationTests.Steps
 
                 Result result = await this
                     .TestingContext.DockerHelper.SecurityServiceClient
-                    .CreateIdentityResource(createIdentityResourceRequest, cancellationToken)
+                    .CreateIdentityResource(this.TestingContext.DockerHelper.AccessToken, createIdentityResourceRequest, cancellationToken)
                     .ConfigureAwait(false);
                 result.IsSuccess.ShouldBeTrue();
 

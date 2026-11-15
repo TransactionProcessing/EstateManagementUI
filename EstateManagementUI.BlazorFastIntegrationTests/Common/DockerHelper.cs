@@ -1,6 +1,6 @@
-using Shared.IntegrationTesting;
+using TransactionProcessing.Shared.IntegrationTesting;
 using TransactionProcessor.DataTransferObjects.Requests.MerchantSchedule;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using MerchantScheduleModel = EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleModel;
 
 namespace EstateManagementUI.IntegrationTests.Common;
@@ -41,7 +41,7 @@ public sealed class DockerHelper
         public async Task<Result<MerchantScheduleModel>> GetMerchantSchedule(string accessToken, Guid estateId, Guid merchantId, int year, CancellationToken cancellationToken)
         {
             var schedule = await _supportClient.GetMerchantScheduleAsync(estateId, merchantId, year);
-            return schedule is null ? Result.NotFound() : Result.Success(new MerchantScheduleModel
+            return schedule is null ? Result.NotFound("The requested resource was not found.") : Result.Success(new MerchantScheduleModel
             {
                 Year = schedule.Year,
                 Months = schedule.Months.Select(month => new EstateManagementUI.BusinessLogic.Models.MerchantModels.MerchantScheduleMonthModel

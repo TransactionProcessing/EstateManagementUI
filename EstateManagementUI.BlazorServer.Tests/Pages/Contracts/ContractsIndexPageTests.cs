@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using ContractModels = EstateManagementUI.BlazorServer.Models.ContractModels;
 using ContractsIndex = EstateManagementUI.BlazorServer.Components.Pages.Contracts.Index;
@@ -147,7 +147,7 @@ public class ContractsIndexPageTests : BaseTest
     {
         // Arrange
         this.ContractUIService.GetContracts(Arg<CorrelationId>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         IRenderedComponent<ContractsIndex> cut = Render<ContractsIndex>();

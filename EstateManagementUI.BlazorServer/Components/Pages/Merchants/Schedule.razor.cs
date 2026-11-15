@@ -4,8 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 {
@@ -88,7 +87,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             if (result.IsFailed)
             {
                 this.selectedYear = previousYear;
-                this.errorMessage = result.Errors.SingleOrDefault() ?? $"Failed to load schedule for {requestedYear}.";
+                this.errorMessage = result.Message;
             }
             this.StateHasChanged();
         }
@@ -108,7 +107,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             Int32 sourceYear = this.selectedYear - 1;
 
             Result<MerchantModels.MerchantScheduleModel> result = await this.MerchantUIService.GetMerchantSchedule(correlationId, estateId, this.MerchantId, sourceYear);
-            if (result.Status == ResultStatus.NotFound)
+            if (result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
             {
                 this.errorMessage = $"No schedule exists for {sourceYear} to clone.";
                 return;
@@ -116,7 +115,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
             if (result.IsFailed)
             {
-                this.errorMessage = result.Errors.SingleOrDefault() ?? $"Failed to load schedule for {sourceYear}.";
+                this.errorMessage = String.IsNullOrEmpty(result.Message) ? $"Failed to load schedule for {sourceYear}." : result.Message;
                 return;
             }
 
@@ -149,12 +148,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result<MerchantModels.MerchantScheduleModel> scheduleResult = this.BuildScheduleToSave();
                 if (scheduleResult.IsFailed)
                 {
-                    this.errorMessage = scheduleResult switch
-                    {
-                        _ when scheduleResult.Errors.Any() => scheduleResult.Errors.First(),
-                        _ when String.IsNullOrEmpty(scheduleResult.Message) == false => scheduleResult.Message,
-                        _ => "Invalid schedule."
-                    };
+                    this.errorMessage = String.IsNullOrEmpty(scheduleResult.Message) ? "Invalid schedule." : scheduleResult.Message;
                     return;
                 }
 
@@ -163,11 +157,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result result = await this.MerchantUIService.SaveMerchantSchedule(correlationId, estateId, this.MerchantId, scheduleResult.Data);
                 if (result.IsFailed)
                 {
-                    this.errorMessage = result switch {
-                        _ when result.Errors.Any() => result.Errors.First(),
-                        _ when String.IsNullOrEmpty(result.Message) == false => result.Message,
-                        _ => "Failed to save merchant schedule."
-                    };
+                    this.errorMessage = String.IsNullOrEmpty(result.Message) ? "Failed to save merchant schedule." : result.Message;
                     return;
                 }
 
@@ -186,7 +176,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
             CorrelationId correlationId = new(Guid.NewGuid());
             Result<MerchantModels.MerchantScheduleModel> result = await this.MerchantUIService.GetMerchantSchedule(correlationId, estateId, this.MerchantId, year);
 
-            if (result.Status == ResultStatus.NotFound)
+            if (result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
             {
                 this.BuildMonthEditors(null);
                 return Result.Success();
@@ -210,8 +200,8 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
                 Result<List<Int32>> parseResult = this.ParseClosedDays(month.ClosedDaysInput, month.Month);
                 if (parseResult.IsFailed)
                 {
-                    this.errorMessage = parseResult.Errors.SingleOrDefault() ?? $"Invalid closed days for {month.MonthName}.";
-                    return Result.Failure();
+                    this.errorMessage = String.IsNullOrEmpty(parseResult.Message) ? $"Invalid closed days for {month.MonthName}." : parseResult.Message;
+                    return Result.Failure(this.errorMessage);
                 }
 
                 month.ClosedDaysInput = this.FormatClosedDays(parseResult.Data);

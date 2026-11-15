@@ -3,7 +3,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using FileProcessingDetails = EstateManagementUI.BlazorServer.Components.Pages.FileProcessing.Details;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.FileProcessing;

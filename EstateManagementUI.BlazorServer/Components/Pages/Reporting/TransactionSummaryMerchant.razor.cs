@@ -2,7 +2,7 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
 {
@@ -143,7 +143,7 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Reporting
             catch (Exception ex)
             {
                 errorMessage = $"Failed to load data: {ex.Message}";
-                return Result.Failure();
+                return Result.Failure(errorMessage);
             }
             finally
             {

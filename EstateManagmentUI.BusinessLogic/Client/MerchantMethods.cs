@@ -1,8 +1,7 @@
 ﻿using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using EstateManagementUI.BusinessLogic.Models;
 using EstateManagementUI.BusinessLogic.Requests;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 using TransactionProcessor.DataTransferObjects.Requests.MerchantSchedule;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
@@ -137,7 +136,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                 return ResultHelpers.CreateFailure(token);
 
             SettlementSchedule settlementSchedule = Enum.Parse<SettlementSchedule>(request.SettlementSchedule);
-            CreateMerchantRequest apiRequest = new() { MerchantId = request.MerchantId, Name = request.Name,SettlementSchedule = settlementSchedule, Address = new Address {
+            CreateMerchantRequest apiRequest = new() { Name = request.Name,SettlementSchedule = settlementSchedule, Address = new Address {
                 AddressLine1 = request.MerchantAddress.AddressLine1,
                 Town = request.MerchantAddress.Town,
                 Country = request.MerchantAddress.Country,
@@ -378,7 +377,7 @@ namespace EstateManagementUI.BusinessLogic.Client
 
             UpdateMerchantRequest apiRequest = new() { SettlementSchedule = settlementSchedule, Name = request.Name };
 
-            Result? apiResult = await this.TransactionProcessorClient.UpdateMerchant(token.Data, request.EstateId, request.MerchantId,apiRequest,cancellationToken);
+            Result apiResult = await this.TransactionProcessorClient.UpdateMerchant(token.Data, request.EstateId, request.MerchantId,apiRequest,cancellationToken);
 
             if (apiResult.IsFailed)
                 return ResultHelpers.CreateFailure(apiResult);
@@ -424,7 +423,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                 Region = request.MerchantAddress.Region
             };
 
-            Result? apiResult = await this.TransactionProcessorClient.UpdateMerchantAddress(token.Data, request.EstateId, request.MerchantId,request.MerchantAddress.AddressId,
+            Result apiResult = await this.TransactionProcessorClient.UpdateMerchantAddress(token.Data, request.EstateId, request.MerchantId,request.MerchantAddress.AddressId,
                 apiRequest, cancellationToken);
             
             if (apiResult.IsFailed)
@@ -447,7 +446,7 @@ namespace EstateManagementUI.BusinessLogic.Client
                 PhoneNumber = request.MerchantContact.ContactPhone
             };
 
-            Result? apiResult = await this.TransactionProcessorClient.UpdateMerchantContact(token.Data, request.EstateId, request.MerchantId, request.MerchantContact.ContactId,
+            Result apiResult = await this.TransactionProcessorClient.UpdateMerchantContact(token.Data, request.EstateId, request.MerchantId, request.MerchantContact.ContactId,
                 apiRequest, cancellationToken);
             
             if (apiResult.IsFailed)

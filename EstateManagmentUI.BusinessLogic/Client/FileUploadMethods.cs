@@ -1,9 +1,8 @@
 using EstateManagementUI.BusinessLogic.BackendAPI.DataTransferObjects;
 using FileProcessor.Client;
 using FileProcessor.DataTransferObjects;
-using Shared.General;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.Shared.General;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BusinessLogic.Client
 {

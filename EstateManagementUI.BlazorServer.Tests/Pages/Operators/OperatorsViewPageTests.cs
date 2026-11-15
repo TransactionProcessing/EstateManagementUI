@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
 
@@ -214,7 +214,7 @@ public class OperatorsViewPageTests : BaseTest
         // Arrange
         var operatorId = Guid.NewGuid();
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         var cut = Render<View>(parameters => parameters
@@ -230,7 +230,7 @@ public class OperatorsViewPageTests : BaseTest
         // Arrange
         var operatorId = Guid.NewGuid();
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
+            .ReturnsAsync(Result.NotFound("The requested resource was not found."));
 
         // Act
         var cut = Render<View>(parameters => parameters
@@ -247,7 +247,7 @@ public class OperatorsViewPageTests : BaseTest
         // Arrange
         var operatorId = Guid.NewGuid();
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<Guid>.Any())
-            .ReturnsAsync(Result.Success<OperatorModels.OperatorModel>(null));
+            .ReturnsAsync(Result.NotFound("The requested resource was not found."));
 
         var cut = Render<View>(parameters => parameters
             .Add(p => p.OperatorId, operatorId));

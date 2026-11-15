@@ -6,7 +6,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Web;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using MerchantsEdit = EstateManagementUI.BlazorServer.Components.Pages.Merchants.Edit;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
@@ -243,7 +243,7 @@ public class MerchantsEditPageTests : BaseTest
         // Arrange
         var merchantId = Guid.NewGuid();
         this.MerchantUIService.GetMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId)
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         IRenderedComponent<MerchantsEdit> cut = Render<MerchantsEdit>(parameters => parameters
@@ -460,7 +460,7 @@ public class MerchantsEditPageTests : BaseTest
         this.OperatorUIService.GetOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), operatorId)
             .ReturnsAsync(Result.Success(operatorDetails));
         this.MerchantUIService.AddOperatorToMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId, operatorId, Arg<String?>.Any(), Arg<String?>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<MerchantsEdit> cut = Render<MerchantsEdit>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
@@ -612,7 +612,7 @@ public class MerchantsEditPageTests : BaseTest
         SetupSuccessfulDataLoadWithContracts(merchantId, new List<ContractModels.ContractDropDownModel> { contractToAdd });
 
         this.MerchantUIService.AssignContractToMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId, contractId)
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<MerchantsEdit> cut = Render<MerchantsEdit>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
@@ -826,7 +826,7 @@ public class MerchantsEditPageTests : BaseTest
         SetupSuccessfulDataLoad(merchantId);
 
         this.MerchantUIService.AddMerchantDevice(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId, Arg<String>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<MerchantsEdit> cut = Render<MerchantsEdit>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
@@ -889,7 +889,7 @@ public class MerchantsEditPageTests : BaseTest
         SetupSuccessfulDataLoad(merchantId);
 
         this.MerchantUIService.UpdateMerchant(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId, Arg<MerchantModels.MerchantEditModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<MerchantsEdit> cut = Render<MerchantsEdit>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));
@@ -1153,7 +1153,7 @@ public class MerchantsEditPageTests : BaseTest
         SetupSuccessfulDataLoad(merchantId, assignedDevices: new List<MerchantModels.MerchantDeviceModel> { existingDevice });
 
         this.MerchantUIService.SwapMerchantDevice(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), merchantId, "DEV123", "DEV456")
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<MerchantsEdit> cut = Render<MerchantsEdit>(parameters => parameters
             .Add(p => p.MerchantId, merchantId));

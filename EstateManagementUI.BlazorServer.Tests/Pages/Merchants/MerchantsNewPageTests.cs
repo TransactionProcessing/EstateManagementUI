@@ -3,7 +3,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using MerchantsNew = EstateManagementUI.BlazorServer.Components.Pages.Merchants.New;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;
@@ -150,7 +150,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<Guid>.Any(),
             Arg<Guid>.Any(),
             Arg<MerchantModels.CreateMerchantModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         var cut = Render<MerchantsNew>();
 
@@ -180,7 +180,7 @@ public class MerchantsNewPageTests : BaseTest
             Arg<Guid>.Any(),
             Arg<Guid>.Any(),
             Arg<MerchantModels.CreateMerchantModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         var cut = Render<MerchantsNew>();
         var initialUri = _fakeNavigationManager.Uri;

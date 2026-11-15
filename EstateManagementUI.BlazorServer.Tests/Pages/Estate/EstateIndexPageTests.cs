@@ -7,7 +7,7 @@ using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Web;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using EstateIndex = EstateManagementUI.BlazorServer.Components.Pages.Estate.Index;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Estate;
@@ -188,7 +188,7 @@ public class EstateIndexPageTests : BaseTest
 
         SetupSuccessfulDataLoadWithOperators(new List<OperatorModels.OperatorDropDownModel> { operatorToAdd });
 
-        this.EstateUIService.AddOperatorToEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any()).ReturnsAsync(Result.Failure());
+        this.EstateUIService.AddOperatorToEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<String>.Any()).ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();
         cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -361,7 +361,7 @@ public class EstateIndexPageTests : BaseTest
     public void EstateIndex_LoadEstateData_LoadFails_NavigatesToError()
     {
         // Arrange
-        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure());
+        this.EstateUIService.LoadEstate(Arg<CorrelationId>.Any(), Arg<Guid>.Any()).ReturnsAsync(Result.Failure("The operation failed."));
 
         // Act
         IRenderedComponent<EstateIndex> cut = Render<EstateIndex>();

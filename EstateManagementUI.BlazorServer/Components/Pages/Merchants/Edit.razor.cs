@@ -6,13 +6,12 @@ using EstateManagementUI.BusinessLogic.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using System.Globalization;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using static FastExpressionCompiler.ExpressionCompiler;
-using Result = SimpleResults.Result;
+using Result = TransactionProcessing.UnionResults.Result;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
     public partial class Edit {
@@ -106,23 +105,23 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
                 await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask, openingHoursResultTask);
 
-                if (operatorsResultTask.Result.IsFailed)
+                if (operatorsResultTask.Result.IsFailed && !operatorsResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(operatorsResultTask.Result);
 
-                if (contractsResultTask.Result.IsFailed)
+                if (contractsResultTask.Result.IsFailed && !contractsResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(contractsResultTask.Result);
 
-                if (devicesResultTask.Result.IsFailed)
+                if (devicesResultTask.Result.IsFailed && !devicesResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
 
-                if (openingHoursResultTask.Result.IsFailed && openingHoursResultTask.Result.Status != ResultStatus.NotFound)
+                if (openingHoursResultTask.Result.IsFailed && !openingHoursResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
 
-                assignedOperators = operatorsResultTask.Result.Data;
-                assignedContracts = contractsResultTask.Result.Data;
-                this.assignedDevices = devicesResultTask.Result.Data;
+                assignedOperators = operatorsResultTask.Result.IsFailed ? [] : operatorsResultTask.Result.Data ?? [];
+                assignedContracts = contractsResultTask.Result.IsFailed ? [] : contractsResultTask.Result.Data ?? [];
+                this.assignedDevices = devicesResultTask.Result.IsFailed ? [] : devicesResultTask.Result.Data ?? [];
 
-                if (openingHoursResultTask.Result.Data == null) {
+                if (openingHoursResultTask.Result.IsFailed || openingHoursResultTask.Result.Data == null) {
                     merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel {
                         Friday = new MerchantModels.DayOpeningHoursModel(),
                         Monday = new MerchantModels.DayOpeningHoursModel(),
@@ -440,11 +439,18 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
 
             String trimmedValue = value.Trim();
 
-            if (DateTime.TryParseExact(trimmedValue,
+            if (trimmedValue.Length == 4 &&
+                Int32.TryParse(trimmedValue.AsSpan(0, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 hours) &&
+                Int32.TryParse(trimmedValue.AsSpan(2, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 minutes) &&
+                (hours > 23 || minutes > 59)) {
+                return trimmedValue;
+            }
+
+            if (TimeOnly.TryParseExact(trimmedValue,
                                        OpeningHoursFormats,
                                        CultureInfo.InvariantCulture,
                                        DateTimeStyles.None,
-                                       out DateTime parsed) == false) {
+                                       out TimeOnly parsed) == false) {
                 return trimmedValue;
             }
 
@@ -458,11 +464,18 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants;
                 return false;
             }
 
-            if (DateTime.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed) == false) {
+            if (value.Length == 4 &&
+                Int32.TryParse(value.AsSpan(0, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 hours) &&
+                Int32.TryParse(value.AsSpan(2, 2), NumberStyles.None, CultureInfo.InvariantCulture, out Int32 minutes) &&
+                (hours > 23 || minutes > 59)) {
                 return false;
             }
 
-            time = parsed.TimeOfDay;
+            if (TimeOnly.TryParseExact(value, "HHmm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly parsed) == false) {
+                return false;
+            }
+
+            time = parsed.ToTimeSpan();
             return true;
         }
 

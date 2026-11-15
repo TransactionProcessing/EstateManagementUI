@@ -4,7 +4,7 @@ using System.Text.Json;
 using EstateManagementUI.IntegrationTests.Common;
 using Microsoft.Playwright;
 using Reqnroll;
-using Shared.IntegrationTesting;
+using TransactionProcessing.Shared.IntegrationTesting;
 using Shouldly;
 using TransactionProcessor.Client;
 using TransactionProcessor.DataTransferObjects;
@@ -12,6 +12,7 @@ using TransactionProcessor.DataTransferObjects.Requests.Contract;
 using TransactionProcessor.DataTransferObjects.Requests.Estate;
 using TransactionProcessor.DataTransferObjects.Requests.Merchant;
 using TransactionProcessor.DataTransferObjects.Requests.Operator;
+using TransactionProcessor.DataTransferObjects.Requests.Transaction;
 using TransactionProcessor.DataTransferObjects.Responses.Contract;
 using TransactionProcessor.DataTransferObjects.Responses.Merchant;
 using TransactionProcessor.DataTransferObjects.Responses.Operator;
@@ -740,7 +741,7 @@ public sealed class ReportingSteps
 
     private string ResolveBaseUrl()
     {
-        var hostPort = _testingContext.DockerHelper.GetHostPort(Shared.IntegrationTesting.ContainerType.EstateManagementUI);
+        var hostPort = _testingContext.DockerHelper.GetHostPort(TransactionProcessing.Shared.IntegrationTesting.ContainerType.EstateManagementUI);
         return $"https://127.0.0.1:{hostPort}";
     }
 

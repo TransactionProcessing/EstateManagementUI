@@ -4,8 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using TransactionDetailModel = EstateManagementUI.BlazorServer.Models.TransactionModels.TransactionDetailModel;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
@@ -72,22 +71,22 @@ namespace EstateManagementUI.BlazorServer.Components.Pages.Merchants
 
                 await Task.WhenAll(operatorsResultTask, contractsResultTask, devicesResultTask, openingHoursResultTask);
 
-                if (operatorsResultTask.Result.IsFailed)
+                if (operatorsResultTask.Result.IsFailed && !operatorsResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(operatorsResultTask.Result);
                 
-                if (contractsResultTask.Result.IsFailed)
+                if (contractsResultTask.Result.IsFailed && !contractsResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(contractsResultTask.Result);
 
-                if (devicesResultTask.Result.IsFailed)
+                if (devicesResultTask.Result.IsFailed && !devicesResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(devicesResultTask.Result);
-                if (openingHoursResultTask.Result.IsFailed && openingHoursResultTask.Result.Status != ResultStatus.NotFound)
+                if (openingHoursResultTask.Result.IsFailed && !openingHoursResultTask.Result.Errors.Any(error => error.ErrorType == ErrorType.NotFound))
                     return ResultHelpers.CreateFailure(openingHoursResultTask.Result);
 
-                assignedOperators = operatorsResultTask.Result.Data;
-                assignedContracts = contractsResultTask.Result.Data;
-                this.assignedDevices = devicesResultTask.Result.Data;
+                assignedOperators = operatorsResultTask.Result.IsFailed ? [] : operatorsResultTask.Result.Data ?? [];
+                assignedContracts = contractsResultTask.Result.IsFailed ? [] : contractsResultTask.Result.Data ?? [];
+                this.assignedDevices = devicesResultTask.Result.IsFailed ? [] : devicesResultTask.Result.Data ?? [];
 
-                if (openingHoursResultTask.Result.Data == null) {
+                if (openingHoursResultTask.Result.IsFailed || openingHoursResultTask.Result.Data == null) {
                     merchantOpeningHoursModel = new MerchantModels.MerchantOpeningHoursModel {
                         Friday = new MerchantModels.DayOpeningHoursModel(),
                         Monday = new MerchantModels.DayOpeningHoursModel(),

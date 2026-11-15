@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Imposter.Abstractions;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using TestContext = Bunit.BunitContext;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages;

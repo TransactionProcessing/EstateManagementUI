@@ -4,9 +4,8 @@ using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.JSInterop;
-using Shared.Exceptions;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.Shared.Exceptions;
+using TransactionProcessing.UnionResults;
 using System.Security.Claims;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages;

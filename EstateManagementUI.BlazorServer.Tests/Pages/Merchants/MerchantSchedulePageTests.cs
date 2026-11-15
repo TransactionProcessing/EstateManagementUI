@@ -4,7 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using Xunit;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Merchants;

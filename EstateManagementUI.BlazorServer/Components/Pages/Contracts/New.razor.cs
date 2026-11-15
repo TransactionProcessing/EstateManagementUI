@@ -2,8 +2,8 @@
 using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BlazorServer.Permissions;
 using EstateManagementUI.BusinessLogic.Requests;
-using Shared.Results;
-using Result = SimpleResults.Result;
+using TransactionProcessing.UnionResults;
+using Result = TransactionProcessing.UnionResults.Result;
 
 namespace EstateManagementUI.BlazorServer.Components.Pages.Contracts
 {

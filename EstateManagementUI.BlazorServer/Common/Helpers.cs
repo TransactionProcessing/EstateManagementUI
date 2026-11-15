@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Shared.General;
-using Shared.Results;
-using SimpleResults;
+using TransactionProcessing.Shared.General;
+using TransactionProcessing.UnionResults;
 using System.Security.Claims;
 using EstateManagementUI.BlazorServer.Models;
 
@@ -22,7 +21,7 @@ namespace EstateManagementUI.BlazorServer.Common
         public static Result<Guid> GetEstateIdFromClaims(this AuthenticationState authState)
         {
             ClaimsPrincipal user = authState.User;
-            Result<Claim>? estateIdClaim = ClaimsHelper.GetUserClaim(user, "estateId");
+            Result<Claim> estateIdClaim = ClaimsHelper.GetUserClaim(user, "estateId");
             if (estateIdClaim.IsFailed)
                 return ResultHelpers.CreateFailure(estateIdClaim);
             Guid estateId = Guid.Parse(estateIdClaim.Data.Value);

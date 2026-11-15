@@ -4,7 +4,7 @@ using EstateManagementUI.BlazorServer.Models;
 using EstateManagementUI.BusinessLogic.Requests;
 using Imposter.Abstractions;
 using Shouldly;
-using SimpleResults;
+using TransactionProcessing.UnionResults;
 using OperatorsNew = EstateManagementUI.BlazorServer.Components.Pages.Operators.New;
 
 namespace EstateManagementUI.BlazorServer.Tests.Pages.Operators;
@@ -90,7 +90,7 @@ public class OperatorsNewPageTests : BaseTest
     {
         // Arrange
         this.OperatorUIService.CreateOperator(Arg<CorrelationId>.Any(), Arg<Guid>.Any(), Arg<OperatorModels.CreateOperatorModel>.Any())
-            .ReturnsAsync(Result.Failure());
+            .ReturnsAsync(Result.Failure("The operation failed."));
 
         IRenderedComponent<OperatorsNew> cut = Render<OperatorsNew>();
         cut.WaitForAssertion(() => cut.Markup.ShouldContain("Create New Operator"), timeout: TimeSpan.FromSeconds(5));

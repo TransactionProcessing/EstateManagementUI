@@ -4,7 +4,7 @@
 @using EstateManagementUI.BlazorServer.Permissions
 @using Microsoft.AspNetCore.Components.Forms
 @using EstateManagementUI.BlazorServer.UIServices
-@using SimpleResults
+@using TransactionProcessing.UnionResults
 @inherits AuthorizedComponentBase
 @inject NavigationManager NavigationManager
 @inject IFileProcessingUIService FileProcessingUIService
@@ -148,7 +148,7 @@
             isLoadingMerchants = false;
             isLoadingFileProfiles = false;
             await InvokeAsync(StateHasChanged);
-            return global::Shared.Results.ResultHelpers.CreateFailure(merchantResult);
+            return global::TransactionProcessing.UnionResults.ResultHelpers.CreateFailure(merchantResult);
         }
 
         Result<List<global::EstateManagementUI.BlazorServer.Models.FileProfileDropDownModel>> fileProfileResult = await FileProcessingUIService.GetFileProfiles();
@@ -157,7 +157,7 @@
             isLoadingMerchants = false;
             isLoadingFileProfiles = false;
             await InvokeAsync(StateHasChanged);
-            return global::Shared.Results.ResultHelpers.CreateFailure(fileProfileResult);
+            return global::TransactionProcessing.UnionResults.ResultHelpers.CreateFailure(fileProfileResult);
         }
 
         merchants = merchantResult.Data;
@@ -204,7 +204,7 @@
 
         if (uploadResult.IsFailed)
         {
-            fileErrorMessage = uploadResult.Errors.FirstOrDefault() ?? "The file upload failed.";
+            fileErrorMessage = String.IsNullOrEmpty(uploadResult.Message) ? "The file upload failed." : uploadResult.Message;
             return;
         }
 
